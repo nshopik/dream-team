@@ -5,6 +5,8 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.3.10] - 2026-09-27
+
 ### Changed
 
 - **Upgrade note:** the marketplace is renamed to `dream-team`; reinstall as `scope-style@dream-team`.

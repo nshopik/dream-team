@@ -1,6 +1,6 @@
 {
   "name": "scope-style",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "description": "Scoped Commits messages and short, review-facing MR/PR descriptions, enforced by a PreToolUse hook.",
   "author": { "name": "Nikolay Shopik" },
   "repository": "https://github.com/nshopik/dream-team",
