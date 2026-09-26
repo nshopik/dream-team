@@ -2,6 +2,17 @@
   "hooks": {
     "PreToolUse": [
       {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/jit-context.py\"",
+            "timeout": 5,
+            "statusMessage": "Loading conventions"
+          }
+        ]
+      },
+      {
         "matcher": "Write|Edit",
         "hooks": [
           {
@@ -9,6 +20,12 @@
             "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/branch-guard.py\"",
             "timeout": 5,
             "statusMessage": "Checking branch"
+          },
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/jit-context.py\"",
+            "timeout": 5,
+            "statusMessage": "Loading file conventions"
           },
           {
             "type": "command",
