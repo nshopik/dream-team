@@ -1,6 +1,14 @@
-# scope-style
+# dream-team
 
-A Claude Code plugin that keeps commit messages, MR/PR descriptions, and issues short and useful
+A Claude Code plugin marketplace with two plugins: `scope-style` and `dream-team`.
+
+```
+/plugin marketplace add nshopik/dream-team
+```
+
+## scope-style
+
+A plugin that keeps commit messages, MR/PR descriptions, and issues short and useful
 to the people who read them.
 
 - `scope-commit` skill: [Scoped Commits](https://scopedcommits.com/) subjects
@@ -15,11 +23,10 @@ to the people who read them.
 
 Status: under active tuning. Rules and caps change as they're measured against real repositories.
 
-## Install
+### Install
 
 ```
-/plugin marketplace add nshopik/scope-style
-/plugin install scope-style@scope-style
+/plugin install scope-style@dream-team
 ```
 
 Requires `python3` on `PATH`.
@@ -27,7 +34,7 @@ Requires `python3` on `PATH`.
 For the [pi](https://github.com/earendil-works/pi) harness:
 
 ```
-pi install git:github.com/nshopik/scope-style
+pi install git:github.com/nshopik/dream-team
 ```
 
 pi loads the three skills; the `body-cap.py` hook is Claude Code only.
@@ -36,7 +43,7 @@ The rules themselves are in each `SKILL.md`. The hook allows anything it can't p
 
 ## dream-team
 
-A second plugin in this marketplace. The `dream-fixer` skill takes one tracker issue to an open
+The `dream-fixer` skill takes one tracker issue to an open
 MR/PR by running the `dream-fixer-loop` workflow: implement, build/test gate, reviewers, bounded
 fix rounds.
 The `align-project` skill checks an existing project against the flow and files one issue per
@@ -54,7 +61,7 @@ project's `CLAUDE.local.md`.
 - `DREAM_TEAM_OWN_REMOTES`: regex matching the git remote URLs you own. Default: unset.
 
 ```
-/plugin install dream-team@scope-style
+/plugin install dream-team@dream-team
 ```
 
 How the flow runs, step by step: [`WORKFLOW.md`](plugins/dream-team/WORKFLOW.md).
