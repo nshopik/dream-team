@@ -226,7 +226,8 @@ md = wrote("desc.md", words)
 short = wrote("short.md", "word " * 20)
 js = wrote("desc.json", json.dumps({"description": words}))
 gh_js = wrote("gh.json", json.dumps({"body": words}))
-commit_md = wrote("commit170.md", "docs: x\n\n" + "\n".join(["word " * 10] * 17))
+cap = "docs: x\n\n" + "\n".join(["word " * 10] * 17)      # 170 words, over the commit cap
+commit_md = wrote("commit170.md", cap)
 fresh = os.path.join(fd, "fresh.md")                     # written by the command itself
 half = "word " * 200
 q = shlex.quote
@@ -252,6 +253,20 @@ shapes = [
     ("glab MR note",         "ALLOW-SILENT", f"glab api -X POST projects/1/merge_requests/9/notes -f body={q(words)}"),
     ("gh api read piped",    "ALLOW-SILENT", f"gh api repos/o/r/pulls --paginate | python3 - <<'EOF'\n{words}\nEOF"),
     ("gh api search piped",  "ALLOW-SILENT", f"gh api 'search/issues?q=repo:o/r' | python3 - <<'EOF'\n{words}\nEOF"),
+    # The PR's heredoc is not the message of a commit chained before it.
+    ("commit -m then PR heredoc", "ALLOW-SILENT",
+     "git " + C + " -q -m 'dream-team: add lab-host skill and lab-runner agent' && \\\n"
+     "  git push -u origin dream-team-lab && \\\n"
+     "  gh pr create --base main --head dream-team-lab --title 'dream-team: add lab-host' --body-file - <<'EOF2'\n"
+     "dream-fixer and the jit-context lab block pointed at a lab host this repo never names.\nEOF2"),
+    # A heredoc opened in the commit's own segment is its message, whatever reads it.
+    ("commit -m $(cat heredoc)", "ALLOW-SILENT", "git " + C + " -m \"$(cat <<'EOF'\ndocs: tidy readme\nEOF\n)\""),
+    ("commit -m $(cat heredoc) over", "DENY", "git " + C + f" -m \"$(cat <<'EOF'\n{cap}\nEOF\n)\""),
+    ("commit heredoc then && log",    "DENY", "git " + C + f" -F - <<'MSG' && git log -1\n{cap}\nMSG"),
+    ("commit --file=-",               "DENY", "git " + C + f" --file=- <<'MSG'\n{cap}\nMSG"),
+    ("commit -F /dev/stdin",          "DENY", "git " + C + f" -F /dev/stdin <<'MSG'\n{cap}\nMSG"),
+    ("commit continued -F -",         "DENY", "git " + C + f" -q \\\n  -F - <<'MSG'\n{cap}\nMSG"),
+    ("commit continued -m",           "DENY", "git " + C + f" -q -m 'docs: x' \\\n  -m {q(cap.split(chr(10), 2)[2])}"),
 ]
 for name, want, cmd in shapes:
     show(name, cmd)

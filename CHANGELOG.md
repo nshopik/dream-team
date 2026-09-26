@@ -9,6 +9,10 @@ All notable changes to this project are documented in this file. The format is b
 
 - **Upgrade note:** the marketplace is renamed to `dream-team`; reinstall as `scope-style@dream-team`.
 
+### Fixed
+
+- `body-cap.py` measures a commit message from the commit's own command, not a heredoc a later chained command reads.
+
 ## [0.3.9] - 2026-09-26
 
 ### Changed
