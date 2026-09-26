@@ -5,6 +5,18 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-09-27
+
+### Added
+
+- `lab-runner` agent runs lab work with blocking remote commands, on the host the repo's
+  `CLAUDE.md` names.
+
+### Changed
+
+- `dream-fixer` sends lab work to `lab-runner`, and there is no lab work when the repo names no
+  lab host.
+
 ## [0.6.1] - 2026-09-27
 
 ### Fixed

@@ -22,9 +22,9 @@ scout issue's research note (step 2a).
 
 **Lab work is yours, not the workflow's.** Workflow agents never ssh to a lab host. Anything the
 issue or the repo's `CLAUDE.md` needs run on a lab host — a measurement the issue asks for, a test
-that needs root, a perf gate — you dispatch after the workflow returns (step 6), through the lab
-agent the repo's `CLAUDE.md` names. No lab agent named → there is no lab work. Say so in the
-workflow's `notes` so the implementer does not try, and does not report it as an assumption.
+that needs root, a perf gate — you dispatch after the workflow returns (step 6), through
+`dream-team:lab-runner`. No lab host named → there is no lab work. Say so in the workflow's `notes`
+so the implementer does not try, and does not report it as an assumption.
 
 ## 1. Read the issue
 
@@ -74,10 +74,10 @@ not in your Agent list) with the issue body, then every
 `git reset --hard <base>` and run the full loop. Report the tier and the criterion that allowed it.
 
 Scout tier: no workflow, no code; the research note is the one change you write. Answer the
-proposal's questions yourself within its time box; lab work goes through the repo's lab agent. Write the
-answers as a note in the repo's research docs, file one issue per gap per `scope-issue` with its
-milestone (step 6), then commit the note on the step-4 branch and open the MR per step 7 with
-`Closes #<n>`, the follow-up issues linked.
+proposal's questions yourself within its time box; lab work goes through `dream-team:lab-runner`.
+Write the answers as a note in the repo's research docs, file one issue per gap per `scope-issue`
+with its milestone (step 6), then commit the note on the step-4 branch and open the MR per step 7
+with `Closes #<n>`, the follow-up issues linked.
 
 ## 3. Pick the roster
 
@@ -174,9 +174,9 @@ The workflow returns structured, not final. Read it and decide:
 - **`assumptions`** — anything the implementer had to invent. Put these at the top of your summary.
 - **`redEvidence`** — the new test's failing output from before the fix; the test reviewer checked
   it. Empty on a bug-fix issue means nobody saw the test fail: say so at the top of your summary.
-- **Lab steps** — once the result is `ok`, run the lab work the issue and repo name through the
-  repo's lab agent on the branch head. A lab failure is a failed verify: fix it before the MR, or hand
-  the branch back. Put measured numbers in the MR description.
+- **Lab steps** — once the result is `ok`, run the lab work the issue and repo name through
+  `dream-team:lab-runner` on the branch head. A lab failure is a failed verify: fix it before the
+  MR, or hand the branch back. Put measured numbers in the MR description.
 
 Findings outside the diff are not this MR's job. File each as an issue before the session ends, per
 the repo's own rules.
