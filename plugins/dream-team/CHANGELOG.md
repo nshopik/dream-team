@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-09-27
+
+### Fixed
+
+- `dream-fixer` starts `dream-fixer-loop` by its plugin name instead of a script path the
+  Workflow tool rejected.
+
 ## [0.6.0] - 2026-09-27
 
 ### Added
