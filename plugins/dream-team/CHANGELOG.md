@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-26
+
+### Added
+
+- `align-project` skill checks a project against the dream-team flow and files one issue per
+  failing check.
+
 ## [0.1.0] - 2026-09-26
 
 ### Added
