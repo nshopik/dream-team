@@ -57,11 +57,9 @@ before going further: it carries that host's API workarounds and label conventio
 </forge_tooling>"""
 
 LAB = """<lab_host>
-About to ssh. If this is a lab / test-lab host, invoke the `lab-host` skill
-first — it carries the connection aliases, the subagent-dispatch rule, and the
-working-dir layout. The lab host is whichever one the repo names; a project
-`CLAUDE.md` naming its own wins. Never carry a hostname over from another
-project or a prior session.
+About to ssh. If this is a lab / test-lab host, dispatch `dream-team:lab-runner`
+instead of running ssh here; it picks the host from the repo's CLAUDE.md. Never
+carry a hostname over from another project or a prior session.
 </lab_host>"""
 
 PROSE = """<prose_style>

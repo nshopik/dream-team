@@ -46,6 +46,7 @@ The `milestone-close` skill checks a milestone's exit criterion, triages its ope
 checks docs against code. Two PreToolUse hooks: `branch-guard.py` blocks a design or spec document
 written on `main`/`master`, and `changelog-cap.py` blocks a CHANGELOG entry past one sentence or
 40 words.
+The `lab-runner` agent does work on a lab host, running every remote command in the foreground.
 `jit-context.py` injects git, forge, changelog, spec, prose and lab conventions the first time a
 session touches each, and at session start tells the agent to record corrections in the
 project's `CLAUDE.local.md`.
