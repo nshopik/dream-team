@@ -43,32 +43,48 @@ The rules themselves are in each `SKILL.md`. The hook allows anything it can't p
 
 ## dream-team
 
-The `dream-fixer` skill takes one tracker issue to an open
-MR/PR by running the `dream-fixer-loop` workflow: implement, build/test gate, reviewers, bounded
-fix rounds.
-The `align-project` skill checks an existing project against the flow and files one issue per
-failing check.
-The `cut-milestones` skill drafts milestones from a spec, one exit gate each.
-The `milestone-close` skill checks a milestone's exit criterion, triages its open issues and
-checks docs against code. Two PreToolUse hooks: `branch-guard.py` blocks a design or spec document
-written on `main`/`master`, and `changelog-cap.py` blocks a CHANGELOG entry past one sentence or
-40 words.
-The `lab-runner` agent does work on a lab host, running every remote command in the foreground.
-`jit-context.py` injects git, forge, changelog, spec, prose and lab conventions the first time a
-session touches each, and at session start tells the agent to record corrections in the
-project's `CLAUDE.local.md`.
+A plugin that takes tracker issues to open MR/PRs, and plans and closes the milestones around
+them. How the flow runs, step by step: [`WORKFLOW.md`](plugins/dream-team/WORKFLOW.md).
 
-- `DREAM_TEAM_OWN_REMOTES`: regex matching the git remote URLs you own. Default: unset.
+Skills:
+
+- `dream-fixer`: takes one tracker issue to an open MR/PR by running the `dream-fixer-loop`
+  workflow: implement, build/test gate, reviewers, bounded fix rounds.
+- `align-project`: checks an existing project against the flow and files one issue per failing
+  check.
+- `cut-milestones`: drafts milestones from a spec, one exit gate each.
+- `milestone-close`: checks a milestone's exit criterion, triages its open issues, and checks
+  docs against code.
+
+Agent:
+
+- `lab-runner`: does work on a lab host, running every remote command in the foreground.
+
+Hooks:
+
+- `branch-guard.py` (PreToolUse): blocks a design or spec document written on `main`/`master`.
+- `changelog-cap.py` (PreToolUse): blocks a CHANGELOG entry past one sentence or 40 words.
+- `jit-context.py`: injects git, forge, changelog, spec, prose and lab conventions the first time
+  a session touches each. At session start, tells the agent to record corrections in the
+  project's `CLAUDE.local.md`.
+
+### Install
 
 ```
 /plugin install dream-team@dream-team
 ```
 
-How the flow runs, step by step: [`WORKFLOW.md`](plugins/dream-team/WORKFLOW.md).
+Needs the Workflow tool. Uses:
 
-Needs the Workflow tool. Uses `scope-mr` and `scope-issue` from `scope-style`, the
-`pr-review-toolkit` reviewers, and `caveman:cavecrew-builder` for docs-only issues; a missing
-agent type runs as a generic agent.
+- `scope-mr` and `scope-issue` from `scope-style`.
+- `pr-review-toolkit` reviewers.
+- `caveman:cavecrew-builder` for docs-only issues.
+
+A missing agent type runs as a generic agent.
+
+### Configuration
+
+- `DREAM_TEAM_OWN_REMOTES`: regex matching the git remote URLs you own. Default: unset.
 
 ## Development
 
