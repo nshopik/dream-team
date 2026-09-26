@@ -1,0 +1,23 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/branch-guard.py\"",
+            "timeout": 5,
+            "statusMessage": "Checking branch"
+          },
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/changelog-cap.py\"",
+            "timeout": 5,
+            "statusMessage": "Checking CHANGELOG entry length"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -5,6 +5,16 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-26
+
+### Added
+
+- `milestone-close` skill checks a milestone's exit criterion, triages its open issues and checks
+  docs against code.
+- `branch-guard.py` hook blocks writing a design, spec or plan document on `main` or `master`.
+- `changelog-cap.py` hook blocks a CHANGELOG entry longer than one sentence or 40 words.
+- Lean-ADR spec template in `reference/spec-template.md`.
+
 ## [0.2.0] - 2026-09-26
 
 ### Added

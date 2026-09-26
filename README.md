@@ -41,6 +41,10 @@ MR/PR by running the `dream-fixer-loop` workflow: implement, build/test gate, re
 fix rounds.
 The `align-project` skill checks an existing project against the flow and files one issue per
 failing check.
+The `milestone-close` skill checks a milestone's exit criterion, triages its open issues and
+checks docs against code. Two PreToolUse hooks: `branch-guard.py` blocks a design or spec document
+written on `main`/`master`, and `changelog-cap.py` blocks a CHANGELOG entry past one sentence or
+40 words.
 
 ```
 /plugin install dream-team@scope-style
@@ -59,6 +63,7 @@ caps. Test a local checkout with:
 claude --plugin-dir .
 claude --plugin-dir plugins/dream-team
 python3 hooks/test_body_cap.py
+python3 plugins/dream-team/hooks/test_changelog_cap.py
 ```
 
 ## License
