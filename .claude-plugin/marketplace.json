@@ -1,9 +1,9 @@
 {
-  "name": "scope-style",
+  "name": "dream-team",
   "owner": {
     "name": "Nikolay Shopik"
   },
-  "description": "Commit message and MR/PR description discipline for Claude Code.",
+  "description": "Claude Code plugins: commit, MR/PR and issue text discipline, and the dream-team issue-to-MR flow.",
   "plugins": [
     {
       "name": "scope-style",
