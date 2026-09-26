@@ -39,6 +39,8 @@ The rules themselves are in each `SKILL.md`. The hook allows anything it can't p
 A second plugin in this marketplace. The `dream-fixer` skill takes one tracker issue to an open
 MR/PR by running the `dream-fixer-loop` workflow: implement, build/test gate, reviewers, bounded
 fix rounds.
+The `align-project` skill checks an existing project against the flow and files one issue per
+failing check.
 
 ```
 /plugin install dream-team@scope-style
