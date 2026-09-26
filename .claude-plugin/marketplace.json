@@ -9,6 +9,11 @@
       "name": "scope-style",
       "source": "./",
       "description": "Scoped Commits messages and short, review-facing MR/PR descriptions."
+    },
+    {
+      "name": "dream-team",
+      "source": "./plugins/dream-team",
+      "description": "One tracker issue to one reviewed MR/PR: gate, implement, mechanical gate, review, bounded fix loop."
     }
   ]
 }

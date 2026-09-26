@@ -34,6 +34,20 @@ pi loads the three skills; the `body-cap.py` hook is Claude Code only.
 
 The rules themselves are in each `SKILL.md`. The hook allows anything it can't parse.
 
+## dream-team
+
+A second plugin in this marketplace. The `dream-fixer` skill takes one tracker issue to an open
+MR/PR by running the `dream-fixer-loop` workflow: implement, build/test gate, reviewers, bounded
+fix rounds.
+
+```
+/plugin install dream-team@scope-style
+```
+
+Needs the Workflow tool. Uses `scope-mr` and `scope-issue` from `scope-style`, the
+`pr-review-toolkit` reviewers, and `caveman:cavecrew-builder` for docs-only issues; a missing
+agent type runs as a generic agent.
+
 ## Development
 
 Rules live in the `## <id>` sections of each `SKILL.md`; the hook holds only detection logic and
@@ -41,6 +55,7 @@ caps. Test a local checkout with:
 
 ```
 claude --plugin-dir .
+claude --plugin-dir plugins/dream-team
 python3 hooks/test_body_cap.py
 ```
 

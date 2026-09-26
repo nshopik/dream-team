@@ -1,0 +1,9 @@
+{
+  "name": "dream-team",
+  "version": "0.1.0",
+  "description": "One tracker issue to one reviewed MR/PR: the dream-fixer skill drives the dream-fixer-loop workflow.",
+  "author": { "name": "Nikolay Shopik" },
+  "repository": "https://github.com/nshopik/scope-style",
+  "license": "MIT",
+  "keywords": ["workflow", "issue", "merge-request", "code-review"]
+}
