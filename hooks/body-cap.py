@@ -392,6 +392,17 @@ def without_heredocs(cmd, spans):
     return ''.join(out)
 
 
+# Quoted strings and line continuations are consumed whole: a separator inside
+# `-m "a; b"` or an escaped newline does not end the command.
+SEGMENT_END = re.compile(r"""'[^']*'|"(?:\\.|[^"\\])*"|\\\n|(&&|[;|\n])""")
+
+
+def segment_end(shell, at):
+    """End of the command starting at `at` in heredoc-blanked `shell`."""
+    return next((m.start() for m in SEGMENT_END.finditer(shell, at) if m.group(1)),
+                len(shell))
+
+
 def heredoc_body(spans, after):
     """The first heredoc opened after `after` — the one the command at that
     offset consumes. A command may carry several (`cat <<A` … `git commit <<B`);
@@ -562,7 +573,14 @@ def main():
     remember_writes(cmd, spans)
     # Heredocs blanked: a body shlex cannot split (an apostrophe) hides every flag.
     field = 'body=' if cmd.startswith('gh', at) else 'description='
-    text = heredoc_body(spans, at) or flag_text(without_heredocs(cmd, spans), kind, field)
+    shell = without_heredocs(cmd, spans)
+    if kind == 'commit':
+        # A heredoc later in the chain belongs to whatever command consumes it.
+        end = segment_end(shell, at)
+        here = heredoc_body([s for s in spans if s[0] < end], at)
+        text = here or flag_text(shell[at:end], kind, field)
+    else:
+        text = heredoc_body(spans, at) or flag_text(shell, kind, field)
     if not text:
         return                                  # editor-based, --no-edit, etc.
     body = text.split('\n')
