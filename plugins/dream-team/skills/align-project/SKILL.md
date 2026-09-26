@@ -39,7 +39,7 @@ The project `CLAUDE.md` carries these, in its own words:
 - Detail beyond a table row goes in the commit or spec, never in module docs.
 - ROADMAP status changes only at milestone close.
 - Ratchet floors rise in the feature MR that earns them.
-- A milestone takes a plain integer or a `major.minor` version, no `v` prefix.
+- A milestone takes a plain integer or a `major.minor` version.
 - A milestone split takes the next free numbers, never a letter.
 - The contributor doc path and the MR target branch are named.
 
