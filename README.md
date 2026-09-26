@@ -41,6 +41,7 @@ MR/PR by running the `dream-fixer-loop` workflow: implement, build/test gate, re
 fix rounds.
 The `align-project` skill checks an existing project against the flow and files one issue per
 failing check.
+The `cut-milestones` skill drafts milestones from a spec, one exit gate each.
 The `milestone-close` skill checks a milestone's exit criterion, triages its open issues and
 checks docs against code. Two PreToolUse hooks: `branch-guard.py` blocks a design or spec document
 written on `main`/`master`, and `changelog-cap.py` blocks a CHANGELOG entry past one sentence or
