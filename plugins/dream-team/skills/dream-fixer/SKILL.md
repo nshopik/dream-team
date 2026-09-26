@@ -219,7 +219,8 @@ until [ "$(glab api "projects/<p>/merge_requests/<iid>" | jq -r .state)" != open
 done
 ```
 
-Give the report (below) without waiting for the poll. When it exits:
+Give the report (below) without waiting for the poll, and leave the poll out of it. When it
+exits:
 
 - **Merged** → `git switch <target> && git pull --ff-only && git branch -d issue-<n>-<slug>`,
   then check the issue closed. Report one line: new `<target>` head, branch deleted, issue state.
@@ -232,3 +233,6 @@ assumption that had to be made. If you stopped at the gate, say what is blocking
 
 Never list `gateCommands` that passed: an `ok` result implies them. A lab step gets one line with
 its measured numbers, or its verdict when it measured none.
+
+A review with no blocking finding, no dispute and no fix round gets one sentence, minor fixes
+applied or not: no per-finding list.
