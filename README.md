@@ -57,6 +57,8 @@ project's `CLAUDE.local.md`.
 /plugin install dream-team@scope-style
 ```
 
+How the flow runs, step by step: [`WORKFLOW.md`](plugins/dream-team/WORKFLOW.md).
+
 Needs the Workflow tool. Uses `scope-mr` and `scope-issue` from `scope-style`, the
 `pr-review-toolkit` reviewers, and `caveman:cavecrew-builder` for docs-only issues; a missing
 agent type runs as a generic agent.
