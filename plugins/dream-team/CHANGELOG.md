@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-09-27
+
+### Changed
+
+- `dream-fixer` leaves the merge poll out of its report and sums up a review with no blocking
+  finding, dispute or fix round in one sentence.
+
 ### Removed
 
 - `dream-fixer-loop` no longer accepts `verifyRounds`; each mechanical gate gets 3 build-fix
