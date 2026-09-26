@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """PreToolUse: inject a rule block the first time a session touches its subject.
+SessionStart: inject the <project_notes> block.
 
 Holds conventions that only matter in the minority of sessions that reach for
 them, so CLAUDE.md does not carry them in every session. Each block is emitted
@@ -108,6 +109,28 @@ Prose rules still apply; they inject on the next file write of the session.
 </spec_structure>"""
 
 
+NOTES = """<project_notes>
+You make a mistake, get corrected, or find something about this repo that is not
+written down → add one imperative line to its `CLAUDE.local.md` and name the line in
+your summary. A fact about how the system works goes in the contributor doc instead.
+</project_notes>"""
+
+CLAUDE_MD = """<claude_md>
+Editing a CLAUDE.md or CLAUDE.local.md.
+- A correction or gotcha goes in the untracked `CLAUDE.local.md`, one imperative
+  line. The user promotes lines to the tracked `CLAUDE.md`; never add one there unasked.
+- Keep a line specific to this repo; general advice belongs in the user's global
+  CLAUDE.md.
+- A fix that is a workflow, not a rule → a skill in `.claude/skills/`, linked from
+  `CLAUDE.local.md`.
+- `git check-ignore CLAUDE.local.md` prints nothing → add it to `.git/info/exclude`
+  before writing.
+- Hostnames, IPs, internal URLs and lab access go in `CLAUDE.local.md` only, never in
+  a tracked file.
+- Keep each file under 500 lines; move an outgrown section to a subdirectory
+  `CLAUDE.md` or a skill.
+</claude_md>"""
+
 UPSTREAM = """<upstream_repo>
 This repo has a git remote outside the namespaces in `DREAM_TEAM_OWN_REMOTES`: it is
 an upstream project, not mine.
@@ -152,6 +175,8 @@ RULES = [
     # Same name as the row above: the sentinel dedupes, so a heredoc/sed write
     # (no file_path field) still gets the block exactly once.
     ('spec',      'command',   r'specs?/[^\s\'"]*-design\.md',        SPEC),
+    ('claude_md', 'file_path', r'(^|/)CLAUDE(\.local)?\.md$',       CLAUDE_MD),
+    ('claude_md', 'command',   r'CLAUDE(\.local)?\.md',             CLAUDE_MD),
     # Lookbehind lets `sudo glab` / `/usr/bin/glab` match while `myglabthing`
     # and `openssh` do not.
     # First: on `glab`/`gh` this fires once, then falls through to `forge` on the
@@ -180,21 +205,23 @@ def fired(session, name):
         return True                             # unwritable state → stay quiet
 
 
+def emit(event, text):
+    print(json.dumps({"hookSpecificOutput": {"hookEventName": event, "additionalContext": text}}))
+
+
 def main():
     try:
         payload = json.load(sys.stdin)
     except Exception:
         return
+    if payload.get('hook_event_name') == 'SessionStart':
+        emit('SessionStart', NOTES)
+        return
     fields = payload.get('tool_input', {})
     for name, field, pattern, text, *when in RULES:
         hit = re.search(pattern, fields.get(field) or '', re.I)
         if hit and all(w(payload) for w in when) and not fired(payload.get('session_id', ''), name):
-            print(json.dumps({
-                "hookSpecificOutput": {
-                    "hookEventName": "PreToolUse",
-                    "additionalContext": text,
-                }
-            }))
+            emit('PreToolUse', text)
             return
 
 

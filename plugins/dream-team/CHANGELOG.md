@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-09-27
+
+### Added
+
+- `jit-context.py` tells every session to record corrections in the project's `CLAUDE.local.md`,
+  and injects the `CLAUDE.md` editing rules on the first write to one.
+
 ## [0.5.0] - 2026-09-27
 
 ### Added

@@ -47,7 +47,8 @@ checks docs against code. Two PreToolUse hooks: `branch-guard.py` blocks a desig
 written on `main`/`master`, and `changelog-cap.py` blocks a CHANGELOG entry past one sentence or
 40 words.
 `jit-context.py` injects git, forge, changelog, spec, prose and lab conventions the first time a
-session touches each.
+session touches each, and at session start tells the agent to record corrections in the
+project's `CLAUDE.local.md`.
 
 - `DREAM_TEAM_OWN_REMOTES`: regex matching the git remote URLs you own. Default: unset.
 
