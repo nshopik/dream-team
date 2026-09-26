@@ -112,8 +112,8 @@ Record `git rev-parse HEAD` — it is the workflow's `base`.
 
 ## 5. Run the workflow
 
-Invoke the **Workflow** tool with `scriptPath: "${CLAUDE_PLUGIN_ROOT}/workflows/dream-fixer-loop.js"`
-and `args` as a real JSON object (never a stringified one):
+Invoke the **Workflow** tool with `name: "dream-team:dream-fixer-loop"` and `args` as a real JSON
+object (never a stringified one):
 
 ```json
 {
