@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-09-27
+
+### Added
+
+- `cut-milestones` skill drafts milestones from a spec, one measurable exit gate each, with the
+  dependency order and ROADMAP rows.
+
 ## [0.3.0] - 2026-09-26
 
 ### Added
