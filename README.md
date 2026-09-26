@@ -46,6 +46,10 @@ The `milestone-close` skill checks a milestone's exit criterion, triages its ope
 checks docs against code. Two PreToolUse hooks: `branch-guard.py` blocks a design or spec document
 written on `main`/`master`, and `changelog-cap.py` blocks a CHANGELOG entry past one sentence or
 40 words.
+`jit-context.py` injects git, forge, changelog, spec, prose and lab conventions the first time a
+session touches each.
+
+- `DREAM_TEAM_OWN_REMOTES`: regex matching the git remote URLs you own. Default: unset.
 
 ```
 /plugin install dream-team@scope-style
@@ -65,6 +69,7 @@ claude --plugin-dir .
 claude --plugin-dir plugins/dream-team
 python3 hooks/test_body_cap.py
 python3 plugins/dream-team/hooks/test_changelog_cap.py
+python3 plugins/dream-team/hooks/test_jit_context.py
 ```
 
 ## License

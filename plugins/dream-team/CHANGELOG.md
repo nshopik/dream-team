@@ -5,6 +5,15 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-09-27
+
+### Added
+
+- `jit-context.py` hook injects git, forge, changelog, spec, prose and lab conventions the first
+  time a session touches each.
+- `DREAM_TEAM_OWN_REMOTES` environment variable names the remotes `jit-context.py` treats as
+  owned.
+
 ## [0.4.0] - 2026-09-27
 
 ### Added
