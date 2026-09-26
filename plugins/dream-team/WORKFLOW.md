@@ -1,5 +1,30 @@
 # Dream team workflow
 
+```mermaid
+%%{init: {"htmlLabels": false, "themeVariables": {"fontSize": "12px"}, "flowchart": {"htmlLabels": false, "curve": "basis", "nodeSpacing": 30, "rankSpacing": 40, "diagramPadding": 8, "padding": 12, "subGraphTitleMargin": {"top": 8, "bottom": 16}}}}%%
+flowchart TD
+  xcut[/cross-cutting decision/] -.-> S0
+  S0(["0 · Idea to spec"]) --> S1{{"1 · Spec to milestones"}}
+  S1 --> S2["2 · Milestone to issues"]
+  bug[/outside bug report/] -.-> S2
+  S2 --> S3
+  subgraph loop ["repeats per issue"]
+    S3[["3 · Issue to MR"]] --> S4["4 · You read the MR"]
+    S4 -->|next issue| S3
+  end
+  S4 -->|issues done| S5{"5 · Milestone<br/>close"}
+  S5 -->|next milestone| S2
+  S5 -->|gaps| S3
+  S5 -->|kill-gate failed| S0
+  S5 -.->|when you choose| S6(["6 · Release"])
+  classDef gate stroke:#d98a2b,stroke-width:2px
+  class S1,S5 gate
+  linkStyle 9,10 stroke:#d9534f,stroke-width:2px
+```
+
+Amber: exit gates. Red: loop-backs from a failed gate. Dotted: side entries and the
+user-triggered release.
+
 ## Walkthrough
 
 ### 0. Idea to spec (once per project)
