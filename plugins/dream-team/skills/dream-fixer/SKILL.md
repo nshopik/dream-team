@@ -137,7 +137,6 @@ object (never a stringified one):
   these after the implementation and after every fix commit. Leave out anything that needs a lab
   host or root; that is lab work. Required.
 - `fixRounds` (default 3, the skill's second argument) is the review fix-loop budget.
-  `verifyRounds` (default 3) is the build-fix budget of each mechanical gate.
 
 Report the branch, the implementer and the domain reviewer by type name, no prose — the roster is
 the one thing the user cannot read off `/workflows`. Three lines, the label in bold:

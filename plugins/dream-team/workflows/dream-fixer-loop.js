@@ -21,7 +21,7 @@ const BRANCH = String(A.branch || '')
 const BASE = String(A.base || '')
 const GATE_COMMANDS = Array.isArray(A.gateCommands) ? A.gateCommands.map(String).filter(Boolean) : []
 const FIX_ROUNDS = Number.isInteger(A.fixRounds) ? A.fixRounds : 3
-const VERIFY_ROUNDS = Number.isInteger(A.verifyRounds) ? A.verifyRounds : 3
+const VERIFY_ROUNDS = 3
 
 if (!ISSUE || !BRANCH || !BASE || !GATE_COMMANDS.length) {
   throw new Error('dream-fixer-loop: args.issue, args.branch, args.base and args.gateCommands are required')
@@ -153,10 +153,6 @@ const ASPECT_AGENTS = {
   types: 'pr-review-toolkit:type-design-analyzer',
 }
 
-function qualityAgents(aspects) {
-  return [...QUALITY_ALWAYS, ...Object.keys(ASPECT_AGENTS).filter((a) => aspects.has(a)).map((a) => ASPECT_AGENTS[a])]
-}
-
 const roster = (agentType) => (isGeneric(agentType) ? {} : { agentType })
 
 // A catalog agent carries its own `model:` in its frontmatter, which wins over
@@ -167,11 +163,7 @@ const reviewerRoster = (agentType) => ({ ...roster(agentType), model: 'opus' })
 const implementerRoster = (agentType) => ({ ...roster(agentType), model: 'opus', effort: 'high' })
 
 const MISSING_TYPES = new Set()
-function degrade(opts) {
-  const o = { ...opts }
-  delete o.agentType
-  return o
-}
+const degrade = ({ agentType, ...o }) => o
 
 // An unknown agentType throws at dispatch, before any null-result safety net.
 // A disabled plugin is enough to make a real type vanish, so degrade instead
@@ -388,8 +380,9 @@ if (impl.redEvidence) aspects.add('tests')
 
 // Gates are keyed so a fix round re-reviews only the ones that failed: fresh
 // reviewers oscillate, inventing a new nit each round and never converging.
+const qualityTypes = [...QUALITY_ALWAYS, ...Object.keys(ASPECT_AGENTS).filter((a) => aspects.has(a)).map((a) => ASPECT_AGENTS[a])]
 const gates = [
-  ...qualityAgents(aspects).map((t) => ({ key: t, type: t, prompt: () => qualityPrompt(t, impl.redEvidence) })),
+  ...qualityTypes.map((t) => ({ key: t, type: t, prompt: () => qualityPrompt(t, impl.redEvidence) })),
   { key: 'domain', type: A.domainReviewer, prompt: domainPrompt },
 ]
 log(`Review: ${gates.length} reviewers — ${gates.map((g) => g.key).join(', ')}`)

@@ -5,6 +5,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Removed
+
+- `dream-fixer-loop` no longer accepts `verifyRounds`; each mechanical gate gets 3 build-fix
+  rounds.
+
 ## [0.7.0] - 2026-09-27
 
 ### Added
