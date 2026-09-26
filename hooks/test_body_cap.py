@@ -274,3 +274,17 @@ for name, want, cmd in shapes:
     assert v == want and ("-word ceiling" in r) == (want == "DENY"), name
 assert not os.path.exists(fresh)
 print(f"{'indirect file bodies measured':34} {'OK':12} {len(shapes)} cases")
+
+# sections(): only lowercase-slug `##` headings become sections; any `##` ends one.
+import importlib.util
+spec = importlib.util.spec_from_file_location("body_cap", HOOK)
+body_cap = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(body_cap)
+for text, want in [
+    ("## fill\nx\n## Two words\ny", {"fill": "x"}),
+    ("## fill\nx\n## Examples\ny", {"fill": "x"}),
+    ("## \nfoo\nbar",               {}),                 # bare heading takes no next line
+    ("intro\n## a-b\n body \n",     {"a-b": "body"}),
+]:
+    assert body_cap.sections(text) == want, (text, body_cap.sections(text))
+print(f"{'sections() parse':34} {'OK':12}")

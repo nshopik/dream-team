@@ -162,11 +162,16 @@ def is_upstream(payload):
     return upstream_remote(line.split()[1] for line in out.splitlines())
 
 
+# Lookbehind lets `sudo glab` / `/usr/bin/glab` match while `myglabthing`
+# and `openssh` do not.
+FORGE_CMD = r'(?<![\w.-])(glab|gh)\b'
+PUBLISH_CMD = r'git\s+(commit|push)\b|' + FORGE_CMD
+
 RULES = [
     # First: must land before the prose/vcs blocks it overrides. The predicate runs
     # git on every matching call, so a later write into another repo is still checked.
     ('upstream',  'file_path', r'.',                              UPSTREAM, is_upstream),
-    ('upstream',  'command',   r'git\s+(commit|push)\b|(?<![\w.-])(glab|gh)\b', UPSTREAM, is_upstream),
+    ('upstream',  'command',   PUBLISH_CMD,                       UPSTREAM, is_upstream),
     ('changelog', 'file_path', r'(^|/)CHANGELOG(\.[\w-]+)?\.md$', CHANGELOG),
     ('changelog', 'command',   r'CHANGELOG(\.[\w-]+)?\.md',        CHANGELOG),
     ('spec',      'file_path', r'/specs?/.*-design\.md$',           SPEC),
@@ -175,12 +180,10 @@ RULES = [
     ('spec',      'command',   r'specs?/[^\s\'"]*-design\.md',        SPEC),
     ('claude_md', 'file_path', r'(^|/)CLAUDE(\.local)?\.md$',       CLAUDE_MD),
     ('claude_md', 'command',   r'CLAUDE(\.local)?\.md',             CLAUDE_MD),
-    # Lookbehind lets `sudo glab` / `/usr/bin/glab` match while `myglabthing`
-    # and `openssh` do not.
     # First: on `glab`/`gh` this fires once, then falls through to `forge` on the
     # next call — main() skips a rule that already fired this session.
-    ('vcs',       'command',   r'git\s+(commit|push)\b|(?<![\w.-])(glab|gh)\b', VCS),
-    ('forge',     'command',   r'(?<![\w.-])(glab|gh)\b',          FORGE),
+    ('vcs',       'command',   PUBLISH_CMD,                       VCS),
+    ('forge',     'command',   FORGE_CMD,                         FORGE),
     ('lab',       'command',   r'(?<![\w.-])ssh\b',               LAB),
     # Last: main() returns on first match, so CHANGELOG keeps its own block.
     ('prose',     'file_path', r'.',                              PROSE),
@@ -197,10 +200,8 @@ def fired(session, name):
         fd = os.open(flag, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
         os.close(fd)
         return False
-    except FileExistsError:
+    except Exception:                           # already fired, or unwritable state
         return True
-    except Exception:
-        return True                             # unwritable state → stay quiet
 
 
 def emit(event, text):

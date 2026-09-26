@@ -60,11 +60,6 @@ def measure(entry):
     return words, sents
 
 
-def entries(text):
-    """The `-` entry lines in a block of changelog text."""
-    return [l for l in text.split('\n') if BULLET.match(l)]
-
-
 def unreleased(content):
     """Just the body of the `## [Unreleased]` section of a full file."""
     out, keep = [], False
@@ -124,7 +119,7 @@ def main():
         candidate = unreleased(ti.get('content') or '')
     else:
         return
-    hits = offenders(entries(candidate))
+    hits = offenders([l for l in candidate.split('\n') if BULLET.match(l)])
     if not hits:
         return
     worst = hits[:3]

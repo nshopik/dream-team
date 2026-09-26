@@ -49,19 +49,9 @@ def sections(text):
     Any `##` closes the open section; only lowercase-slug ones are kept, so prose
     headings (`## Examples`) end a section without becoming one.
     """
-    out, key, buf = {}, None, []
-    for line in text.split('\n'):
-        m = re.match(r'##\s+(\S+)\s*$', line)
-        if m:
-            if key:
-                out[key] = '\n'.join(buf).strip()
-            key = m.group(1) if re.fullmatch(r'[a-z-]+', m.group(1)) else None
-            buf = []
-        elif key is not None:
-            buf.append(line)
-    if key:
-        out[key] = '\n'.join(buf).strip()
-    return out
+    parts = re.split(r'^##[ \t]+(.*?)[ \t]*$', text, flags=re.M)
+    return {k: v.strip() for k, v in zip(parts[1::2], parts[2::2])
+            if re.fullmatch(r'[a-z-]+', k)}
 
 
 def reminder(kind, section, **fields):
@@ -379,11 +369,6 @@ HEREDOC = re.compile(
     re.DOTALL)
 
 
-def heredoc_spans(cmd):
-    """(start, end, body) per heredoc, in command order. Start is at the `<<`."""
-    return [(m.start(), m.end(), m.group(3)) for m in HEREDOC.finditer(cmd)]
-
-
 def without_heredocs(cmd, spans):
     """cmd with every heredoc body blanked out, leaving only shell text."""
     out = list(cmd)
@@ -548,24 +533,24 @@ def count(lines):
     return len(TABLE.sub(' ', text).split())
 
 
-CHAINED = ''
-
-
 def main():
     try:
         cmd = json.load(sys.stdin).get('tool_input', {}).get('command', '')
     except Exception:
         return
-    spans = heredoc_spans(cmd)
+    # Start is at the `<<`.
+    spans = [(m.start(), m.end(), m.group(3)) for m in HEREDOC.finditer(cmd)]
     kind, at = classify(cmd, spans)
     if not kind:
         return
     # A denied call runs none of the command. Re-issuing only the commit half of
     # `git add -A && git commit` then commits a stale index, silently.
-    if re.search(r'[;&|]', cmd[:at]):
-        global CHAINED
-        CHAINED = ('\n\nNothing in this command ran: the steps chained before '
-                   'it did not happen either.\n')
+    chained = ('\n\nNothing in this command ran: the steps chained before '
+               'it did not happen either.\n') if re.search(r'[;&|]', cmd[:at]) else ''
+
+    def deny(reason):
+        emit(permissionDecision="deny", permissionDecisionReason=reason + chained)
+
     # Checked before the text lookup: --fill puts no description on the command
     # line, so there is nothing for the ceiling check to measure.
     if kind == 'mr' and uses_fill(without_heredocs(cmd, spans)):
@@ -620,10 +605,6 @@ def main():
         if budget and n > budget and not seen(body, 'budget'):
             return deny(OVER_DIFF.format(n=n, lines=lines, allow=budget) + out)
     emit(additionalContext=out)
-
-
-def deny(reason):
-    emit(permissionDecision="deny", permissionDecisionReason=reason + CHAINED)
 
 
 # PreToolUse plain stdout never reaches the model; only hookSpecificOutput does.
