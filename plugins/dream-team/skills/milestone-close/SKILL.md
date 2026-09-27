@@ -17,6 +17,9 @@ and filed issue.
 Milestone description and the project roadmap row. No measurable exit criterion → stop and ask
 for one; a milestone without one cannot close.
 
+A version milestone's criterion includes the ROADMAP `## Release criteria` section; check each
+item there too.
+
 ## 2. Check the criterion
 
 Run or read the measurement it names: gate floors, a recorded run, a deployed host. A field-evidence
@@ -28,10 +31,14 @@ user keeps or drops each; file the kept ones and stop. The milestone stays open.
 A failed kill-gate (the criterion names a redesign) gets no gap issues: report it and stop. The
 redesign goes back to the spec.
 
+An open headline issue in a version milestone is its own gap; file nothing for it. Past the
+ship-by date, the user picks between moving the headline to the next version and a new date.
+
 ## 3. Triage open issues
 
 One table: issue, title, proposed action — close (done or obsolete; cite the commit or reason),
 move (target milestone from the roadmap), or blocks-close. The user answers in one reply.
+In a version milestone, an open backlog issue defaults to move, to the next version.
 
 `Meta:` issues carry no milestone and stay out of the table. List each meta issue with a child in
 this milestone; tick the boxes of closed children in its description.

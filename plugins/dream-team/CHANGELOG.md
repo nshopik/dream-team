@@ -5,6 +5,15 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-09-27
+
+### Added
+
+- `cut-milestones` drafts a version milestone for a stable project's minor release: one headline
+  issue plus backlog, gated on standing ROADMAP release criteria, no spec required.
+- `milestone-close` checks a version milestone against the ROADMAP release criteria and moves its
+  open backlog issues to the next version by default.
+
 ## [0.7.3] - 2026-09-27
 
 ### Changed

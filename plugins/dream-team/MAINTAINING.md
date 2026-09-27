@@ -13,7 +13,7 @@ Skills:
 - `align-project` (dream-team plugin): checks a project against the flow, files one issue per
   failing check.
 - `cut-milestones` (dream-team plugin): milestones from a spec, one exit gate each, with the
-  dependency order and ROADMAP rows.
+  dependency order and ROADMAP rows; or one version milestone for a minor release.
 - `milestone-close` (dream-team plugin): exit check with gap issues, triage, docs check, facts
   sweep, `CLAUDE.md` cuts and `CLAUDE.local.md` promotions.
 - `scope-commit`, `scope-mr`: commit and MR text.
@@ -58,6 +58,8 @@ Planning stays explicit, at issue size, because you review every plan.
 - Work spanning milestones (full RFC 8914 coverage) is a `Meta:` issue, not a milestone (one
   exit gate cannot cover it) and not a per-item table in the repo (every MR would churn it). A
   closed child shows "(closed)" beside its mention; the box is ticked at `milestone-close`.
+- A minor release is scope-based: one headline feature plus backlog, behind standing release
+  criteria in ROADMAP. One maintainer defines a release by its feature, not a date.
 - Release stays user-triggered ("tag v0.1"), not time-based.
 
 ## Open items

@@ -50,6 +50,10 @@ that fits one issue gets no spec; a decision made during it goes into the issue 
 - Result: tracker milestones with the exit criterion in each description, a ROADMAP table, and a
   note naming which milestones run in parallel and what waits on what.
 
+A stable project's minor release skips the spec: "plan 1.3 around #140". `cut-milestones` drafts
+one version milestone, exit "release criteria met and #140 closed", and a `## Release criteria`
+section in ROADMAP the first time. Backlog issues join it as they are filed.
+
 ### 2. Milestone to issues
 
 - You: "File the issues for M4."
