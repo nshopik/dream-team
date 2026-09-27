@@ -236,7 +236,7 @@ The report carries only what the user must know or act on.
 - Assumptions above the bullets → put a `**Notes:**` line between them.
 - End with one plain line, after a blank line: `Work on #<n> is done: <MR/PR link>`.
 - No MR/PR → end with `Work on #<n> is handed back: <branch> — <why>`.
-- Name each `degraded` roster type and each dead reviewer.
+- Name each `degraded` roster type, and each dead reviewer the hand-back `<why>` does not name.
 - Name each dispute you settled, which way, and why.
 - Name each `resolved` entry, one line each.
 - Name each issue filed for an adjacent defect by its link, one line each, never the defect itself.

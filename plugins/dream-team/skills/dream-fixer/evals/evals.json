@@ -136,7 +136,7 @@
       "expectations": [
         "The report says the branch is handed back without a PR/MR (\"handed back\" in the closing line counts)",
         "The branch issue-69-flush-deadline is named",
-        "pr-review-toolkit:silent-failure-hunter is named as the reviewer that returned nothing",
+        "pr-review-toolkit:silent-failure-hunter is named as the reviewer that returned nothing, in the closing line only, with no bullet repeating it",
         "No PR/MR link or invented URL",
         "No claim that red evidence is missing or that nobody saw the test fail; the result carries it",
         "The last line is `Work on #<n> is handed back: <branch> \u2014 <why>`",

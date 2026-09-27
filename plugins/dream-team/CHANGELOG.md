@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.8.8] - 2026-09-28
+
+### Fixed
+
+- `dream-fixer` names a dead reviewer once: a hand-back line whose reason names it gets no
+  separate bullet.
+
 ## [0.8.7] - 2026-09-28
 
 ### Fixed
