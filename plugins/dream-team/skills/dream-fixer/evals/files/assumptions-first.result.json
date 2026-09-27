@@ -1,0 +1,47 @@
+{
+  "ok": true,
+  "issue": 57,
+  "branch": "issue-57-export-since-flag",
+  "implementer": "voltagent-lang:golang-pro",
+  "reviewers": [
+    "pr-review-toolkit:code-reviewer",
+    "pr-review-toolkit:comment-analyzer",
+    "pr-review-toolkit:silent-failure-hunter",
+    "pr-review-toolkit:pr-test-analyzer",
+    "domain"
+  ],
+  "degraded": [],
+  "fixRounds": 0,
+  "assumptions": [
+    "--since accepts RFC 3339 timestamps only; the issue did not say whether relative durations like 24h should work",
+    "--since is inclusive: a record stamped exactly at the boundary is exported"
+  ],
+  "redEvidence": "",
+  "changedFiles": [
+    "cmd/flowlog/export.go",
+    "cmd/flowlog/export_test.go",
+    "README.md"
+  ],
+  "minorFindings": [
+    {
+      "severity": "minor",
+      "description": "parseSince error message could quote the accepted format",
+      "file": "cmd/flowlog/export.go",
+      "gate": "pr-review-toolkit:code-reviewer"
+    },
+    {
+      "severity": "minor",
+      "description": "table test case names use mixed casing",
+      "file": "cmd/flowlog/export_test.go",
+      "gate": "pr-review-toolkit:pr-test-analyzer"
+    }
+  ],
+  "disputes": [],
+  "summaries": {
+    "pr-review-toolkit:code-reviewer": "Clean change, one minor wording nit.",
+    "pr-review-toolkit:comment-analyzer": "Flag help text matches behaviour. No findings.",
+    "pr-review-toolkit:silent-failure-hunter": "Parse errors are returned to the CLI. No findings.",
+    "pr-review-toolkit:pr-test-analyzer": "Boundary, empty and invalid inputs covered. One minor naming nit.",
+    "domain": "Filter runs before the batch encoder, matching the existing --until path. No findings."
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "ok": false,
+  "stage": "review",
+  "reason": "2 blocking finding(s) and 0 dead reviewer(s) outstanding after 3 fix rounds",
+  "handBack": true,
+  "blocking": [
+    {
+      "severity": "critical",
+      "description": "Retry loop re-sends a partially written batch, duplicating records at the sink on any mid-batch failure",
+      "file": "internal/sink/http.go",
+      "gate": "domain"
+    },
+    {
+      "severity": "important",
+      "description": "Backoff has no upper bound; a sink down for an hour blocks shutdown for the whole backoff",
+      "file": "internal/sink/http.go",
+      "gate": "pr-review-toolkit:code-reviewer"
+    }
+  ],
+  "deadReviewers": [],
+  "degraded": [],
+  "redEvidence": "",
+  "disputes": [],
+  "verdicts": {
+    "pr-review-toolkit:code-reviewer": {
+      "summary": "Unbounded backoff.",
+      "findings": [
+        {
+          "severity": "important",
+          "description": "Backoff has no upper bound; a sink down for an hour blocks shutdown for the whole backoff",
+          "file": "internal/sink/http.go"
+        }
+      ]
+    },
+    "pr-review-toolkit:comment-analyzer": {
+      "summary": "No findings.",
+      "findings": []
+    },
+    "pr-review-toolkit:silent-failure-hunter": {
+      "summary": "No findings.",
+      "findings": []
+    },
+    "pr-review-toolkit:pr-test-analyzer": {
+      "summary": "No findings.",
+      "findings": []
+    },
+    "domain": {
+      "summary": "Retry resends from batch start.",
+      "findings": [
+        {
+          "severity": "critical",
+          "description": "Retry loop re-sends a partially written batch, duplicating records at the sink on any mid-batch failure",
+          "file": "internal/sink/http.go"
+        }
+      ]
+    }
+  }
+}

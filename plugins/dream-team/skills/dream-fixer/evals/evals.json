@@ -1,0 +1,212 @@
+{
+  "skill_name": "dream-fixer",
+  "notes": "Each case hands the model a finished dream-fixer-loop result and what steps 6-8 already did, and asks for the final report only. It grades the Report back section, not the workflow. `checks` are mechanical and decide the regression-prone rules (heading position, leaked minor findings); `expectations` go to an LLM grader. Every case also expects silence on anything that went smoothly; the summary counts the grader's deletable lines as a second minimality signal.",
+  "gateCommands": "go build ./..., go test ./..., golangci-lint run",
+  "evals": [
+    {
+      "slug": "assumptions-first",
+      "issue": 57,
+      "title": "cli: add --since flag to export",
+      "labels": [
+        "enhancement"
+      ],
+      "result": "evals/files/assumptions-first.result.json",
+      "after": "You applied neither minor finding. Steps 7 and 8 are done: the PR is open at https://github.com/acme/flowlog/pull/61 and the merge poll is running.",
+      "expectations": [
+        "The report opens with an `Assumptions:` heading (plain, bold or markdown heading) and nothing above it",
+        "Both assumptions (RFC 3339 only; inclusive boundary) are listed under that heading, as their own list",
+        "The PR link comes after the assumptions list, not inside it",
+        "No minor finding is mentioned, applied or dropped",
+        "No gate command that passed is listed",
+        "No summary of what the change does beyond what an assumption needs",
+        "No line about the review, since it had no blocking finding, dispute or fix round",
+        "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
+      ],
+      "checks": {
+        "first_line": "(?i)^\\W*assumptions\\W*$",
+        "order": [
+          "RFC 3339",
+          "inclusive",
+          "https://github.com/acme/flowlog/pull/61"
+        ],
+        "absent": [
+          "parseSince",
+          "mixed casing",
+          "go test",
+          "golangci-lint"
+        ]
+      }
+    },
+    {
+      "slug": "clean-minimal",
+      "issue": 63,
+      "title": "rotate: --keep 5 keeps only 4 files",
+      "labels": [
+        "bug"
+      ],
+      "result": "evals/files/clean-minimal.result.json",
+      "after": "You dropped the minor finding. Steps 7 and 8 are done: the PR is open at https://github.com/acme/flowlog/pull/64 and the merge poll is running.",
+      "expectations": [
+        "No `Assumptions:` heading or empty assumptions line",
+        "The PR link is present",
+        "No minor finding, reviewer verdict, gate command or change summary",
+        "The whole report is at most two short lines",
+        "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
+      ],
+      "checks": {
+        "contains": [
+          "https://github.com/acme/flowlog/pull/64"
+        ],
+        "absent": [
+          "ssumption",
+          "keepN",
+          "go test"
+        ],
+        "max_words": 30
+      }
+    },
+    {
+      "slug": "fix-round-dispute",
+      "issue": 71,
+      "title": "config: flowlog.d override panics when base has no sinks",
+      "labels": [
+        "bug"
+      ],
+      "result": "evals/files/fix-round-dispute.result.json",
+      "after": "You checked the dispute against docs/config.md and internal/config/merge.go; the fixer's evidence holds, so you accepted it. With the only blocking entry settled and no dead reviewer, you carried on to step 7. Steps 7 and 8 are done: the PR is open at https://github.com/acme/flowlog/pull/72 and the merge poll is running.",
+      "expectations": [
+        "The PR link is present",
+        "The dispute over the ignored os.Stat error is named, says it was accepted, and gives the reason (override file is optional; only not-exist is swallowed)",
+        "The nil sinks map write resolved in fix round 1 is named in one line",
+        "No gate command or change summary",
+        "No claim that red evidence is missing or that nobody saw the test fail; the result carries it",
+        "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
+      ],
+      "checks": {
+        "contains": [
+          "https://github.com/acme/flowlog/pull/72",
+          "os.Stat"
+        ],
+        "absent": [
+          "go test",
+          "golangci-lint"
+        ]
+      },
+      "branch": "issue-71-merge-sink-configs"
+    },
+    {
+      "slug": "degraded-no-red",
+      "issue": 66,
+      "title": "resolve: DNS lookup goroutine leaks on timeout",
+      "labels": [
+        "bug"
+      ],
+      "result": "evals/files/degraded-no-red.result.json",
+      "after": "Steps 7 and 8 are done: the PR is open at https://github.com/acme/flowlog/pull/67 and the merge poll is running.",
+      "expectations": [
+        "The PR link is present",
+        "voltagent-lang:golang-pro is named as degraded (ran as a generic agent)",
+        "The report says no failing test was seen before the fix (empty redEvidence on a bug fix)",
+        "No reviewer verdict, gate command or change summary",
+        "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
+      ],
+      "checks": {
+        "contains": [
+          "https://github.com/acme/flowlog/pull/67",
+          "golang-pro"
+        ],
+        "absent": [
+          "go test",
+          "golangci-lint"
+        ]
+      }
+    },
+    {
+      "slug": "dead-reviewer",
+      "issue": 69,
+      "title": "sink: batch flush ignores deadline",
+      "labels": [
+        "bug"
+      ],
+      "result": "evals/files/dead-reviewer.result.json",
+      "after": "You followed step 6: no PR was opened.",
+      "expectations": [
+        "The report says no PR/MR was opened and the branch is handed back",
+        "The branch issue-69-flush-deadline is named",
+        "pr-review-toolkit:silent-failure-hunter is named as the reviewer that returned nothing",
+        "No PR/MR link or invented URL",
+        "No claim that red evidence is missing or that nobody saw the test fail; the result carries it",
+        "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
+      ],
+      "checks": {
+        "contains": [
+          "silent-failure-hunter",
+          "issue-69-flush-deadline"
+        ],
+        "absent": [
+          "/pull/",
+          "go test"
+        ]
+      },
+      "branch": "issue-69-flush-deadline"
+    },
+    {
+      "slug": "rounds-out",
+      "issue": 70,
+      "title": "sink: retry failed HTTP batches",
+      "labels": [
+        "enhancement"
+      ],
+      "result": "evals/files/rounds-out.result.json",
+      "after": "You followed step 6: no PR was opened.",
+      "expectations": [
+        "The report says no PR/MR was opened and the branch is handed back",
+        "The branch issue-70-http-retry is named",
+        "Both outstanding findings are listed: duplicate records on mid-batch retry, and unbounded backoff",
+        "No PR/MR link or invented URL",
+        "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
+      ],
+      "checks": {
+        "contains": [
+          "issue-70-http-retry"
+        ],
+        "absent": [
+          "/pull/",
+          "go test"
+        ]
+      },
+      "branch": "issue-70-http-retry"
+    },
+    {
+      "slug": "lab-step",
+      "issue": 74,
+      "title": "encode: pool batch encoders",
+      "labels": [
+        "performance"
+      ],
+      "result": "evals/files/lab-step.result.json",
+      "after": "You dropped the minor finding. You ran the lab step through dream-team:lab-runner on the branch head: BenchmarkEncodeBatch p99 4.1ms -> 2.3ms, allocs/op 212 -> 18, 3 runs each on the lab host. Steps 7 and 8 are done: the PR is open at https://github.com/acme/flowlog/pull/75 with the numbers in its description, and the merge poll is running.",
+      "expectations": [
+        "The report opens with an `Assumptions:` heading listing the GOMAXPROCS default",
+        "The PR link comes after the assumptions",
+        "The lab step gets one line with its measured numbers",
+        "No minor finding, gate command or change summary",
+        "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
+      ],
+      "checks": {
+        "first_line": "(?i)^\\W*assumptions\\W*$",
+        "order": [
+          "GOMAXPROCS",
+          "https://github.com/acme/flowlog/pull/75"
+        ],
+        "contains": [
+          "2.3"
+        ],
+        "absent": [
+          "t.Parallel",
+          "go test"
+        ]
+      }
+    }
+  ]
+}
