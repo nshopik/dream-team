@@ -279,6 +279,35 @@
         ],
         "assumptions": true
       }
+    },
+    {
+      "slug": "adjacent-issue",
+      "issue": 84,
+      "title": "export: --format csv quotes numeric fields",
+      "labels": [
+        "bug"
+      ],
+      "result": "evals/files/adjacent-issue.result.json",
+      "after": "While running the gates you hit a bug outside the diff: `flowlog tail -f` exits instead of reopening the file when logrotate renames it. You filed it as https://github.com/acme/flowlog/issues/85 with its milestone. Steps 7 and 8 are done: the PR is open at https://github.com/acme/flowlog/pull/86 and the merge poll is running.",
+      "expectations": [
+        "The PR link is present",
+        "The issue filed for the adjacent defect is named by its link, https://github.com/acme/flowlog/issues/85, in one line",
+        "The adjacent defect itself (tail -f exiting on log rotation) is not described",
+        "No gate command, reviewer verdict or change summary",
+        "Every line other than the closing `Work on #` line and the assumption entries is a `- **Label:**` bullet, with no blank line between bullets and a `**Notes:**` line between them and any assumptions",
+        "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
+      ],
+      "checks": {
+        "contains": [
+          "https://github.com/acme/flowlog/issues/85",
+          "https://github.com/acme/flowlog/pull/86"
+        ],
+        "absent": [
+          "tail -f",
+          "rotat",
+          "go test"
+        ]
+      }
     }
   ]
 }

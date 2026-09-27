@@ -1,0 +1,30 @@
+{
+  "ok": true,
+  "issue": 84,
+  "branch": "issue-84-csv-quote-numbers",
+  "implementer": "voltagent-lang:golang-pro",
+  "reviewers": [
+    "pr-review-toolkit:code-reviewer",
+    "pr-review-toolkit:comment-analyzer",
+    "pr-review-toolkit:silent-failure-hunter",
+    "pr-review-toolkit:pr-test-analyzer",
+    "domain"
+  ],
+  "degraded": [],
+  "fixRounds": 0,
+  "assumptions": [],
+  "redEvidence": "--- FAIL: TestExportCSVNumbers (0.00s)\n    csv_test.go:58: got \"\\\"42\\\"\", want \"42\"",
+  "changedFiles": [
+    "internal/export/csv.go",
+    "internal/export/csv_test.go"
+  ],
+  "minorFindings": [],
+  "disputes": [],
+  "summaries": {
+    "pr-review-toolkit:code-reviewer": "No findings.",
+    "pr-review-toolkit:comment-analyzer": "No findings.",
+    "pr-review-toolkit:silent-failure-hunter": "No findings.",
+    "pr-review-toolkit:pr-test-analyzer": "Red evidence matches the bug; table covers int, float and numeric-looking strings.",
+    "domain": "Numeric fields now unquoted per RFC 4180 usage in docs/export.md. No findings."
+  }
+}

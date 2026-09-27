@@ -169,8 +169,14 @@ The workflow returns structured, not final. Read it and decide:
   failed verify: fix it before the MR, or hand the branch back. Put measured numbers in the MR
   description.
 
-Findings outside the diff are not this MR's job. File each as an issue before the session ends, per
-the repo's own rules.
+Adjacent defects — anything found outside the diff:
+
+- A scout finding, a review-panel survivor outside the diff, a bug hit running evals or gates, or
+  a spec consequence nobody owns → file it as an issue before the session ends, per the repo's
+  own rules.
+- The finding is a minor nit → file nothing.
+- Filed → never leave the finding in the MR description or the chat summary.
+- Filing fails or yields no issue link → name the defect in the report as unfiled, with the reason.
 
 Every issue you open gets the milestone it belongs to, set at creation. Pick it from the repo's
 roadmap milestone table (`ROADMAP.md` or `docs/ROADMAP.md`); no roadmap → the tracker's open
@@ -233,6 +239,8 @@ The report carries only what the user must know or act on.
 - Name each `degraded` roster type and each dead reviewer.
 - Name each dispute you settled, which way, and why.
 - Name each `resolved` entry, one line each.
+- Name each issue filed for an adjacent defect by its link, one line each, never the defect itself.
+- Name each adjacent defect that could not be filed, and why, one line each.
 - Say so when `redEvidence` is empty on a bug fix.
 - Give a lab step one line: its measured numbers, or its verdict when it measured none.
 - Name each reviewer that could not check something, and the check you ran in its place.
