@@ -82,17 +82,17 @@ for i, ch in enumerate(s):
 PY
 }
 
-# Mechanical checks: first_line regex, contains, absent, order, max_words.
+# Mechanical checks: heading, assumptions position, contains, absent, order, layout, max_words.
 check() {
   python3 - "$1" "$OUT/$1.md" <<'PY'
 import json, re, sys
 top = json.load(open('evals.json'))
 e = next(e for e in top['evals'] if e['slug'] == sys.argv[1])
 c, text = e['checks'], open(sys.argv[2]).read()
-first = next((l for l in text.splitlines() if l.strip()), '')
+body = [l.rstrip() for l in text.splitlines() if l.strip()]
 res = []
-if 'first_line' in c:
-    res.append((f'first line /{c["first_line"]}/', bool(re.match(c['first_line'], first.strip()))))
+if c.get('assumptions'):
+    res.append(('assumptions heading first', bool(body) and body[0] == '**Assumptions:**'))
 for s in c.get('contains', []):
     res.append((f'contains {s!r}', s in text))
 for s in c.get('absent', []):
@@ -100,6 +100,20 @@ for s in c.get('absent', []):
 if 'order' in c:
     idx = [text.find(s) for s in c['order']]
     res.append((f'order {c["order"]}', -1 not in idx and idx == sorted(idx)))
+# Layout: the assumptions block, `**Label:**` paragraphs, then the `Work on #<n>` line.
+bad, in_assumptions = [], False
+for l in body[:-1]:
+    if l == '**Assumptions:**':
+        in_assumptions = True; continue
+    if in_assumptions and l.startswith('- ') and not l.startswith('- **'):
+        continue
+    in_assumptions = False
+    if not re.match(r'^\*\*[^*]+:\*\* .+$', l):
+        bad.append(l[:40])
+res.append((f'layout {bad[:2]}' if bad else 'layout', not bad))
+last = body[-1] if body else ''
+end = rf'^Work on #{e["issue"]} is (done: https?://\S+|handed back: .+)$'
+res.append(('ends with Work on line', bool(re.match(end, last))))
 if 'max_words' in c:
     res.append((f'<= {c["max_words"]} words', len(text.split()) <= c['max_words']))
 json.dump([{'check': k, 'pass': v} for k, v in res], open(sys.argv[2].replace('.md', '.checks.json'), 'w'), indent=1)
@@ -126,7 +140,7 @@ Output only JSON, no fence, no commentary:
  "expectations":[{"text":"<the expectation verbatim>","verdict":"PASS|FAIL",
                   "evidence":"<the words that decide it>"}],
  "correct":<count of PASS>,"applicable":<total expectations>,
- "deletable_lines":["<any report line the user would not miss>"],
+ "deletable_lines":["<any report line the user would not miss; the closing `Work on #` line is required, never list it>"],
  "verdict_summary":"one line"}
 EOF
   dejson "$OUT/$slug.grade.json"

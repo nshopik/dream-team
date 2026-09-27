@@ -222,14 +222,33 @@ exits:
 
 The report carries only what the user must know or act on.
 
-- Open with every assumption as its own list under an `Assumptions:` heading, above the rest.
-- Then the MR/PR link.
+- Open with every entry of `assumptions` as its own list under a `**Assumptions:**` heading.
+- Put nothing else under that heading.
+- Every other item is its own paragraph opening with a bold label, e.g. `**Dispute accepted:**`,
+  `**Lab:**`. No bullets.
+- End with one plain line: `Work on #<n> is done: <MR/PR link>`.
+- No MR/PR → end with `Work on #<n> is handed back: <branch> — <why>`.
 - Name each `degraded` roster type and each dead reviewer.
 - Name each dispute you settled, which way, and why.
 - Name each blocking finding a fix round resolved, one line each.
 - Say so when `redEvidence` is empty on a bug fix.
 - Give a lab step one line: its measured numbers, or its verdict when it measured none.
+- Name each reviewer that could not check something, and the check you ran in its place.
 - Stopped at the gate → say what is blocking and stop there.
 - Leave out minor findings, applied or dropped, and reviewer verdicts with no finding.
 - Leave out gate commands that passed and a summary of the change: the MR carries it.
+- Leave out a present `redEvidence` and lab work that did not run.
 - A review with no blocking finding, no dispute and no fix round gets no line.
+
+Layout, with sections that have nothing to report left out:
+
+```
+**Assumptions:**
+- <assumption>
+
+**Dispute accepted:** <finding> — <why>
+
+**Lab:** <measured numbers>
+
+Work on #<n> is done: <MR/PR link>
+```
