@@ -5,6 +5,18 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.7.3] - 2026-09-27
+
+### Changed
+
+- `dream-fixer` skill text drops restated rationale and duplicate report and lab-work rules.
+
+### Fixed
+
+- `dream-fixer` hands the branch back instead of opening an MR when a reviewer returned nothing
+  on every try.
+- `dream-fixer` names degraded roster types and dead reviewers in its report.
+
 ## [0.7.2] - 2026-09-27
 
 ### Changed

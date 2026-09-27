@@ -31,8 +31,6 @@ so the implementer does not try, and does not report it as an assumption.
 Fetch body, title, labels and discussion — `gh issue view <n> --comments`, `glab issue view <n>
 --comments`, or whatever the host's tooling skill says to use instead.
 
-Read the project's `CLAUDE.md` — it carries what this repo has already been burned by.
-
 A `Meta:` issue is not a work item. Pick an open child from its checklist with no open blocker,
 say which, and run the rest of this skill on that child. None left → report it and stop.
 
@@ -74,10 +72,10 @@ not in your Agent list) with the issue body, then every
 `git reset --hard <base>` and run the full loop. Report the tier and the criterion that allowed it.
 
 Scout tier: no workflow, no code; the research note is the one change you write. Answer the
-proposal's questions yourself within its time box; lab work goes through `dream-team:lab-runner`.
-Write the answers as a note in the repo's research docs, file one issue per gap per `scope-issue`
-with its milestone (step 6), then commit the note on the step-4 branch and open the MR per step 7
-with `Closes #<n>`, the follow-up issues linked.
+proposal's questions yourself within its time box. Write the answers as a note in the repo's
+research docs, file one issue per gap per `scope-issue` with its milestone (step 6), then commit
+the note on the step-4 branch and open the MR per step 7 with `Closes #<n>`, the follow-up issues
+linked.
 
 ## 3. Pick the roster
 
@@ -88,13 +86,10 @@ in it fails at dispatch.
   type must have Bash: it commits and runs tests. A fitting specialist without Bash → make it the
   domain reviewer and implement with `generic`.
 - **Domain reviewer**: the lens the build and test suite cannot check — the project's own rules,
-  reference sources and invariants. **MUST be a different type than the implementer** (the workflow
-  rejects an equal pair); if the catalog has no second specialist for the domain, use `generic`
-  (reviewers run on Opus, so a generic reviewer is still strong).
+  reference sources and invariants. **MUST be a different type than the implementer**; if the
+  catalog has no second specialist for the domain, use `generic`.
 
-The domain reviewer's brief comes from the repo's `CLAUDE.md`, which every subagent gets injected —
-so the slot stays project-agnostic and picks up whatever that repo's domain rules are. Override the
-pick when you know better than the catalog descriptions.
+Override the pick when you know better than the catalog descriptions.
 
 The quality reviewers are not your choice: the workflow picks them.
 
@@ -134,8 +129,7 @@ object (never a stringified one):
   and the lab work the implementer must leave alone. Optional.
 - `gateCommands`: the build, test and lint commands the repo's CI config runs that also run in this
   checkout — CI config first, `CLAUDE.md` and README second. The mechanical gate runs exactly
-  these after the implementation and after every fix commit. Leave out anything that needs a lab
-  host or root; that is lab work. Required.
+  these after the implementation and after every fix commit. Leave out lab work. Required.
 - `fixRounds` (default 3, the skill's second argument) is the review fix-loop budget.
 
 Report the branch, the implementer and the domain reviewer by type name, no prose — the roster is
@@ -155,27 +149,24 @@ The workflow returns structured, not final. Read it and decide:
   - *Fix rounds ran out.* Do not open an MR. Report the outstanding findings and hand the branch
     back. When the user wants more rounds, relaunch with `resumeFromRunId: <runId>` and the same
     args except a higher `fixRounds`: finished stages return from cache and only the new rounds
-    run. Same session only.
-    Change no other arg — `body`, `notes`, `base` and `gateCommands` are in every prompt, and a
-    changed prompt re-runs its stage. Never relaunch without `resumeFromRunId`: a fresh run
-    re-implements on a branch that already has the change.
+    run. Same session only. Change no other arg. Never relaunch without `resumeFromRunId`.
   - *The fixer disputed every finding and the reviewers held.* Settle each entry in `disputes`
-    yourself, per the `disputes` bullet below. With every entry in `blocking` settled, carry on
-    to the lab steps and step 7; otherwise hand the branch back.
-  - `deadReviewers` names reviewers that returned nothing on every try. Their lens is unreviewed.
+    yourself, per the `disputes` bullet below. With every entry in `blocking` settled and
+    `deadReviewers` empty, carry on to the lab steps and step 7; otherwise hand the branch back.
+  - `deadReviewers` non-empty → those reviewers returned nothing on every try. Do not open the MR;
+    hand the branch back.
 - **`ok: false` otherwise** — the implement, verify or fix stage failed. Report the reason; the
   branch is where the agent left it.
 - **`degraded`** — roster types that were not dispatchable and ran as a generic agent instead.
-  Name them next to the roster in your report.
 - **`disputes`** — the fixer refused a finding and gave evidence. Check it yourself. The fixer may
-  be right; it may also be rationalizing. Apply the fix or accept the dispute, and say which.
+  be right; it may also be rationalizing. Apply the fix or accept the dispute.
 - **`minorFindings`** — never auto-fixed. Apply the ones worth applying, drop the rest.
-- **`assumptions`** — anything the implementer had to invent. Put these at the top of your summary.
+- **`assumptions`** — anything the implementer had to invent.
 - **`redEvidence`** — the new test's failing output from before the fix; the test reviewer checked
-  it. Empty on a bug-fix issue means nobody saw the test fail: say so at the top of your summary.
-- **Lab steps** — once the result is `ok`, run the lab work the issue and repo name through
-  `dream-team:lab-runner` on the branch head. A lab failure is a failed verify: fix it before the
-  MR, or hand the branch back. Put measured numbers in the MR description.
+  it. Empty on a bug-fix issue means nobody saw the test fail.
+- **Lab steps** — once the result is `ok`, run the lab work on the branch head. A lab failure is a
+  failed verify: fix it before the MR, or hand the branch back. Put measured numbers in the MR
+  description.
 
 Findings outside the diff are not this MR's job. File each as an issue before the session ends, per
 the repo's own rules.
@@ -199,9 +190,8 @@ git reset --soft <base> && git commit -C "$FIRST"
 git diff --quiet "$OLD" HEAD
 ```
 
-`-C` reuses the implementer's message and authorship. The last line exits 0 when the folded tree
-equals the gated one, so the fold needs no re-gate. Amend the message when the fix rounds changed
-what the commit does.
+Last line non-zero → stop and report: the fold changed the tree. Amend the message when the fix
+rounds changed what the commit does.
 
 Then push and open the MR/PR against the branch the project's `CLAUDE.md` names.
 
@@ -233,6 +223,7 @@ exits:
 The report carries only what the user must know or act on.
 
 - Open with every assumption, then the MR/PR link.
+- Name each `degraded` roster type and each dead reviewer.
 - Name each dispute you settled, which way, and why.
 - Name each blocking finding a fix round resolved, one line each.
 - Say so when `redEvidence` is empty on a bug fix.
