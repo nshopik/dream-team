@@ -441,8 +441,10 @@ def input_text(path):
         data = json.loads(file_text(path))
     except ValueError:
         return ''
-    return (data.get('description') or data.get('body') or '') \
-        if isinstance(data, dict) else ''
+    if not isinstance(data, dict):
+        return ''
+    text = data.get('description') or data.get('body')
+    return text if isinstance(text, str) else ''
 
 
 def flag_text(cmd, kind, field):
