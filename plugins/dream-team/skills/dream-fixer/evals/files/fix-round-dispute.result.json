@@ -26,10 +26,26 @@
       "round": 2
     }
   ],
+  "resolved": [
+    {
+      "severity": "important",
+      "description": "merge() writes to the nil sinks map when the base config has no sinks block",
+      "file": "internal/config/merge.go",
+      "gate": "pr-review-toolkit:code-reviewer",
+      "round": 1
+    }
+  ],
   "verdicts": {
     "pr-review-toolkit:code-reviewer": {
       "summary": "Round 1 re-review: the write to the nil sinks map in merge() when the base config has no sinks block is fixed; the new test covers it.",
-      "findings": []
+      "findings": [],
+      "resolved": [
+        {
+          "severity": "important",
+          "description": "merge() writes to the nil sinks map when the base config has no sinks block",
+          "file": "internal/config/merge.go"
+        }
+      ]
     },
     "pr-review-toolkit:comment-analyzer": {
       "summary": "No findings.",
@@ -43,7 +59,8 @@
           "description": "merge() ignores the error from os.Stat on the override file",
           "file": "internal/config/merge.go"
         }
-      ]
+      ],
+      "resolved": []
     },
     "pr-review-toolkit:pr-test-analyzer": {
       "summary": "Red evidence matches the reported panic. No findings.",

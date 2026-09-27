@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.8.4] - 2026-09-28
+
+### Fixed
+
+- `dream-fixer-loop` returns the blocking findings its fix rounds resolved as `resolved`, so the
+  `dream-fixer` report no longer drops a fixed finding on a hand-back.
+
 ## [0.8.3] - 2026-09-27
 
 ### Changed

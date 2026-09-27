@@ -21,6 +21,7 @@
   "degraded": [],
   "redEvidence": "",
   "disputes": [],
+  "resolved": [],
   "verdicts": {
     "pr-review-toolkit:code-reviewer": {
       "summary": "Unbounded backoff.",

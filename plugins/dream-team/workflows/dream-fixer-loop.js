@@ -110,6 +110,17 @@ const VERDICT_SCHEMA = {
   },
 }
 
+// Re-reviewers reword findings, so a resolved one is named by the reviewer,
+// not diffed out of its prior verdict.
+const RE_REVIEW_SCHEMA = {
+  ...VERDICT_SCHEMA,
+  required: [...VERDICT_SCHEMA.required, 'resolved'],
+  properties: {
+    ...VERDICT_SCHEMA.properties,
+    resolved: { ...VERDICT_SCHEMA.properties.findings, description: 'your prior findings the current branch now fixes' },
+  },
+}
+
 // A fixer that cannot refuse turns every reviewer opinion into a code change,
 // which is how a wrong finding becomes a bug. Disputes go to the orchestrator.
 const FIX_SCHEMA = {
@@ -299,7 +310,8 @@ function reReviewPrompt(prev, fix, round) {
     READ_ONLY,
     'Re-review ONLY your own outstanding findings against the current branch state.',
     'Do not raise new findings unrelated to them — a fresh sweep each round makes this loop never converge.',
-    'A disputed finding you now agree was wrong is resolved: drop it and say so.',
+    'List under resolved each of your prior findings the current branch now fixes, severity unchanged.',
+    'A disputed finding you now agree was wrong is not a fix: drop it, leave it out of resolved, and say so in the summary.',
     'Return only the findings that still stand, severity unchanged.',
   ].join('\n')
 }
@@ -401,6 +413,7 @@ const record = (g, v) => {
 gates.forEach((g, i) => record(g, initial[i]))
 
 const disputes = []
+const resolved = []
 const outstanding = () => gates.flatMap((g) => blockingOf(state.get(g.key)).map((f) => ({ ...f, gate: g.key })))
 const deadGates = () => gates.filter((g) => state.get(g.key).dead)
 const handBack = (reason) => ({
@@ -413,6 +426,7 @@ const handBack = (reason) => ({
   degraded: [...MISSING_TYPES],
   redEvidence: impl.redEvidence,
   disputes,
+  resolved,
   verdicts: Object.fromEntries(state),
 })
 
@@ -435,14 +449,14 @@ while (true) {
       schema: FIX_SCHEMA,
       ...implementerRoster(A.implementer),
     })
-    if (!fix) return { ok: false, stage: 'fix', reason: 'fixer returned no result', blocking, disputes }
+    if (!fix) return { ok: false, stage: 'fix', reason: 'fixer returned no result', blocking, disputes, resolved }
     if (!fix.committed && !fix.addressed.length && !fix.disputed.length) {
-      return { ok: false, stage: 'fix', reason: `fixer changed nothing and disputed nothing: ${fix.summary}`, blocking, disputes }
+      return { ok: false, stage: 'fix', reason: `fixer changed nothing and disputed nothing: ${fix.summary}`, blocking, disputes, resolved }
     }
     disputes.push(...fix.disputed.map((d) => ({ ...d, round })))
     if (fix.committed) {
       const g = await gate(`review-fix round ${round}`, `fix${round}`, false)
-      if (!g.ok) return { ok: false, stage: 'verify', reason: g.reason, verify: g.verify, blocking, disputes }
+      if (!g.ok) return { ok: false, stage: 'verify', reason: g.reason, verify: g.verify, blocking, disputes, resolved }
       changedFiles = g.verify.changedFiles
     }
   }
@@ -451,7 +465,7 @@ while (true) {
     ...failed.map((g) => () => agentR(reReviewPrompt(state.get(g.key), fix, round), {
       label: `re-review:${g.key}:r${round}`,
       phase: 'Fix',
-      schema: VERDICT_SCHEMA,
+      schema: RE_REVIEW_SCHEMA,
       ...reviewerRoster(g.type),
     })),
     ...dead.map((g) => () => agentR(g.prompt(), {
@@ -461,7 +475,10 @@ while (true) {
       ...reviewerRoster(g.type),
     })),
   ])
-  failed.forEach((g, i) => state.set(g.key, again[i] || deadReviewer(g.key)))
+  failed.forEach((g, i) => {
+    state.set(g.key, again[i] || deadReviewer(g.key))
+    if (again[i]) resolved.push(...blockingOf({ findings: again[i].resolved }).map((f) => ({ ...f, gate: g.key, round })))
+  })
   dead.forEach((g, i) => record(g, again[failed.length + i]))
 
   // The same fixer would get the same findings and dispute them again. The
@@ -484,5 +501,6 @@ return {
   changedFiles,
   minorFindings: minor,
   disputes,
+  resolved,
   summaries: Object.fromEntries(gates.map((g) => [g.key, state.get(g.key).summary])),
 }

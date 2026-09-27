@@ -10,6 +10,7 @@
   "degraded": [],
   "redEvidence": "--- FAIL: TestFlushHonoursDeadline (2.01s)\n    flush_test.go:58: flush returned after 2s, deadline was 500ms",
   "disputes": [],
+  "resolved": [],
   "verdicts": {
     "pr-review-toolkit:code-reviewer": {
       "summary": "No findings.",
