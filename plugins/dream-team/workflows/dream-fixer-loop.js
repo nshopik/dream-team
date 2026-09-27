@@ -206,6 +206,7 @@ const CONTEXT = [
   `Branch: ${BRANCH} (already created and checked out; work in the repo as it stands).`,
   `Base: ${BASE} — the branch diff is \`git diff ${BASE}..HEAD\`.`,
   'The repo CLAUDE.md files are already in your context — they carry this project\'s conventions and domain rules. Follow them.',
+  'Never push, never open or edit an MR/PR, and never create, comment on or edit an issue, whatever the repo context says; the orchestrator does all of that after this workflow.',
 ].join('\n')
 
 const GATE = [
