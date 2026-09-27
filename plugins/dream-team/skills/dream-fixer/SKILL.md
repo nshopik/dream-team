@@ -210,11 +210,13 @@ skill, if present, is the source of truth for it.
 
 ## 8. Watch the MR/PR
 
-Once the MR/PR is open, start a Bash `run_in_background` poll that exits when its state leaves
-open. Poll every 30s through the host's tooling skill, e.g.:
+Once the MR/PR is open, start a Bash `run_in_background` poll that exits on a final state,
+`merged` or `closed` — never on "not open": GitLab reports a transient `locked` while it merges.
+Poll every 30s through the host's tooling skill, e.g.:
 
 ```sh
-until [ "$(glab api "projects/<p>/merge_requests/<iid>" | jq -r .state)" != opened ]; do
+until s=$(glab api "projects/<p>/merge_requests/<iid>" | jq -r .state)
+      [ "$s" = merged ] || [ "$s" = closed ]; do
   sleep 30
 done
 ```
