@@ -222,7 +222,8 @@ exits:
 
 The report carries only what the user must know or act on.
 
-- Open with every assumption, then the MR/PR link.
+- Open with every assumption as its own list under an `Assumptions:` heading, above the rest.
+- Then the MR/PR link.
 - Name each `degraded` roster type and each dead reviewer.
 - Name each dispute you settled, which way, and why.
 - Name each blocking finding a fix round resolved, one line each.
