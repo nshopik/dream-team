@@ -20,7 +20,7 @@ const NOTES = String(A.notes || '')
 const BRANCH = String(A.branch || '')
 const BASE = String(A.base || '')
 const GATE_COMMANDS = Array.isArray(A.gateCommands) ? A.gateCommands.map(String).filter(Boolean) : []
-const FIX_ROUNDS = Number.isInteger(A.fixRounds) ? A.fixRounds : 3
+const FIX_ROUNDS = 3
 const VERIFY_ROUNDS = 3
 
 if (!ISSUE || !BRANCH || !BASE || !GATE_COMMANDS.length) {

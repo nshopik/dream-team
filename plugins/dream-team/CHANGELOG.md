@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Removed
+
+- `dream-fixer` drops its `fix-rounds` argument; the review fix loop always runs at most 3 rounds.
+
 ## [0.8.9] - 2026-09-28
 
 ### Fixed
