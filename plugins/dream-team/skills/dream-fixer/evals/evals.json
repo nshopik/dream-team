@@ -20,7 +20,7 @@
         "No gate command that passed is listed",
         "No summary of what the change does beyond what an assumption needs",
         "No line about the review, since it had no blocking finding, dispute or fix round",
-        "Every line other than the closing `Work on #` line and the assumption entries opens with a bold label, with no bullets outside the assumptions list",
+        "Every line other than the closing `Work on #` line and the assumption entries is a `- **Label:**` bullet, with no blank line between bullets and a `**Notes:**` line between them and any assumptions",
         "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
       ],
       "checks": {
@@ -81,7 +81,7 @@
         "The nil sinks map write resolved in fix round 1 is named in one line",
         "No gate command or change summary",
         "No claim that red evidence is missing or that nobody saw the test fail; the result carries it",
-        "Every line other than the closing `Work on #` line and the assumption entries opens with a bold label, with no bullets outside the assumptions list",
+        "Every line other than the closing `Work on #` line and the assumption entries is a `- **Label:**` bullet, with no blank line between bullets and a `**Notes:**` line between them and any assumptions",
         "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
       ],
       "checks": {
@@ -110,7 +110,7 @@
         "voltagent-lang:golang-pro is named as degraded (ran as a generic agent)",
         "The report says no failing test was seen before the fix (empty redEvidence on a bug fix)",
         "No reviewer verdict, gate command or change summary",
-        "Every line other than the closing `Work on #` line and the assumption entries opens with a bold label, with no bullets outside the assumptions list",
+        "Every line other than the closing `Work on #` line and the assumption entries is a `- **Label:**` bullet, with no blank line between bullets and a `**Notes:**` line between them and any assumptions",
         "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
       ],
       "checks": {
@@ -134,13 +134,13 @@
       "result": "evals/files/dead-reviewer.result.json",
       "after": "You followed step 6: no PR was opened.",
       "expectations": [
-        "The report says no PR/MR was opened and the branch is handed back",
+        "The report says the branch is handed back without a PR/MR (\"handed back\" in the closing line counts)",
         "The branch issue-69-flush-deadline is named",
         "pr-review-toolkit:silent-failure-hunter is named as the reviewer that returned nothing",
         "No PR/MR link or invented URL",
         "No claim that red evidence is missing or that nobody saw the test fail; the result carries it",
         "The last line is `Work on #<n> is handed back: <branch> \u2014 <why>`",
-        "Every line other than the closing `Work on #` line and the assumption entries opens with a bold label, with no bullets outside the assumptions list",
+        "Every line other than the closing `Work on #` line and the assumption entries is a `- **Label:**` bullet, with no blank line between bullets and a `**Notes:**` line between them and any assumptions",
         "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
       ],
       "checks": {
@@ -165,12 +165,12 @@
       "result": "evals/files/rounds-out.result.json",
       "after": "You followed step 6: no PR was opened.",
       "expectations": [
-        "The report says no PR/MR was opened and the branch is handed back",
+        "The report says the branch is handed back without a PR/MR (\"handed back\" in the closing line counts)",
         "The branch issue-70-http-retry is named",
         "Both outstanding findings are listed: duplicate records on mid-batch retry, and unbounded backoff",
         "No PR/MR link or invented URL",
         "The last line is `Work on #<n> is handed back: <branch> \u2014 <why>`",
-        "Every line other than the closing `Work on #` line and the assumption entries opens with a bold label, with no bullets outside the assumptions list",
+        "Every line other than the closing `Work on #` line and the assumption entries is a `- **Label:**` bullet, with no blank line between bullets and a `**Notes:**` line between them and any assumptions",
         "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
       ],
       "checks": {
@@ -198,7 +198,7 @@
         "The last line is `Work on #<n> is done: <PR link>`",
         "The lab step gets one line with its measured numbers",
         "No minor finding, gate command or change summary",
-        "Every line other than the closing `Work on #` line and the assumption entries opens with a bold label, with no bullets outside the assumptions list",
+        "Every line other than the closing `Work on #` line and the assumption entries is a `- **Label:**` bullet, with no blank line between bullets and a `**Notes:**` line between them and any assumptions",
         "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
       ],
       "checks": {
@@ -231,7 +231,7 @@
         "The PR link is present",
         "No line says red evidence was seen, the new test failed before the fix, or tests pass",
         "No line about lab work",
-        "Every line other than the closing `Work on #` line and the assumption entries opens with a bold label, with no bullets outside the assumptions list",
+        "Every line other than the closing `Work on #` line and the assumption entries is a `- **Label:**` bullet, with no blank line between bullets and a `**Notes:**` line between them and any assumptions",
         "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
       ],
       "checks": {
