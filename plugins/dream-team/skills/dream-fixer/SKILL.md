@@ -160,6 +160,7 @@ The workflow returns structured, not final. Read it and decide:
 - **`degraded`** — roster types that were not dispatchable and ran as a generic agent instead.
 - **`disputes`** — the fixer refused a finding and gave evidence. Check it yourself. The fixer may
   be right; it may also be rationalizing. Apply the fix or accept the dispute.
+- **`resolved`** — blocking findings a fix round fixed, each with its gate and round.
 - **`minorFindings`** — never auto-fixed. Apply the ones worth applying, drop the rest.
 - **`assumptions`** — anything the implementer had to invent.
 - **`redEvidence`** — the new test's failing output from before the fix; the test reviewer checked
@@ -231,7 +232,7 @@ The report carries only what the user must know or act on.
 - No MR/PR → end with `Work on #<n> is handed back: <branch> — <why>`.
 - Name each `degraded` roster type and each dead reviewer.
 - Name each dispute you settled, which way, and why.
-- Name each blocking finding a fix round resolved, one line each.
+- Name each `resolved` entry, one line each.
 - Say so when `redEvidence` is empty on a bug fix.
 - Give a lab step one line: its measured numbers, or its verdict when it measured none.
 - Name each reviewer that could not check something, and the check you ran in its place.
