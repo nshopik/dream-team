@@ -9,6 +9,8 @@ C = "c" + "ommit"   # keep this file's own text from tripping the hook that runs
 def run(cmd):
     p = subprocess.run([sys.executable, HOOK], text=True, capture_output=True,
                        input=json.dumps({"tool_input": {"command": cmd}}))
+    if p.returncode:
+        return "CRASH", p.stderr.strip().splitlines()[-1]
     out = p.stdout.strip()
     if not out:
         return "ALLOW-SILENT", ""
@@ -238,6 +240,7 @@ shapes = [
     ("$(cat) in commit -m",       "DENY", "git " + C + f' -m "$(cat {commit_md})"'),
     ("glab api --input json",     "DENY", f"glab api -X PUT projects/1/merge_requests/9 --input {js}"),
     ("gh api --input body key",   "DENY", f"gh api -X PATCH repos/o/r/pulls/9 --input {gh_js}"),
+    ("--input non-string value", "ALLOW-SILENT", f"glab api -X PUT projects/1/merge_requests/9 --input {wrote('list.json', json.dumps({'description': ['a', 'b']}))}"),
     ("gh api pulls -f body=",     "DENY", f'gh api -X PATCH repos/o/r/pulls/9 -f body="$(cat {md})"'),
     ("gh api issues -f body=",    "DENY", f"gh api -X PATCH repos/o/r/issues/7 -f body={q('word ' * 550)}"),
     ("heredoc then --body-file",  "DENY", f"cat > {fresh} <<'EOF'\nit's {words}\nEOF\ngh pr edit 9 --body-file {fresh}"),
