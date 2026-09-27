@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-09-27
+
+### Fixed
+
+- `dream-fixer` lists assumptions under their own heading above the report again, not mixed into
+  its bullets.
+
 ## [0.8.0] - 2026-09-27
 
 ### Added
