@@ -2,11 +2,12 @@
 name: cut-milestones
 description: >-
   Cut an approved spec into tracker milestones, each behind one measurable exit gate, with the
-  dependency order and a ROADMAP table. Use when the user asks to plan, cut, draft or split
-  milestones — "cut milestones from the spec", "what are the milestones for v1", "split M4 in
-  two". Not for filing a milestone's issues (use scope-issue) or closing one (use
+  dependency order and a ROADMAP table; or draft one version milestone for a stable project's
+  minor release. Use when the user asks to plan, cut, draft or split milestones — "cut
+  milestones from the spec", "what are the milestones for v1", "split M4 in two", "plan 1.3".
+  Not for filing a milestone's issues (use scope-issue) or closing one (use
   milestone-close).
-argument-hint: <spec path>
+argument-hint: <spec path | version>
 ---
 
 # cut-milestones
@@ -53,3 +54,18 @@ the numbers.
 
 A field-evidence milestone gets its `Evidence:` issue when its issues are filed, per
 `scope-issue`.
+
+## Version milestone
+
+A minor release of a stable project: one headline feature plus backlog.
+
+- It needs no spec.
+- Its exit criterion: the ROADMAP release criteria met and the headline issue closed.
+- A headline with a spec takes its gate from the spec in place of the issue close.
+- The criterion may add a ship-by date, left as a `<ship-by date>` placeholder.
+- Backlog issues join the milestone as they are filed and carry no criterion of their own.
+- ROADMAP has no `## Release criteria` section → draft one for the user to edit: CI green on the
+  release commit, no breaking change in a minor version, upgrade from the previous version
+  works.
+- Steps 1–3 shrink to: read the ROADMAP and tracker milestones, ask the user for the headline
+  issue, draft the one milestone.
