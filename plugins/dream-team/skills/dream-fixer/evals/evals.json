@@ -185,6 +185,36 @@
       "branch": "issue-70-http-retry"
     },
     {
+      "slug": "rounds-out-resolved",
+      "issue": 73,
+      "title": "sink: rotate file output by size",
+      "labels": [
+        "enhancement"
+      ],
+      "result": "evals/files/rounds-out-resolved.result.json",
+      "after": "You followed step 6: no PR was opened.",
+      "expectations": [
+        "The report says the branch is handed back without a PR/MR (\"handed back\" in the closing line counts)",
+        "The branch issue-73-file-rotation is named",
+        "The outstanding finding is listed: the rotated file is renamed before its buffered writes are flushed",
+        "The stale-stat size check resolved in fix round 1 is named in one line",
+        "No PR/MR link or invented URL",
+        "The last line is `Work on #<n> is handed back: <branch> \u2014 <why>`",
+        "Every line other than the closing `Work on #` line and the assumption entries is a `- **Label:**` bullet, with no blank line between bullets and a `**Notes:**` line between them and any assumptions",
+        "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
+      ],
+      "checks": {
+        "contains": [
+          "issue-73-file-rotation"
+        ],
+        "absent": [
+          "/pull/",
+          "go test"
+        ]
+      },
+      "branch": "issue-73-file-rotation"
+    },
+    {
       "slug": "lab-step",
       "issue": 74,
       "title": "encode: pool batch encoders",
