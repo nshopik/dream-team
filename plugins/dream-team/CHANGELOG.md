@@ -5,8 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-09-27
+
 ### Fixed
 
+- `dream-fixer` report follows a fixed layout: real assumptions only under `**Assumptions:**`, one
+  bold-labelled paragraph per item, including a reviewer that could not check something and the
+  check run in its place, and a closing `Work on #<n> is done: <link>` line.
 - `dream-fixer-loop` returns `redEvidence` on a hand-back too, so the report no longer claims a
   bug fix's test was never seen failing.
 

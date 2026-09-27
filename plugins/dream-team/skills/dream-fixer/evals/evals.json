@@ -13,17 +13,17 @@
       "result": "evals/files/assumptions-first.result.json",
       "after": "You applied neither minor finding. Steps 7 and 8 are done: the PR is open at https://github.com/acme/flowlog/pull/61 and the merge poll is running.",
       "expectations": [
-        "The report opens with an `Assumptions:` heading (plain, bold or markdown heading) and nothing above it",
+        "The report opens with an `Assumptions:` heading and nothing above it",
         "Both assumptions (RFC 3339 only; inclusive boundary) are listed under that heading, as their own list",
-        "The PR link comes after the assumptions list, not inside it",
+        "The last line is `Work on #<n> is done: <PR link>`",
         "No minor finding is mentioned, applied or dropped",
         "No gate command that passed is listed",
         "No summary of what the change does beyond what an assumption needs",
         "No line about the review, since it had no blocking finding, dispute or fix round",
+        "Every line other than the closing `Work on #` line and the assumption entries opens with a bold label, with no bullets outside the assumptions list",
         "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
       ],
       "checks": {
-        "first_line": "(?i)^\\W*assumptions\\W*$",
         "order": [
           "RFC 3339",
           "inclusive",
@@ -34,7 +34,8 @@
           "mixed casing",
           "go test",
           "golangci-lint"
-        ]
+        ],
+        "assumptions": true
       }
     },
     {
@@ -80,6 +81,7 @@
         "The nil sinks map write resolved in fix round 1 is named in one line",
         "No gate command or change summary",
         "No claim that red evidence is missing or that nobody saw the test fail; the result carries it",
+        "Every line other than the closing `Work on #` line and the assumption entries opens with a bold label, with no bullets outside the assumptions list",
         "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
       ],
       "checks": {
@@ -108,6 +110,7 @@
         "voltagent-lang:golang-pro is named as degraded (ran as a generic agent)",
         "The report says no failing test was seen before the fix (empty redEvidence on a bug fix)",
         "No reviewer verdict, gate command or change summary",
+        "Every line other than the closing `Work on #` line and the assumption entries opens with a bold label, with no bullets outside the assumptions list",
         "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
       ],
       "checks": {
@@ -136,6 +139,8 @@
         "pr-review-toolkit:silent-failure-hunter is named as the reviewer that returned nothing",
         "No PR/MR link or invented URL",
         "No claim that red evidence is missing or that nobody saw the test fail; the result carries it",
+        "The last line is `Work on #<n> is handed back: <branch> \u2014 <why>`",
+        "Every line other than the closing `Work on #` line and the assumption entries opens with a bold label, with no bullets outside the assumptions list",
         "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
       ],
       "checks": {
@@ -164,6 +169,8 @@
         "The branch issue-70-http-retry is named",
         "Both outstanding findings are listed: duplicate records on mid-batch retry, and unbounded backoff",
         "No PR/MR link or invented URL",
+        "The last line is `Work on #<n> is handed back: <branch> \u2014 <why>`",
+        "Every line other than the closing `Work on #` line and the assumption entries opens with a bold label, with no bullets outside the assumptions list",
         "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
       ],
       "checks": {
@@ -188,13 +195,13 @@
       "after": "You dropped the minor finding. You ran the lab step through dream-team:lab-runner on the branch head: BenchmarkEncodeBatch p99 4.1ms -> 2.3ms, allocs/op 212 -> 18, 3 runs each on the lab host. Steps 7 and 8 are done: the PR is open at https://github.com/acme/flowlog/pull/75 with the numbers in its description, and the merge poll is running.",
       "expectations": [
         "The report opens with an `Assumptions:` heading listing the GOMAXPROCS default",
-        "The PR link comes after the assumptions",
+        "The last line is `Work on #<n> is done: <PR link>`",
         "The lab step gets one line with its measured numbers",
         "No minor finding, gate command or change summary",
+        "Every line other than the closing `Work on #` line and the assumption entries opens with a bold label, with no bullets outside the assumptions list",
         "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
       ],
       "checks": {
-        "first_line": "(?i)^\\W*assumptions\\W*$",
         "order": [
           "GOMAXPROCS",
           "https://github.com/acme/flowlog/pull/75"
@@ -205,7 +212,42 @@
         "absent": [
           "t.Parallel",
           "go test"
-        ]
+        ],
+        "assumptions": true
+      }
+    },
+    {
+      "slug": "mixed-notes",
+      "issue": 81,
+      "title": "scrub: RRSIG with foreign owner survives scrubbing",
+      "labels": [
+        "bug"
+      ],
+      "result": "evals/files/mixed-notes.result.json",
+      "after": "The domain reviewer read upstream from the working tree, so you checked iter_scrub.c:670-675 at the pinned commit a7fc80d8c yourself; it matches the fix. Steps 7 and 8 are done: the PR is open at https://github.com/acme/flowlog/pull/82 and the merge poll is running.",
+      "expectations": [
+        "The report opens with an assumptions heading listing exactly the two entries of the result's `assumptions`, nothing else under it",
+        "The domain reviewer reading the working tree, and your own check at a7fc80d8c, appear once, outside the assumptions list",
+        "The PR link is present",
+        "No line says red evidence was seen, the new test failed before the fix, or tests pass",
+        "No line about lab work",
+        "Every line other than the closing `Work on #` line and the assumption entries opens with a bold label, with no bullets outside the assumptions list",
+        "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
+      ],
+      "checks": {
+        "order": [
+          "RRSIG",
+          "resolver_test.go",
+          "https://github.com/acme/flowlog/pull/82"
+        ],
+        "absent": [
+          "lab",
+          "go test"
+        ],
+        "contains": [
+          "a7fc80d8c"
+        ],
+        "assumptions": true
       }
     }
   ]

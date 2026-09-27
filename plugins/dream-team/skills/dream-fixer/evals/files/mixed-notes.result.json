@@ -1,0 +1,34 @@
+{
+  "ok": true,
+  "issue": 81,
+  "branch": "issue-81-scrub-foreign-rrsig",
+  "implementer": "voltagent-lang:golang-pro",
+  "reviewers": [
+    "pr-review-toolkit:code-reviewer",
+    "pr-review-toolkit:comment-analyzer",
+    "pr-review-toolkit:silent-failure-hunter",
+    "pr-review-toolkit:pr-test-analyzer",
+    "domain"
+  ],
+  "degraded": [],
+  "fixRounds": 0,
+  "assumptions": [
+    "A standalone RRSIG at the qname counts as the answer when the query type is RRSIG, following how upstream msgparse.c groups signatures; no test covers this case",
+    "The resolver_test.go minimisation case answered an AAAA query with an A record, which the stricter scrub now drops; the test was changed to answer with AAAA rather than loosening the scrub"
+  ],
+  "redEvidence": "--- FAIL: TestScrubForeignRRSIG/unrelated_owner (0.00s)\n    scrub_test.go:112: kept 1 RRSIG not covering any answer RRset, want 0",
+  "changedFiles": [
+    "internal/scrub/scrub.go",
+    "internal/scrub/scrub_test.go",
+    "internal/resolve/resolver_test.go"
+  ],
+  "minorFindings": [],
+  "disputes": [],
+  "summaries": {
+    "pr-review-toolkit:code-reviewer": "No findings.",
+    "pr-review-toolkit:comment-analyzer": "No findings.",
+    "pr-review-toolkit:silent-failure-hunter": "No findings.",
+    "pr-review-toolkit:pr-test-analyzer": "Red evidence matches the bug; new table rows cover owner and type mismatch. No findings.",
+    "domain": "Matches upstream iter_scrub.c behaviour. Read upstream from the ~/upstream working tree, not the pinned commit a7fc80d8c: this reviewer type has no shell to check it out. No findings."
+  }
+}
