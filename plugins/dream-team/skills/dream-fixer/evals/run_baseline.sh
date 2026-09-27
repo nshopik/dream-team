@@ -150,7 +150,7 @@ Output only JSON, no fence, no commentary:
  "expectations":[{"text":"<the expectation verbatim>","verdict":"PASS|FAIL",
                   "evidence":"<the words that decide it>"}],
  "correct":<count of PASS>,"applicable":<total expectations>,
- "deletable_lines":["<any report line the user would not miss; the closing `Work on #` line is required, never list it>"],
+ "deletable_lines":["<any report line the user would not miss; the closing \`Work on #\` line is required, never list it>"],
  "verdict_summary":"one line"}
 EOF
   dejson "$OUT/$slug.grade.json"
