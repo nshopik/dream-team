@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-09-27
+
+### Changed
+
+- `dream-fixer` reports only what the user must know or act on, leaving out minor findings
+  and a clean review.
+
 ### Fixed
 
 - `dream-fixer` watches an MR until it is `merged` or `closed`, so GitLab's transient `locked`

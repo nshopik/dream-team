@@ -230,11 +230,14 @@ exits:
 
 ## Report back
 
-End with: the MR/PR link, what the reviewers changed, any dispute you accepted and why, and any
-assumption that had to be made. If you stopped at the gate, say what is blocking and stop there.
+The report carries only what the user must know or act on.
 
-Never list `gateCommands` that passed: an `ok` result implies them. A lab step gets one line with
-its measured numbers, or its verdict when it measured none.
-
-A review with no blocking finding, no dispute and no fix round gets one sentence, minor fixes
-applied or not: no per-finding list.
+- Open with every assumption, then the MR/PR link.
+- Name each dispute you settled, which way, and why.
+- Name each blocking finding a fix round resolved, one line each.
+- Say so when `redEvidence` is empty on a bug fix.
+- Give a lab step one line: its measured numbers, or its verdict when it measured none.
+- Stopped at the gate → say what is blocking and stop there.
+- Leave out minor findings, applied or dropped, and reviewer verdicts with no finding.
+- Leave out gate commands that passed and a summary of the change: the MR carries it.
+- A review with no blocking finding, no dispute and no fix round gets no line.
