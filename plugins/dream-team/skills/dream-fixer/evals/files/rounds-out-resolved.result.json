@@ -1,0 +1,55 @@
+{
+  "ok": false,
+  "stage": "review",
+  "reason": "1 blocking finding(s) and 0 dead reviewer(s) outstanding after 3 fix rounds",
+  "handBack": true,
+  "blocking": [
+    {
+      "severity": "critical",
+      "description": "Rotated file is renamed before its buffered writes are flushed, so the tail of each segment is lost on rotation",
+      "file": "internal/sink/file.go",
+      "gate": "domain"
+    }
+  ],
+  "deadReviewers": [],
+  "degraded": [],
+  "redEvidence": "",
+  "disputes": [],
+  "resolved": [
+    {
+      "severity": "important",
+      "description": "Size check reads the stale stat from open time, so a segment never rotates after the first write",
+      "file": "internal/sink/file.go",
+      "gate": "pr-review-toolkit:code-reviewer",
+      "round": 1
+    }
+  ],
+  "verdicts": {
+    "pr-review-toolkit:code-reviewer": {
+      "summary": "No findings.",
+      "findings": []
+    },
+    "pr-review-toolkit:comment-analyzer": {
+      "summary": "No findings.",
+      "findings": []
+    },
+    "pr-review-toolkit:silent-failure-hunter": {
+      "summary": "No findings.",
+      "findings": []
+    },
+    "pr-review-toolkit:pr-test-analyzer": {
+      "summary": "No findings.",
+      "findings": []
+    },
+    "domain": {
+      "summary": "Rename before flush.",
+      "findings": [
+        {
+          "severity": "critical",
+          "description": "Rotated file is renamed before its buffered writes are flushed, so the tail of each segment is lost on rotation",
+          "file": "internal/sink/file.go"
+        }
+      ]
+    }
+  }
+}

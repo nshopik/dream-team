@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.8.5] - 2026-09-28
+
+### Fixed
+
+- `dream-fixer` hand-back report no longer says a reviewer found nothing or that nothing was
+  disputed, in a bullet or in the closing line's `<why>` clause.
+
 ## [0.8.4] - 2026-09-28
 
 ### Fixed

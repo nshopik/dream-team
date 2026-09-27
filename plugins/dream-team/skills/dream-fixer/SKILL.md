@@ -241,6 +241,9 @@ The report carries only what the user must know or act on.
 - Leave out gate commands that passed and a summary of the change: the MR carries it.
 - Leave out a present `redEvidence` and lab work that did not run.
 - A review with no blocking finding, no dispute and no fix round gets no line.
+- Handed back → no line saying a reviewer found nothing or that nothing was disputed.
+- The hand-back `<why>` clause names only what blocks; it never adds that other reviewers, rounds
+  or disputes came back clean.
 
 Layout, with sections that have nothing to report left out:
 
