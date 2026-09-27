@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.8.7] - 2026-09-28
+
+### Fixed
+
+- `dream-fixer-loop` tells every workflow agent never to push, open or edit an MR/PR, or create,
+  comment on or edit an issue; `dream-fixer` step 7 does that.
+
 ## [0.8.6] - 2026-09-28
 
 ### Fixed
