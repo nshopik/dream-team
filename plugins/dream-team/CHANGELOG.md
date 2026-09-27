@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.8.6] - 2026-09-28
+
+### Fixed
+
+- `dream-fixer` files every adjacent defect it finds as an issue, not only review findings, and
+  links each filed issue in its report instead of describing the defect.
+
 ## [0.8.5] - 2026-09-28
 
 ### Fixed
