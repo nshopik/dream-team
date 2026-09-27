@@ -224,9 +224,10 @@ The report carries only what the user must know or act on.
 
 - Open with every entry of `assumptions` as its own list under a `**Assumptions:**` heading.
 - Put nothing else under that heading.
-- Every other item is its own paragraph opening with a bold label, e.g. `**Dispute accepted:**`,
-  `**Lab:**`. No bullets.
-- End with one plain line: `Work on #<n> is done: <MR/PR link>`.
+- Every other item is one bullet with a bold label, e.g. `**Dispute accepted:**`, `**Lab:**`.
+- No blank line between bullets.
+- Assumptions above the bullets → put a `**Notes:**` line between them.
+- End with one plain line, after a blank line: `Work on #<n> is done: <MR/PR link>`.
 - No MR/PR → end with `Work on #<n> is handed back: <branch> — <why>`.
 - Name each `degraded` roster type and each dead reviewer.
 - Name each dispute you settled, which way, and why.
@@ -246,9 +247,9 @@ Layout, with sections that have nothing to report left out:
 **Assumptions:**
 - <assumption>
 
-**Dispute accepted:** <finding> — <why>
-
-**Lab:** <measured numbers>
+**Notes:**
+- **Dispute accepted:** <finding> — <why>
+- **Lab:** <measured numbers>
 
 Work on #<n> is done: <MR/PR link>
 ```

@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.8.3] - 2026-09-27
+
+### Changed
+
+- `dream-fixer` report lists its items as tight bold-labelled bullets under a `**Notes:**` line
+  instead of spaced paragraphs.
+
 ## [0.8.2] - 2026-09-27
 
 ### Fixed
