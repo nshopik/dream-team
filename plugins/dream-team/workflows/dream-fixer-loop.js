@@ -3,7 +3,7 @@ export const meta = {
   description: 'One issue end to end: implement, mechanical gate after every write, pr-review-toolkit reviewers plus one domain reviewer, bounded fix loop',
   phases: [
     { title: 'Implement', detail: 'one specialist writes the change and commits' },
-    { title: 'Verify', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix commit' },
+    { title: 'Verify', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
     { title: 'Review', detail: 'pr-review-toolkit suite plus one domain reviewer (opus)' },
     { title: 'Fix', detail: 'blocking findings only; re-review the failed gate' },
   ],
@@ -51,12 +51,13 @@ const IMPL_SCHEMA = {
 // be self-assessment, and a second agent for a `git diff --name-only` is waste.
 const VERIFY_SCHEMA = {
   type: 'object',
-  required: ['passed', 'summary', 'changedFiles'],
+  required: ['passed', 'summary', 'changedFiles', 'dirtyPaths'],
   additionalProperties: false,
   properties: {
     passed: { type: 'boolean', description: 'true only if every command exited 0' },
     summary: { type: 'string' },
     changedFiles: { type: 'array', items: { type: 'string' } },
+    dirtyPaths: { type: 'array', items: { type: 'string' }, description: 'paths from `git status --porcelain` taken before the gate ran' },
     aspects: {
       type: 'array',
       description: 'which review aspects this diff touches; only when the prompt asks for them',
@@ -214,6 +215,8 @@ const GATE = [
   ...GATE_COMMANDS.map((c) => `  ${c}`),
 ].join('\n')
 
+const COMMIT_ALL = 'Commit every edit you make. Do not bump a version or add a release section: only the implementer\'s commit carries the release.'
+
 const READ_ONLY = 'Read-only: do not edit, stage or commit anything, and do not run the build or the test suite — the gate already ran them, and the other reviewers share this checkout.'
 
 const REVIEW_RULES = [
@@ -241,6 +244,7 @@ function verifyPrompt(after, withAspects) {
     CONTEXT,
     '',
     after ? `Re-run the mechanical gate after ${after}.` : 'Run the mechanical gate on the current branch state.',
+    'Before any gate command, run `git status --porcelain` and report every path it lists as dirtyPaths; do not stage, commit or clean them.',
     GATE,
     'Report pass only if every command exited 0.',
     'Do not review style or design — that is a later stage. Report what the tooling says.',
@@ -266,6 +270,7 @@ function buildFixPrompt(v, round) {
     '',
     'Fix the cause, not the symptom. Do not weaken or delete a test to make it pass.',
     'Re-run the failing commands, then commit on the branch.',
+    COMMIT_ALL,
   ].join('\n')
 }
 
@@ -333,6 +338,7 @@ function fixPrompt(blocking, disputes, round) {
     'Fix the ones that hold. For any that does not, leave the code alone and return it under disputed with the evidence that settles it.',
     'Do not fix minor findings and do not widen the change beyond these findings.',
     'Re-run the gate commands, then commit on the branch.',
+    COMMIT_ALL,
     GATE,
   ].join('\n')
 }
@@ -346,7 +352,7 @@ const blockingOf = (v) => v.findings.filter((f) => BLOCKING.has(f.severity))
 // prompt, and never handed to the fixer as a finding.
 const deadReviewer = (kind) => ({ dead: true, summary: `${kind} reviewer produced no verdict`, findings: [] })
 
-// Every commit is followed by this gate, so the head that ships is a gated one.
+// The run continues past a writing agent only through this gate, so the head that ships is a gated one.
 async function gate(after, tag, withAspects) {
   for (let round = 0; ; round++) {
     const verify = await agent(verifyPrompt(round ? `build-fix round ${round}` : after, withAspects), {
@@ -357,6 +363,7 @@ async function gate(after, tag, withAspects) {
       effort: 'low',
     })
     if (!verify) return { ok: false, reason: 'gate agent returned no result' }
+    if (verify.dirtyPaths.length) return { ok: false, reason: `uncommitted edits in the working tree: ${verify.dirtyPaths.join(', ')}`, verify }
     if (verify.passed) return { ok: true, verify }
     if (round === VERIFY_ROUNDS) {
       return { ok: false, reason: `build/test still failing after ${VERIFY_ROUNDS} fix rounds`, verify }
@@ -455,11 +462,9 @@ while (true) {
       return { ok: false, stage: 'fix', reason: `fixer changed nothing and disputed nothing: ${fix.summary}`, blocking, disputes, resolved }
     }
     disputes.push(...fix.disputed.map((d) => ({ ...d, round })))
-    if (fix.committed) {
-      const g = await gate(`review-fix round ${round}`, `fix${round}`, false)
-      if (!g.ok) return { ok: false, stage: 'verify', reason: g.reason, verify: g.verify, blocking, disputes, resolved }
-      changedFiles = g.verify.changedFiles
-    }
+    const g = await gate(`review-fix round ${round}`, `fix${round}`, false)
+    if (!g.ok) return { ok: false, stage: 'verify', reason: g.reason, verify: g.verify, blocking, disputes, resolved }
+    changedFiles = g.verify.changedFiles
   }
 
   const again = await parallel([
