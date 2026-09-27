@@ -1,9 +1,10 @@
 export const meta = {
   name: 'dream-fixer-loop',
-  description: 'One issue end to end: implement, mechanical gate after every write, pr-review-toolkit reviewers plus one domain reviewer, bounded fix loop',
+  description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review simplify pass, pr-review-toolkit reviewers plus one domain reviewer, bounded fix loop',
   phases: [
     { title: 'Implement', detail: 'one specialist writes the change and commits' },
     { title: 'Verify', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
+    { title: 'Simplify', detail: 'ponytail-review cuts, applied or disputed by the implementer; skipped when the diff has no code or ponytail-review is unavailable (opus)' },
     { title: 'Review', detail: 'pr-review-toolkit suite plus one domain reviewer (opus)' },
     { title: 'Fix', detail: 'blocking findings only; re-review the failed gate' },
   ],
@@ -61,7 +62,7 @@ const VERIFY_SCHEMA = {
     aspects: {
       type: 'array',
       description: 'which review aspects this diff touches; only when the prompt asks for them',
-      items: { type: 'string', enum: ['tests', 'types'] },
+      items: { type: 'string', enum: ['tests', 'types', 'code'] },
     },
     failures: {
       type: 'array',
@@ -108,6 +109,30 @@ const VERDICT_SCHEMA = {
         },
       },
     },
+  },
+}
+
+const SIMPLIFY_SCHEMA = {
+  type: 'object',
+  required: ['skillLoaded', 'findings', 'net'],
+  additionalProperties: false,
+  properties: {
+    skillLoaded: { type: 'boolean', description: 'false when the ponytail:ponytail-review skill is not available in this session' },
+    findings: {
+      type: 'array',
+      items: {
+        type: 'object',
+        required: ['tag', 'location', 'cut', 'replacement'],
+        additionalProperties: false,
+        properties: {
+          tag: { type: 'string', enum: ['delete', 'stdlib', 'native', 'yagni', 'shrink'] },
+          location: { type: 'string', description: '<file>:L<line>' },
+          cut: { type: 'string' },
+          replacement: { type: 'string' },
+        },
+      },
+    },
+    net: { type: 'integer', minimum: 0, description: 'the N of the skill\'s `net: -<N> lines possible.`; 0 on `Lean already. Ship.`' },
   },
 }
 
@@ -174,7 +199,9 @@ const roster = (agentType) => (isGeneric(agentType) ? {} : { agentType })
 const reviewerRoster = (agentType) => ({ ...roster(agentType), model: 'opus' })
 const implementerRoster = (agentType) => ({ ...roster(agentType), model: 'opus', effort: 'high' })
 
+// Also holds a missing ponytail-review skill, so `degraded` reports it.
 const MISSING_TYPES = new Set()
+const PONYTAIL_REVIEW = 'ponytail:ponytail-review'
 const degrade = ({ agentType, ...o }) => o
 
 // An unknown agentType throws at dispatch, before any null-result safety net.
@@ -255,8 +282,9 @@ function verifyPrompt(after, withAspects) {
       `  tests - \`git diff --name-only ${BASE}..HEAD | grep -Ei '(^|/)(tests?|spec)/|_(test|spec)\\.|\\.(test|spec)\\.'\`,`,
       '          or D matches `^\\+.*(#\\[test\\]|#\\[cfg\\(test\\)\\]|\\bdef test_|\\bit\\(|\\btest\\()`',
       '  types - D matches `^\\+\\s*(pub )?(struct|enum|trait|type|impl|interface|class|dataclass)\\b`',
+      `  code  - \`git diff --name-only ${BASE}..HEAD | grep -Ei '\\.(c|cc|cpp|cs|css|ex|exs|go|h|hpp|html|java|js|jsx|kt|lua|mjs|cjs|php|py|rb|rs|scala|sh|svelte|swift|ts|tsx|vue|zig)$'\``,
       'Adapt the patterns to this repo\'s language if it is not one the patterns cover, keeping them mechanical.',
-      'These over-report on purpose. An extra reviewer is cheap; a missing one is silent. Never drop an aspect whose command matched.',
+      'These over-report on purpose. An extra check is cheap; a missing one is silent. Never drop an aspect whose command matched.',
     ] : []),
   ].join('\n')
 }
@@ -271,6 +299,29 @@ function buildFixPrompt(v, round) {
     'Fix the cause, not the symptom. Do not weaken or delete a test to make it pass.',
     'Re-run the failing commands, then commit on the branch.',
     COMMIT_ALL,
+  ].join('\n')
+}
+
+function simplifyPrompt() {
+  return [
+    CONTEXT,
+    '',
+    `Load the ${PONYTAIL_REVIEW} skill with the Skill tool and review the branch diff with it.`,
+    'Not available in this session → return skillLoaded false, no findings and net 0. Never review without it.',
+    'Return each line the skill writes as one finding, and the N of its `net: -<N> lines possible.` as net.',
+    'The skill says `Lean already. Ship.` → return no findings and net 0.',
+    READ_ONLY,
+  ].join('\n')
+}
+
+function simplifyFixPrompt(findings) {
+  return [
+    CONTEXT,
+    '',
+    'An over-engineering review of the branch diff proposes these cuts:',
+    findings.map((f) => `- ${f.location}: ${f.tag}: ${f.cut} → ${f.replacement}`).join('\n'),
+    '',
+    ...APPLY_RULES,
   ].join('\n')
 }
 
@@ -322,6 +373,15 @@ function reReviewPrompt(prev, fix, round) {
   ].join('\n')
 }
 
+const APPLY_RULES = [
+  'Verify each finding against the code before acting on it. A reviewer can be wrong, and applying a wrong finding is its own bug.',
+  'Fix the ones that hold. For any that does not, leave the code alone and return it under disputed with the evidence that settles it.',
+  'Do not widen the change beyond these findings.',
+  'Re-run the gate commands, then commit on the branch.',
+  COMMIT_ALL,
+  GATE,
+]
+
 function fixPrompt(blocking, disputes, round) {
   return [
     CONTEXT,
@@ -334,12 +394,8 @@ function fixPrompt(blocking, disputes, round) {
       disputes.map((d) => `- (round ${d.round}) ${d.finding} — ${d.reason}`).join('\n'),
     ] : []),
     '',
-    'Verify each finding against the code before acting on it. A reviewer can be wrong, and applying a wrong finding is its own bug.',
-    'Fix the ones that hold. For any that does not, leave the code alone and return it under disputed with the evidence that settles it.',
-    'Do not fix minor findings and do not widen the change beyond these findings.',
-    'Re-run the gate commands, then commit on the branch.',
-    COMMIT_ALL,
-    GATE,
+    'Do not fix minor findings.',
+    ...APPLY_RULES,
   ].join('\n')
 }
 
@@ -398,6 +454,36 @@ let changedFiles = first.verify.changedFiles
 const aspects = new Set(first.verify.aspects || [])
 if (impl.redEvidence) aspects.add('tests')
 
+// Must precede Review: a cut made after it ships unreviewed.
+let simplify = null
+if (aspects.has('code')) {
+  phase('Simplify')
+  const review = await agent(simplifyPrompt(), { label: `simplify:#${ISSUE}`, phase: 'Simplify', schema: SIMPLIFY_SCHEMA, model: 'opus' })
+  if (!review) return { ok: false, stage: 'simplify', reason: 'simplify reviewer returned no result' }
+  if (!review.skillLoaded) {
+    MISSING_TYPES.add(PONYTAIL_REVIEW)
+    log(`Simplify: ${PONYTAIL_REVIEW} not available — skipped.`)
+  } else if (!review.findings.length) {
+    simplify = { net: 0, applied: [], disputed: [], unhandled: 0 }
+  } else {
+    const cuts = await agentR(simplifyFixPrompt(review.findings), {
+      label: `simplify-fix:#${ISSUE}`,
+      phase: 'Simplify',
+      schema: FIX_SCHEMA,
+      ...implementerRoster(A.implementer),
+    })
+    if (!cuts) return { ok: false, stage: 'simplify', reason: 'implementer returned no result on the simplify cuts' }
+    if (cuts.addressed.length ? !cuts.committed : !cuts.disputed.length) {
+      return { ok: false, stage: 'simplify', reason: `simplify implementer applied nothing it committed and disputed nothing: ${cuts.summary}` }
+    }
+    const g = await gate('the simplify cuts', 'simplify', false)
+    if (!g.ok) return { ok: false, stage: 'verify', reason: g.reason, verify: g.verify }
+    changedFiles = g.verify.changedFiles
+    const unhandled = Math.max(0, review.findings.length - cuts.addressed.length - cuts.disputed.length)
+    simplify = { net: review.net, applied: cuts.addressed, disputed: cuts.disputed, unhandled }
+  }
+}
+
 // Gates are keyed so a fix round re-reviews only the ones that failed: fresh
 // reviewers oscillate, inventing a new nit each round and never converging.
 const qualityTypes = [...QUALITY_ALWAYS, ...Object.keys(ASPECT_AGENTS).filter((a) => aspects.has(a)).map((a) => ASPECT_AGENTS[a])]
@@ -433,6 +519,7 @@ const handBack = (reason) => ({
   deadReviewers: deadGates().map((g) => g.key),
   degraded: [...MISSING_TYPES],
   redEvidence: impl.redEvidence,
+  simplify,
   disputes,
   resolved,
   verdicts: Object.fromEntries(state),
@@ -506,6 +593,7 @@ return {
   redEvidence: impl.redEvidence,
   changedFiles,
   minorFindings: minor,
+  simplify,
   disputes,
   resolved,
   summaries: Object.fromEntries(gates.map((g) => [g.key, state.get(g.key).summary])),
