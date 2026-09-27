@@ -411,6 +411,7 @@ const handBack = (reason) => ({
   blocking: outstanding(),
   deadReviewers: deadGates().map((g) => g.key),
   degraded: [...MISSING_TYPES],
+  redEvidence: impl.redEvidence,
   disputes,
   verdicts: Object.fromEntries(state),
 })

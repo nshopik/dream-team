@@ -5,6 +5,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Fixed
+
+- `dream-fixer-loop` returns `redEvidence` on a hand-back too, so the report no longer claims a
+  bug fix's test was never seen failing.
+
 ## [0.8.1] - 2026-09-27
 
 ### Fixed
