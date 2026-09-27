@@ -1,0 +1,37 @@
+{
+  "ok": true,
+  "issue": 63,
+  "branch": "issue-63-rotate-off-by-one",
+  "implementer": "voltagent-lang:golang-pro",
+  "reviewers": [
+    "pr-review-toolkit:code-reviewer",
+    "pr-review-toolkit:comment-analyzer",
+    "pr-review-toolkit:silent-failure-hunter",
+    "pr-review-toolkit:pr-test-analyzer",
+    "domain"
+  ],
+  "degraded": [],
+  "fixRounds": 0,
+  "assumptions": [],
+  "redEvidence": "--- FAIL: TestRotateKeepsN (0.00s)\n    rotate_test.go:41: kept 4 files, want 5",
+  "changedFiles": [
+    "internal/rotate/rotate.go",
+    "internal/rotate/rotate_test.go"
+  ],
+  "minorFindings": [
+    {
+      "severity": "minor",
+      "description": "keep variable could be named keepN for symmetry with maxN",
+      "file": "internal/rotate/rotate.go",
+      "gate": "pr-review-toolkit:code-reviewer"
+    }
+  ],
+  "disputes": [],
+  "summaries": {
+    "pr-review-toolkit:code-reviewer": "Correct fix, one naming nit.",
+    "pr-review-toolkit:comment-analyzer": "No findings.",
+    "pr-review-toolkit:silent-failure-hunter": "No findings.",
+    "pr-review-toolkit:pr-test-analyzer": "Red evidence matches the bug; test pins the boundary.",
+    "domain": "Retention count now matches the documented --keep semantics. No findings."
+  }
+}

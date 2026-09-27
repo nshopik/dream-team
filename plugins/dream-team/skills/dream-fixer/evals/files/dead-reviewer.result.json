@@ -1,0 +1,36 @@
+{
+  "ok": false,
+  "stage": "review",
+  "reason": "0 blocking finding(s) and 1 dead reviewer(s) outstanding after 3 fix rounds",
+  "handBack": true,
+  "blocking": [],
+  "deadReviewers": [
+    "pr-review-toolkit:silent-failure-hunter"
+  ],
+  "degraded": [],
+  "redEvidence": "--- FAIL: TestFlushHonoursDeadline (2.01s)\n    flush_test.go:58: flush returned after 2s, deadline was 500ms",
+  "disputes": [],
+  "verdicts": {
+    "pr-review-toolkit:code-reviewer": {
+      "summary": "No findings.",
+      "findings": []
+    },
+    "pr-review-toolkit:comment-analyzer": {
+      "summary": "No findings.",
+      "findings": []
+    },
+    "pr-review-toolkit:silent-failure-hunter": {
+      "dead": true,
+      "summary": "pr-review-toolkit:silent-failure-hunter reviewer produced no verdict",
+      "findings": []
+    },
+    "pr-review-toolkit:pr-test-analyzer": {
+      "summary": "Red evidence matches the missed deadline. No findings.",
+      "findings": []
+    },
+    "domain": {
+      "summary": "Batch flush honours the configured deadline. No findings.",
+      "findings": []
+    }
+  }
+}
