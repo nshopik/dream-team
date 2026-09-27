@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-09-28
+
+### Added
+
+- `dream-fixer-loop` runs a Simplify phase before review that applies `ponytail:ponytail-review`
+  cuts to a diff with code and reports them in its result.
+
 ### Removed
 
 - `dream-fixer` drops its `fix-rounds` argument; the review fix loop always runs at most 3 rounds.

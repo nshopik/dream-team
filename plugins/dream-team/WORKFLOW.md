@@ -86,8 +86,8 @@ A bug reported from outside (the dogfood router, a user) enters here too: one is
        for the note that closes the scout issue.
      - Light (docs, config, rename, no behaviour change): one builder agent plus
        `gateCommands`, no reviewers.
-     - Full: implementer, mechanical gate, quality reviewers, domain reviewer, bounded fix
-       rounds.
+     - Full: implementer, mechanical gate, over-engineering cuts, quality reviewers, domain
+       reviewer, bounded fix rounds.
   4. Lab work (perf gate, tests that need root) through `dream-team:lab-runner` on the host the
      repo's `CLAUDE.md` names.
   5. MR: one folded commit, description by `scope-mr`, with ratchet floors, the component table

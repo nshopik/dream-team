@@ -151,9 +151,15 @@ The workflow returns structured, not final. Read it and decide:
     `deadReviewers` empty, carry on to the lab steps and step 7; otherwise hand the branch back.
   - `deadReviewers` non-empty → those reviewers returned nothing on every try. Do not open the MR;
     hand the branch back.
-- **`ok: false` otherwise** — the implement, verify or fix stage failed. Report the reason; the
-  branch is where the agent left it.
-- **`degraded`** — roster types that were not dispatchable and ran as a generic agent instead.
+- **`ok: false` otherwise** — the implement, verify, simplify or fix stage failed. Report the
+  reason; the branch is where the agent left it.
+- **`degraded`** — roster types that were not dispatchable and ran as a generic agent instead, and
+  `ponytail:ponytail-review` when that skill was missing and the Simplify phase was skipped.
+- **`simplify`** — the over-engineering cuts made before review: `applied`, `disputed` with the
+  implementer's reason, and `net`, the review's estimate of lines that could go. Put applied cuts in
+  the MR description, and `net` only when nothing was disputed; treat a disputed cut like a minor
+  finding. `unhandled` counts cuts the implementer neither applied nor disputed; above 0 → say so in
+  the MR description. `null` → the phase was skipped.
 - **`disputes`** — the fixer refused a finding and gave evidence. Check it yourself. The fixer may
   be right; it may also be rationalizing. Apply the fix or accept the dispute.
 - **`resolved`** — blocking findings a fix round fixed, each with its gate and round.
@@ -183,8 +189,8 @@ milestones. None clearly fits → ask.
 Commit anything you changed in step 6. If you changed anything, run every `gateCommands` entry on
 the new head yourself and carry on only when all exit 0; a red gate is a failed verify.
 
-Fold the branch to one commit. The workflow leaves the implementer's commit plus one per build-fix
-and fix round, and one issue is one commit:
+Fold the branch to one commit. The workflow leaves the implementer's commit plus one for any
+simplify cuts and one per build-fix and fix round, and one issue is one commit:
 
 ```sh
 OLD=$(git rev-parse HEAD)
