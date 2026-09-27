@@ -2,6 +2,9 @@
 
 - Write skill rules as atomic `-` bullets, one condition and one action each; never as prose
   paragraphs.
+- Add a skill rule only for a failure seen in a real run or eval; never for a hypothetical one.
+- Prefer editing or deleting an existing rule over adding a new one.
+- Fix one failure with one rule; never add a rule for adjacent cases the issue did not hit.
 - Keep rules out of `README.md`; it points at the skills instead of restating them.
 - Keep `skills/*/evals/` out of git; the eval corpus is local and unpublished.
 - Run evals with `--plugin-dir .`; without it they measure the installed plugin cache, not the
