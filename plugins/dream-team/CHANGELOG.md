@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.8.9] - 2026-09-28
+
+### Fixed
+
+- `dream-fixer-loop` fails the verify stage, naming the paths, when an implement or fix agent
+  leaves uncommitted edits in the working tree.
+
 ## [0.8.8] - 2026-09-28
 
 ### Fixed
