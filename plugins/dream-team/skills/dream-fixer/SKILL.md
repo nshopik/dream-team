@@ -8,7 +8,7 @@ description: >-
   number plus intent to resolve it, even when the user doesn't spell out the review or MR steps.
   Not for vague feature ideas with no issue (use brainstorming), and not for reviewing an existing
   PR (use review-pr).
-argument-hint: <issue-number> [fix-rounds]
+argument-hint: <issue-number>
 ---
 
 # dream-fixer
@@ -120,8 +120,7 @@ object (never a stringified one):
   "base": "<sha from step 4>",
   "gateCommands": ["cargo build --workspace", "cargo test --workspace", "cargo clippy --workspace"],
   "implementer": "<catalog type or generic>",
-  "domainReviewer": "<catalog type or generic>",
-  "fixRounds": 3
+  "domainReviewer": "<catalog type or generic>"
 }
 ```
 
@@ -130,7 +129,6 @@ object (never a stringified one):
 - `gateCommands`: the build, test and lint commands the repo's CI config runs that also run in this
   checkout — CI config first, `CLAUDE.md` and README second. The mechanical gate runs exactly
   these after the implementation and after every fix commit. Leave out lab work. Required.
-- `fixRounds` (default 3, the skill's second argument) is the review fix-loop budget.
 
 Report the branch, the implementer and the domain reviewer by type name, no prose — the roster is
 the one thing the user cannot read off `/workflows`. Three lines, the label in bold:
@@ -147,9 +145,7 @@ The workflow returns structured, not final. Read it and decide:
 
 - **`ok: false` with `handBack: true`** — blocking findings survived. `reason` says which case:
   - *Fix rounds ran out.* Do not open an MR. Report the outstanding findings and hand the branch
-    back. When the user wants more rounds, relaunch with `resumeFromRunId: <runId>` and the same
-    args except a higher `fixRounds`: finished stages return from cache and only the new rounds
-    run. Same session only. Change no other arg. Never relaunch without `resumeFromRunId`.
+    back.
   - *The fixer disputed every finding and the reviewers held.* Settle each entry in `disputes`
     yourself, per the `disputes` bullet below. With every entry in `blocking` settled and
     `deadReviewers` empty, carry on to the lab steps and step 7; otherwise hand the branch back.
