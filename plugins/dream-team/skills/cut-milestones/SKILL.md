@@ -26,8 +26,9 @@ the numbers.
   redesign on failure.
 - Milestones with no dependency between them are listed as parallel.
 - The dependency order is written out.
-- A milestone takes a plain integer or a `major.minor` version.
-- A split takes the next free numbers, never a letter.
+- A milestone is `M<n>`: a capital M and a plain integer, no dash.
+- A version milestone is `v<major>.<minor>`.
+- A split takes the next free `M<n>`, never a letter.
 - Work spanning several milestones is a `Meta:` issue per `scope-issue`, not a milestone.
 
 ## Numbers
