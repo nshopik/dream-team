@@ -338,7 +338,7 @@ function verifyRunPrompt() {
     'Run Claude Code\'s /verify on the branch diff in a nested session from Bash. Do not replicate /verify yourself.',
     '`command -v claude` prints nothing → return available false and verdict SKIP.',
     'Otherwise run this as one Bash call from the repo root, with the Bash tool\'s 600000 ms timeout and no permission flags; shell variables do not survive to the next call, so read the stream later from the directory it prints:',
-    `  D=$(mktemp -d) && echo "$D" && claude -p "/verify the changes in ${BASE}..HEAD. Write every capture under $D." --output-format stream-json --verbose > "$D/stream.jsonl"`,
+    `  D=$(mktemp -d) && echo "$D" && claude -p "/verify the changes in ${BASE}..HEAD. Write every capture under $D." --model opus --effort medium --output-format stream-json --verbose > "$D/stream.jsonl"`,
     'The run exits non-zero, times out, or its stream has no final result event → return available true and verdict BLOCKED, with the exit status or the last stream lines as reason.',
     'The init event (type system, subtype init) does not list verify under slash_commands → return available false and verdict SKIP.',
     'Otherwise return available true and, from the run\'s final report: the verdict, the command it drove the changed code with, that command\'s output trimmed to the key lines, and the reason for the verdict.',
