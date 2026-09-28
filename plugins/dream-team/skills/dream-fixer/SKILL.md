@@ -165,13 +165,13 @@ The workflow returns structured, not final. Read it and decide:
   finding. `unhandled` counts cuts the implementer neither applied nor disputed; above 0 → say so in
   the MR description. `null` → the phase was skipped.
 - **`verifyRun`** — the last `/verify` gate run: `verdict`, `command`, `output`, `reason`,
-  `recipe`. `null` → the gate did not run, or was skipped (see `degraded`). A FAIL was a blocking finding for the fix loop.
+  `recipePath`. `null` → the gate did not run, or was skipped (see `degraded`). A FAIL was a blocking finding for the fix loop.
   - `PASS` → put its `command` and `output` in the MR description.
   - `BLOCKED` and its `reason` needs the lab → run it as a lab step through `dream-team:lab-runner`.
   - `BLOCKED` otherwise → name the verdict and its `reason` in the report.
   - `SKIP` → name the verdict and its `reason` in the report.
-  - `recipe` non-empty → never commit it on the branch; report it for the user to commit
-    separately as `.claude/skills/verify/SKILL.md`.
+  - `recipePath` non-empty → never commit the recipe on the branch; report its path for the user
+    to copy to `.claude/skills/verify/SKILL.md` and commit separately.
 - **`disputes`** — the fixer refused a finding and gave evidence. Check it yourself. The fixer may
   be right; it may also be rationalizing. Apply the fix or accept the dispute.
 - **`resolved`** — blocking findings a fix round fixed, each with its gate and round.
@@ -259,8 +259,8 @@ The report carries only what the user must know or act on.
 - Say so when `redEvidence` is empty on a bug fix.
 - Give a lab step one line: its measured numbers, or its verdict when it measured none.
 - Give a `verifyRun` SKIP, or a BLOCKED that no lab step ran, one line: the verdict and its `reason`.
-- Give a non-empty `verifyRun.recipe` one `**Verify recipe:**` bullet, the contents in a fenced
-  block under it.
+- Give a non-empty `verifyRun.recipePath` one `**Verify recipe:**` bullet: the path only, never
+  the contents.
 - Name each reviewer that could not check something, and the check you ran in its place.
 - Stopped at the gate → say what is blocking and stop there.
 - Leave out minor findings, applied or dropped, and reviewer verdicts with no finding.

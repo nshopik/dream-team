@@ -9,6 +9,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - `dream-fixer-loop` runs the nested `/verify` session on Opus at medium effort instead of the
   user's default model and effort.
+- `dream-fixer` reports the `/verify` cold-start recipe by its path, not its contents.
 
 ## [0.10.0] - 2026-09-28
 

@@ -139,7 +139,7 @@ const SIMPLIFY_SCHEMA = {
 
 const VERIFY_RUN_SCHEMA = {
   type: 'object',
-  required: ['available', 'verdict', 'command', 'output', 'reason', 'recipe'],
+  required: ['available', 'verdict', 'command', 'output', 'reason', 'recipePath'],
   additionalProperties: false,
   properties: {
     available: { type: 'boolean', description: 'false when `claude` is not on PATH or the nested init event does not list verify under slash_commands' },
@@ -147,7 +147,7 @@ const VERIFY_RUN_SCHEMA = {
     command: { type: 'string', description: 'the command /verify drove the changed code with' },
     output: { type: 'string', description: 'that command\'s output, trimmed to the key lines' },
     reason: { type: 'string', description: 'the reason /verify gives for its verdict' },
-    recipe: { type: 'string', description: 'contents of the .claude/skills/verify/SKILL.md the nested run wrote; empty string when it wrote none' },
+    recipePath: { type: 'string', description: 'path outside the checkout of the .claude/skills/verify/SKILL.md the nested run wrote; empty string when it wrote none' },
   },
 }
 
@@ -342,9 +342,9 @@ function verifyRunPrompt() {
     'The run exits non-zero, times out, or its stream has no final result event → return available true and verdict BLOCKED, with the exit status or the last stream lines as reason.',
     'The init event (type system, subtype init) does not list verify under slash_commands → return available false and verdict SKIP.',
     'Otherwise return available true and, from the run\'s final report: the verdict, the command it drove the changed code with, that command\'s output trimmed to the key lines, and the reason for the verdict.',
-    '`git status --porcelain --untracked-files=all -- .claude/skills/verify/SKILL.md` prints `??` → return the file\'s contents as recipe and delete the file.',
-    'It prints ` M` → return the file\'s contents as recipe and run `git restore -- .claude/skills/verify/SKILL.md`.',
-    'It prints nothing → recipe is an empty string; leave the file alone.',
+    '`git status --porcelain --untracked-files=all -- .claude/skills/verify/SKILL.md` prints `??` → move the file to SKILL.md in the directory the run printed and return that path as recipePath.',
+    'It prints ` M` → copy the file to SKILL.md in that directory, return that path as recipePath, and run `git restore -- .claude/skills/verify/SKILL.md`.',
+    'It prints nothing → recipePath is an empty string; leave the file alone.',
     'Delete or restore nothing else, and do not edit, stage or commit anything: the other reviewers share this checkout.',
   ].join('\n')
 }
@@ -525,7 +525,7 @@ let verifyRun = null
 async function runVerify(label, phase, prev) {
   const r = await agent(verifyRunPrompt(), { label, phase, schema: VERIFY_RUN_SCHEMA, model: 'sonnet', effort: 'low' })
   if (!r) return null
-  if (r.available) verifyRun = { ...r, recipe: r.recipe || verifyRun?.recipe || '' }
+  if (r.available) verifyRun = { ...r, recipePath: r.recipePath || verifyRun?.recipePath || '' }
   else {
     MISSING_TYPES.add(VERIFY_SKILL)
     log(`Review: /verify not available — skipped: ${r.reason}`)

@@ -64,8 +64,8 @@ for (const row of rows) {
 }
 
 const lean = loaded([], 0)
-const vrun = (verdict, recipe = '') => ({ available: true, verdict, command: 'curl -s localhost:8080/health', output: '{"ok":true}', reason: `${verdict} reason`, recipe })
-const unavailable = { available: false, verdict: 'SKIP', command: '', output: '', reason: '', recipe: '' }
+const vrun = (verdict, recipePath = '') => ({ available: true, verdict, command: 'curl -s localhost:8080/health', output: '{"ok":true}', reason: `${verdict} reason`, recipePath })
+const unavailable = { available: false, verdict: 'SKIP', command: '', output: '', reason: '', recipePath: '' }
 const failFinding = { severity: 'important', gate: 'verify', round: 1,
   description: '/verify FAIL: FAIL reason\nCommand: curl -s localhost:8080/health\nOutput:\n{"ok":true}' }
 
@@ -76,8 +76,8 @@ const verifyRows = [
     ok: true, verifyRun: null, degraded: [], ran: 0, fixRounds: 0, resolved: [] },
   { name: 'verify unavailable', opts: { verify: true, verifyRuns: [unavailable] },
     ok: true, verifyRun: null, degraded: ['verify'], ran: 1, fixRounds: 0, resolved: [] },
-  { name: 'verify PASS with recipe', opts: { verify: true, verifyRuns: [vrun('PASS', '# recipe')] },
-    ok: true, verifyRun: vrun('PASS', '# recipe'), degraded: [], ran: 1, fixRounds: 0, resolved: [] },
+  { name: 'verify PASS with recipe', opts: { verify: true, verifyRuns: [vrun('PASS', '/tmp/tmp.x/SKILL.md')] },
+    ok: true, verifyRun: vrun('PASS', '/tmp/tmp.x/SKILL.md'), degraded: [], ran: 1, fixRounds: 0, resolved: [] },
   { name: 'verify BLOCKED is not a finding', opts: { verify: true, verifyRuns: [vrun('BLOCKED')] },
     ok: true, verifyRun: vrun('BLOCKED'), degraded: [], ran: 1, fixRounds: 0, resolved: [] },
   { name: 'verify FAIL fixed in one round', opts: { verify: true, verifyRuns: [vrun('FAIL'), vrun('PASS')] },
