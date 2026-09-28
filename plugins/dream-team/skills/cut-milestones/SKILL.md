@@ -30,6 +30,8 @@ the numbers.
 - A version milestone is `v<major>.<minor>`.
 - A split takes the next free `M<n>`, never a letter.
 - Work spanning several milestones is a `Meta:` issue per `scope-issue`, not a milestone.
+- An issue in a milestone with an open dependency carries the host's waiting label
+  (`workflow::future` on GitLab); an issue in a ready milestone carries none.
 
 ## Numbers
 
@@ -42,8 +44,8 @@ the numbers.
 2. Draft each milestone: number, title, exit criterion, gate type, what it depends on.
 3. Write the dependency order: which milestones run in parallel, what waits on what.
 4. Show the draft to the user. Stop until the user sets every placeholder.
-5. Create each milestone through the host's tooling skill, the exit criterion in its
-   description.
+5. Create each milestone through the host's tooling skill. Its description is three bullets:
+   `- **Exit:**`, `- **Gate:**`, `- **Depends on:**` (milestones, or `none`).
 6. Add one ROADMAP row per milestone, in the same table as existing ones.
 7. Report the milestones created and the dependency order.
 

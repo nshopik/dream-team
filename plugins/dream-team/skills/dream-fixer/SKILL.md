@@ -192,7 +192,8 @@ Adjacent defects — anything found outside the diff:
 - Filed → never leave the finding in the MR description or the chat summary.
 - Filing fails or yields no issue link → name the defect in the report as unfiled, with the reason.
 
-Every issue you open gets the milestone it belongs to, set at creation. Pick it from the repo's
+Every issue you open gets the milestone it belongs to, set at creation, and the host's waiting
+label when that milestone has an open dependency. Pick the milestone from the repo's
 roadmap milestone table (`ROADMAP.md` or `docs/ROADMAP.md`); no roadmap → the tracker's open
 milestones. None clearly fits → ask.
 
