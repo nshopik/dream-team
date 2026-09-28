@@ -1,4 +1,4 @@
-// What dream-fixer-loop does with each Simplify review reply, through stub agents; no claude call.
+// What dream-fixer-loop does with each Simplify review and /verify gate reply, through stub agents; no claude call.
 // Usage: node test_simplify.mjs
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
@@ -7,20 +7,23 @@ const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
 const body = readFileSync(new URL('dream-fixer-loop.js', import.meta.url), 'utf8').replace(/^export /m, '')
 const args = { issue: '1', branch: 'issue-1', base: 'HEAD', gateCommands: ['true'] }
 
-// Every reviewer passes, so the run ends after Review.
-async function run(review, cuts) {
+// Every other reviewer passes, so the run ends after Review or its fix rounds.
+// verifyRuns: the /verify gate's replies, one per run.
+async function run(review, cuts, { verify = false, aspects = ['code'], verifyRuns = [] } = {}) {
   const labels = []
   async function agent(prompt, opts) {
     labels.push(opts.label)
     if (opts.phase === 'Implement') return { committed: true, summary: '', redEvidence: '' }
-    if (opts.phase === 'Verify') return { passed: true, summary: '', changedFiles: [], dirtyPaths: [], aspects: ['code'] }
+    if (opts.phase === 'Verify') return { passed: true, summary: '', changedFiles: [], dirtyPaths: [], aspects }
     if (opts.label.startsWith('simplify:')) return review
     if (opts.label.startsWith('simplify-fix:')) return cuts
+    if (/^(re-)?review:verify/.test(opts.label)) return verifyRuns.shift()
+    if (opts.label.startsWith('fix:')) return { committed: true, addressed: ['verify'], disputed: [], summary: '' }
     if (opts.phase === 'Review') return { summary: '', findings: [] }
     throw new Error(`unexpected agent ${opts.label}`)
   }
   const result = await new AsyncFunction('args', 'agent', 'phase', 'log', 'parallel', body)(
-    args, agent, () => {}, () => {}, (fns) => Promise.all(fns.map((f) => f())))
+    { ...args, verify }, agent, () => {}, () => {}, (fns) => Promise.all(fns.map((f) => f())))
   return { result, labels }
 }
 
@@ -57,5 +60,44 @@ for (const row of rows) {
   } else {
     assert.equal(result.stage, row.stage, row.name)
   }
+  console.log(`PASS ${row.name}`)
+}
+
+const lean = loaded([], 0)
+const vrun = (verdict, recipe = '') => ({ available: true, verdict, command: 'curl -s localhost:8080/health', output: '{"ok":true}', reason: `${verdict} reason`, recipe })
+const unavailable = { available: false, verdict: 'SKIP', command: '', output: '', reason: '', recipe: '' }
+const failFinding = { severity: 'important', gate: 'verify', round: 1,
+  description: '/verify FAIL: FAIL reason\nCommand: curl -s localhost:8080/health\nOutput:\n{"ok":true}' }
+
+const verifyRows = [
+  { name: 'verify off', opts: {},
+    ok: true, verifyRun: null, degraded: [], ran: 0, fixRounds: 0, resolved: [] },
+  { name: 'verify on, diff has no code', opts: { verify: true, aspects: [] },
+    ok: true, verifyRun: null, degraded: [], ran: 0, fixRounds: 0, resolved: [] },
+  { name: 'verify unavailable', opts: { verify: true, verifyRuns: [unavailable] },
+    ok: true, verifyRun: null, degraded: ['verify'], ran: 1, fixRounds: 0, resolved: [] },
+  { name: 'verify PASS with recipe', opts: { verify: true, verifyRuns: [vrun('PASS', '# recipe')] },
+    ok: true, verifyRun: vrun('PASS', '# recipe'), degraded: [], ran: 1, fixRounds: 0, resolved: [] },
+  { name: 'verify BLOCKED is not a finding', opts: { verify: true, verifyRuns: [vrun('BLOCKED')] },
+    ok: true, verifyRun: vrun('BLOCKED'), degraded: [], ran: 1, fixRounds: 0, resolved: [] },
+  { name: 'verify FAIL fixed in one round', opts: { verify: true, verifyRuns: [vrun('FAIL'), vrun('PASS')] },
+    ok: true, verifyRun: vrun('PASS'), degraded: [], ran: 2, fixRounds: 1, resolved: [failFinding] },
+  { name: 'verify FAIL never fixed', opts: { verify: true, verifyRuns: [vrun('FAIL'), vrun('FAIL'), vrun('FAIL'), vrun('FAIL')] },
+    ok: false, verifyRun: vrun('FAIL'), degraded: [], ran: 4, resolved: [] },
+  { name: 'verify FAIL then BLOCKED keeps the FAIL', opts: { verify: true, verifyRuns: [vrun('FAIL'), vrun('BLOCKED'), vrun('BLOCKED'), vrun('BLOCKED')] },
+    ok: false, verifyRun: vrun('BLOCKED'), degraded: [], ran: 4, resolved: [] },
+  { name: 'verify FAIL then unavailable keeps the FAIL', opts: { verify: true, verifyRuns: [vrun('FAIL'), unavailable, unavailable, unavailable] },
+    ok: false, verifyRun: vrun('FAIL'), degraded: ['verify'], ran: 4, resolved: [] },
+]
+
+for (const row of verifyRows) {
+  const { result, labels } = await run(lean, undefined, row.opts)
+  assert.equal(result.ok, row.ok, row.name)
+  assert.equal(labels.filter((l) => /^(re-)?review:verify/.test(l)).length, row.ran, `${row.name}: /verify runs`)
+  assert.deepEqual(result.verifyRun, row.verifyRun, row.name)
+  assert.deepEqual(result.degraded, row.degraded, row.name)
+  assert.deepEqual(result.resolved, row.resolved, row.name)
+  if (row.ok) assert.equal(result.fixRounds, row.fixRounds, row.name)
+  else assert.equal(result.handBack, true, row.name)
   console.log(`PASS ${row.name}`)
 }
