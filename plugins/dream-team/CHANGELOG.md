@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-09-28
+
 ### Changed
 
 - **Breaking:** milestones are named `M<n>` or `v<major>.<minor>`; `align-project` flags a bare
