@@ -7,6 +7,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Added
 
+- `align-project` checks for one area document per `area::` label and adds the rule that an MR
+  updates its area document.
 - Milestone descriptions carry bold `Exit:`, `Gate:` and `Depends on:` bullets, and issues in a
   milestone with an open dependency carry the host's waiting label until `milestone-close`
   clears it.

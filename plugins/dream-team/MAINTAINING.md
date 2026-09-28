@@ -67,6 +67,9 @@ Planning stays explicit, at issue size, because you review every plan.
 - Parallel milestones show readiness through the waiting label, not ROADMAP: the Board's
   default column is what can start now. `workflow::future`, not `workflow::blocked`: blocked means
   an external gate someone must chase; future clears itself when the dependency closes.
+- Issues are the log, area documents the reference: one small document per `area::` label, each
+  fact with one owner, updated in the MR that changes it. One large spec went stale and hard to
+  skim; a closed issue is not a place anyone looks things up.
 
 ## Open items
 
