@@ -5,6 +5,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking:** milestones are named `M<n>` or `v<major>.<minor>`; `align-project` flags a bare
+  integer or `major.minor` milestone.
+
 ## [0.10.1] - 2026-09-28
 
 ### Changed
