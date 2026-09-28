@@ -64,6 +64,9 @@ Planning stays explicit, at issue size, because you review every plan.
 - Milestones are `M<n>`, not a bare integer: "milestone 5" reads badly in prose and collides
   with counts ("all 5 sites"). One generic prefix beats a per-project codename; the repo name
   disambiguates the rare cross-project mention.
+- Parallel milestones show readiness through the waiting label, not ROADMAP: the Board's
+  default column is what can start now. `workflow::future`, not `workflow::blocked`: blocked means
+  an external gate someone must chase; future clears itself when the dependency closes.
 
 ## Open items
 

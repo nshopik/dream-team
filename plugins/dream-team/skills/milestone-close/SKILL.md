@@ -64,7 +64,8 @@ Report drift, fix nothing yet:
 The approved closes and moves, through the host's tooling skill; the `Evidence:` issue closes with
 the milestone. Docs fixes, kept facts, approved `CLAUDE.md` cuts and promotions as one MR; approved
 promotions and cuts leave `CLAUDE.local.md` directly, since it is untracked. Then close the
-milestone and set the roadmap status.
+milestone and set the roadmap status. Every milestone whose `Depends on:` is now all closed
+is ready: drop the host's waiting label (`workflow::future` on GitLab) from its open issues.
 
 ## Report back
 

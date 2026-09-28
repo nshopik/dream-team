@@ -20,6 +20,8 @@ changes no code, no docs and no tracker settings; the filed issues go through `d
 - Each milestone has a matching ROADMAP row.
 - A milestone gated on field evidence has one open `Evidence:` issue.
 - Every open issue has a `type::` label, an `area::` label and a milestone.
+- Each milestone description lists `Exit:`, `Gate:` and `Depends on:` as bold bullets.
+- An open issue carries the waiting label exactly when its milestone has an open dependency.
 - Every open issue runs context, problem, proposal, per `scope-issue`.
 - A `Meta:` issue has no `area::` label and no milestone.
 - An issue with an open blocker ends with one `Blocked by #<n>` line per blocker.
