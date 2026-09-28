@@ -120,7 +120,8 @@ object (never a stringified one):
   "base": "<sha from step 4>",
   "gateCommands": ["cargo build --workspace", "cargo test --workspace", "cargo clippy --workspace"],
   "implementer": "<catalog type or generic>",
-  "domainReviewer": "<catalog type or generic>"
+  "domainReviewer": "<catalog type or generic>",
+  "verify": false
 }
 ```
 
@@ -129,6 +130,8 @@ object (never a stringified one):
 - `gateCommands`: the build, test and lint commands the repo's CI config runs that also run in this
   checkout — CI config first, `CLAUDE.md` and README second. The mechanical gate runs exactly
   these after the implementation and after every fix commit. Leave out lab work. Required.
+- `verify`: `true` or `false`; runs Claude Code's `/verify` as a Review gate. Default `false`.
+- The repo's `CLAUDE.md` opts in to `/verify` → set `verify` to `true`.
 
 Report the branch, the implementer and the domain reviewer by type name, no prose — the roster is
 the one thing the user cannot read off `/workflows`. Three lines, the label in bold:
@@ -153,13 +156,22 @@ The workflow returns structured, not final. Read it and decide:
     hand the branch back.
 - **`ok: false` otherwise** — the implement, verify, simplify or fix stage failed. Report the
   reason; the branch is where the agent left it.
-- **`degraded`** — roster types that were not dispatchable and ran as a generic agent instead, and
-  `ponytail:ponytail-review` when that skill was missing and the Simplify phase was skipped.
+- **`degraded`** — roster types that were not dispatchable and ran as a generic agent instead,
+  `ponytail:ponytail-review` when that skill was missing and the Simplify phase was skipped, and
+  `verify` when `claude` or its `/verify` was missing and the `/verify` gate was skipped.
 - **`simplify`** — the over-engineering cuts made before review: `applied`, `disputed` with the
   implementer's reason, and `net`, the review's estimate of lines that could go. Put applied cuts in
   the MR description, and `net` only when nothing was disputed; treat a disputed cut like a minor
   finding. `unhandled` counts cuts the implementer neither applied nor disputed; above 0 → say so in
   the MR description. `null` → the phase was skipped.
+- **`verifyRun`** — the last `/verify` gate run: `verdict`, `command`, `output`, `reason`,
+  `recipe`. `null` → the gate did not run, or was skipped (see `degraded`). A FAIL was a blocking finding for the fix loop.
+  - `PASS` → put its `command` and `output` in the MR description.
+  - `BLOCKED` and its `reason` needs the lab → run it as a lab step through `dream-team:lab-runner`.
+  - `BLOCKED` otherwise → name the verdict and its `reason` in the report.
+  - `SKIP` → name the verdict and its `reason` in the report.
+  - `recipe` non-empty → never commit it on the branch; report it for the user to commit
+    separately as `.claude/skills/verify/SKILL.md`.
 - **`disputes`** — the fixer refused a finding and gave evidence. Check it yourself. The fixer may
   be right; it may also be rationalizing. Apply the fix or accept the dispute.
 - **`resolved`** — blocking findings a fix round fixed, each with its gate and round.
@@ -246,6 +258,9 @@ The report carries only what the user must know or act on.
 - Name each adjacent defect that could not be filed, and why, one line each.
 - Say so when `redEvidence` is empty on a bug fix.
 - Give a lab step one line: its measured numbers, or its verdict when it measured none.
+- Give a `verifyRun` SKIP, or a BLOCKED that no lab step ran, one line: the verdict and its `reason`.
+- Give a non-empty `verifyRun.recipe` one `**Verify recipe:**` bullet, the contents in a fenced
+  block under it.
 - Name each reviewer that could not check something, and the check you ran in its place.
 - Stopped at the gate → say what is blocking and stop there.
 - Leave out minor findings, applied or dropped, and reviewer verdicts with no finding.
