@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-09-28
+
 ### Changed
 
 - `dream-fixer-loop` runs the nested `/verify` session on Opus at medium effort instead of the
