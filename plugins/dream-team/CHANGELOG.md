@@ -5,6 +5,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Fixed
+
+- `dream-fixer` reports as assumptions only what the implementer had to guess, not a choice that a
+  written rule or instruction settles.
+
 ## [0.9.0] - 2026-09-28
 
 ### Added
