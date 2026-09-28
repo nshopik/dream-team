@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-09-28
+
+### Added
+
+- `dream-fixer-loop` runs Claude Code's `/verify` as an opt-in Review gate when the repo's
+  `CLAUDE.md` asks for it, and `dream-fixer` puts its evidence in the MR.
+
 ## [0.9.1] - 2026-09-28
 
 ### Fixed
