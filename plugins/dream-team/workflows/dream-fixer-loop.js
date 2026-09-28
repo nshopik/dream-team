@@ -43,7 +43,7 @@ const IMPL_SCHEMA = {
     committed: { type: 'boolean' },
     summary: { type: 'string' },
     redEvidence: { type: 'string', description: 'bug fix: key lines of the new test failing before the fix was applied; empty string when the issue is not a bug fix' },
-    assumptions: { type: 'array', items: { type: 'string' }, description: 'anything that had to be assumed because the issue left it open' },
+    assumptions: { type: 'array', items: { type: 'string' }, description: 'anything you had to guess because the issue left it open; a choice a written rule or instruction settles is not an assumption' },
   },
 }
 
@@ -262,7 +262,7 @@ function implPrompt() {
     'For a bug fix, write the test first, run it, and keep the key lines of its failing output: return them as redEvidence. Not a bug fix: return an empty string.',
     GATE,
     'Get every gate command green, then commit on the branch in the repo\'s commit convention. Commit once: one issue is one commit.',
-    'If the issue left something genuinely open, implement your best reading and list it in assumptions rather than stopping.',
+    'If the issue left something genuinely open, implement your best reading and list it in assumptions rather than stopping. A choice that a written rule or instruction settles (CLAUDE.md, a skill, a harness instruction) is not an assumption: leave it out.',
   ].join('\n')
 }
 

@@ -231,7 +231,8 @@ exits:
 
 The report carries only what the user must know or act on.
 
-- Open with every entry of `assumptions` as its own list under a `**Assumptions:**` heading.
+- Open with every `assumptions` entry that no written rule or instruction settles, as its own list
+  under a `**Assumptions:**` heading.
 - Put nothing else under that heading.
 - Every other item is one bullet with a bold label, e.g. `**Dispute accepted:**`, `**Lab:**`.
 - No blank line between bullets.
