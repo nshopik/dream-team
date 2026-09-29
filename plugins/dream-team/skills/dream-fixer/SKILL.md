@@ -17,8 +17,8 @@ One issue per invocation. If the user names several, do them one at a time.
 
 You are the orchestrator. You read, gate, roster, branch and ship. **You do not write the change** —
 the workflow's implementer does. Everything between the branch and the MR happens in dispatched
-agents. Your only edits are step 6's settled disputes and minor findings, which step 7 gates, and a
-scout issue's research note (step 2a).
+agents. Your only edits are step 6's settled disputes and minor findings, which step 7 gates, a
+light-tier issue's edit, and a scout issue's research note (step 2a).
 
 **Lab work is yours, not the workflow's.** Workflow agents never ssh to a lab host. Anything the
 issue or the repo's `CLAUDE.md` needs run on a lab host — a measurement the issue asks for, a test
