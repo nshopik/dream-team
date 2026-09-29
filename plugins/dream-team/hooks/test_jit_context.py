@@ -47,6 +47,8 @@ assert "<prose_style>" in context({"file_path": os.path.join(mine, "x.md")})
 
 assert jit.TEMPLATE in context({"file_path": "/r/docs/specs/0001-x-design.md"})
 assert os.path.isfile(jit.TEMPLATE)
+assert "<decision_record>" in context({"file_path": "/r/docs/decisions/0003-x.md"})
+assert "<decision_record>" in context({"command": "git mv docs/decisions/x.md docs/decisions/0003-x.md"})
 s = uuid.uuid4().hex                                           # vcs fires first, forge on the next call
 assert "<vcs_workflow>" in context({"command": "gh pr view 1"}, session=s)
 assert "<forge_tooling>" in context({"command": "gh pr view 1"}, session=s)
