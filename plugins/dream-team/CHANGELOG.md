@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.12.1] - 2026-09-29
+
 ### Changed
 
 - `lab-runner` runs at medium effort instead of low.
