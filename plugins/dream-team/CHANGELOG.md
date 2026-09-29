@@ -15,6 +15,16 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `jit-context` injects a decision-record rule on the first write under `docs/decisions/`: files
   are named `NNNN-<topic>.md` with a four-digit sequence from `0000`.
 
+### Changed
+
+- The spec template is a project overview with Context, Decision, Consequences, Design and Open
+  items sections; it drops Expertise required, Rejected alternatives, Affected files, Testing and
+  Out of scope.
+
+### Fixed
+
+- `jit-context` points spec writes at `docs/specs/` instead of `docs/superpowers/specs/`.
+
 ## [0.11.0] - 2026-09-28
 
 ### Changed
