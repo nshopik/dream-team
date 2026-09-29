@@ -66,9 +66,8 @@ full (step 3 on):
 - Not a bug fix — a bug fix needs a test seen failing, which only the full loop checks.
 - Touches no path the project's `CLAUDE.md` puts under a parity or perf gate.
 
-Light path: step 4, then one `caveman:cavecrew-builder` agent (`general-purpose` when that type is
-not in your Agent list) with the issue body, then every
-`gateCommands` entry yourself, then step 7. No workflow, no reviewers. Diff outgrows the criteria →
+Light path: step 4, then make the edit inline, then every `gateCommands` entry, then step 7. No
+workflow, no subagents, no reviewers. Diff outgrows the criteria →
 `git reset --hard <base>` and run the full loop. Report the tier and the criterion that allowed it.
 
 Scout tier: no workflow, no code; the research note is the one change you write. Answer the

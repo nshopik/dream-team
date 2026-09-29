@@ -78,7 +78,6 @@ Needs the Workflow tool. Uses:
 
 - `scope-mr` and `scope-issue` from `scope-style`.
 - `pr-review-toolkit` reviewers.
-- `caveman:cavecrew-builder` for docs-only issues.
 
 A missing agent type runs as a generic agent.
 

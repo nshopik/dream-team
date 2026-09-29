@@ -8,6 +8,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 ### Changed
 
 - `lab-runner` runs at medium effort instead of low.
+- `dream-fixer` light path makes the edit inline instead of dispatching a `cavecrew-builder` agent.
 
 ## [0.12.0] - 2026-09-29
 
