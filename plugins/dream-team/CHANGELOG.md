@@ -12,6 +12,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 - Milestone descriptions carry bold `Exit:`, `Gate:` and `Depends on:` bullets, and issues in a
   milestone with an open dependency carry the host's waiting label until `milestone-close`
   clears it.
+- `jit-context` injects a decision-record rule on the first write under `docs/decisions/`: files
+  are named `NNNN-<topic>.md` with a four-digit sequence from `0000`.
 
 ## [0.11.0] - 2026-09-28
 
