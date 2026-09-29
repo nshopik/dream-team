@@ -87,22 +87,17 @@ TEMPLATE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__
                         'reference', 'spec-template.md')
 
 SPEC = f"""<spec_structure>
-Writing a design doc / spec (`docs/superpowers/specs/NNNN-<topic>-design.md`, sequential
-ADR numbering; the date lives in the document header, not the filename)
-— use the lean-ADR template at `{TEMPLATE}`; read it before writing.
+Writing a spec (`docs/specs/NNNN-<topic>-design.md`, sequential numbering; the date
+lives in the document header, not the filename)
+— use the template at `{TEMPLATE}`; read it before writing.
 This overrides the brainstorming skill's freeform default.
 
 - Header: `**Date:**` + `**Status:**` (`Draft` → `Accepted`, terminal; or
   `Superseded by <spec-file>`). No branch name.
-- `## Context`, `## Decision`, `## Consequences` are mandatory. Every other section
-  is deleted when it would be empty — never "N/A", never "None at this time".
-- `## Consequences` names at least one negative, or it is not finished.
-- `## Rejected alternatives`: one bullet each, option then what killed it. Not a
-  pros/cons matrix.
-- `## Expertise required` goes directly after `## Decision`. A fresh agent reads it
-  to pick reviewers and implementers before it has read the Design, so it must be
-  above the bulk, not below it.
-- One spec lands one feature. Needs two → split it.
+- Sections: `## Context`, `## Decision`, `## Consequences`, `## Design`,
+  `## Open items`. An empty one is deleted — never "N/A", never "None at this time".
+- No per-change detail: file lists, test cases, rejected options and milestones go in
+  issues, area documents, `docs/decisions/` or the ROADMAP.
 Prose rules still apply; they inject on the next file write of the session.
 </spec_structure>"""
 

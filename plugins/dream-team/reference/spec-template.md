@@ -1,52 +1,30 @@
-# <topic>
+# <project>
 
 **Date:** YYYY-MM-DD
 **Status:** Draft | Accepted | Superseded by `<spec-file>`
 
-Every section below is optional except Context, Decision, and Consequences. An
-empty section is deleted, never filled with "N/A" or "None". One spec lands one
-feature; if it needs two, split it.
+A spec is a high-level overview of the project, written as bullets of facts. Per-change detail
+lives in issues, area documents and decision records. An empty section is deleted, never filled
+with "N/A" or "None".
 
 ## Context
 
-The problem, and enough of the current model to judge the decision. One or two
-paragraphs. No restating of the title.
+What the project is, what it replaces or starts from, and what is wrong with that today. The
+environment facts and constraints the design must meet.
 
 ## Decision
 
-What we are doing, stated flatly. Not why the alternatives lost — that is below.
-
-## Expertise required
-
-Which domains and capabilities this needs, and for what. Name domains, not specific
-agents. A fresh agent reads this to pick reviewers and implementers before reading
-the Design, so it sits high; humans skip it.
-
-## Rejected alternatives
-
-One bullet each: the option, then what killed it. Bullets, not a pros/cons matrix.
-Delete the section if nothing real was considered.
+What gets built, in one or two paragraphs. The governing rules every component obeys.
 
 ## Consequences
 
-What gets worse, not just what gets better. A section with no negative entry is
-not finished. This is the section future-you rereads.
+Costs and limits the whole project accepts: operational burden, failure modes, dependencies.
 
 ## Design
 
-The detail: invariants, seams, signatures, config surface, edge cases. Subsections
-scaled to their complexity. This is usually the bulk of the document.
+One subsection per component: parts, interfaces, numbers and behaviour. No file paths, no test
+cases.
 
-## Affected files
+## Open items
 
-Path — what changes. Include the files that deliberately do **not** change when a
-reader would expect them to.
-
-## Testing (TDD)
-
-Numbered cases, each pinning one behavior. Note any test-harness gotcha.
-
-## Out of scope
-
-Adjacent work this spec deliberately does not do, and where it lives instead.
-
+Numbered questions the design waits on, each with the person who answers it.
