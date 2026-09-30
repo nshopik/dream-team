@@ -23,7 +23,8 @@ light-tier issue's edit, and a scout issue's research note (step 2a).
 **Lab work is yours, not the workflow's.** Workflow agents never ssh to a lab host. Anything the
 issue or the repo's `CLAUDE.md` needs run on a lab host — a measurement the issue asks for, a test
 that needs root, a perf gate — you dispatch after the workflow returns (step 6), through
-`dream-team:lab-runner`. No lab host named → there is no lab work. Say so in the workflow's `notes`
+`dream-team:lab-runner`. A light-tier issue has lab work only when it asks for a measurement
+(step 2a). No lab host named → there is no lab work. Say so in the workflow's `notes`
 so the implementer does not try, and does not report it as an assumption.
 
 ## 1. Read the issue
@@ -61,14 +62,18 @@ Never open a dialog whose options you had to invent to fill the slots.
 Scout tier when the title starts `Scout:` (below). Otherwise light tier when all hold; otherwise
 full (step 3 on):
 
-- No runtime behaviour change: docs, comments, CI config, test fixtures, or a rename.
-- The proposal names the exact edit; no design choice left.
+- No runtime behaviour change: docs, comments, help or usage text, CI config, test fixtures, or a
+  rename.
+- The proposal names the exact edit, or the diff changes only docs, comments or help or usage
+  text to match the code; no design choice left.
 - Not a bug fix — a bug fix needs a test seen failing, which only the full loop checks.
-- Touches no path the project's `CLAUDE.md` puts under a parity or perf gate.
+- Touches no path the project's `CLAUDE.md` puts under a parity or perf gate, unless the change
+  there is comments only.
 
 Light path: step 4, then make the edit inline, then every `gateCommands` entry, then step 7. No
-workflow, no subagents, no reviewers. Diff outgrows the criteria →
-`git reset --hard <base>` and run the full loop. Report the tier and the criterion that allowed it.
+workflow, no subagents, no reviewers. Lab work only when the issue asks for a measurement, run
+per step 6's lab steps before step 7. Diff outgrows the criteria → `git reset --hard <base>` and
+run the full loop. Report the tier and the criterion that allowed it.
 
 Scout tier: no workflow, no code; the research note is the one change you write. Answer the
 proposal's questions yourself within its time box. Write the answers as a note in the repo's
