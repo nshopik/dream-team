@@ -5,6 +5,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Changed
+
+- `dream-fixer` light tier takes doc, comment and help-text rot issues, including comment-only
+  edits in gated paths, and skips lab work unless the issue asks for a measurement.
+
 ## [0.12.1] - 2026-09-29
 
 ### Changed
