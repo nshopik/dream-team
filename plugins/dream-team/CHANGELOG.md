@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.12.2] - 2026-09-30
+
 ### Changed
 
 - `dream-fixer` light tier takes doc, comment and help-text rot issues, including comment-only
