@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-10-01
+
 ### Changed
 
 - `align-project` no longer checks for an area document per `area::` label; its project rule
