@@ -91,8 +91,8 @@ A bug reported from outside (the dogfood router, a user) enters here too: one is
        reviewer, bounded fix rounds.
   4. Lab work (perf gate, tests that need root) through `dream-team:lab-runner` on the host the
      repo's `CLAUDE.md` names.
-  5. MR: one folded commit, description by `scope-mr`, with ratchet floors, the component table
-     and the diagram updated in the same MR. ROADMAP status waits for `milestone-close`.
+  5. MR: one folded commit, description by `scope-mr`, with ratchet floors, the diagram and any
+     component table updated in the same MR. ROADMAP status waits for `milestone-close`.
   6. Adjacent defects found on the way are filed as issues, never left in the MR text.
 - You: check the roster line, any assumptions at the top of the report, and the MR.
 
@@ -117,11 +117,11 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
      goes back to step 0.
   2. Triage table of open issues: close, move, or blocks-close. You answer in one reply.
      `Meta:` issues stay out of the table; the agent ticks their closed children.
-  3. Docs check: component table and diagram against the code, specs that need a `Superseded by`
-     line, ROADMAP status for the milestone's merged work, facts from its merged MRs that
-     `docs/development.md` lacks, `CLAUDE.md` lines that no longer fire, and `CLAUDE.local.md`
-     lines to cut or promote to `CLAUDE.md`. Each fact, cut and promotion is one proposed line
-     for you to keep or drop.
+  3. Docs check: the diagram and any component table against the code, specs that need a
+     `Superseded by` line, ROADMAP status for the milestone's merged work, facts from its merged
+     MRs that `docs/development.md` lacks, `CLAUDE.md` lines that no longer fire, and
+     `CLAUDE.local.md` lines to cut or promote to `CLAUDE.md`. Each fact, cut and promotion is one
+     proposed line for you to keep or drop.
   4. Applies what you approved: moves, one docs MR, milestone closed, ROADMAP updated.
 - You: the gap issues, the triage table, the proposed facts and the cuts are your decisions.
 

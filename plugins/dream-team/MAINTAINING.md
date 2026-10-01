@@ -73,9 +73,9 @@ Planning stays explicit, at issue size, because you review every plan.
 - No document per `area::` label. Folder names already say where things live; a per-label
   pointer list repeats them and rots on every rename. A topic doc exists only for what is not
   obvious from the tree.
-- The component table is a map, not a description: one row per component with its path, and a
-  note only where the name and path don't say what it does. A purpose column restating the role
-  name rots like any other pointer list.
+- The component table is optional. Where folder names already say what each component does, a
+  table restating them is a pointer list and rots like one. A project that keeps one gives each
+  component a row and a note only where the name and path fall short.
 
 ## Open items
 
