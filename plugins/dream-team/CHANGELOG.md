@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.13.1] - 2026-10-01
+
 ### Changed
 
 - `align-project` treats the component table as optional; a table that exists matches the code
