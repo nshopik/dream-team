@@ -67,12 +67,12 @@ Planning stays explicit, at issue size, because you review every plan.
 - Parallel milestones show readiness through the waiting label, not ROADMAP: the Board's
   default column is what can start now. `workflow::future`, not `workflow::blocked`: blocked means
   an external gate someone must chase; future clears itself when the dependency closes.
-- Issues are the log, area documents the reference: one section per `area::` label, each fact
-  with one owner, updated in the MR that changes it. One large spec went stale and hard to skim;
-  a closed issue is not a place anyone looks things up.
-- Area sections share one document until the maintainer splits one out. A small project split
-  into a file per label makes the reader open six 20-line files for 120 lines of text; a section
-  past 100 lines is the point where the split stops being a judgement call.
+- Issues are the log, docs the reference: a fact the code and paths don't show has one reference
+  doc, updated in the MR that changes it. One large spec went stale and hard to skim; a closed
+  issue is not a place anyone looks things up.
+- No document per `area::` label. Folder names already say where things live; a per-label
+  pointer list repeats them and rots on every rename. A topic doc exists only for what is not
+  obvious from the tree.
 
 ## Open items
 

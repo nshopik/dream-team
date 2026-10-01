@@ -7,8 +7,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Changed
 
-- `align-project` accepts one area section per `area::` label in a shared area document, and
-  flags a shared section over 100 lines.
+- `align-project` no longer checks for an area document per `area::` label; its project rule
+  asks for one reference doc per fact the code and paths don't show.
 - `dream-fixer` targets the remote's default branch unless the project `CLAUDE.md` names another,
   and `align-project` no longer requires the project `CLAUDE.md` to name the MR target branch.
 

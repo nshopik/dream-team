@@ -97,7 +97,7 @@ This overrides the brainstorming skill's freeform default.
 - Sections: `## Context`, `## Decision`, `## Consequences`, `## Design`,
   `## Open items`. An empty one is deleted — never "N/A", never "None at this time".
 - No per-change detail: file lists, test cases, rejected options and milestones go in
-  issues, area documents, `docs/decisions/` or the ROADMAP.
+  issues, topic docs, `docs/decisions/` or the ROADMAP.
 Prose rules still apply; they inject on the next file write of the session.
 </spec_structure>"""
 
