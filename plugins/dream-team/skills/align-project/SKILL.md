@@ -47,7 +47,7 @@ The project `CLAUDE.md` carries these, in its own words:
 - Ratchet floors rise in the feature MR that earns them.
 - A milestone is `M<n>`, or `v<major>.<minor>` for a version milestone.
 - A milestone split takes the next free `M<n>`, never a letter.
-- The contributor doc path and the MR target branch are named.
+- The contributor doc path is named.
 
 ## Steps
 

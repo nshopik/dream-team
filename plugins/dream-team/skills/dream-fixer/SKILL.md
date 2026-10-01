@@ -105,8 +105,9 @@ Stop and report when either holds:
 - A branch `issue-<n>-*` exists locally or on the remote, or an open MR/PR references the issue.
   Ask whether to continue that work or start over.
 
-Then `git fetch` and branch from the fetched tip of the branch the project's `CLAUDE.md` names as
-the MR target: `git switch -c issue-<n>-<slug> origin/<target>`. Never work on `master`/`main`.
+Then `git fetch` and branch from the fetched tip of the MR target, the remote's default branch
+unless the project's `CLAUDE.md` names another: `git switch -c issue-<n>-<slug> origin/<target>`.
+Never work on `master`/`main`.
 Record `git rev-parse HEAD` — it is the workflow's `base`.
 
 ## 5. Run the workflow
