@@ -27,7 +27,7 @@ changes no code, no docs and no tracker settings; the filed issues go through `d
 - An issue with an open blocker ends with one `Blocked by #<n>` line per blocker.
 - `docs/specs/` holds only specs the code still follows; every other spec carries a
   `Superseded by` line.
-- The component table in the contributor doc matches the code.
+- A component table, if the contributor doc has one, matches the code.
 - A component table cell says only what the component's name and path don't.
 - The architecture diagram matches the code.
 - The tracker has the `type::scout` and `type::meta` labels.
@@ -38,9 +38,7 @@ changes no code, no docs and no tracker settings; the filed issues go through `d
 The project `CLAUDE.md` carries these, in its own words:
 
 - The architecture diagram changes in the same MR as a component or pipeline change.
-- The component table in the contributor doc changes in the same MR, one row per component, with
-  a note only where the name and path don't say enough.
-- Detail beyond a table row goes in the commit, spec or a topic doc, never in module docs.
+- Detail the code doesn't show goes in the commit, spec or a topic doc, never in module docs.
 - A fact the code and paths don't show has one reference doc, updated in the MR that changes it.
 - ROADMAP status changes only at milestone close.
 - Ratchet floors rise in the feature MR that earns them.

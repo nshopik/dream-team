@@ -7,8 +7,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Changed
 
-- `align-project` keeps the component table to one row per component with its path, and a note
-  only where the name and path don't say enough.
+- `align-project` treats the component table as optional; a table that exists matches the code
+  and notes only what a component's name and path don't say.
 
 ## [0.13.0] - 2026-10-01
 
