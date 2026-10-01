@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.13.2] - 2026-10-01
+
 ### Changed
 
 - `dream-fixer` light tier takes a small bug fix the orchestrator already reproduced, and every
