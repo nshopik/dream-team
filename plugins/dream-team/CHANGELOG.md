@@ -5,6 +5,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Changed
+
+- `align-project` accepts one area section per `area::` label in a shared area document, and
+  flags a shared section over 100 lines.
+
 ## [0.12.2] - 2026-09-30
 
 ### Changed
