@@ -28,7 +28,9 @@ changes no code, no docs and no tracker settings; the filed issues go through `d
 - `docs/specs/` holds only specs the code still follows; every other spec carries a
   `Superseded by` line.
 - The component table in the contributor doc matches the code.
-- Each `area::` label has one area document, and the contributor doc indexes them.
+- Each `area::` label has one area section, in a shared area document or split into its own file.
+- The contributor doc links every area document.
+- No section of a shared area document runs over 100 lines.
 - The architecture diagram matches the code.
 - The tracker has the `type::scout` and `type::meta` labels.
 - The project `CLAUDE.md` carries every rule in **Project rules** below.
@@ -40,7 +42,7 @@ The project `CLAUDE.md` carries these, in its own words:
 - The architecture diagram changes in the same MR as a component or pipeline change.
 - The component table in the contributor doc changes in the same MR, one row per component.
 - Detail beyond a table row goes in the commit, spec or area document, never in module docs.
-- An MR updates the area document of its issue's `area::` label in the same MR.
+- An MR updates the area section of its issue's `area::` label in the same MR.
 - ROADMAP status changes only at milestone close.
 - Ratchet floors rise in the feature MR that earns them.
 - A milestone is `M<n>`, or `v<major>.<minor>` for a version milestone.
