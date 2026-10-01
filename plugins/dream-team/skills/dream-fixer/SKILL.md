@@ -23,9 +23,10 @@ light-tier issue's edit, and a scout issue's research note (step 2a).
 **Lab work is yours, not the workflow's.** Workflow agents never ssh to a lab host. Anything the
 issue or the repo's `CLAUDE.md` needs run on a lab host — a measurement the issue asks for, a test
 that needs root, a perf gate — you dispatch after the workflow returns (step 6), through
-`dream-team:lab-runner`. A light-tier issue has lab work only when it asks for a measurement
-or its bug reproduces there (step 2a). No lab host named → there is no lab work. Say so in the
-workflow's `notes` so the implementer does not try, and does not report it as an assumption.
+`dream-team:lab-runner`. A light-tier issue has lab work only when it asks for a measurement,
+its bug reproduces there, or it takes the infra path (step 2a). No lab host named → there is no
+lab work. Say so in the workflow's `notes` so the implementer does not try, and does not report it
+as an assumption.
 
 ## 1. Read the issue
 
@@ -59,8 +60,10 @@ Never open a dialog whose options you had to invent to fill the slots.
 
 ## 2a. Tier
 
-Scout tier when the title starts `Scout:` (below). Otherwise light tier when all hold; otherwise
-full (step 3 on):
+Scout tier when the title starts `Scout:` (below). Otherwise light tier when the small-change or
+the infra criteria all hold; otherwise full (step 3 on).
+
+Small-change criteria:
 
 - No runtime behaviour change: docs, comments, help or usage text, CI config, test fixtures, or a
   rename. Or a bug fix you reproduced yourself before the edit: a lab probe or a test seen failing.
@@ -70,18 +73,33 @@ full (step 3 on):
 - Touches no path the project's `CLAUDE.md` puts under a parity or perf gate, unless the change
   there is comments only.
 
-Light path: step 4, then make the edit inline, then every `gateCommands` entry. Then dispatch one
-reviewer with the issue and the diff:
+Infra criteria:
+
+- The project's `CLAUDE.md` opts in to the infra light tier, and it or `CLAUDE.local.md` names a
+  lab host.
+- The change is infrastructure as code: config-management roles, templates, inventory vars, or
+  alert rules.
+- The issue names every component the change touches.
+- No design choice is left once the issue, its discussion and the step-2 answers are read.
+- Changes no SPEC or contract and no path shared with another independently deployed system.
+- Adds no runtime dependency between systems.
+
+Light path: step 4, then make the edit inline, then every `gateCommands` entry. Infra path → run
+the lab steps now: converge, a second check run showing no changes, then the issue's done-check.
+Then dispatch the reviewers with the issue and the diff:
 
 - Docs, comments, help or usage text only → `gdoc-writer`, review-only.
+- Infra path → the step-3 domain reviewer and `pr-review-toolkit:silent-failure-hunter`, in
+  parallel, with the lab output.
 - Anything else → the step-3 domain reviewer type, with the failing evidence for a bug fix.
 - Type not in the catalog → `generic`.
 
 A blocking finding → fix it inline and rerun the gates, or hand the branch back. A bug fix → rerun
-the reproduction on the branch head and see it pass. Lab work only for that rerun or a
-measurement the issue asks for, per step 6's lab steps. Then step 7. No workflow. Diff outgrows
-the criteria → `git reset --hard <base>` and run the full loop. Report the tier and the criterion
-that allowed it.
+the reproduction on the branch head and see it pass. An infra fix → rerun the lab steps. Other lab
+work only for that rerun or a measurement the issue asks for, per step 6's lab steps. Then step 7.
+No workflow. Diff outgrows the small-change criteria → `git reset --hard <base>` and run the full
+loop. Infra edit needs a file or component the issue does not name → the same. Report the tier
+and the criterion that allowed it.
 
 Scout tier: no workflow, no code; the research note is the one change you write. Answer the
 proposal's questions yourself within its time box. Write the answers as a note in the repo's

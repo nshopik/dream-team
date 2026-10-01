@@ -5,6 +5,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Added
+
+- `dream-fixer` light tier has an infra path for opted-in projects: the orchestrator edits
+  infrastructure-as-code inline, runs the lab first, then two parallel reviewers.
+
 ## [0.13.2] - 2026-10-01
 
 ### Changed
