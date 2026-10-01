@@ -4,7 +4,7 @@
 **Status:** Draft | Accepted | Superseded by `<spec-file>`
 
 A spec is a high-level overview of the project, written as bullets of facts. Per-change detail
-lives in issues, area documents and decision records. An empty section is deleted, never filled
+lives in issues, topic docs and decision records. An empty section is deleted, never filled
 with "N/A" or "None".
 
 ## Context
