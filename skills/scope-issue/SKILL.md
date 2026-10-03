@@ -10,7 +10,7 @@ Issue is actionable items, not prose. Read days or weeks later with zero convers
 
 ## issue-style
 
-{over_cap}Reader starts the task from the description alone — no comment threads, no chat history.
+Reader starts the task from the description alone — no comment threads, no chat history.
 
 ### Goal
 

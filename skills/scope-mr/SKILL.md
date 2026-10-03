@@ -10,7 +10,7 @@ MR description is review-facing. Different text from the commit body. Never `--f
 
 ## mr-style
 
-{over_cap}Reviewer has the diff open and ten minutes. They read code, not your session.
+Reviewer has the diff open and ten minutes. They read code, not your session.
 
 ### Shape
 
@@ -103,9 +103,6 @@ MR description is review-facing. Different text from the commit body. Never `--f
 
 ## rung-four
 
-Description says something was deliberately left out. Apply the boundary, then re-run
-the same command unchanged to pass.
-
 - In-diff and fine: a knob inside the changed lines, a next step this change stops short of.
 - Off-diff and not fine: an audit finding, a rule you rejected, a follow-up idea —
   however deliberate the omission.
@@ -113,9 +110,6 @@ the same command unchanged to pass.
 - Fix: move it to an issue and cite the issue, or drop the line.
 
 ## fill
-
-`--fill` writes the description from the commit message. Drop it, pass the description
-explicitly (`--description`, `-f description=`), then re-run.
 
 - Commit body = permanent history. Why the change exists.
 - Description = review-facing. What to look at first.

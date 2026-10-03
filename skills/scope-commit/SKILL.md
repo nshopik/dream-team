@@ -10,10 +10,6 @@ Subject `<scope>: <description>`. Body = the why. Most commits don't need one.
 
 ## subject
 
-Commit subject `{subject}` breaks Scoped Commits (https://scopedcommits.com/):
-{problems}
-Rewrite it, then re-run.
-
 ### Shape
 
 - `<scope>: <description>`. Scope lowercase.
@@ -31,7 +27,7 @@ Rewrite it, then re-run.
 
 ## commit-style
 
-{over_cap}### When a body earns its place
+### When a body earns its place
 
 - Default: no body.
 - Write one only to carry a fact the diff cannot show: the original problem, why this
@@ -56,10 +52,6 @@ Rewrite it, then re-run.
 - Issue refs (`Closes #42`) on their own line at the end.
 
 ## body-issues
-
-Commit body breaks style:
-{problems}
-Rewrite it, then re-run.
 
 - Impersonal prose. No self-narration.
 - No "I" / "we".
