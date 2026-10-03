@@ -5,6 +5,8 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.3.11] - 2026-10-03
+
 ### Fixed
 
 - `body-cap.py` lets a `--input` JSON whose description or body is not a string through silently instead of crashing.
