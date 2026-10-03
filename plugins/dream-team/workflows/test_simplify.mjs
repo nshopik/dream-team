@@ -14,7 +14,7 @@ async function run(review, cuts, { verify = false, aspects = ['code'], verifyRun
   async function agent(prompt, opts) {
     labels.push(opts.label)
     if (opts.phase === 'Implement') return { committed: true, summary: '', redEvidence: '' }
-    if (opts.phase === 'Verify') return { passed: true, summary: '', changedFiles: [], dirtyPaths: [], aspects }
+    if (opts.phase === 'Gate') return { passed: true, summary: '', changedFiles: [], dirtyPaths: [], aspects }
     if (opts.label.startsWith('simplify:')) return review
     if (opts.label.startsWith('simplify-fix:')) return cuts
     if (/^(re-)?review:verify/.test(opts.label)) return verifyRuns.shift()

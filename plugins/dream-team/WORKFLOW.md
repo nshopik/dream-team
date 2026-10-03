@@ -79,7 +79,7 @@ A bug reported from outside (the dogfood router, a user) enters here too: one is
 - Agent: `dream-team:dream-fixer`:
   1. Reads the issue and the project `CLAUDE.md`. Given a `Meta:` issue, it picks an open
      child with no open blocker and works that.
-  2. Gate: an open decision gets a dialog with 2–3 options and their costs. The answer is
+  2. Triage: an open decision gets a dialog with 2–3 options and their costs. The answer is
      written into the issue description. A `Blocked by` line naming an open issue stops here.
   3. Tier:
      - Scout: research within the time box, a note in `docs/research/`, follow-up issues, an MR
@@ -139,6 +139,6 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
 | 0 | Approve the spec |
 | 1 | Exit criteria and their numbers |
 | 2 | Is anything missing from the issue list |
-| 3 | Which issue is next; gate dialogs, only when a decision is open |
+| 3 | Which issue is next; triage dialogs, only when a decision is open |
 | 4 | Read the MR, note what you learned, merge |
 | 5 | Gap issues to file; close or move per leftover issue; each proposed fact and cut |
