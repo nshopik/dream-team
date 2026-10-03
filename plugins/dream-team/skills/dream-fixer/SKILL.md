@@ -1,7 +1,7 @@
 ---
 name: dream-fixer
 description: >-
-  Take one tracker issue from "here's the number" to "MR is open": read it, gate it, run the
+  Take one tracker issue from "here's the number" to "MR is open": read it, triage it, run the
   dream-fixer-loop workflow, and open the MR/PR from the result. Use whenever the user points at an
   issue by number and asks to work on / take / handle / do / close it — e.g. "work on #42", "take
   issue 123", "do GL-88 end to end", "pick up that issue and open an MR". Triggers on an issue
@@ -15,10 +15,10 @@ argument-hint: <issue-number>
 
 One issue per invocation. If the user names several, do them one at a time.
 
-You are the orchestrator. You read, gate, roster, branch and ship. **You do not write the change** —
-the workflow's implementer does. Everything between the branch and the MR happens in dispatched
-agents. Your only edits are step 6's settled disputes and minor findings, which step 7 gates, a
-light-tier issue's edit, and a scout issue's research note (step 2a).
+You are the orchestrator. You read, triage, roster, branch and ship. **You do not write the
+change** — the workflow's implementer does. Everything between the branch and the MR happens in
+dispatched agents. Your only edits are step 6's settled disputes and minor findings, which step 7
+reruns `gateCommands` on, a light-tier issue's edit, and a scout issue's research note (step 2a).
 
 **Lab work is yours, not the workflow's.** Workflow agents never ssh to a lab host. Anything the
 issue or the repo's `CLAUDE.md` needs run on a lab host — a measurement the issue asks for, a test
@@ -35,7 +35,7 @@ Fetch body, title, labels and discussion — `gh issue view <n> --comments`, `gl
 A `Meta:` issue is not a work item. Pick an open child from its checklist with no open blocker,
 say which, and run the rest of this skill on that child. None left → report it and stop.
 
-## 2. Gate: is this actionable without the user?
+## 2. Triage: is this actionable without the user?
 
 Fail *before* code is written on a guess, not after. An open decision is anything the issue
 leaves to a guess: which screen or endpoint, what happens on failure, whether it needs a
@@ -45,8 +45,8 @@ naming an open issue.
 
 Say exactly what is blocking and what you need. Don't half-build around the gap.
 
-A blocked gate is not the end of the turn. Do the reading that makes the choice answerable — what
-each option costs, how many call sites it touches, what the reference source does — then:
+Blocked at triage is not the end of the turn. Do the reading that makes the choice answerable —
+what each option costs, how many call sites it touches, what the reference source does — then:
 
 - **The options are enumerable** — two or three concrete paths, and the user's pick is the only
   thing missing: put them in an **AskUserQuestion** dialog, one option per path, cost in the
@@ -77,8 +77,8 @@ reviewer with the issue and the diff:
 - Anything else → the step-3 domain reviewer type, with the failing evidence for a bug fix.
 - Type not in the catalog → `generic`.
 
-A blocking finding → fix it inline and rerun the gates, or hand the branch back. A bug fix → rerun
-the reproduction on the branch head and see it pass. Lab work only for that rerun or a
+A blocking finding → fix it inline and rerun `gateCommands`, or hand the branch back. A bug fix →
+rerun the reproduction on the branch head and see it pass. Lab work only for that rerun or a
 measurement the issue asks for, per step 6's lab steps. Then step 7. No workflow. Diff outgrows
 the criteria → `git reset --hard <base>` and run the full loop. Report the tier and the criterion
 that allowed it.
@@ -138,7 +138,7 @@ object (never a stringified one):
 }
 ```
 
-- `notes`: decisions made in the tracker discussion, the answer the user gave at the step-2 gate,
+- `notes`: decisions made in the tracker discussion, the answer the user gave at step-2 triage,
   and the lab work the implementer must leave alone. Optional.
 - `gateCommands`: the build, test and lint commands the repo's CI config runs that also run in this
   checkout — CI config first, `CLAUDE.md` and README second. The mechanical gate runs exactly
@@ -167,7 +167,7 @@ The workflow returns structured, not final. Read it and decide:
     `deadReviewers` empty, carry on to the lab steps and step 7; otherwise hand the branch back.
   - `deadReviewers` non-empty → those reviewers returned nothing on every try. Do not open the MR;
     hand the branch back.
-- **`ok: false` otherwise** — the implement, verify, simplify or fix stage failed. Report the
+- **`ok: false` otherwise** — the implement, gate, simplify or fix stage failed. Report the
   reason; the branch is where the agent left it.
 - **`degraded`** — roster types that were not dispatchable and ran as a generic agent instead,
   `ponytail:ponytail-review` when that skill was missing and the Simplify phase was skipped, and
@@ -178,7 +178,8 @@ The workflow returns structured, not final. Read it and decide:
   finding. `unhandled` counts cuts the implementer neither applied nor disputed; above 0 → say so in
   the MR description. `null` → the phase was skipped.
 - **`verifyRun`** — the last `/verify` gate run: `verdict`, `command`, `output`, `reason`,
-  `recipePath`. `null` → the gate did not run, or was skipped (see `degraded`). A FAIL was a blocking finding for the fix loop.
+  `recipePath`. `null` → the `/verify` gate did not run, or was skipped (see `degraded`). A FAIL
+  was a blocking finding for the fix loop.
   - `PASS` → put its `command` and `output` in the MR description.
   - `BLOCKED` and its `reason` needs the lab → run it as a lab step through `dream-team:lab-runner`.
   - `BLOCKED` otherwise → name the verdict and its `reason` in the report.
@@ -187,20 +188,20 @@ The workflow returns structured, not final. Read it and decide:
     to copy to `.claude/skills/verify/SKILL.md` and commit separately.
 - **`disputes`** — the fixer refused a finding and gave evidence. Check it yourself. The fixer may
   be right; it may also be rationalizing. Apply the fix or accept the dispute.
-- **`resolved`** — blocking findings a fix round fixed, each with its gate and round.
+- **`resolved`** — blocking findings a fix round fixed, each with its reviewer (`gate`) and round.
 - **`minorFindings`** — never auto-fixed. Apply the ones worth applying, drop the rest.
 - **`assumptions`** — anything the implementer had to invent.
 - **`redEvidence`** — the new test's failing output from before the fix; the test reviewer checked
   it. Empty on a bug-fix issue means nobody saw the test fail.
-- **Lab steps** — once the result is `ok`, run the lab work on the branch head. A lab failure is a
-  failed verify: fix it before the MR, or hand the branch back. Put measured numbers in the MR
-  description.
+- **Lab steps** — once the result is `ok`, run the lab work on the branch head. Treat a lab failure
+  like a red `gateCommands` run: fix it before the MR, or hand the branch back. Put measured
+  numbers in the MR description.
 
 Adjacent defects — anything found outside the diff:
 
-- A scout finding, a review-panel survivor outside the diff, a bug hit running evals or gates, or
-  a spec consequence nobody owns → file it as an issue before the session ends, per the repo's
-  own rules.
+- A scout finding, a review-panel survivor outside the diff, a bug hit running evals or
+  `gateCommands`, or a spec consequence nobody owns → file it as an issue before the session
+  ends, per the repo's own rules.
 - The finding is a minor nit → file nothing.
 - Filed → never leave the finding in the MR description or the chat summary.
 - Filing fails or yields no issue link → name the defect in the report as unfiled, with the reason.
@@ -213,7 +214,8 @@ milestones. None clearly fits → ask.
 ## 7. Open the MR/PR
 
 Commit anything you changed in step 6. If you changed anything, run every `gateCommands` entry on
-the new head yourself and carry on only when all exit 0; a red gate is a failed verify.
+the new head yourself and carry on only when all exit 0. A red run → fix it, or hand the branch
+back.
 
 Fold the branch to one commit. The workflow leaves the implementer's commit plus one for any
 simplify cuts and one per build-fix and fix round, and one issue is one commit:
@@ -276,9 +278,9 @@ The report carries only what the user must know or act on.
 - Give a non-empty `verifyRun.recipePath` one `**Verify recipe:**` bullet: the path only, never
   the contents.
 - Name each reviewer that could not check something, and the check you ran in its place.
-- Stopped at the gate → say what is blocking and stop there.
+- Stopped at triage → say what is blocking and stop there.
 - Leave out minor findings, applied or dropped, and reviewer verdicts with no finding.
-- Leave out gate commands that passed and a summary of the change: the MR carries it.
+- Leave out `gateCommands` entries that passed and a summary of the change: the MR carries it.
 - Leave out a present `redEvidence` and lab work that did not run.
 - A review with no blocking finding, no dispute and no fix round gets no line.
 - Handed back → no line saying a reviewer found nothing or that nothing was disputed.

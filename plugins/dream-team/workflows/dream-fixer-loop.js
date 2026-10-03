@@ -3,10 +3,10 @@ export const meta = {
   description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review simplify pass, pr-review-toolkit reviewers plus one domain reviewer, bounded fix loop',
   phases: [
     { title: 'Implement', detail: 'one specialist writes the change and commits' },
-    { title: 'Verify', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
+    { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
     { title: 'Simplify', detail: 'ponytail-review cuts, applied or disputed by the implementer; skipped when the diff has no code or ponytail-review is unavailable (opus)' },
     { title: 'Review', detail: 'pr-review-toolkit suite plus one domain reviewer (opus); opt-in /verify gate through a nested claude session, skipped when the diff has no code or claude or its /verify is unavailable' },
-    { title: 'Fix', detail: 'blocking findings only; re-review the failed gate' },
+    { title: 'Fix', detail: 'blocking findings only; re-review only the reviewers that failed' },
   ],
 }
 
@@ -447,8 +447,8 @@ const deadReviewer = (kind) => ({ dead: true, summary: `${kind} reviewer produce
 async function gate(after, tag, withAspects) {
   for (let round = 0; ; round++) {
     const verify = await agent(verifyPrompt(round ? `build-fix round ${round}` : after, withAspects), {
-      label: `verify:#${ISSUE}${tag ? `:${tag}` : ''}${round ? `:r${round}` : ''}`,
-      phase: 'Verify',
+      label: `gate:#${ISSUE}${tag ? `:${tag}` : ''}${round ? `:r${round}` : ''}`,
+      phase: 'Gate',
       schema: VERIFY_SCHEMA,
       model: 'sonnet',
       effort: 'low',
@@ -462,7 +462,7 @@ async function gate(after, tag, withAspects) {
     log(`Gate failed: ${verify.summary}`)
     const bf = await agentR(buildFixPrompt(verify, round + 1), {
       label: `build-fix:#${ISSUE}${tag ? `:${tag}` : ''}:r${round + 1}`,
-      phase: 'Verify',
+      phase: 'Gate',
       schema: BUILD_FIX_SCHEMA,
       ...implementerRoster(A.implementer),
     })
@@ -481,9 +481,9 @@ const impl = await agentR(implPrompt(), {
 if (!impl) return { ok: false, stage: 'implement', reason: 'implementer returned no result' }
 if (!impl.committed) return { ok: false, stage: 'implement', reason: impl.summary || 'implementer committed nothing' }
 
-phase('Verify')
+phase('Gate')
 const first = await gate('', '', true)
-if (!first.ok) return { ok: false, stage: 'verify', reason: first.reason, verify: first.verify }
+if (!first.ok) return { ok: false, stage: 'gate', reason: first.reason, verify: first.verify }
 let changedFiles = first.verify.changedFiles
 
 const aspects = new Set(first.verify.aspects || [])
@@ -512,7 +512,7 @@ if (aspects.has('code')) {
       return { ok: false, stage: 'simplify', reason: `simplify implementer applied nothing it committed and disputed nothing: ${cuts.summary}` }
     }
     const g = await gate('the simplify cuts', 'simplify', false)
-    if (!g.ok) return { ok: false, stage: 'verify', reason: g.reason, verify: g.verify }
+    if (!g.ok) return { ok: false, stage: 'gate', reason: g.reason, verify: g.verify }
     changedFiles = g.verify.changedFiles
     const unhandled = Math.max(0, review.findings.length - cuts.addressed.length - cuts.disputed.length)
     simplify = { net: review.net, applied: cuts.addressed, disputed: cuts.disputed, unhandled }
@@ -610,7 +610,7 @@ while (true) {
     }
     disputes.push(...fix.disputed.map((d) => ({ ...d, round })))
     const g = await gate(`review-fix round ${round}`, `fix${round}`, false)
-    if (!g.ok) return { ok: false, stage: 'verify', reason: g.reason, verify: g.verify, blocking, disputes, resolved }
+    if (!g.ok) return { ok: false, stage: 'gate', reason: g.reason, verify: g.verify, blocking, disputes, resolved }
     changedFiles = g.verify.changedFiles
   }
 
