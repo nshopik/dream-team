@@ -13,7 +13,7 @@ it cannot confidently parse — a false block is worse than a missed one.
 
 All rules live in the `scope-commit`, `scope-mr` and `scope-issue` skills, not here: this file
 detects and measures, then quotes back the matching `## <id>` section of the skill for
-that kind. Rule edits go to the skill; only detection logic and the caps belong here.
+that kind. Rule edits go to the skill; only detection logic, the caps and deny headers belong here.
 
 Caps derive from measured baselines; the commit that sets a cap records its derivation.
 
@@ -42,6 +42,12 @@ FALLBACK = 'Follow Scoped Commits — https://scopedcommits.com/'
 # and verification output reaches history unchallenged.
 OVER_CAP = "{what} is {n} words — over the {cap}-word ceiling. Rewrite it, then re-run.\n\n"
 
+SUBJECT = ("Commit subject `{subject}` breaks Scoped Commits (https://scopedcommits.com/):\n"
+           "{problems}\nRewrite it, then re-run.\n\n")
+BODY_ISSUES = "Commit body breaks style:\n{problems}\nRewrite it, then re-run.\n\n"
+FILL = ("`--fill` writes the description from the commit message. Drop it, pass the "
+        "description explicitly (`--description`, `-f description=`), then re-run.\n\n")
+
 
 def sections(text):
     """`## id` headings of a markdown document mapped to their body text.
@@ -54,19 +60,14 @@ def sections(text):
             if re.fullmatch(r'[a-z-]+', k)}
 
 
-def reminder(kind, section, **fields):
-    """That kind's skill section, wrapped in its style tag, with fields filled in."""
+def reminder(kind, section):
+    """That kind's skill section, wrapped in its style tag."""
     path = SKILLS_DIR / SKILL[kind] / 'SKILL.md'
     try:
         body = sections(path.read_text(encoding='utf-8'))[section]
     except Exception:
         body = FALLBACK
     tag = f'{kind}_style'
-    fields.setdefault('over_cap', '')
-    try:
-        body = body.format(**fields)
-    except (KeyError, IndexError):
-        pass
     return f'<{tag}>\n{body}\n</{tag}>'
 
 
@@ -556,7 +557,7 @@ def main():
     # Checked before the text lookup: --fill puts no description on the command
     # line, so there is nothing for the ceiling check to measure.
     if kind == 'mr' and uses_fill(without_heredocs(cmd, spans)):
-        return deny(reminder('mr', 'fill'))
+        return deny(FILL + reminder('mr', 'fill'))
     remember_writes(cmd, spans)
     # Heredocs blanked: a body shlex cannot split (an apostrophe) hides every flag.
     field = 'body=' if cmd.startswith('gh', at) else 'description='
@@ -575,13 +576,13 @@ def main():
         issues = subject_issues(text)
         if issues:
             subject = next(l.strip() for l in text.split('\n') if l.strip())
-            return deny(reminder('commit', 'subject', subject=subject,
-                                 problems='\n'.join(issues)))
+            return deny(SUBJECT.format(subject=subject, problems='\n'.join(issues))
+                        + reminder('commit', 'subject'))
         body = body_of(text)
         b_issues = body_issues(body)
         if b_issues:
-            return deny(reminder('commit', 'body-issues',
-                                 problems='\n'.join(b_issues)))
+            return deny(BODY_ISSUES.format(problems='\n'.join(b_issues))
+                        + reminder('commit', 'body-issues'))
     n = count(body)
     if not n:
         return                                  # subject-only commit, nothing to style
@@ -590,9 +591,9 @@ def main():
         what={'commit': 'Commit body', 'mr': 'MR description',
               'issue': 'Issue description'}[kind],
         n=n, cap=cap)
-    out = reminder(kind, f'{kind}-style', over_cap=over)
+    out = reminder(kind, f'{kind}-style')
     if over:
-        return deny(out)
+        return deny(over + out)
     if kind == 'commit' and not EXEMPT.match(text.lstrip()) and not seen(body, 'confirm'):
         return deny(CONFIRM + out)
     if kind == 'mr':

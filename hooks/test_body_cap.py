@@ -291,3 +291,20 @@ for text, want in [
 ]:
     assert body_cap.sections(text) == want, (text, body_cap.sections(text))
 print(f"{'sections() parse':34} {'OK':12}")
+
+# 14. deny headers live in the hook, prepended outside the style tag.
+headers = [
+    ("bad subject", "git " + C + " -m 'feat: add thing'",
+     "Commit subject `feat: add thing` breaks", "<commit_style>\n### Shape"),
+    ("body issues", "git " + C + " -F - <<'EOF'\ndocs: x\n\nWe fixed it.\nEOF",
+     "Commit body breaks style:\n- refers", "<commit_style>\n- Impersonal"),
+    ("over cap", commit_of(170), "Commit body is 170 words", "<commit_style>\n### When"),
+    ("--fill", "glab mr create --fill", "`--fill` writes", "<mr_style>\n- Commit body"),
+]
+for name, cmd, head, tag in headers:
+    v, r = run(cmd)
+    assert v == "DENY" and r.startswith(head) and tag in r and "{" not in r, (name, r)
+for kind in ("scope-commit", "scope-issue", "scope-mr"):
+    text = open(os.path.join(HERE, "..", "skills", kind, "SKILL.md")).read()
+    assert not re.search(r"\{\w+\}", text) and "re-run" not in text, kind
+print(f"{'deny headers in hook':34} {'OK':12} {len(headers)} cases")
