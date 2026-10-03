@@ -10,10 +10,6 @@ description: >
 
 Issue is actionable items, not prose. Read days or weeks later with zero conversation context.
 
-`hooks/body-cap.py` extracts the `## <id>` sections below verbatim and shows them when an issue
-command is blocked. Edit rules here — the hook holds no prose. Keep heading ids stable;
-sub-headings stay `###` (any `##` closes a section); `{over_cap}` is a hook-filled placeholder.
-
 ## issue-style
 
 {over_cap}Reader starts the task from the description alone — no comment threads, no chat history.

@@ -12,11 +12,6 @@ description: >
 
 MR description is review-facing. Different text from the commit body. Never `--fill`.
 
-`hooks/body-cap.py` extracts the `## <id>` sections below verbatim and shows
-them when an MR/PR command is blocked. Edit rules here — the hook holds no prose. Keep
-heading ids stable; sub-headings stay `###` (any `##` closes a section); `{over_cap}` is
-a hook-filled placeholder.
-
 ## mr-style
 
 {over_cap}Reviewer has the diff open and ten minutes. They read code, not your session.
