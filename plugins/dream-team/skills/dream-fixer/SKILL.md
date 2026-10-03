@@ -37,16 +37,22 @@ say which, and run the rest of this skill on that child. None left → report it
 
 ## 2. Triage: is this actionable without the user?
 
-Fail *before* code is written on a guess, not after. An open decision is anything the issue
-leaves to a guess: which screen or endpoint, what happens on failure, whether it needs a
-migration, a public API or schema change, product copy or acceptance criteria. Two more cases
-block here: a credential, environment or access you don't have, and a `Blocked by #<n>` line
-naming an open issue.
+Fail *before* code is written on a guess, not after. Triage blocks on:
 
-Say exactly what is blocking and what you need. Don't half-build around the gap.
+- An open decision: anything the issue leaves to a guess — which screen or endpoint, what happens
+  on failure, whether it needs a migration, a public API or schema change, product copy or
+  acceptance criteria.
+- A credential, environment or access you don't have.
+- A `Blocked by #<n>` line naming an open issue.
 
-Blocked at triage is not the end of the turn. Do the reading that makes the choice answerable —
-what each option costs, how many call sites it touches, what the reference source does — then:
+Blocked at triage:
+
+- Say exactly what is blocking and what you need.
+- Don't half-build around the gap.
+- Don't end the turn yet: do the reading that makes the choice answerable — what each option
+  costs, how many call sites it touches, what the reference source does.
+
+Then:
 
 - **The options are enumerable** — two or three concrete paths, and the user's pick is the only
   thing missing: put them in an **AskUserQuestion** dialog, one option per path, cost in the
@@ -70,18 +76,24 @@ full (step 3 on):
 - Touches no path the project's `CLAUDE.md` puts under a parity or perf gate, unless the change
   there is comments only.
 
-Light path: step 4, then make the edit inline, then every `gateCommands` entry. Then dispatch one
-reviewer with the issue and the diff:
+Light path, no workflow:
+
+- Branch per step 4.
+- Make the edit inline.
+- Run every `gateCommands` entry.
+- Dispatch one reviewer with the issue and the diff, its type picked below.
+- A blocking finding → fix it inline and rerun `gateCommands`, or hand the branch back.
+- A bug fix → rerun the reproduction on the branch head and see it pass.
+- Run lab work only for that rerun or a measurement the issue asks for, per step 6's lab steps.
+- The diff outgrows the criteria → `git reset --hard <base>` and run the full loop.
+- Open the MR per step 7.
+- Report the tier and the criterion that allowed it.
+
+Light-path reviewer type:
 
 - Docs, comments, help or usage text only → `gdoc-writer`, review-only.
 - Anything else → the step-3 domain reviewer type, with the failing evidence for a bug fix.
 - Type not in the catalog → `generic`.
-
-A blocking finding → fix it inline and rerun `gateCommands`, or hand the branch back. A bug fix →
-rerun the reproduction on the branch head and see it pass. Lab work only for that rerun or a
-measurement the issue asks for, per step 6's lab steps. Then step 7. No workflow. Diff outgrows
-the criteria → `git reset --hard <base>` and run the full loop. Report the tier and the criterion
-that allowed it.
 
 Scout tier: no workflow, no code; the research note is the one change you write. Answer the
 proposal's questions yourself within its time box. Write the answers as a note in the repo's
