@@ -5,11 +5,17 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.14.1] - 2026-10-03
+
 ### Changed
 
 - `dream-fixer` calls its step 2 triage, and `dream-fixer-loop` names the `gateCommands` phase
   and its failure stage `Gate`/`gate` instead of `Verify`/`verify`, so "verify" means `/verify`
   only.
+
+### Fixed
+
+- `WORKFLOW.md` describes the light tier as `dream-fixer` runs it since 0.13.2.
 
 ## [0.14.0] - 2026-10-03
 
