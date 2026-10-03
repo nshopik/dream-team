@@ -3,8 +3,7 @@ name: scope-commit
 description: >
   Scoped Commits message generator (https://scopedcommits.com/): `<scope>: <description>`
   subject, body only when the "why" isn't obvious. Use when writing or amending a commit
-  message. Also the rule source the `body-cap.py` PreToolUse hook quotes back when it
-  blocks a `git commit`. MR/PR descriptions: use `scope-mr` instead.
+  message. MR/PR descriptions: use `scope-mr` instead.
 ---
 
 Subject `<scope>: <description>`. Body = the why. Most commits don't need one.

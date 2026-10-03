@@ -1,11 +1,9 @@
 ---
 name: scope-issue
 description: >
-  Issue description writer. Issues are pulled from a board days or weeks later with no
-  conversation context, so the text runs context, then problem, then a concrete proposal. Use
-  when writing or editing an issue (`gh issue create`, `glab issue create`, `-f description=`).
-  Also the rule source the `body-cap.py` PreToolUse hook quotes back when it blocks one. Commit
-  messages: use `scope-commit`; MR/PR descriptions: use `scope-mr`.
+  Issue description writer. Use when writing or editing an issue (`gh issue create`,
+  `glab issue create`, `-f description=`). Commit messages: use `scope-commit`; MR/PR
+  descriptions: use `scope-mr`.
 ---
 
 Issue is actionable items, not prose. Read days or weeks later with zero conversation context.
