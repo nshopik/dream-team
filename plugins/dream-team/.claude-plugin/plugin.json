@@ -1,6 +1,6 @@
 {
   "name": "dream-team",
-  "version": "0.13.2",
+  "version": "0.14.0",
   "description": "One tracker issue to one reviewed MR/PR: the dream-fixer skill drives the dream-fixer-loop workflow.",
   "author": { "name": "Nikolay Shopik" },
   "repository": "https://github.com/nshopik/dream-team",

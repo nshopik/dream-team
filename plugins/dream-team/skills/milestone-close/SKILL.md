@@ -67,6 +67,13 @@ promotions and cuts leave `CLAUDE.local.md` directly, since it is untracked. The
 milestone and set the roadmap status. Every milestone whose `Depends on:` is now all closed
 is ready: drop the host's waiting label (`workflow::future` on GitLab) from its open issues.
 
+- The project's `CLAUDE.md` opts in to tagging milestone closes → the docs MR bumps the project
+  version to the next pre-1.0 minor (`0.<n>.0`).
+- Once that MR merges, tag its merge commit `v0.<n>.0`, the tag message naming the milestone.
+- No opt-in line and no `v1.0.0` tag yet → recommend the opt-in in the report, as the one
+  `CLAUDE.md` line to add.
+
 ## Report back
 
-Criterion result, issues closed, moved and filed, the docs MR link.
+Criterion result, issues closed, moved and filed, the docs MR link, the tag or the recommended
+opt-in line.

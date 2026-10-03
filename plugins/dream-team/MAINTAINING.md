@@ -60,7 +60,8 @@ Planning stays explicit, at issue size, because you review every plan.
   closed child shows "(closed)" beside its mention; the box is ticked at `milestone-close`.
 - A minor release is scope-based: one headline feature plus backlog, behind standing release
   criteria in ROADMAP. One maintainer defines a release by its feature, not a date.
-- Release stays user-triggered ("tag v0.1"), not time-based.
+- Release stays user-triggered ("tag v0.1"), not time-based. Pre-1.0, a project may opt in to
+  a `v0.<n>.0` tag per milestone close: a version a user can find, without a release process.
 - Milestones are `M<n>`, not a bare integer: "milestone 5" reads badly in prose and collides
   with counts ("all 5 sites"). One generic prefix beats a per-project codename; the repo name
   disambiguates the rare cross-project mention.
