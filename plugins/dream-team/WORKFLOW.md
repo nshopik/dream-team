@@ -84,9 +84,10 @@ A bug reported from outside (the dogfood router, a user) enters here too: one is
   3. Tier:
      - Scout: research within the time box, a note in `docs/research/`, follow-up issues, an MR
        for the note that closes the scout issue.
-     - Light (docs, comments, help text, config, rename, no behaviour change): the agent makes
-       the edit inline and runs `gateCommands`; no subagents, no reviewers, no lab work unless the
-       issue asks for a measurement.
+     - Light (docs, comments, help text, config, rename, or a small bug fix the agent reproduced
+       first): the agent makes the edit inline, runs `gateCommands`, and dispatches one reviewer
+       — `gdoc-writer` for docs, the domain reviewer type otherwise. Full criteria: dream-fixer
+       step 2a.
      - Full: implementer, mechanical gate, over-engineering cuts, quality reviewers, domain
        reviewer, bounded fix rounds.
   4. Lab work (perf gate, tests that need root) through `dream-team:lab-runner` on the host the
