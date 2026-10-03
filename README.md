@@ -88,7 +88,11 @@ A missing agent type runs as a generic agent.
 ## Development
 
 Rules live in the `## <id>` sections of each `SKILL.md`; the hook holds only detection logic and
-caps. Test a local checkout with:
+caps. `hooks/body-cap.py` quotes a section back verbatim when it blocks a command. Keep heading ids
+stable and sub-headings at `###`, since any `##` closes a section. `{over_cap}`, and in
+`scope-commit` also `{subject}` and `{problems}`, are placeholders the hook fills.
+
+Test a local checkout with:
 
 ```
 claude --plugin-dir .

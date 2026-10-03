@@ -9,11 +9,6 @@ description: >
 
 Subject `<scope>: <description>`. Body = the why. Most commits don't need one.
 
-`hooks/body-cap.py` extracts the `## <id>` sections below verbatim and shows
-them when a commit is blocked. Edit rules here — the hook holds no prose. Keep heading
-ids stable; sub-headings stay `###` (any `##` closes a section); `{subject}`,
-`{problems}`, `{over_cap}` are hook-filled placeholders.
-
 ## subject
 
 Commit subject `{subject}` breaks Scoped Commits (https://scopedcommits.com/):
