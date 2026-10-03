@@ -1,12 +1,8 @@
 ---
 name: scope-mr
 description: >
-  Merge-request / pull-request description writer. Review-facing text in up to four parts —
-  why it is needed (the problem removed or the capability added), how the change addresses
-  it, the root cause of a fixed bug, then any behaviour a reviewer cannot read off the diff —
-  never a restatement of the commits. Use when writing or editing an MR/PR description
-  (`glab mr create`, `gh pr create`, `-f description=`). Also the rule source the
-  `body-cap.py` PreToolUse hook quotes back when it blocks one. Commit messages: use
+  Merge-request / pull-request description writer. Use when writing or editing an MR/PR
+  description (`glab mr create`, `gh pr create`, `-f description=`). Commit messages: use
   `scope-commit` instead.
 ---
 
