@@ -122,7 +122,8 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
      MRs that `docs/development.md` lacks, `CLAUDE.md` lines that no longer fire, and
      `CLAUDE.local.md` lines to cut or promote to `CLAUDE.md`. Each fact, cut and promotion is one
      proposed line for you to keep or drop.
-  4. Applies what you approved: moves, one docs MR, milestone closed, ROADMAP updated.
+  4. Applies what you approved: moves, one docs MR, milestone closed, ROADMAP updated. A
+     pre-1.0 project that opts in through `CLAUDE.md` gets a `v0.<n>.0` tag on the close.
 - You: the gap issues, the triage table, the proposed facts and the cuts are your decisions.
 
 ### 6. Release

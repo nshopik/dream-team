@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-10-03
+
+### Added
+
+- `milestone-close` tags a pre-1.0 milestone close as the next `v0.<n>.0` when the project's
+  `CLAUDE.md` opts in, and recommends that opt-in when it is missing.
+
 ## [0.13.2] - 2026-10-01
 
 ### Changed
