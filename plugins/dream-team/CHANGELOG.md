@@ -5,6 +5,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Fixed
+
+- The `<project_notes>` rule has a session read `CLAUDE.local.md` before adding a line, so a gotcha
+  already there is sharpened instead of repeated.
+
 ## [0.14.1] - 2026-10-03
 
 ### Changed
