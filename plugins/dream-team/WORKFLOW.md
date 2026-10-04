@@ -120,8 +120,9 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
      `Meta:` issues stay out of the table; the agent ticks their closed children.
   3. Docs check: the diagram and any component table against the code, specs that need a
      `Superseded by` line, ROADMAP status for the milestone's merged work, facts from its merged
-     MRs that `docs/development.md` lacks, `CLAUDE.md` lines that no longer fire, and
-     `CLAUDE.local.md` lines to cut or promote to `CLAUDE.md`. Each fact, cut and promotion is one
+     MRs that `docs/development.md` lacks, `CLAUDE.md` and `CLAUDE.local.md` lines to cut (with
+     the lab host or tool change that would fix the gotcha, where one could), and
+     `CLAUDE.local.md` lines to promote to `CLAUDE.md`. Each fact, cut and promotion is one
      proposed line for you to keep or drop.
   4. Applies what you approved: moves, one docs MR, milestone closed, ROADMAP updated. A
      pre-1.0 project that opts in through `CLAUDE.md` gets a `v0.<n>.0` tag on the close.

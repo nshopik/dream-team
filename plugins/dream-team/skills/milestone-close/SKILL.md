@@ -53,11 +53,12 @@ Report drift, fix nothing yet:
   MRs leave roadmap status to this step.
 - Root-cause and behaviour sections of the milestone's merged MRs → each fact a future change must
   respect that the contributor doc lacks, proposed as one line. The user keeps or drops each.
-- Project `CLAUDE.md` lines that no longer fire — the path or tool is gone, a hook or CI enforces
-  it now, or a global rule already says it — each proposed as a cut. The user keeps or drops each.
-- Each `CLAUDE.local.md` line: proposed as a cut when it no longer fires, as a promotion to
-  `CLAUDE.md` when it holds no hostname, IP, internal URL or lab access, otherwise left alone. The
-  user decides each.
+- Each project `CLAUDE.md` and `CLAUDE.local.md` line, proposed as a cut when the path or tool it
+  names is gone, a hook or CI enforces it now, a global rule already says it, or a change outside
+  the repo could fix the gotcha it works around (a lab host's config, a missing tool, a plugin
+  bug), recommending that change. The user keeps or drops each.
+- Each other `CLAUDE.local.md` line: proposed as a promotion to `CLAUDE.md` when it holds no
+  hostname, IP, internal URL or lab access, otherwise left alone. The user decides each.
 
 ## 5. Apply
 

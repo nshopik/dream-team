@@ -5,6 +5,16 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Added
+
+- `milestone-close` proposes cutting a `CLAUDE.md` or `CLAUDE.local.md` line when a change outside
+  the repo, such as a lab host's config, could fix its gotcha, and recommends that change.
+
+### Changed
+
+- `milestone-close` judges `CLAUDE.local.md` lines for a cut by the same checks as `CLAUDE.md`
+  lines, instead of whether a line still fires.
+
 ### Fixed
 
 - The `<project_notes>` rule has a session read `CLAUDE.local.md` before adding a line, so a gotcha
