@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-10-04
+
 ### Added
 
 - `milestone-close` proposes cutting a `CLAUDE.md` or `CLAUDE.local.md` line when a change outside
