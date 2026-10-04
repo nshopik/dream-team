@@ -115,7 +115,8 @@ Prose rules still apply; they inject on the next file write of the session.
 NOTES = """<project_notes>
 You make a mistake, get corrected, or find something about this repo that is not
 written down → add one imperative line to its `CLAUDE.local.md` and name the line in
-your summary. A fact about how the system works goes in the contributor doc instead.
+your summary. Read the file first; a line that already covers it gets sharpened, not
+repeated. A fact about how the system works goes in the contributor doc instead.
 </project_notes>"""
 
 CLAUDE_MD = """<claude_md>
