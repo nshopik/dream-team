@@ -5,9 +5,15 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.3.12] - 2026-10-05
+
 ### Added
 
 - `scope-issue` sets the host's waiting label on an issue filed into a milestone with an open dependency.
+
+### Changed
+
+- `scope-issue` ends the proposal with a `Done when …` paragraph after its items.
 
 ## [0.3.11] - 2026-10-03
 
