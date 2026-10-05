@@ -273,6 +273,7 @@ function implPrompt() {
     CONTEXT,
     '',
     'Implement the smallest change that resolves this issue. Reuse what is already in the repo before writing anything new.',
+    'The issue\'s `Done when …` paragraph, when present, is the finish line: stop once it holds and every gate command is green.',
     'Build only what the issue needs: no abstractions for hypothetical requirements, no error handling for cases that cannot happen, no cleanup around the change, no feature flag or back-compat shim.',
     'A bug fix gets a test that reproduces the bug; new behaviour gets a unit or e2e test. Prefer a new case in an existing table-driven test over a new test function.',
     'For a bug fix, write the test first, run it, and keep the key lines of its failing output: return them as redEvidence. Not a bug fix: return an empty string.',
@@ -382,6 +383,7 @@ function domainPrompt() {
     '',
     'Review the branch diff as the domain reviewer.',
     'Your lens is the one the build and test suite cannot check: does this change hold against the rules, reference sources and invariants this project\'s CLAUDE.md sets out, and against the issue it claims to close.',
+    'The issue\'s `Done when …` paragraph, when present, must hold on this branch: check it by reading and cite what you read. A condition that does not hold is an important finding; one only a build or test run can show is left to the gate.',
     'Where the project names a reference implementation or spec, check the claim against that source and cite what you read — file and line.',
     REVIEW_RULES,
   ].join('\n')
