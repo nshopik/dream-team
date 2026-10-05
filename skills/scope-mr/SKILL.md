@@ -56,6 +56,10 @@ Reviewer has the diff open and ten minutes. They read code, not your session.
 - User-facing name (flag, config key, metric, exit code, error string) → no limit.
 - Code name (function, type, field — own code or library) → at most five distinct names in
   the whole text; repeating one costs nothing.
+- Detail that locates a site or person (city, address, coordinates) → leave it out unless the
+  work depends on it.
+- Issue, MR or repo the target forge's readers cannot open → describe it in plain words, or
+  drop it.
 
 ### Behaviour
 
