@@ -5,6 +5,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.3.13] - 2026-10-06
+
+### Changed
+
+- `scope-issue` and `scope-mr` leave out details that locate a site or person, and references to issues, MRs or repos the forge's readers cannot open.
+
 ## [0.3.12] - 2026-10-05
 
 ### Added
