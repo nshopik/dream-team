@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.15.1] - 2026-10-05
+
+### Changed
+
+- `dream-fixer-loop` treats the issue's `Done when …` paragraph as the finish line, and the domain
+  reviewer checks it.
+
 ### Fixed
 
 - `cut-milestones` adds the waiting label to the open issues already in a milestone with an open
