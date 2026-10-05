@@ -41,13 +41,18 @@ the numbers.
 ## Steps
 
 1. Read the spec and the existing ROADMAP and tracker milestones.
-2. Draft each milestone: number, title, exit criterion, gate type, what it depends on.
+2. Draft each milestone: number, title, exit criterion, gate type, what it depends on. A
+   dependency that gates only the exit measurement goes in the exit criterion, as "on a commit
+   with Mn closed".
 3. Write the dependency order: which milestones run in parallel, what waits on what.
 4. Show the draft to the user. Stop until the user sets every placeholder.
 5. Create each milestone through the host's tooling skill. Its description is three bullets:
-   `- **Exit:**`, `- **Gate:**`, `- **Depends on:**` (milestones, or `none`).
-6. Add one ROADMAP row per milestone, in the same table as existing ones.
-7. Report the milestones created and the dependency order.
+   `- **Exit:**`, `- **Gate:**`, `- **Depends on:**` (milestones that must close before work can
+   start, or `none`).
+6. Add the waiting label to every open issue already in a milestone whose `Depends on:` has an
+   open milestone.
+7. Add one ROADMAP row per milestone, in the same table as existing ones.
+8. Report the milestones created and the dependency order.
 
 ## ROADMAP row
 
