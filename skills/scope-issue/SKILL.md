@@ -57,6 +57,7 @@ Reader starts the task from the description alone — no comment threads, no cha
 
 - Work cannot start until another issue closes → a `Blocked by #<n>` line, one per blocker.
 - Blocker lines end the description.
+- Filed into a milestone whose description's `Depends on:` has an open milestone → the host's waiting label (`workflow::future` on GitLab).
 
 ### Title
 

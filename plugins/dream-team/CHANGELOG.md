@@ -5,6 +5,12 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Fixed
+
+- `cut-milestones` adds the waiting label to the open issues already in a milestone with an open
+  dependency, and puts a dependency that gates only the exit measurement in `Exit:` instead of
+  `Depends on:`.
+
 ## [0.15.0] - 2026-10-04
 
 ### Added
