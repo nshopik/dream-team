@@ -99,6 +99,10 @@ Reader starts the task from the description alone — no comment threads, no cha
 - User-facing name (flag, config key, metric, exit code, error string) → no limit.
 - Code name (function, type, field — own code or library) → at most three backticked
   occurrences in the whole text.
+- Detail that locates a site or person (city, address, coordinates) → leave it out unless the
+  work depends on it.
+- Issue, MR or repo the target forge's readers cannot open → describe it in plain words, or
+  drop it.
 
 ### Updates
 
