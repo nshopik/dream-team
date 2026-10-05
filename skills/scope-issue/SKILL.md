@@ -25,6 +25,7 @@ Reader starts the task from the description alone — no comment threads, no cha
 - Problem: the defect or gap the context leads to, under `## Problem`.
 - Proposal: the next step, under `## Proposal`. Always present.
 - Proposal is concrete: a list of actions, a person to engage, or a scout's questions.
+- Proposal ends with a `Done when …` paragraph after its items, naming an observable check. Never a bullet.
 - Never end at the problem.
 - Meta issue: context, then the checklist. No `## Problem` or `## Proposal`.
 
@@ -70,7 +71,6 @@ Reader starts the task from the description alone — no comment threads, no cha
 
 - Multi-part work → `-` bullet list.
 - Each item independently completable and verifiable.
-- Done-condition not obvious from the items → state it.
 - Default: plain `-` bullets.
 - `- [ ]` boxes only for complex multi-stage work, or a meta issue's checklist.
 - A paragraph contains an action → pull the action into an item; the paragraph keeps only the why.
