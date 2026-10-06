@@ -173,6 +173,8 @@ the one thing the user cannot read off `/workflows`. Three lines, the label in b
 - **Domain reviewer:** `<type>`
 ```
 
+- Domain reviewer `generic` → write `project specialist` in place of the type.
+
 ## 6. Judge the result
 
 The workflow returns structured, not final. Once it returns, read
