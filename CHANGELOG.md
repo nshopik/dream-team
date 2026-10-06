@@ -5,6 +5,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.3.14] - 2026-10-06
+
+### Changed
+
+- The body-cap hook no longer bounces a commit body once for a subagent committing on an `issue-<n>-*` branch; subject, style and length checks still apply.
+
 ## [0.3.13] - 2026-10-06
 
 ### Changed
