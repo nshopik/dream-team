@@ -1,6 +1,6 @@
 {
   "skill_name": "dream-fixer",
-  "notes": "Each case hands the model a finished dream-fixer-loop result and what steps 6-8 already did, and asks for the final report only. It grades the Report back section, not the workflow. `checks` are mechanical and decide the regression-prone rules (heading position, leaked minor findings); `expectations` go to an LLM grader. Every case also expects silence on anything that went smoothly; the summary counts the grader's deletable lines as a second minimality signal.",
+  "notes": "Each case hands the model a finished dream-fixer-loop result and what steps 6-8 already did, and asks for the final report only. It grades the Report back section, not the workflow. `checks` are mechanical and decide the regression-prone rules (heading position, leaked minor findings); `expectations` go to an LLM grader. Every case also expects silence on anything that went smoothly; the summary counts the grader's deletable lines as a second minimality signal. A `kind: tier` case instead hands it an issue and a project `CLAUDE.md` and asks for the step-2a tier only; its `tier` check is the whole grade.",
   "gateCommands": "go build ./..., go test ./..., golangci-lint run",
   "evals": [
     {
@@ -307,6 +307,18 @@
           "rotat",
           "go test"
         ]
+      }
+    },
+    {
+      "slug": "claude-md-tier",
+      "kind": "tier",
+      "issue": 88,
+      "title": "docs: generate the CLI reference from the command tree",
+      "labels": [
+        "docs"
+      ],
+      "checks": {
+        "tier": "light"
       }
     }
   ]

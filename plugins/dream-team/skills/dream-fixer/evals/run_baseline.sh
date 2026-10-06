@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# Baseline runner for the dream-fixer report. Two phases:
-#   generate — one headless claude per case, writes the final report from a canned workflow result
-#   grade    — mechanical `checks` from evals.json, then one headless claude per case scoring
-#              the `expectations`
+# Baseline runner for the dream-fixer report and step-2a tier. Two phases:
+#   generate — one headless claude per case, writes the final report from a canned workflow result,
+#              or a `kind: tier` case's tier from a canned issue and project CLAUDE.md
+#   grade    — mechanical `checks` from evals.json, then one headless claude per report case
+#              scoring the `expectations`
 #
 # Usage:  ./run_baseline.sh [slug ...]      (no args = all cases)
 #         MODEL=opus ./run_baseline.sh      (default: opus)
@@ -27,6 +28,16 @@ import json, sys
 slug, here = sys.argv[1:]
 top = json.load(open('evals.json'))
 e = next(e for e in top['evals'] if e['slug'] == slug)
+if e.get('kind') == 'tier':
+    print(f"""Use the dream-team:dream-fixer skill. You are its orchestrator on issue #{e['issue']}
+of github.com/acme/flowlog, "{e['title']}", labels {', '.join(e['labels'])}.
+
+The issue body is in {here}/files/{slug}.issue.md and the project's CLAUDE.md is
+{here}/files/{slug}.CLAUDE.md — read both. Step 1 is done and step 2 found nothing blocking.
+
+Use only the Read, Grep, Glob and Skill tools. Make only the step-2a tier decision. Output the
+tier alone on the first line — scout, light or full — then one line naming what decided it.""")
+    sys.exit()
 result = f"{here}/files/{slug}.result.json"
 branch = e.get('branch') or json.load(open(result))['branch']
 print(f"""Use the dream-team:dream-fixer skill. You are its orchestrator on issue #{e['issue']}
@@ -91,6 +102,11 @@ e = next(e for e in top['evals'] if e['slug'] == sys.argv[1])
 c, text = e['checks'], open(sys.argv[2]).read()
 body = [l.rstrip() for l in text.splitlines() if l.strip()]
 res = []
+if 'tier' in c:
+    named = ''.join(re.findall(r'[a-z]+', text.lower())[:1])
+    res.append((f'tier {c["tier"]} (named {named!r})', named == c['tier']))
+    json.dump([{'check': k, 'pass': v} for k, v in res], open(sys.argv[2].replace('.md', '.checks.json'), 'w'), indent=1)
+    sys.exit()
 if c.get('assumptions'):
     res.append(('assumptions heading first', bool(body) and body[0] == '**Assumptions:**'))
 for s in c.get('contains', []):
@@ -133,6 +149,8 @@ PY
 grade() {
   local slug=$1
   check "$slug"
+  python3 -c "import json, sys; sys.exit(any(e['slug'] == sys.argv[1] and e.get('kind') == 'tier'
+    for e in json.load(open('evals.json'))['evals']))" "$slug" || return 0
   ask <<EOF > "$OUT/$slug.grade.json"
 You are grading one dream-fixer final report against a fixed expectation list. Be adversarial:
 a pass on a report that breaks a rule is worse than useless. Judge only what the expectations
@@ -192,6 +210,7 @@ if [ "$PHASE" != generate ]; then
 import json, sys
 from pathlib import Path
 out = Path(sys.argv[1])
+kinds = {e['slug']: e.get('kind') for e in json.load(open('evals.json'))['evals']}
 print(f'\n{"case":<20} {"words":>5} {"checks":>7} {"exp":>7} {"del":>4}  failures')
 print('-' * 72)
 tc = ta = tk = tn = td = 0
@@ -203,7 +222,7 @@ for slug in sys.argv[2:]:
     kp = sum(c['pass'] for c in ck)
     fails = [c['check'] for c in ck if not c['pass']]
     try:
-        g = json.load(open(out / f'{slug}.grade.json'))
+        g = {'expectations': [], 'correct': 0, 'applicable': 0} if kinds[slug] == 'tier' else json.load(open(out / f'{slug}.grade.json'))
         fails += [x['text'][:50] for x in g['expectations'] if x['verdict'] == 'FAIL']
     except Exception as e:
         g = {'correct': 0, 'applicable': 0}
