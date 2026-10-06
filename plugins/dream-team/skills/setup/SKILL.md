@@ -1,14 +1,12 @@
 ---
-name: align-project
+name: setup
 description: >-
-  Check a project against the dream-team flow and file one issue per failing check. Use when the
-  user asks to bring a project into the dream-team flow, align it, upgrade it to the workflow, or
-  asks whether a project is ready for dream-fixer — "align this repo", "is this project aligned",
-  "move this project onto the dream-team flow". Not for working an issue (use dream-fixer) or
-  closing a milestone (use milestone-close).
+  Check a project against the dream-team flow and file one issue per failing check. Not for
+  working an issue (use dream-fixer) or closing a milestone (use milestone-close).
+disable-model-invocation: true
 ---
 
-# align-project
+# setup
 
 Bringing a project into line is a program, not a change. This skill audits and files issues. It
 changes no code, no docs and no tracker settings; the filed issues go through `dream-fixer`.

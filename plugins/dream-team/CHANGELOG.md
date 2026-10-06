@@ -5,6 +5,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking:** the `align-project` skill is renamed `setup`, run as `/dream-team:setup`, and
+  Claude no longer starts it unprompted.
+
 ## [0.16.0] - 2026-10-06
 
 ### Added

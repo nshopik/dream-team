@@ -2,7 +2,7 @@
 
 ## Pieces and where they live
 
-Rules, in each project `CLAUDE.md`: listed in `align-project`, which checks for them.
+Rules, in each project `CLAUDE.md`: listed in `setup`, which checks for them.
 
 Skills:
 
@@ -10,7 +10,7 @@ Skills:
   `Meta:` issues and `Blocked by` lines.
 - `dream-fixer` (dream-team plugin): one issue to one MR, with scout, light and full tiers;
   stops on an open blocker; on a `Meta:` issue, works one open unblocked child.
-- `align-project` (dream-team plugin): checks a project against the flow, files one issue per
+- `setup` (dream-team plugin): checks a project against the flow, files one issue per
   failing check.
 - `cut-milestones` (dream-team plugin): milestones from a spec, one exit gate each, with the
   dependency order and ROADMAP rows; or one version milestone for a minor release.
