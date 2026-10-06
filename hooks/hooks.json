@@ -7,13 +7,6 @@
           {
             "type": "command",
             "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/body-cap.py\"",
-            "if": "Bash(git *)",
-            "timeout": 5,
-            "statusMessage": "Checking commit message"
-          },
-          {
-            "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/body-cap.py\"",
             "if": "Bash(gh *)",
             "timeout": 5,
             "statusMessage": "Checking PR or issue description"
