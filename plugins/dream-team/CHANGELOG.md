@@ -7,8 +7,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Changed
 
-- **Breaking:** the `align-project` skill is renamed `setup`, run as `/dream-team:setup`, and
-  Claude no longer starts it unprompted.
+- **Breaking:** the `align-project` skill is renamed `setup-dream-team`, run as
+  `/dream-team:setup-dream-team`, and Claude no longer starts it unprompted.
+- `setup-dream-team` fixes missing project rules and labels, milestone bullets, `Blocked by`
+  lines and the waiting label directly after one confirm, and files issues only for the other
+  failing checks.
 
 ## [0.16.0] - 2026-10-06
 
