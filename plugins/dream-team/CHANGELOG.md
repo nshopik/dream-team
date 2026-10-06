@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-10-06
+
+### Added
+
+- A change requested in chat that needs a user decision, contradicts the spec, adds a component, or
+  needs a lab check is offered as an issue instead of being edited inline.
+
 ## [0.15.1] - 2026-10-05
 
 ### Changed
