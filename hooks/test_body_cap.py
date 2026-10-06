@@ -31,35 +31,19 @@ BODY = "docs: document dedup\n\nCloses #4 - the remaining work is operator-side,
 # 1. bug: `git commit` mentioned only inside a heredoc payload -> not a commit
 show("mention inside heredoc", "cat > x.py <<'PY'\nprint('git " + C + " -m nope')\nPY\npython3 x.py")
 
-# 2. bug: earlier unrelated heredoc must not be measured as the message. Its own
-# body, so the verdict does not depend on whether case 3 has run yet — the note
-# text would trip the "I"/"now" bans if it were the text being measured.
+# 2. bug: earlier unrelated heredoc must not be measured as the message — the
+# note has no `<scope>:` subject, so measuring it would deny.
 two = ("cat > note.txt <<'NOTE'\nI wrote this and now it is here\nNOTE\n"
        "git " + C + " -F - <<'MSG'\n"
        + BODY.replace("operator-side", "elsewhere") + "\nMSG")
 show("second heredoc is the message", two)
-
-# 3. gate: first submission bounced, identical resubmission passes
-os.path.exists(SEEN) and os.remove(SEEN)
-one = "git add -A && git " + C + " -q -F - <<'EOF'\n" + BODY + "\nEOF"
-show("body, 1st submission", one)
-show("body, same again", one)
-show("body, reworded", one.replace("operator-side", "server-side"))
+assert run(two)[0] == "ALLOW+RULES"
 
 # 4. subject-only still silent; over-cap still denies; subject check still fires
 show("subject only", "git " + C + " -m 'docs: tidy'")
 show("over cap", "git " + C + " -F - <<'EOF'\ndocs: x\n\n" + ("word " * 200) + "\nEOF")
 show("bad subject", "git " + C + " -m 'feat: add thing'")
 show("revert exempt", "git " + C + " -F - <<'EOF'\nRevert \"docs: x\"\n\nThis reverts commit abc.\nEOF")
-
-# 5. wrap: a runaway line denies at 80; 73-79 is tolerated; a long bare token is exempt
-wide = "row: widen the field\n\n" + ("prose " * 20)
-show("runaway body line", "git " + C + " -F - <<'EOF'\n" + wide + "\nEOF")
-near = "row: widen the field\n\n" + "w" * 40 + " " + "x" * 34   # 75 columns
-show("75 cols tolerated", "git " + C + " -F - <<'EOF'\n" + near + "\nEOF")
-url = ("row: widen the field\n\nSee\nhttps://example.invalid/"
-       + "x" * 90 + "\nfor the shape.")
-show("long bare URL exempt", "git " + C + " -F - <<'EOF'\n" + url + "\nEOF")
 
 # 7. MR rubric: a rung rubric stamped as a heading or lead-in denies; prose passes.
 def mr(desc):
@@ -182,33 +166,26 @@ assert second[0] == "DENY" and "budget" in second[1]
 assert third[0] == "ALLOW+RULES"
 print(f"{'per-gate bounce':34} {'OK':12} 2 deny / 1 pass")
 
-# 10b. a subagent on an issue-<n>-* branch skips the confirm bounce.
-body_cmd = "git " + C + " -F - <<'EOF'\n" + BODY + "\nEOF"
-agent = {"agent_id": "a1b2", "agent_type": "dream-fixer-loop"}
-elsewhere = tempfile.mkdtemp()
-agent_cases = [
-    ("agent, issue branch",        "issue-114-x", repo, agent, body_cmd, "ALLOW+RULES"),
-    ("agent, issue branch via cd", "issue-114-x", elsewhere, agent,
-     f"cd {repo} && " + body_cmd, "ALLOW+RULES"),
-    ("main session, issue branch", "issue-114-x", repo, {}, body_cmd, "DENY"),
-    ("agent, non-issue branch",    "topic", repo, agent, body_cmd, "DENY"),
-    ("agent, issue branch, over",  "issue-114-x", repo, agent,
-     "git " + C + " -F - <<'EOF'\ndocs: x\n\n" + "\n".join(["word " * 10] * 17) + "\nEOF", "DENY"),
-    ("agent, outside a repo",      "topic", elsewhere, agent, body_cmd, "DENY"),
-    ("main session, -F fold",      "issue-114-x", repo, {},
-     "git reset --soft main && git " + C + " -F " + wrote("fold-msg", BODY), "DENY"),
-    ("main session, -C fold unseen", "issue-114-x", repo, {},
-     "git reset --soft main && git " + C + " -C HEAD", "ALLOW-SILENT"),
+# 10b. a commit body under the cap passes on first run; body style (narration,
+# `*` bullets, wrap) is the skill's job, not the hook's.
+def commit_with(body):
+    return "git " + C + " -F - <<'EOF'\n" + body + "\nEOF"
+
+first_run = [
+    ("short clean body",       commit_with(BODY)),
+    ("add-and-commit chain",   "git add -A && git " + C + " -q -F - <<'EOF'\n" + BODY + "\nEOF"),
+    ("-F file fold",           "git reset --soft main && git " + C + " -F " + wrote("fold-msg", BODY)),
+    ("self-narration",         commit_with("docs: x\n\nWe fixed it. Now it works.")),
+    ("`*` bullet",             commit_with("docs: x\n\n* one\n* two")),
+    ("runaway body line",      commit_with("row: widen the field\n\n" + "prose " * 20)),
 ]
-for name, branch, cwd, extra, cmd, want in agent_cases:
-    git("checkout", "-qB", branch)
-    os.path.exists(SEEN) and os.remove(SEEN)
-    v, r = run_in(cmd, cwd, **extra)
-    print(f"{name:34} {v:12} {r.splitlines()[0][:60] if r else ''}")
-    assert v == want, name
-    if v == "DENY" and "-word ceiling" not in r:
-        assert run_in(cmd, cwd, **extra)[0] == "ALLOW+RULES", name   # bounced once
-print(f"{'agent confirm skip':34} {'OK':12} {len(agent_cases)} cases")
+for name, cmd in first_run:
+    v, r = run(cmd)
+    print(f"{name:34} {v:12}")
+    assert v == "ALLOW+RULES" and "<commit_style>" in r, name
+print(f"{'commit body first run':34} {'OK':12} {len(first_run)} cases")
+v, r = run("git " + C + " -F " + wrote("bad-subj", "feat: add thing\n\nbody"))
+assert v == "DENY" and "breaks" in r, "-F file subject"
 
 # 11. issues: scope-issue section rides along under the cap, 500-word cap denies.
 under = "gh issue create --title t --body " + json.dumps("word " * 490)
@@ -324,8 +301,6 @@ print(f"{'sections() parse':34} {'OK':12}")
 headers = [
     ("bad subject", "git " + C + " -m 'feat: add thing'",
      "Commit subject `feat: add thing` breaks", "<commit_style>\n### Shape"),
-    ("body issues", "git " + C + " -F - <<'EOF'\ndocs: x\n\nWe fixed it.\nEOF",
-     "Commit body breaks style:\n- refers", "<commit_style>\n- Impersonal"),
     ("over cap", commit_of(170), "Commit body is 170 words", "<commit_style>\n### When"),
     ("--fill", "glab mr create --fill", "`--fill` writes", "<mr_style>\n- Commit body"),
 ]

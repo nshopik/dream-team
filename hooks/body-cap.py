@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
-"""PreToolUse gate: Scoped Commits subjects, over-long and over-wide bodies,
-descriptions that outrun the diff they describe, `--fill` MRs, and MR
-descriptions that stamp a rung rubric as a heading/lead-in. Text passed by file
-is measured the same as text on the flag.
-
-Also bounces every distinct commit body once (see CONFIRM): whether a body earns
-its place is judgment, not a measurement, so the gate forces the judgment to be
-made rather than trying to make it. A subagent on an `issue-<n>-*` branch skips it.
+"""PreToolUse gate: Scoped Commits subjects, over-long bodies, descriptions that
+outrun the diff they describe, `--fill` MRs, and MR descriptions that stamp a
+rung rubric as a heading/lead-in. Text passed by file is measured the same as
+text on the flag.
 
 Reads the hook payload on stdin. Allows silently (exit 0, no output) on anything
 it cannot confidently parse — a false block is worse than a missed one.
@@ -44,7 +40,6 @@ OVER_CAP = "{what} is {n} words — over the {cap}-word ceiling. Rewrite it, the
 
 SUBJECT = ("Commit subject `{subject}` breaks Scoped Commits (https://scopedcommits.com/):\n"
            "{problems}\nRewrite it, then re-run.\n\n")
-BODY_ISSUES = "Commit body breaks style:\n{problems}\nRewrite it, then re-run.\n\n"
 FILL = ("`--fill` writes the description from the commit message. Drop it, pass the "
         "description explicitly (`--description`, `-f description=`), then re-run.\n\n")
 
@@ -123,48 +118,6 @@ def subject_issues(text):
     return out
 
 
-# Body self-narration and formatting bans.
-BODY_BAN = [
-    (re.compile(r'\bthis (commit|change) (does|adds|fixes|removes|makes)\b', re.I),
-     "narrates itself (\"this commit/change does...\") — the diff shows what changed"),
-    (re.compile(r'^\s*(I|We)\b', re.M),
-     "refers to the author (\"I\"/\"We\") — state the why, not who did it"),
-    (re.compile(r'^\s*(Now|Currently),?\s', re.M),
-     "narration word (\"now\"/\"currently\") — describe the why, not the state change"),
-    (re.compile(r'^\s*\*\s', re.M),
-     "`*` bullet — use `-`"),
-]
-
-
-# Wrap at 72 is the instruction (the skill carries the reason); 80 is where the
-# gate fires. The split is deliberate and measured: across 669 commits in this
-# repo and dnstap2clck, 81% of over-wide lines land at 73-76 columns, median 74.
-# Denying at 72 would block 24% of real commits over a one-character overflow;
-# anything under 80 still renders fine everywhere we care about, so the gate
-# catches only the genuine runaway line — 1% of that history.
-WRAP_HARD = 80
-
-# A line only counts if wrapping it is possible: a bare URL or path longer than
-# the limit is left alone rather than reported as unfixable. Indented and quoted
-# lines are NOT exempt — in that same history the over-wide lines were prose
-# overflow, not preformatted blocks.
-# ponytail: add an indent exemption if real code blocks start tripping it.
-def wrap_issues(lines):
-    out = []
-    for i, line in enumerate(lines, 1):
-        if len(line) > WRAP_HARD and max(map(len, line.split()), default=0) <= WRAP_HARD:
-            out.append(f'- body line {i} is {len(line)} columns — wrap at 72.')
-    return out[:3] + ([f'- …and {len(out) - 3} more over 72.'] if len(out) > 3 else [])
-
-
-def body_issues(body):
-    """Self-narration, formatting and wrap violations in the body, as strings."""
-    kept = strip_trailers(body)
-    text = '\n'.join(kept)
-    return ([f'- {msg}.' for pattern, msg in BODY_BAN if pattern.search(text)]
-            + wrap_issues(kept))
-
-
 # `gh api` on a PR/issue itself, only when it sends a body: a read piped into
 # `python3 - <<EOF` would otherwise have its script measured as the description.
 # The path must be the first argument, or a path quoted in a comment body matches.
@@ -184,18 +137,11 @@ ISSUE_CMD = re.compile(r'\bglab\b(?:[^\n|;&]*\bissues(?:/\d+)?(?![/\w])'
                        r'|\bgh\b\s+issue\s+(?:create|edit)\b'
                        r'|' + GH_API.format('issues'))
 
-# No regex measures whether a body earns its place, so the gate is procedural:
-# bounce each distinct body once and let re-issuing it be the judgment. MRs are
-# exempt from the blanket bounce — a description is mandatory there, so the same
-# gate is pure toll — but a rung-4 claim gets its own bounce below: "deliberately
-# left out" is the one line that reliably smuggles unrelated findings into an MR.
-CONFIRM = ("This commit has a body — bounced once so the judgment below gets made. "
-           "Re-run the same command unchanged to pass; otherwise drop or shorten "
-           "the body.\n\n")
-
-# Rung-4 leaders. The explicit phrases are specific enough to match anywhere in
-# the prose; the bare "unchanged:"-style ones only lead a line, where prose that
-# merely mentions the word cannot reach them.
+# Rung-4 leaders, bounced once in an MR: "deliberately left out" is the one line
+# that reliably smuggles unrelated findings into an MR. The explicit phrases are
+# specific enough to match anywhere in the prose; the bare "unchanged:"-style
+# ones only lead a line, where prose that merely mentions the word cannot reach
+# them.
 # The prescriptive set is the same smuggling in forward-looking grammar: work
 # the diff does not contain, written as an instruction rather than as an
 # omission ("a contact point still needs to exist before this delivers").
@@ -245,15 +191,6 @@ def cmd_cwd(cmd, at):
         return None
     path = os.path.expanduser(os.path.expandvars(path))
     return path if os.path.isdir(path) else None
-
-
-def on_issue_branch(cwd=None):
-    try:
-        p = subprocess.run(('git', 'symbolic-ref', '--short', 'HEAD'),
-                           capture_output=True, text=True, timeout=5, cwd=cwd)
-    except (OSError, subprocess.SubprocessError):
-        return False
-    return p.returncode == 0 and bool(re.match(r'issue-\d+-', p.stdout.strip()))
 
 
 def diff_lines(cwd=None):
@@ -549,7 +486,6 @@ def main():
     try:
         payload = json.load(sys.stdin)
         cmd = payload.get('tool_input', {}).get('command', '')
-        agent = payload.get('agent_id')
     except Exception:
         return
     # Start is at the `<<`.
@@ -590,10 +526,6 @@ def main():
             return deny(SUBJECT.format(subject=subject, problems='\n'.join(issues))
                         + reminder('commit', 'subject'))
         body = body_of(text)
-        b_issues = body_issues(body)
-        if b_issues:
-            return deny(BODY_ISSUES.format(problems='\n'.join(b_issues))
-                        + reminder('commit', 'body-issues'))
     n = count(body)
     if not n:
         return                                  # subject-only commit, nothing to style
@@ -605,10 +537,6 @@ def main():
     out = reminder(kind, f'{kind}-style')
     if over:
         return deny(over + out)
-    if (kind == 'commit' and not EXEMPT.match(text.lstrip())
-            and not (agent and on_issue_branch(cmd_cwd(cmd, at)))
-            and not seen(body, 'confirm')):
-        return deny(CONFIRM + out)
     if kind == 'mr':
         m = MR_RUBRIC.search('\n'.join(strip_trailers(body)))
         if m:

@@ -1,9 +1,10 @@
 ---
 name: scope-commit
 description: >
-  Scoped Commits message generator (https://scopedcommits.com/): `<scope>: <description>`
-  subject, body only when the "why" isn't obvious. Use when writing or amending a commit
-  message. MR/PR descriptions: use `scope-mr` instead.
+  Scoped Commits message rules (https://scopedcommits.com/): `<scope>: <description>`
+  subject, body only when the "why" isn't obvious. Use before running any `git commit`,
+  including `--amend` and a squash or fold, and for "write a commit", "commit message",
+  "commit this" or /commit. MR/PR descriptions: use `scope-mr` instead.
 ---
 
 Subject `<scope>: <description>`. Body = the why. Most commits don't need one.
