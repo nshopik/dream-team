@@ -1,4 +1,4 @@
-// What dream-fixer-loop does with each Simplify review and /verify gate reply, through stub agents; no claude call.
+// What dream-fixer-loop does with each Simplify review, /verify gate reply and domainReviewer arg, through stub agents; no claude call.
 // Usage: node test_simplify.mjs
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
@@ -9,10 +9,12 @@ const args = { issue: '1', branch: 'issue-1', base: 'HEAD', gateCommands: ['true
 
 // Every other reviewer passes, so the run ends after Review or its fix rounds.
 // verifyRuns: the /verify gate's replies, one per run.
-async function run(review, cuts, { verify = false, aspects = ['code'], verifyRuns = [] } = {}) {
+async function run(review, cuts, { verify = false, aspects = ['code'], verifyRuns = [], domainReviewer } = {}) {
   const labels = []
+  const prompts = {}
   async function agent(prompt, opts) {
     labels.push(opts.label)
+    prompts[opts.label] = prompt
     if (opts.phase === 'Implement') return { committed: true, summary: '', redEvidence: '' }
     if (opts.phase === 'Gate') return { passed: true, summary: '', changedFiles: [], dirtyPaths: [], aspects }
     if (opts.label.startsWith('simplify:')) return review
@@ -23,8 +25,8 @@ async function run(review, cuts, { verify = false, aspects = ['code'], verifyRun
     throw new Error(`unexpected agent ${opts.label}`)
   }
   const result = await new AsyncFunction('args', 'agent', 'phase', 'log', 'parallel', body)(
-    { ...args, verify }, agent, () => {}, () => {}, (fns) => Promise.all(fns.map((f) => f())))
-  return { result, labels }
+    { ...args, verify, domainReviewer }, agent, () => {}, () => {}, (fns) => Promise.all(fns.map((f) => f())))
+  return { result, labels, prompts }
 }
 
 const cut = (tag) => ({ tag, location: 'latency.py:L3', cut: `${tag} cut`, replacement: 'statistics.median' })
@@ -99,5 +101,20 @@ for (const row of verifyRows) {
   assert.deepEqual(result.resolved, row.resolved, row.name)
   if (row.ok) assert.equal(result.fixRounds, row.fixRounds, row.name)
   else assert.equal(result.handBack, true, row.name)
+  console.log(`PASS ${row.name}`)
+}
+
+const doneWhenCheck = 'The issue\'s `Done when …` paragraph, when present, must hold on this branch'
+const domainRows = [
+  { name: 'domain reviewer absent', domainReviewer: undefined, domainRan: true },
+  { name: 'domain reviewer specialist', domainReviewer: 'rust-pro', domainRan: true },
+  { name: 'domain reviewer none', domainReviewer: 'none', domainRan: false },
+]
+
+for (const row of domainRows) {
+  const { result, labels, prompts } = await run(lean, undefined, { domainReviewer: row.domainReviewer })
+  assert.equal(result.ok, true, row.name)
+  assert.equal(labels.includes('review:domain'), row.domainRan, `${row.name}: review:domain dispatched`)
+  assert.equal(prompts['review:pr-review-toolkit:code-reviewer'].includes(doneWhenCheck), !row.domainRan, `${row.name}: code-reviewer Done-when check`)
   console.log(`PASS ${row.name}`)
 }

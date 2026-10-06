@@ -93,8 +93,9 @@ makes inline.
        first): the agent makes the edit inline, runs `gateCommands`, and dispatches one reviewer
        — `gdoc-writer` for docs, the domain reviewer type otherwise. Full criteria: dream-fixer
        step 2a.
-     - Full: implementer, mechanical gate, over-engineering cuts, quality reviewers, domain
-       reviewer, bounded fix rounds.
+     - Full: implementer, mechanical gate, over-engineering cuts, quality reviewers, a domain
+       reviewer when the catalog has a second specialist or the project's `CLAUDE.md` asks for a
+       project specialist, bounded fix rounds.
   4. Lab work (perf gate, tests that need root) through `dream-team:lab-runner` on the host the
      repo's `CLAUDE.md` names.
   5. MR: one folded commit, description by `scope-mr`, with ratchet floors, the diagram and any

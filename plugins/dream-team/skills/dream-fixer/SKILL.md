@@ -95,7 +95,7 @@ Light-path reviewer type:
 
 - Docs, comments, help or usage text only → `gdoc-writer`, review-only.
 - Anything else → the step-3 domain reviewer type, with the failing evidence for a bug fix.
-- Type not in the catalog → `generic`.
+- Type `none` or not in the catalog → `generic`.
 
 Scout tier: no workflow, no code; the research note is the one change you write. Answer the
 proposal's questions yourself within its time box. Write the answers as a note in the repo's
@@ -112,8 +112,12 @@ in it fails at dispatch.
   type must have Bash: it commits and runs tests. A fitting specialist without Bash → make it the
   domain reviewer and implement with `generic`.
 - **Domain reviewer**: the lens the build and test suite cannot check — the project's own rules,
-  reference sources and invariants. **MUST be a different type than the implementer**; if the
-  catalog has no second specialist for the domain, use `generic`.
+  reference sources and invariants. **MUST be a different type than the implementer**.
+  - No second specialist for the domain in the catalog → `none`: no domain reviewer runs.
+  - The project's `CLAUDE.md` asks for a project specialist, or for review against its own rules
+    or reference → `generic` in place of `none`.
+  - A project specialist is `generic` run with the domain prompt, checking the rules and reference
+    sources the project's `CLAUDE.md` names; it is not a catalog specialist.
 
 Override the pick when you know better than the catalog descriptions.
 
@@ -147,7 +151,7 @@ object (never a stringified one):
   "base": "<sha from step 4>",
   "gateCommands": ["cargo build --workspace", "cargo test --workspace", "cargo clippy --workspace"],
   "implementer": "<catalog type or generic>",
-  "domainReviewer": "<catalog type or generic>",
+  "domainReviewer": "<catalog type, generic or none>",
   "verify": false
 }
 ```
