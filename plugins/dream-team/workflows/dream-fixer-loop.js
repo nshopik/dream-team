@@ -1,11 +1,11 @@
 export const meta = {
   name: 'dream-fixer-loop',
-  description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review simplify pass, pr-review-toolkit reviewers plus one domain reviewer, bounded fix loop',
+  description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review simplify pass, pr-review-toolkit reviewers plus one domain reviewer unless args.domainReviewer is none, bounded fix loop',
   phases: [
     { title: 'Implement', detail: 'one specialist writes the change and commits' },
     { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
     { title: 'Simplify', detail: 'ponytail-review cuts, applied or disputed by the implementer; skipped when the diff has no code or ponytail-review is unavailable (opus)' },
-    { title: 'Review', detail: 'pr-review-toolkit suite plus one domain reviewer (opus); opt-in /verify gate through a nested claude session, skipped when the diff has no code or claude or its /verify is unavailable' },
+    { title: 'Review', detail: 'pr-review-toolkit suite plus one domain reviewer unless args.domainReviewer is none (opus); opt-in /verify gate through a nested claude session, skipped when the diff has no code or claude or its /verify is unavailable' },
     { title: 'Fix', detail: 'blocking findings only; re-review only the reviewers that failed' },
   ],
 }
@@ -22,6 +22,7 @@ const BRANCH = String(A.branch || '')
 const BASE = String(A.base || '')
 const GATE_COMMANDS = Array.isArray(A.gateCommands) ? A.gateCommands.map(String).filter(Boolean) : []
 const VERIFY = A.verify === true
+const NO_DOMAIN = A.domainReviewer === 'none'
 const FIX_ROUNDS = 3
 const VERIFY_ROUNDS = 3
 
@@ -195,8 +196,9 @@ const FIX_SCHEMA = {
 // (commands/review-pr.md:41) live here. Comments and error handling change in
 // nearly every diff, so those reviewers always run; only tests and types are
 // detected, by the verify agent's greps.
+const CODE_REVIEWER = 'pr-review-toolkit:code-reviewer'
 const QUALITY_ALWAYS = [
-  'pr-review-toolkit:code-reviewer',
+  CODE_REVIEWER,
   'pr-review-toolkit:comment-analyzer',
   'pr-review-toolkit:silent-failure-hunter',
 ]
@@ -361,6 +363,8 @@ function simplifyFixPrompt(findings) {
   ].join('\n')
 }
 
+const DONE_WHEN = 'The issue\'s `Done when …` paragraph, when present, must hold on this branch: check it by reading and cite what you read. A condition that does not hold is an important finding; one only a build or test run can show is left to the gate.'
+
 function qualityPrompt(agentType, redEvidence) {
   return [
     CONTEXT,
@@ -368,6 +372,7 @@ function qualityPrompt(agentType, redEvidence) {
     `Review the branch diff as ${agentType}, on your own specialty only.`,
     REVIEW_RULES,
     'Anything a linter, typechecker or the test suite would catch is out of scope — that gate already ran and passed.',
+    ...(NO_DOMAIN && agentType === CODE_REVIEWER ? [DONE_WHEN] : []),
     ...(redEvidence && agentType === ASPECT_AGENTS.tests ? [
       '',
       'The implementer reports this failing output from the new test, observed before the fix was applied:',
@@ -383,7 +388,7 @@ function domainPrompt() {
     '',
     'Review the branch diff as the domain reviewer.',
     'Your lens is the one the build and test suite cannot check: does this change hold against the rules, reference sources and invariants this project\'s CLAUDE.md sets out, and against the issue it claims to close.',
-    'The issue\'s `Done when …` paragraph, when present, must hold on this branch: check it by reading and cite what you read. A condition that does not hold is an important finding; one only a build or test run can show is left to the gate.',
+    DONE_WHEN,
     'Where the project names a reference implementation or spec, check the claim against that source and cite what you read — file and line.',
     REVIEW_RULES,
   ].join('\n')
@@ -548,7 +553,7 @@ async function runVerify(label, phase, prev) {
 const qualityTypes = [...QUALITY_ALWAYS, ...Object.keys(ASPECT_AGENTS).filter((a) => aspects.has(a)).map((a) => ASPECT_AGENTS[a])]
 const gates = [
   ...qualityTypes.map((t) => ({ key: t, type: t, prompt: () => qualityPrompt(t, impl.redEvidence) })),
-  { key: 'domain', type: A.domainReviewer, prompt: domainPrompt },
+  ...(NO_DOMAIN ? [] : [{ key: 'domain', type: A.domainReviewer, prompt: domainPrompt }]),
   ...(VERIFY && aspects.has('code') ? [{ key: VERIFY_SKILL, run: runVerify }] : []),
 ]
 log(`Review: ${gates.length} reviewers — ${gates.map((g) => g.key).join(', ')}`)
