@@ -71,6 +71,11 @@ section in ROADMAP the first time. Backlog issues join it as they are filed.
 A bug reported from outside (the dogfood router, a user) enters here too: one issue per
 `scope-issue`, in the milestone it belongs to.
 
+A change you describe in chat enters here when it is issue-sized: it needs a decision from you,
+contradicts the spec, adds a component, or needs a lab check. The agent gives its assessment and
+offers to file the issue instead of editing; open questions go in the issue. Smaller changes it
+makes inline.
+
 ### 3. Issue to MR (the daily loop)
 
 - You: "what's next in M4?" The agent lists the milestone's open issues without an open
