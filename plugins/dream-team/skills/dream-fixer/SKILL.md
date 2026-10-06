@@ -199,14 +199,35 @@ milestones. None clearly fits → ask.
 
 ## 7. Open the MR/PR
 
-Commit anything you changed in step 6. If you changed anything, run every `gateCommands` entry on
-the new head yourself and carry on only when all exit 0. A red run → fix it, or hand the branch
-back.
+Commit anything you changed in step 6 as `fixup! <subject of the commit it repairs>`, one fixup
+per commit an edit repairs. If you changed anything, run every `gateCommands` entry on the new
+head yourself and carry on only when all exit 0. A red run → fix it, or hand the branch back.
 
-Fold the branch to one commit. The workflow leaves the implementer's commit plus one for any
-simplify cuts and one per build-fix and fix round, and one issue is one commit. Save the first
-commit's message in one Bash call (body-cap reads the file before its call runs), then fold in a
-second:
+Fold the branch to one commit per change. The implementer commits once per independent change;
+the simplify cuts, build-fix and fix rounds add `fixup! <subject>` commits. Count the changes:
+
+```sh
+git log --format=%s <base>..HEAD | grep -vc '^fixup! '
+```
+
+More than `1` → fold each fixup into the commit it names:
+
+```sh
+OLD=$(git rev-parse HEAD) && echo "$OLD" &&
+  git -c sequence.editor=: rebase -i --autosquash <base> &&
+  git diff --quiet "$OLD" HEAD &&
+  ! git log --format=%s <base>..HEAD | grep -q '^fixup! '
+```
+
+- Rebase stops on a conflict → `git rebase --abort`, fold to one commit as below, and say so in
+  the report.
+- After that fallback → add every other change's subject to `<scratchpad>/fold-msg` before the
+  second call.
+- A `fixup!` commit survives the rebase → `git reset --hard <the sha it printed>`, then stop and
+  report its subject.
+
+`1` → save the first commit's message in one Bash call (body-cap reads the file before its call
+runs), then fold in a second:
 
 ```sh
 F=$(git rev-list --reverse <base>..HEAD | head -1) && [ -n "$F" ] &&
@@ -223,8 +244,10 @@ git diff --quiet "$OLD" HEAD
 - Commit bounced by body-cap → cut or rewrite the body in `<scratchpad>/fold-msg` when it does
   not earn its place.
 - After a bounce → re-run the second call; the reset did not run either.
-- Last line non-zero → stop and report: the fold changed the tree.
 - Amend the message when the fix rounds changed what the commit does.
+
+After either fold, `git diff --quiet "$OLD" HEAD` non-zero → stop and report: the fold changed the
+tree.
 
 Then push and open the MR/PR against the branch the project's `CLAUDE.md` names.
 
