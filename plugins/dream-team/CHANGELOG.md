@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-10-06
+
 ### Changed
 
 - **Breaking:** the `align-project` skill is renamed `setup-dream-team`, run as
@@ -12,6 +14,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `setup-dream-team` fixes missing project rules and labels, milestone bullets, `Blocked by`
   lines and the waiting label directly after one confirm, and files issues only for the other
   failing checks.
+- `dream-fixer` uses the tier a project's `CLAUDE.md` sets for an issue instead of its own
+  tier criteria.
 
 ## [0.16.0] - 2026-10-06
 
