@@ -1,9 +1,9 @@
 ---
 name: scope-issue
 description: >
-  Issue description writer. Use when writing or editing an issue (`gh issue create`,
-  `glab issue create`, `-f description=`). Commit messages: use `scope-commit`; MR/PR
-  descriptions: use `scope-mr`.
+  Writes issue descriptions: context, problem, proposal. Use when writing or editing an issue
+  (`gh issue create`, `gh api …/issues`, `glab issue create`, `-f description=`). Commit
+  messages: use `scope-commit`; MR/PR descriptions: use `scope-mr`.
 ---
 
 Issue is actionable items, not prose. Read days or weeks later with zero conversation context.

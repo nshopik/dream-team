@@ -1,7 +1,7 @@
 ---
 name: milestone-close
 description: >-
-  Close out one tracker milestone: check its exit criterion, triage its open issues, check docs
+  Closes a tracker milestone: checks its exit criterion, triages its open issues, checks docs
   against code. Use when the user asks to close, wrap up or review a milestone — "close milestone
   4", "is M4 done", "wrap up the dogfood milestone".
 argument-hint: <milestone id or title>

@@ -1,13 +1,11 @@
 ---
 name: dream-fixer
 description: >-
-  Take one tracker issue from "here's the number" to "MR is open": read it, triage it, run the
-  dream-fixer-loop workflow, and open the MR/PR from the result. Use whenever the user points at an
-  issue by number and asks to work on / take / handle / do / close it — e.g. "work on #42", "take
-  issue 123", "do GL-88 end to end", "pick up that issue and open an MR". Triggers on an issue
-  number plus intent to resolve it, even when the user doesn't spell out the review or MR steps.
-  Not for vague feature ideas with no issue (use brainstorming), and not for reviewing an existing
-  PR (use review-pr).
+  Takes one tracker issue from its number to an open MR/PR: reads and triages it, runs the
+  dream-fixer-loop workflow, and opens the MR/PR from the result. Use when the user points at an
+  issue by number and asks to work on, take, pick up, handle, do or close it — e.g. "work on
+  #42", "do GL-88 end to end". Not for vague feature ideas with no issue (use brainstorming), and
+  not for reviewing an existing PR (use review-pr).
 argument-hint: <issue-number>
 ---
 
@@ -173,8 +171,8 @@ the one thing the user cannot read off `/workflows`. Three lines, the label in b
 - **Domain reviewer:** `<type>`
 ```
 
-- Domain reviewer `generic` → write `project specialist — <lens>`, the lens in a few words, e.g.
-  `project specialist — skill-rule style`.
+- Domain reviewer is a project specialist → write `project specialist — <lens>`, never its type;
+  the lens in a few words, e.g. `project specialist — skill-rule style`.
 
 ## 6. Judge the result
 
