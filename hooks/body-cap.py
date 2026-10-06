@@ -6,7 +6,7 @@ is measured the same as text on the flag.
 
 Also bounces every distinct commit body once (see CONFIRM): whether a body earns
 its place is judgment, not a measurement, so the gate forces the judgment to be
-made rather than trying to make it.
+made rather than trying to make it. A subagent on an `issue-<n>-*` branch skips it.
 
 Reads the hook payload on stdin. Allows silently (exit 0, no output) on anything
 it cannot confidently parse — a false block is worse than a missed one.
@@ -245,6 +245,15 @@ def cmd_cwd(cmd, at):
         return None
     path = os.path.expanduser(os.path.expandvars(path))
     return path if os.path.isdir(path) else None
+
+
+def on_issue_branch(cwd=None):
+    try:
+        p = subprocess.run(('git', 'symbolic-ref', '--short', 'HEAD'),
+                           capture_output=True, text=True, timeout=5, cwd=cwd)
+    except (OSError, subprocess.SubprocessError):
+        return False
+    return p.returncode == 0 and bool(re.match(r'issue-\d+-', p.stdout.strip()))
 
 
 def diff_lines(cwd=None):
@@ -538,7 +547,9 @@ def count(lines):
 
 def main():
     try:
-        cmd = json.load(sys.stdin).get('tool_input', {}).get('command', '')
+        payload = json.load(sys.stdin)
+        cmd = payload.get('tool_input', {}).get('command', '')
+        agent = payload.get('agent_id')
     except Exception:
         return
     # Start is at the `<<`.
@@ -594,7 +605,9 @@ def main():
     out = reminder(kind, f'{kind}-style')
     if over:
         return deny(over + out)
-    if kind == 'commit' and not EXEMPT.match(text.lstrip()) and not seen(body, 'confirm'):
+    if (kind == 'commit' and not EXEMPT.match(text.lstrip())
+            and not (agent and on_issue_branch(cmd_cwd(cmd, at)))
+            and not seen(body, 'confirm')):
         return deny(CONFIRM + out)
     if kind == 'mr':
         m = MR_RUBRIC.search('\n'.join(strip_trailers(body)))

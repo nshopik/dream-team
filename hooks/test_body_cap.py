@@ -131,9 +131,9 @@ print(f"{'file-flag bodies measured':34} {'OK':12} 4 deny / 2 pass")
 
 # 9. diff budget: a description that outruns the change it describes bounces once.
 # Needs a repo with a known base, so build a throwaway one.
-def run_in(cmd, cwd):
+def run_in(cmd, cwd, **payload):
     p = subprocess.run([sys.executable, HOOK], text=True, capture_output=True, cwd=cwd,
-                       input=json.dumps({"tool_input": {"command": cmd}}))
+                       input=json.dumps({"tool_input": {"command": cmd}, **payload}))
     out = p.stdout.strip()
     if not out:
         return "ALLOW-SILENT", ""
@@ -181,6 +181,30 @@ assert first[0] == "DENY" and "deliberately left out" in first[1]
 assert second[0] == "DENY" and "budget" in second[1]
 assert third[0] == "ALLOW+RULES"
 print(f"{'per-gate bounce':34} {'OK':12} 2 deny / 1 pass")
+
+# 10b. a subagent on an issue-<n>-* branch skips the confirm bounce.
+body_cmd = "git " + C + " -F - <<'EOF'\n" + BODY + "\nEOF"
+agent = {"agent_id": "a1b2", "agent_type": "dream-fixer-loop"}
+elsewhere = tempfile.mkdtemp()
+agent_cases = [
+    ("agent, issue branch",        "issue-114-x", repo, agent, body_cmd, "ALLOW+RULES"),
+    ("agent, issue branch via cd", "issue-114-x", elsewhere, agent,
+     f"cd {repo} && " + body_cmd, "ALLOW+RULES"),
+    ("main session, issue branch", "issue-114-x", repo, {}, body_cmd, "DENY"),
+    ("agent, non-issue branch",    "topic", repo, agent, body_cmd, "DENY"),
+    ("agent, issue branch, over",  "issue-114-x", repo, agent,
+     "git " + C + " -F - <<'EOF'\ndocs: x\n\n" + "\n".join(["word " * 10] * 17) + "\nEOF", "DENY"),
+    ("agent, outside a repo",      "topic", elsewhere, agent, body_cmd, "DENY"),
+]
+for name, branch, cwd, extra, cmd, want in agent_cases:
+    git("checkout", "-qB", branch)
+    os.path.exists(SEEN) and os.remove(SEEN)
+    v, r = run_in(cmd, cwd, **extra)
+    print(f"{name:34} {v:12} {r.splitlines()[0][:60] if r else ''}")
+    assert v == want, name
+    if v == "DENY" and "-word ceiling" not in r:
+        assert run_in(cmd, cwd, **extra)[0] == "ALLOW+RULES", name   # bounced once
+print(f"{'agent confirm skip':34} {'OK':12} {len(agent_cases)} cases")
 
 # 11. issues: scope-issue section rides along under the cap, 500-word cap denies.
 under = "gh issue create --title t --body " + json.dumps("word " * 490)
