@@ -260,7 +260,7 @@ const GATE = [
   ...GATE_COMMANDS.map((c) => `  ${c}`),
 ].join('\n')
 
-const COMMIT_ALL = 'Commit every edit you make. Do not bump a version or add a release section: only the implementer\'s commit carries the release.'
+const COMMIT_ALL = 'Commit every edit you make as `fixup! <subject of the commit it repairs>`, with that subject copied from `git log`. An edit that repairs two commits is two fixup commits, never a plain commit: stage per path, and stage the hunks of a shared file with a partial patch through `git apply --cached`. Do not bump a version or add a release section: only the implementer\'s commit carries the release.'
 
 const READ_ONLY = 'Read-only: do not edit, stage or commit anything, and do not run the build or the test suite — the gate already ran them, and the other reviewers share this checkout.'
 
@@ -280,7 +280,7 @@ function implPrompt() {
     'A bug fix gets a test that reproduces the bug; new behaviour gets a unit or e2e test. Prefer a new case in an existing table-driven test over a new test function.',
     'For a bug fix, write the test first, run it, and keep the key lines of its failing output: return them as redEvidence. Not a bug fix: return an empty string.',
     GATE,
-    'Get every gate command green, then commit on the branch in the repo\'s commit convention. Commit once: one issue is one commit.',
+    'Get every gate command green, then commit on the branch in the repo\'s commit convention. Commit once; only when the issue holds independent changes, commit each change separately under its own subject.',
     'If the issue left something genuinely open, implement your best reading and list it in assumptions rather than stopping. A choice that a written rule or instruction settles (CLAUDE.md, a skill, a harness instruction) is not an assumption: leave it out.',
   ].join('\n')
 }

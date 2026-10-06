@@ -98,8 +98,9 @@ makes inline.
        project specialist, bounded fix rounds.
   4. Lab work (perf gate, tests that need root) through `dream-team:lab-runner` on the host the
      repo's `CLAUDE.md` names.
-  5. MR: one folded commit, description by `scope-mr`, with ratchet floors, the diagram and any
-     component table updated in the same MR. ROADMAP status waits for `milestone-close`.
+  5. MR: one folded commit per change, description by `scope-mr`, with ratchet floors, the
+     diagram and any component table updated in the same MR. ROADMAP status waits for
+     `milestone-close`.
   6. Adjacent defects found on the way are filed as issues, never left in the MR text.
 - You: check the roster line, any assumptions at the top of the report, and the MR.
 

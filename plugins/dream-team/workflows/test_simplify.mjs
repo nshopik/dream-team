@@ -1,4 +1,4 @@
-// What dream-fixer-loop does with each Simplify review, /verify gate reply and domainReviewer arg, through stub agents; no claude call.
+// What dream-fixer-loop does with each Simplify review, /verify gate reply and domainReviewer arg, and the commit rule each writing agent gets, through stub agents; no claude call.
 // Usage: node test_simplify.mjs
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
@@ -8,15 +8,16 @@ const body = readFileSync(new URL('dream-fixer-loop.js', import.meta.url), 'utf8
 const args = { issue: '1', branch: 'issue-1', base: 'HEAD', gateCommands: ['true'] }
 
 // Every other reviewer passes, so the run ends after Review or its fix rounds.
-// verifyRuns: the /verify gate's replies, one per run.
-async function run(review, cuts, { verify = false, aspects = ['code'], verifyRuns = [], domainReviewer } = {}) {
+// verifyRuns: the /verify gate's replies, one per run. gateFails: gate runs that fail before one passes.
+async function run(review, cuts, { verify = false, aspects = ['code'], verifyRuns = [], domainReviewer, gateFails = 0 } = {}) {
   const labels = []
   const prompts = {}
   async function agent(prompt, opts) {
     labels.push(opts.label)
     prompts[opts.label] = prompt
     if (opts.phase === 'Implement') return { committed: true, summary: '', redEvidence: '' }
-    if (opts.phase === 'Gate') return { passed: true, summary: '', changedFiles: [], dirtyPaths: [], aspects }
+    if (opts.label.startsWith('build-fix:')) return { committed: true, summary: '' }
+    if (opts.phase === 'Gate') return { passed: gateFails-- <= 0, summary: '', changedFiles: [], dirtyPaths: [], aspects }
     if (opts.label.startsWith('simplify:')) return review
     if (opts.label.startsWith('simplify-fix:')) return cuts
     if (/^(re-)?review:verify/.test(opts.label)) return verifyRuns.shift()
@@ -116,5 +117,21 @@ for (const row of domainRows) {
   assert.equal(result.ok, true, row.name)
   assert.equal(labels.includes('review:domain'), row.domainRan, `${row.name}: review:domain dispatched`)
   assert.equal(prompts['review:pr-review-toolkit:code-reviewer'].includes(doneWhenCheck), !row.domainRan, `${row.name}: code-reviewer Done-when check`)
+  console.log(`PASS ${row.name}`)
+}
+
+const fixup = 'as `fixup! <subject of the commit it repairs>`'
+const commitRows = [
+  { name: 'implementer splits only independent changes', label: 'impl:#1', rule: 'commit each change separately under its own subject' },
+  { name: 'build-fix commits fixups', label: 'build-fix:#1:r1', rule: fixup, opts: { gateFails: 1 } },
+  { name: 'simplify-fix commits fixups', label: 'simplify-fix:#1', rule: fixup, review: loaded([cut('stdlib')], 4),
+    cuts: { committed: true, addressed: ['stdlib cut'], disputed: [], summary: '' } },
+  { name: 'fix round commits fixups', label: 'fix:#1:r1', rule: fixup, opts: { verify: true, verifyRuns: [vrun('FAIL'), vrun('PASS')] } },
+]
+
+for (const row of commitRows) {
+  const { result, prompts } = await run(row.review || lean, row.cuts, row.opts)
+  assert.equal(result.ok, true, row.name)
+  assert.ok(prompts[row.label].includes(row.rule), row.name)
   console.log(`PASS ${row.name}`)
 }
