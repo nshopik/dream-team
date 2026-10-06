@@ -56,5 +56,6 @@ assert "<claude_md>" in context({"file_path": os.path.join(mine, "CLAUDE.local.m
 assert "<claude_md>" in context({"command": "echo x >> CLAUDE.local.md"})
 p = subprocess.run([sys.executable, HOOK], text=True, capture_output=True,
                    input=json.dumps({"hook_event_name": "SessionStart", "session_id": "x"}))
-assert "<project_notes>" in json.loads(p.stdout)["hookSpecificOutput"]["additionalContext"]
+start = json.loads(p.stdout)["hookSpecificOutput"]["additionalContext"]
+assert "<project_notes>" in start and "<issue_sized>" in start
 print("ok")

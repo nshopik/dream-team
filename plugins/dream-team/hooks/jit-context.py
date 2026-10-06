@@ -119,6 +119,14 @@ your summary. Read the file first; a line that already covers it gets sharpened,
 repeated. A fact about how the system works goes in the contributor doc instead.
 </project_notes>"""
 
+ISSUE_SIZED = """<issue_sized>
+A change requested in chat is issue-sized when it needs a user decision, contradicts the spec,
+adds a component, or needs a lab check.
+- Issue-sized → give your assessment, then offer to file it with `scope-issue`; edit nothing.
+- Open questions go in the issue as listed open items, or as a `Scout:` issue.
+- Smaller → make the change inline.
+</issue_sized>"""
+
 CLAUDE_MD = """<claude_md>
 Editing a CLAUDE.md or CLAUDE.local.md.
 - A correction or gotcha goes in the untracked `CLAUDE.local.md`, one imperative
@@ -222,7 +230,7 @@ def main():
     except Exception:
         return
     if payload.get('hook_event_name') == 'SessionStart':
-        emit('SessionStart', NOTES)
+        emit('SessionStart', NOTES + '\n\n' + ISSUE_SIZED)
         return
     fields = payload.get('tool_input', {})
     for name, field, pattern, text, *when in RULES:
