@@ -1,8 +1,8 @@
 ---
 name: setup-dream-team
 description: >-
-  Check a project against the dream-team flow, fix the mechanical failures directly and file
-  one issue per other failing check. Not for working an issue (use dream-fixer) or closing a
+  Checks a project against the dream-team flow, fixes mechanical failures directly and files one
+  issue per other failing check. Not for working an issue (use dream-fixer) or closing a
   milestone (use milestone-close).
 disable-model-invocation: true
 ---

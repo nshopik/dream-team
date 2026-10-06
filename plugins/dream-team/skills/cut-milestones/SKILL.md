@@ -1,8 +1,8 @@
 ---
 name: cut-milestones
 description: >-
-  Cut an approved spec into tracker milestones, each behind one measurable exit gate, with the
-  dependency order and a ROADMAP table; or draft one version milestone for a stable project's
+  Cuts an approved spec into tracker milestones, each behind one measurable exit gate, with
+  dependency order and a ROADMAP table; or drafts one version milestone for a stable project's
   minor release. Use when the user asks to plan, cut, draft or split milestones — "cut
   milestones from the spec", "what are the milestones for v1", "split M4 in two", "plan 1.3".
   Not for filing a milestone's issues (use scope-issue) or closing one (use

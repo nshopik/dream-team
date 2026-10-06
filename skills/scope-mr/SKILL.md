@@ -1,9 +1,9 @@
 ---
 name: scope-mr
 description: >
-  Merge-request / pull-request description writer. Use when writing or editing an MR/PR
-  description (`glab mr create`, `gh pr create`, `-f description=`). Commit messages: use
-  `scope-commit` instead.
+  Writes MR/PR descriptions: why, how, root cause, behaviour. Use when writing or editing an
+  MR/PR description (`glab mr create`, `gh pr create`, `gh api …/pulls`, `-f description=`).
+  Commit messages: use `scope-commit` instead.
 ---
 
 MR description is review-facing. Different text from the commit body. Never `--fill`.
