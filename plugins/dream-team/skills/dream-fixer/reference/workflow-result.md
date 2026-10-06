@@ -13,7 +13,8 @@
   reason; the branch is where the agent left it.
 - **`degraded`** — roster types that were not dispatchable and ran as a generic agent instead,
   `ponytail:ponytail-review` when that skill was missing and the Simplify phase was skipped, and
-  `verify` when `claude` or its `/verify` was missing and the `/verify` gate was skipped.
+  `verify` when `claude` or its `/verify` was missing and the `/verify` gate was skipped, and
+  `external` when the `externalReview` command was missing or exited non-zero and was skipped.
 - **`simplify`** — the over-engineering cuts made before review: `applied`, `disputed` with the
   implementer's reason, and `net`, the review's estimate of lines that could go. Put applied cuts in
   the MR description, and `net` only when nothing was disputed; treat a disputed cut like a minor

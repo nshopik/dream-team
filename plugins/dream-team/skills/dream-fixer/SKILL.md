@@ -150,7 +150,8 @@ object (never a stringified one):
   "gateCommands": ["cargo build --workspace", "cargo test --workspace", "cargo clippy --workspace"],
   "implementer": "<catalog type or generic>",
   "domainReviewer": "<catalog type, generic or none>",
-  "verify": false
+  "verify": false,
+  "externalReview": "<command, or leave out>"
 }
 ```
 
@@ -161,14 +162,21 @@ object (never a stringified one):
   these after the implementation and after every fix commit. Leave out lab work. Required.
 - `verify`: `true` or `false`; runs Claude Code's `/verify` as a Review gate. Default `false`.
 - The repo's `CLAUDE.md` opts in to `/verify` → set `verify` to `true`.
+- `externalReview`: a shell command that reads a diff on stdin and prints findings. Default unset.
+- A `CLAUDE.md` the session loads — global, the project's, or its `CLAUDE.local.md` — opts in to an
+  external reviewer → set `externalReview` to the command it names.
+- The project's line and the global one disagree → the project's wins, including a project line
+  that turns it off.
 
-Report the branch, the implementer and the domain reviewer by type name, no prose — the roster is
-the one thing the user cannot read off `/workflows`. Three lines, the label in bold:
+Report the branch, the implementer and the domain reviewer by type name, and whether
+`externalReview` is set, no prose — the roster is the one thing the user cannot read off
+`/workflows`. Four lines, the label in bold:
 
 ```
 - **Branch:** `issue-42-slug`
 - **Implementer:** `<type>`
 - **Domain reviewer:** `<type>`
+- **External reviewer:** yes|no
 ```
 
 - Domain reviewer is a project specialist → write `project specialist — <lens>`, never its type;
