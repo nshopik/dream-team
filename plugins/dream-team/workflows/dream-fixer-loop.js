@@ -280,7 +280,7 @@ function implPrompt() {
     'A bug fix gets a test that reproduces the bug; new behaviour gets a unit or e2e test. Prefer a new case in an existing table-driven test over a new test function.',
     'For a bug fix, write the test first, run it, and keep the key lines of its failing output: return them as redEvidence. Not a bug fix: return an empty string.',
     GATE,
-    'Get every gate command green, then commit on the branch in the repo\'s commit convention. Commit once; only when the issue holds independent changes, commit each change separately under its own subject.',
+    'Get every gate command green, load the `scope-commit` skill, then commit on the branch in the repo\'s commit convention. Commit once; only when the issue holds independent changes, commit each change separately under its own subject.',
     'If the issue left something genuinely open, implement your best reading and list it in assumptions rather than stopping. A choice that a written rule or instruction settles (CLAUDE.md, a skill, a harness instruction) is not an assumption: leave it out.',
   ].join('\n')
 }

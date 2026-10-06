@@ -173,6 +173,8 @@ the one thing the user cannot read off `/workflows`. Three lines, the label in b
 - **Domain reviewer:** `<type>`
 ```
 
+- Domain reviewer `generic` → write `project specialist` in place of the type.
+
 ## 6. Judge the result
 
 The workflow returns structured, not final. Once it returns, read
@@ -241,9 +243,9 @@ git diff --quiet "$OLD" HEAD
 ```
 
 - Spell `<scratchpad>` as your scratchpad directory's literal path in both calls.
-- Commit bounced by body-cap → cut or rewrite the body in `<scratchpad>/fold-msg` when it does
-  not earn its place.
-- After a bounce → re-run the second call; the reset did not run either.
+- Load `scope-commit` before the fold commit or an amend.
+- Commit denied by body-cap → fix the subject or cut the body in `<scratchpad>/fold-msg`.
+- After a deny → re-run the second call; the reset did not run either.
 - Amend the message when the fix rounds changed what the commit does.
 
 After either fold, `git diff --quiet "$OLD" HEAD` non-zero → stop and report: the fold changed the
