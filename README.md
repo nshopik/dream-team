@@ -17,10 +17,9 @@ to the people who read them.
   behaviour), never a restatement of the commits.
 - `scope-issue` skill: issues in three parts (context, problem, proposal) that can be started
   without the conversation that produced them.
-- `body-cap.py` PreToolUse hook: checks `git commit` subjects and body length, and
-  `gh pr|issue create|edit` and `glab mr|issue` commands, before they run. It blocks rule
-  violations and quotes the matching skill section back to Claude, so the fix happens in the same
-  turn.
+- `body-cap.py` PreToolUse hook: checks `gh pr|issue create|edit` and `glab mr|issue` commands
+  before they run. It blocks rule violations and quotes the matching skill section back to
+  Claude, so the fix happens in the same turn.
 
 Status: under active tuning. Rules and caps change as they're measured against real repositories.
 

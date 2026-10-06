@@ -1,21 +1,17 @@
 #!/usr/bin/env python3
-"""PreToolUse gate: Scoped Commits subjects, over-long bodies, descriptions that
-outrun the diff they describe, `--fill` MRs, and MR descriptions that stamp a
-rung rubric as a heading/lead-in. Text passed by file is measured the same as
+"""PreToolUse gate: over-long bodies, descriptions that outrun the diff they
+describe, `--fill` MRs, and MR descriptions that stamp a rung rubric as a
+heading/lead-in. Text passed by file is measured the same as
 text on the flag.
 
 Reads the hook payload on stdin. Allows silently (exit 0, no output) on anything
 it cannot confidently parse — a false block is worse than a missed one.
 
-All rules live in the `scope-commit`, `scope-mr` and `scope-issue` skills, not here: this file
+All rules live in the `scope-mr` and `scope-issue` skills, not here: this file
 detects and measures, then quotes back the matching `## <id>` section of the skill for
 that kind. Rule edits go to the skill; only detection logic, the caps and deny headers belong here.
 
 Caps derive from measured baselines; the commit that sets a cap records its derivation.
-
-The subject checks are deliberately narrow. Only the Conventional Commits types
-that could never plausibly name a subsystem are rejected — `docs:`, `ci:`,
-`test:`, `fix:` are all legitimate Scoped Commits scopes and must pass.
 """
 import hashlib
 import json
@@ -26,10 +22,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-CAPS = {'commit': 160, 'mr': 300, 'issue': 500}
+CAPS = {'mr': 300, 'issue': 500}
 
 SKILLS_DIR = Path(__file__).resolve().parent.parent / 'skills'
-SKILL = {'commit': 'scope-commit', 'mr': 'scope-mr', 'issue': 'scope-issue'}
+SKILL = {'mr': 'scope-mr', 'issue': 'scope-issue'}
 FALLBACK = 'Follow Scoped Commits — https://scopedcommits.com/'
 
 # Prepended to the style block when the body is also over the ceiling. The style
@@ -38,8 +34,6 @@ FALLBACK = 'Follow Scoped Commits — https://scopedcommits.com/'
 # and verification output reaches history unchallenged.
 OVER_CAP = "{what} is {n} words — over the {cap}-word ceiling. Rewrite it, then re-run.\n\n"
 
-SUBJECT = ("Commit subject `{subject}` breaks Scoped Commits (https://scopedcommits.com/):\n"
-           "{problems}\nRewrite it, then re-run.\n\n")
 FILL = ("`--fill` writes the description from the commit message. Drop it, pass the "
         "description explicitly (`--description`, `-f description=`), then re-run.\n\n")
 
@@ -79,43 +73,6 @@ def uses_fill(cmd):
         return bool(FILL_FLAGS.intersection(shlex.split(cmd)))
     except ValueError:
         return False
-
-
-# Conventional Commits types with no plausible reading as a subsystem name.
-CC_TYPE = re.compile(r'^(feat|feature|chore|perf|style)(\([^)]*\))?!?:', re.I)
-EXEMPT = re.compile(r'^(merge\b|revert\b|fixup!|squash!|amend!)', re.I)
-
-# Non-imperative first word of the description ("fix:" then "added ..." etc).
-NON_IMPERATIVE = re.compile(
-    r':\s*(added|adds|adding|fixed|fixes|fixing|removed|removes|removing|'
-    r'updated|updates|updating|changed|changes|changing|renamed|renames|'
-    r'renaming|refactored|refactors|refactoring)\b', re.I)
-
-SUBJECT_HARD_CAP = 72
-SUBJECT_TARGET = 50
-
-
-def subject_issues(text):
-    """Scoped Commits violations in the subject line, as a list of strings."""
-    subject = next((l.strip() for l in text.split('\n') if l.strip()), '')
-    if not subject or EXEMPT.match(subject):
-        return []
-    out = []
-    if CC_TYPE.match(subject):
-        out.append('- Names a change kind, not an area touched — use the '
-                   'subsystem instead.')
-    elif ':' not in subject:
-        out.append('- No `<scope>:` prefix.')
-    if subject.endswith('.'):
-        out.append('- Trailing period.')
-    m = NON_IMPERATIVE.search(subject)
-    if m:
-        out.append(f"- Non-imperative mood ('{m.group(1)}') — use imperative: "
-                    "add/fix/remove.")
-    if len(subject) > SUBJECT_HARD_CAP:
-        out.append(f'- {len(subject)} chars — hard cap is {SUBJECT_HARD_CAP} '
-                    f'(target ≤{SUBJECT_TARGET}).')
-    return out
 
 
 # `gh api` on a PR/issue itself, only when it sends a body: a read piped into
@@ -278,17 +235,11 @@ def seen(body, gate):
     return False
 
 
-# [^\n] as well as the separators: without it `git push` on one line and the
-# word `commit` inside a later heredoc read as one commit command, and a plain
-# MR description got judged against commit-subject rules.
-GIT_COMMIT = re.compile(r'\bgit\b[^\n|;&]*\bcommit\b')
-
-
 def classify(cmd, spans):
-    """(kind, offset) of the committing/MR-opening command, or (None, None).
+    """(kind, offset) of the MR/issue-writing command, or (None, None).
 
     Matches inside a heredoc body are skipped: that text is data, not shell — a
-    script or payload that merely mentions `git commit` is not a commit.
+    script or payload that merely mentions `gh pr create` is not one.
     """
     def first_outside(pattern):
         # Both ends: a match that starts on the command line and reaches into a
@@ -297,9 +248,6 @@ def classify(cmd, spans):
                      if not any(s <= m.start() < e or s < m.end() <= e
                                 for s, e, _ in spans)), None)
 
-    at = first_outside(GIT_COMMIT)
-    if at is not None:
-        return 'commit', at
     at = first_outside(MR_CMD)
     if at is not None:
         return 'mr', at
@@ -308,7 +256,7 @@ def classify(cmd, spans):
 
 
 # [^\n]* after the delimiter: a heredoc opener may be followed by more of the
-# command (`git commit -F - <<'MSG' && git log -1`). Requiring the newline to
+# command (`gh pr create --body-file - <<'MSG' && gh pr view`). Requiring the newline to
 # follow the delimiter directly made those bodies invisible, and an unmeasured
 # body is allowed silently — the gate failed open.
 HEREDOC = re.compile(
@@ -324,20 +272,9 @@ def without_heredocs(cmd, spans):
     return ''.join(out)
 
 
-# Quoted strings and line continuations are consumed whole: a separator inside
-# `-m "a; b"` or an escaped newline does not end the command.
-SEGMENT_END = re.compile(r"""'[^']*'|"(?:\\.|[^"\\])*"|\\\n|(&&|[;|\n])""")
-
-
-def segment_end(shell, at):
-    """End of the command starting at `at` in heredoc-blanked `shell`."""
-    return next((m.start() for m in SEGMENT_END.finditer(shell, at) if m.group(1)),
-                len(shell))
-
-
 def heredoc_body(spans, after):
     """The first heredoc opened after `after` — the one the command at that
-    offset consumes. A command may carry several (`cat <<A` … `git commit <<B`);
+    offset consumes. A command may carry several (`cat <<A` … `gh pr create <<B`);
     taking the first in the string measures the wrong text."""
     return next((body for start, _, body in spans if start > after), None)
 
@@ -394,7 +331,7 @@ def input_text(path):
     return text if isinstance(text, str) else ''
 
 
-def flag_text(cmd, kind, field):
+def flag_text(cmd, field):
     """Pull the message/description out of explicit flags. `field` is the API
     key that carries it: `body=` on GitHub, where GitLab's `body=` is a note."""
     try:
@@ -405,41 +342,27 @@ def flag_text(cmd, kind, field):
     while i < len(parts):
         p = parts[i]
         nxt = parts[i + 1] if i + 1 < len(parts) else None
-        if kind == 'commit':
-            # -m, --message, and bundled short flags ending in m (-am, -sm).
-            if (p == '--message' or re.fullmatch(r'-[a-zA-Z]*m', p)) \
-                    and nxt is not None:
-                out.append(expand(nxt)); i += 2; continue
-            if p in ('-F', '--file') and nxt is not None:
-                out.append(file_text(nxt)); i += 2; continue
-            if p.startswith('--file='):
-                out.append(file_text(p.split('=', 1)[1]))
-            elif p.startswith('--message='):
-                out.append(expand(p.split('=', 1)[1]))
-            elif p.startswith('-m') and len(p) > 2:
-                out.append(expand(p[2:]))
-        else:
-            # `gh|glab api -F key=@file` expands the @path itself, so the
-            # value carries the file rather than the text.
-            if p in ('-F', '-f', '--field', '--raw-field') and nxt is not None \
-                    and nxt.startswith(field):
-                v = nxt.split('=', 1)[1]
-                out.append(file_text(v[1:]) if v.startswith('@') else expand(v))
-                i += 2; continue
-            if p == '--input' and nxt is not None:
-                out.append(input_text(nxt)); i += 2; continue
-            # gh -F body.md. A value carrying '=' is `gh api -F key=value`, whose
-            # short flags are the reverse of glab's, not a file.
-            if p in ('-F', '--body-file') and nxt is not None and '=' not in nxt:
-                out.append(file_text(nxt)); i += 2; continue
-            if p.startswith('--body-file='):
-                out.append(file_text(p.split('=', 1)[1])); i += 1; continue
-            if p in ('-f', '--field', '--raw-field') and nxt is not None:
-                i += 2; continue
-            if p in ('-d', '--description', '-b', '--body') and nxt is not None:
-                out.append(expand(nxt)); i += 2; continue
-            if p.startswith('--description=') or p.startswith('--body='):
-                out.append(expand(p.split('=', 1)[1]))
+        # `gh|glab api -F key=@file` expands the @path itself, so the
+        # value carries the file rather than the text.
+        if p in ('-F', '-f', '--field', '--raw-field') and nxt is not None \
+                and nxt.startswith(field):
+            v = nxt.split('=', 1)[1]
+            out.append(file_text(v[1:]) if v.startswith('@') else expand(v))
+            i += 2; continue
+        if p == '--input' and nxt is not None:
+            out.append(input_text(nxt)); i += 2; continue
+        # gh -F body.md. A value carrying '=' is `gh api -F key=value`, whose
+        # short flags are the reverse of glab's, not a file.
+        if p in ('-F', '--body-file') and nxt is not None and '=' not in nxt:
+            out.append(file_text(nxt)); i += 2; continue
+        if p.startswith('--body-file='):
+            out.append(file_text(p.split('=', 1)[1])); i += 1; continue
+        if p in ('-f', '--field', '--raw-field') and nxt is not None:
+            i += 2; continue
+        if p in ('-d', '--description', '-b', '--body') and nxt is not None:
+            out.append(expand(nxt)); i += 2; continue
+        if p.startswith('--description=') or p.startswith('--body='):
+            out.append(expand(p.split('=', 1)[1]))
         i += 1
     return '\n\n'.join(out) if out else None
 
@@ -462,17 +385,6 @@ def strip_trailers(lines):
     return lines[:end]
 
 
-def body_of(text):
-    """Lines after the (possibly wrapped) subject line."""
-    lines = text.split('\n')
-    i = 0
-    while i < len(lines) and not lines[i].strip():
-        i += 1
-    while i < len(lines) and lines[i].strip():       # subject may wrap
-        i += 1
-    return lines[i:]
-
-
 def count(lines):
     # A pasted log, trace or config dump is evidence, not prose: across 484 maintainer
     # issues it carries 32% of the words. An unterminated fence stays counted.
@@ -493,8 +405,8 @@ def main():
     kind, at = classify(cmd, spans)
     if not kind:
         return
-    # A denied call runs none of the command. Re-issuing only the commit half of
-    # `git add -A && git commit` then commits a stale index, silently.
+    # A denied call runs none of the command. Re-issuing only the PR half of
+    # `git push && gh pr create` then runs it without the push before it.
     chained = ('\n\nNothing in this command ran: the steps chained before '
                'it did not happen either.\n') if re.search(r'[;&|]', cmd[:at]) else ''
 
@@ -509,30 +421,16 @@ def main():
     # Heredocs blanked: a body shlex cannot split (an apostrophe) hides every flag.
     field = 'body=' if cmd.startswith('gh', at) else 'description='
     shell = without_heredocs(cmd, spans)
-    if kind == 'commit':
-        # A heredoc later in the chain belongs to whatever command consumes it.
-        end = segment_end(shell, at)
-        here = heredoc_body([s for s in spans if s[0] < end], at)
-        text = here or flag_text(shell[at:end], kind, field)
-    else:
-        text = heredoc_body(spans, at) or flag_text(shell, kind, field)
+    text = heredoc_body(spans, at) or flag_text(shell, field)
     if not text:
-        return                                  # editor-based, --no-edit, etc.
+        return                                  # editor-based, etc.
     body = text.split('\n')
-    if kind == 'commit':
-        issues = subject_issues(text)
-        if issues:
-            subject = next(l.strip() for l in text.split('\n') if l.strip())
-            return deny(SUBJECT.format(subject=subject, problems='\n'.join(issues))
-                        + reminder('commit', 'subject'))
-        body = body_of(text)
     n = count(body)
     if not n:
-        return                                  # subject-only commit, nothing to style
+        return
     cap = CAPS[kind]
     over = '' if n <= cap else OVER_CAP.format(
-        what={'commit': 'Commit body', 'mr': 'MR description',
-              'issue': 'Issue description'}[kind],
+        what={'mr': 'MR description', 'issue': 'Issue description'}[kind],
         n=n, cap=cap)
     out = reminder(kind, f'{kind}-style')
     if over:

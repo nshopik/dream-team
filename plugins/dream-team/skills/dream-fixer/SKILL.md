@@ -173,7 +173,8 @@ the one thing the user cannot read off `/workflows`. Three lines, the label in b
 - **Domain reviewer:** `<type>`
 ```
 
-- Domain reviewer `generic` → write `project specialist` in place of the type.
+- Domain reviewer `generic` → write `project specialist — <lens>`, the lens in a few words, e.g.
+  `project specialist — skill-rule style`.
 
 ## 6. Judge the result
 
@@ -223,29 +224,22 @@ OLD=$(git rev-parse HEAD) && echo "$OLD" &&
 
 - Rebase stops on a conflict → `git rebase --abort`, fold to one commit as below, and say so in
   the report.
-- After that fallback → add every other change's subject to `<scratchpad>/fold-msg` before the
-  second call.
+- After that fallback → amend the fold commit to add every other change's subject.
 - A `fixup!` commit survives the rebase → `git reset --hard <the sha it printed>`, then stop and
   report its subject.
 
-`1` → save the first commit's message in one Bash call (body-cap reads the file before its call
-runs), then fold in a second:
+`1` → fold onto the first commit's message in one Bash call:
 
 ```sh
-F=$(git rev-list --reverse <base>..HEAD | head -1) && [ -n "$F" ] &&
-  git log -1 --format=%B "$F" > <scratchpad>/fold-msg
+OLD=$(git rev-parse HEAD) && echo "$OLD" &&
+  F=$(git rev-list --reverse <base>..HEAD | head -1) && [ -n "$F" ] &&
+  git log -1 --format=%B "$F" > <scratchpad>/fold-msg &&
+  git reset --soft <base> && git commit -F <scratchpad>/fold-msg &&
+  git diff --quiet "$OLD" HEAD
 ```
 
-```sh
-OLD=$(git rev-parse HEAD)
-git reset --soft <base> && git commit -F <scratchpad>/fold-msg
-git diff --quiet "$OLD" HEAD
-```
-
-- Spell `<scratchpad>` as your scratchpad directory's literal path in both calls.
+- Spell `<scratchpad>` as your scratchpad directory's literal path.
 - Load `scope-commit` before the fold commit or an amend.
-- Commit denied by body-cap → fix the subject or cut the body in `<scratchpad>/fold-msg`.
-- After a deny → re-run the second call; the reset did not run either.
 - Amend the message when the fix rounds changed what the commit does.
 
 After either fold, `git diff --quiet "$OLD" HEAD` non-zero → stop and report: the fold changed the
