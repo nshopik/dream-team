@@ -65,6 +65,8 @@ Never open a dialog whose options you had to invent to fill the slots.
 
 ## 2a. Tier
 
+A tier the project's `CLAUDE.md` sets for the issue overrides the criteria below.
+
 Scout tier when the title starts `Scout:` (below). Otherwise light tier when all hold; otherwise
 full (step 3 on):
 
