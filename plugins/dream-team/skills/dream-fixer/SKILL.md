@@ -173,7 +173,8 @@ the one thing the user cannot read off `/workflows`. Three lines, the label in b
 - **Domain reviewer:** `<type>`
 ```
 
-- Domain reviewer `generic` → write `project specialist` in place of the type.
+- Domain reviewer `generic` → write `project specialist — <lens>`, the lens in a few words, e.g.
+  `project specialist — skill-rule style`.
 
 ## 6. Judge the result
 
