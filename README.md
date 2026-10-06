@@ -50,7 +50,7 @@ Skills:
 
 - `dream-fixer`: takes one tracker issue to an open MR/PR by running the `dream-fixer-loop`
   workflow: implement, build/test gate, reviewers, bounded fix rounds.
-- `align-project`: checks an existing project against the flow and files one issue per failing
+- `setup`: checks an existing project against the flow and files one issue per failing
   check.
 - `cut-milestones`: drafts milestones from a spec, one exit gate each.
 - `milestone-close`: checks a milestone's exit criterion, triages its open issues, and checks
