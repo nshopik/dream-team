@@ -5,6 +5,20 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-10-06
+
+### Added
+
+- `dream-fixer-loop` accepts `domainReviewer: "none"`, which runs no domain reviewer and has
+  `code-reviewer` check the issue's `Done when` paragraph instead.
+
+### Changed
+
+- `dream-fixer` runs no domain reviewer when the catalog has no second specialist for the issue,
+  unless the project's `CLAUDE.md` asks for a project specialist.
+- `dream-fixer` folds the branch by committing the first commit's message from a file, so the
+  body-cap hook checks the body that reaches history.
+
 ## [0.17.0] - 2026-10-06
 
 ### Changed

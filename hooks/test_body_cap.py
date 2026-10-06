@@ -195,6 +195,10 @@ agent_cases = [
     ("agent, issue branch, over",  "issue-114-x", repo, agent,
      "git " + C + " -F - <<'EOF'\ndocs: x\n\n" + "\n".join(["word " * 10] * 17) + "\nEOF", "DENY"),
     ("agent, outside a repo",      "topic", elsewhere, agent, body_cmd, "DENY"),
+    ("main session, -F fold",      "issue-114-x", repo, {},
+     "git reset --soft main && git " + C + " -F " + wrote("fold-msg", BODY), "DENY"),
+    ("main session, -C fold unseen", "issue-114-x", repo, {},
+     "git reset --soft main && git " + C + " -C HEAD", "ALLOW-SILENT"),
 ]
 for name, branch, cwd, extra, cmd, want in agent_cases:
     git("checkout", "-qB", branch)

@@ -204,17 +204,27 @@ the new head yourself and carry on only when all exit 0. A red run → fix it, o
 back.
 
 Fold the branch to one commit. The workflow leaves the implementer's commit plus one for any
-simplify cuts and one per build-fix and fix round, and one issue is one commit:
+simplify cuts and one per build-fix and fix round, and one issue is one commit. Save the first
+commit's message in one Bash call (body-cap reads the file before its call runs), then fold in a
+second:
+
+```sh
+F=$(git rev-list --reverse <base>..HEAD | head -1) && [ -n "$F" ] &&
+  git log -1 --format=%B "$F" > <scratchpad>/fold-msg
+```
 
 ```sh
 OLD=$(git rev-parse HEAD)
-FIRST=$(git rev-list --reverse <base>..HEAD | head -1)
-git reset --soft <base> && git commit -C "$FIRST"
+git reset --soft <base> && git commit -F <scratchpad>/fold-msg
 git diff --quiet "$OLD" HEAD
 ```
 
-Last line non-zero → stop and report: the fold changed the tree. Amend the message when the fix
-rounds changed what the commit does.
+- Spell `<scratchpad>` as your scratchpad directory's literal path in both calls.
+- Commit bounced by body-cap → cut or rewrite the body in `<scratchpad>/fold-msg` when it does
+  not earn its place.
+- After a bounce → re-run the second call; the reset did not run either.
+- Last line non-zero → stop and report: the fold changed the tree.
+- Amend the message when the fix rounds changed what the commit does.
 
 Then push and open the MR/PR against the branch the project's `CLAUDE.md` names.
 
