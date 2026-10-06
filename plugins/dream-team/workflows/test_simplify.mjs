@@ -1,4 +1,4 @@
-// What dream-fixer-loop does with each Simplify review, /verify gate reply and domainReviewer arg, and the commit rule each writing agent gets, through stub agents; no claude call.
+// What dream-fixer-loop does with each Simplify review, /verify gate reply, domainReviewer and externalReview arg, and the commit rule each writing agent gets, through stub agents; no claude call.
 // Usage: node test_simplify.mjs
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
@@ -9,7 +9,8 @@ const args = { issue: '1', branch: 'issue-1', base: 'HEAD', gateCommands: ['true
 
 // Every other reviewer passes, so the run ends after Review or its fix rounds.
 // verifyRuns: the /verify gate's replies, one per run. gateFails: gate runs that fail before one passes.
-async function run(review, cuts, { verify = false, aspects = ['code'], verifyRuns = [], domainReviewer, gateFails = 0 } = {}) {
+// externalRuns: the external reviewer's replies, the first to its review, the rest to its re-reviews.
+async function run(review, cuts, { verify = false, aspects = ['code'], verifyRuns = [], domainReviewer, gateFails = 0, externalReview, externalRuns = [] } = {}) {
   const labels = []
   const prompts = {}
   async function agent(prompt, opts) {
@@ -21,12 +22,13 @@ async function run(review, cuts, { verify = false, aspects = ['code'], verifyRun
     if (opts.label.startsWith('simplify:')) return review
     if (opts.label.startsWith('simplify-fix:')) return cuts
     if (/^(re-)?review:verify/.test(opts.label)) return verifyRuns.shift()
+    if (/^(re-)?review:external/.test(opts.label)) return externalRuns.shift()
     if (opts.label.startsWith('fix:')) return { committed: true, addressed: ['verify'], disputed: [], summary: '' }
     if (opts.phase === 'Review') return { summary: '', findings: [] }
     throw new Error(`unexpected agent ${opts.label}`)
   }
   const result = await new AsyncFunction('args', 'agent', 'phase', 'log', 'parallel', body)(
-    { ...args, verify, domainReviewer }, agent, () => {}, () => {}, (fns) => Promise.all(fns.map((f) => f())))
+    { ...args, verify, domainReviewer, externalReview }, agent, () => {}, () => {}, (fns) => Promise.all(fns.map((f) => f())))
   return { result, labels, prompts }
 }
 
@@ -133,5 +135,30 @@ for (const row of commitRows) {
   const { result, prompts } = await run(row.review || lean, row.cuts, row.opts)
   assert.equal(result.ok, true, row.name)
   assert.ok(prompts[row.label].includes(row.rule), row.name)
+  console.log(`PASS ${row.name}`)
+}
+
+const cmd = 'vllm-review --stdin'
+const extFinding = { severity: 'important', description: 'off-by-one in the retry count', file: 'retry.js' }
+const externalRows = [
+  { name: 'external review unset', opts: {},
+    reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [] },
+  { name: 'external blocking finding fixed in one round',
+    opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] },
+    reviewer: true, agents: 2, degraded: [], fixRounds: 1, resolved: [{ ...extFinding, gate: 'external', round: 1 }], prompts: ['review:external'] },
+  { name: 'external command fails',
+    opts: { externalReview: cmd, externalRuns: [{ ran: false, summary: 'exit 127', findings: [] }] },
+    reviewer: true, agents: 1, degraded: ['external'], fixRounds: 0, resolved: [], prompts: ['review:external'] },
+]
+
+for (const row of externalRows) {
+  const { result, labels, prompts } = await run(lean, undefined, row.opts)
+  assert.equal(result.ok, true, row.name)
+  assert.equal(result.reviewers.includes('external'), row.reviewer, `${row.name}: reviewers`)
+  assert.equal(labels.filter((l) => l.includes(':external')).length, row.agents, `${row.name}: external agents`)
+  assert.deepEqual(Object.keys(prompts).filter((l) => prompts[l].includes(`| ${cmd}`) && prompts[l].includes('set -o pipefail;')), row.prompts, `${row.name}: command runs`)
+  assert.deepEqual(result.degraded, row.degraded, row.name)
+  assert.equal(result.fixRounds, row.fixRounds, row.name)
+  assert.deepEqual(result.resolved, row.resolved, row.name)
   console.log(`PASS ${row.name}`)
 }

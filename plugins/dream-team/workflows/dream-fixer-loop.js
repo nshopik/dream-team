@@ -5,7 +5,7 @@ export const meta = {
     { title: 'Implement', detail: 'one specialist writes the change and commits' },
     { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
     { title: 'Simplify', detail: 'ponytail-review cuts, applied or disputed by the implementer; skipped when the diff has no code or ponytail-review is unavailable (opus)' },
-    { title: 'Review', detail: 'pr-review-toolkit suite plus one domain reviewer unless args.domainReviewer is none (opus); opt-in /verify gate through a nested claude session, skipped when the diff has no code or claude or its /verify is unavailable' },
+    { title: 'Review', detail: 'pr-review-toolkit suite plus one domain reviewer unless args.domainReviewer is none (opus); opt-in /verify gate through a nested claude session, skipped when the diff has no code or claude or its /verify is unavailable; opt-in external review command, its findings checked by one agent' },
     { title: 'Fix', detail: 'blocking findings only; re-review only the reviewers that failed' },
   ],
 }
@@ -23,6 +23,7 @@ const BASE = String(A.base || '')
 const GATE_COMMANDS = Array.isArray(A.gateCommands) ? A.gateCommands.map(String).filter(Boolean) : []
 const VERIFY = A.verify === true
 const NO_DOMAIN = A.domainReviewer === 'none'
+const EXTERNAL = String(A.externalReview || '')
 const FIX_ROUNDS = 3
 const VERIFY_ROUNDS = 3
 
@@ -111,6 +112,15 @@ const VERDICT_SCHEMA = {
         },
       },
     },
+  },
+}
+
+const EXTERNAL_SCHEMA = {
+  ...VERDICT_SCHEMA,
+  required: [...VERDICT_SCHEMA.required, 'ran'],
+  properties: {
+    ...VERDICT_SCHEMA.properties,
+    ran: { type: 'boolean', description: 'false when the command is not found or exits non-zero' },
   },
 }
 
@@ -394,6 +404,20 @@ function domainPrompt() {
   ].join('\n')
 }
 
+function externalPrompt() {
+  return [
+    CONTEXT,
+    '',
+    'Get a second opinion on the branch diff from an external reviewer, then check it.',
+    'Run this once, as one Bash call from the repo root:',
+    `  set -o pipefail; git diff ${BASE}..HEAD | ${EXTERNAL}`,
+    'The command is not found or exits non-zero → return ran false, no findings, and the exit status or error as summary.',
+    'It prints nothing, or neither findings nor a no-issues verdict → return ran false, no findings, and its output as summary.',
+    'Otherwise return ran true. Check each finding it prints against the code: return only the ones that hold, and drop the rest with the reason in the summary.',
+    REVIEW_RULES,
+  ].join('\n')
+}
+
 function reReviewPrompt(prev, fix, round) {
   return [
     CONTEXT,
@@ -555,6 +579,8 @@ const gates = [
   ...qualityTypes.map((t) => ({ key: t, type: t, prompt: () => qualityPrompt(t, impl.redEvidence) })),
   ...(NO_DOMAIN ? [] : [{ key: 'domain', type: A.domainReviewer, prompt: domainPrompt }]),
   ...(VERIFY && aspects.has('code') ? [{ key: VERIFY_SKILL, run: runVerify }] : []),
+  // A re-review does not re-run the command.
+  ...(EXTERNAL ? [{ key: 'external', type: 'generic', prompt: externalPrompt, schema: EXTERNAL_SCHEMA }] : []),
 ]
 log(`Review: ${gates.length} reviewers — ${gates.map((g) => g.key).join(', ')}`)
 
@@ -562,11 +588,16 @@ phase('Review')
 const state = new Map()
 const initial = await parallel(gates.map((g) => () => (g.run
   ? g.run(`review:${g.key}`, 'Review')
-  : agentR(g.prompt(), { label: `review:${g.key}`, phase: 'Review', schema: VERDICT_SCHEMA, ...reviewerRoster(g.type) }))))
+  : agentR(g.prompt(), { label: `review:${g.key}`, phase: 'Review', schema: g.schema || VERDICT_SCHEMA, ...reviewerRoster(g.type) }))))
 // Minors are kept from full reviews only: a re-review verdict replaces the
 // gate's state and lists outstanding findings, so it would drop them.
 const minor = []
 const record = (g, v) => {
+  if (v?.ran === false) {
+    MISSING_TYPES.add(g.key)
+    log(`Review: external review command failed — skipped: ${v.summary}`)
+    v = { ...v, findings: [] }
+  }
   state.set(g.key, v || deadReviewer(g.key))
   if (v) minor.push(...v.findings.filter((f) => f.severity === 'minor').map((f) => ({ ...f, gate: g.key })))
 }
@@ -633,7 +664,7 @@ while (true) {
     ...dead.map((g) => () => g.run ? g.run(`review:${g.key}:retry${round}`, 'Fix') : agentR(g.prompt(), {
       label: `review:${g.key}:retry${round}`,
       phase: 'Fix',
-      schema: VERDICT_SCHEMA,
+      schema: g.schema || VERDICT_SCHEMA,
       ...reviewerRoster(g.type),
     })),
   ])
