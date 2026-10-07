@@ -176,7 +176,7 @@ Report the branch, the implementer and the domain reviewer by type name, and whe
 - **Branch:** `issue-42-slug`
 - **Implementer:** `<type>`
 - **Domain reviewer:** `<type>`
-- **External reviewer:** yes|no
+- **External reviewer:** `yes`|`no`
 ```
 
 - Domain reviewer is a project specialist → write `project specialist — <lens>`, never its type;
