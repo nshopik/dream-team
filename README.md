@@ -75,7 +75,9 @@ claude --plugin-dir .
 python3 hooks/test_body_cap.py
 python3 hooks/test_changelog_cap.py
 python3 hooks/test_jit_context.py
+python3 skills/dream-fixer/test_fold.py
 python3 skills/friction/test_friction.py
+node workflows/test_simplify.mjs
 ```
 
 ## License
