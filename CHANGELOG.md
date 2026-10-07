@@ -23,6 +23,9 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - `branch-guard` no longer blocks plan files such as `docs/plans/x.md` or `test-plan.md` on
   `main`.
+- `dream-fixer-loop`'s nested `/verify` run cannot call ssh and is told to run no lab-only
+  command. The gate kills the processes the run leaves alive, reports them in `verifyRun.killed`,
+  and moves the recipe file out of the checkout on every outcome.
 
 ## [0.22.0] - 2026-10-07
 

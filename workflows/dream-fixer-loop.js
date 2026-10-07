@@ -157,7 +157,7 @@ const SIMPLIFY_SCHEMA = {
 
 const VERIFY_RUN_SCHEMA = {
   type: 'object',
-  required: ['available', 'verdict', 'command', 'output', 'reason', 'recipePath'],
+  required: ['available', 'verdict', 'command', 'output', 'reason', 'recipePath', 'killed'],
   additionalProperties: false,
   properties: {
     friction: FRICTION,
@@ -167,6 +167,7 @@ const VERIFY_RUN_SCHEMA = {
     output: { type: 'string', description: 'that command\'s output, trimmed to the key lines' },
     reason: { type: 'string', description: 'the reason /verify gives for its verdict' },
     recipePath: { type: 'string', description: 'path outside the checkout of the .claude/skills/verify/SKILL.md the nested run wrote; empty string when it wrote none' },
+    killed: { type: 'array', items: { type: 'string' }, description: 'the `<pid> <args>` line of each leftover process of the nested run that you killed' },
   },
 }
 
@@ -362,14 +363,18 @@ function verifyRunPrompt() {
     '',
     'Run Claude Code\'s /verify on the branch diff in a nested session from Bash. Do not replicate /verify yourself.',
     '`command -v claude` prints nothing → return available false and verdict SKIP.',
-    'Otherwise run this as one Bash call from the repo root, with the Bash tool\'s 600000 ms timeout and no permission flags; shell variables do not survive to the next call, so read the stream later from the directory it prints:',
-    `  D=$(mktemp -d) && echo "$D" && claude -p "/verify the changes in ${BASE}..HEAD. Write every capture under $D." --model opus --effort medium --output-format stream-json --verbose > "$D/stream.jsonl"`,
+    'Otherwise run this as one Bash call from the repo root, with the Bash tool\'s 600000 ms timeout and no permission flags; shell variables do not survive to the next call, so use the directory it prints as <dir> below:',
+    `  D=$(mktemp -d) && echo "$D" && DREAM_VERIFY_RUN="$D" claude -p "/verify the changes in ${BASE}..HEAD. Write every capture under $D." --append-system-prompt "Run no ssh and no lab-only command such as a perf gate; the orchestrator runs lab work after the workflow returns." --disallowedTools "Bash(ssh *)" --model opus --effort medium --output-format stream-json --verbose > "$D/stream.jsonl"`,
+    'Do the next six steps after every run, a timeout included, before you return anything.',
+    'Run `grep -lsxzF "DREAM_VERIFY_RUN=<dir>" /proc/[0-9]*/environ | cut -d/ -f3 | xargs -r ps -o pid=,args= -p` to list the processes the run left alive.',
+    'It lists any → `kill` those PIDs, and only those, and return each listed line in killed.',
+    'Then re-run that listing; it still lists any → `kill -9` those PIDs.',
+    '`git status --porcelain --untracked-files=all -- .claude/skills/verify/SKILL.md` prints `??` → move the file to <dir>/SKILL.md and return that path as recipePath.',
+    'It prints ` M` → copy the file to <dir>/SKILL.md, return that path as recipePath, and run `git restore -- .claude/skills/verify/SKILL.md`.',
+    'It prints nothing → recipePath is an empty string; leave the file alone.',
     'The run exits non-zero, times out, or its stream has no final result event → return available true and verdict BLOCKED, with the exit status or the last stream lines as reason.',
     'The init event (type system, subtype init) does not list verify under slash_commands → return available false and verdict SKIP.',
     'Otherwise return available true and, from the run\'s final report: the verdict, the command it drove the changed code with, that command\'s output trimmed to the key lines, and the reason for the verdict.',
-    '`git status --porcelain --untracked-files=all -- .claude/skills/verify/SKILL.md` prints `??` → move the file to SKILL.md in the directory the run printed and return that path as recipePath.',
-    'It prints ` M` → copy the file to SKILL.md in that directory, return that path as recipePath, and run `git restore -- .claude/skills/verify/SKILL.md`.',
-    'It prints nothing → recipePath is an empty string; leave the file alone.',
     'Delete or restore nothing else, and do not edit, stage or commit anything: the other reviewers share this checkout.',
   ].join('\n')
 }
@@ -568,8 +573,10 @@ let verifyRun = null
 async function runVerify(label, phase, prev) {
   const r = await agentR(verifyRunPrompt(), { label, phase, schema: VERIFY_RUN_SCHEMA, model: 'sonnet', effort: 'low' })
   if (!r) return null
-  if (r.available) verifyRun = { ...r, recipePath: r.recipePath || verifyRun?.recipePath || '' }
-  else {
+  const cleanup = { recipePath: r.recipePath || verifyRun?.recipePath || '', killed: [...(verifyRun?.killed || []), ...r.killed] }
+  if (r.available || (!verifyRun && (r.recipePath || r.killed.length))) verifyRun = { ...r, ...cleanup }
+  else if (verifyRun) verifyRun = { ...verifyRun, ...cleanup }
+  if (!r.available) {
     MISSING_TYPES.add(VERIFY_SKILL)
     log(`Review: /verify not available — skipped: ${r.reason}`)
   }

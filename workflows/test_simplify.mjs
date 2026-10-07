@@ -74,8 +74,9 @@ for (const row of rows) {
 }
 
 const lean = loaded([], 0)
-const vrun = (verdict, recipePath = '') => ({ available: true, verdict, command: 'curl -s localhost:8080/health', output: '{"ok":true}', reason: `${verdict} reason`, recipePath })
-const unavailable = { available: false, verdict: 'SKIP', command: '', output: '', reason: '', recipePath: '' }
+const vrun = (verdict, recipePath = '', killed = []) => ({ available: true, verdict, command: 'curl -s localhost:8080/health', output: '{"ok":true}', reason: `${verdict} reason`, recipePath, killed })
+const unavailable = { available: false, verdict: 'SKIP', command: '', output: '', reason: '', recipePath: '', killed: [] }
+const leftover = '4242 python3 bench/server.py --port 8080'
 const failFinding = { severity: 'important', gate: 'verify', round: 1,
   description: '/verify FAIL: FAIL reason\nCommand: curl -s localhost:8080/health\nOutput:\n{"ok":true}' }
 
@@ -86,18 +87,24 @@ const verifyRows = [
     ok: true, verifyRun: null, degraded: [], ran: 0, fixRounds: 0, resolved: [] },
   { name: 'verify unavailable', opts: { verify: true, verifyRuns: [unavailable] },
     ok: true, verifyRun: null, degraded: ['verify'], ran: 1, fixRounds: 0, resolved: [] },
+  { name: 'verify unavailable after cleanup keeps it', opts: { verify: true, verifyRuns: [{ ...unavailable, recipePath: '/tmp/tmp.z/SKILL.md', killed: [leftover] }] },
+    ok: true, verifyRun: { ...unavailable, recipePath: '/tmp/tmp.z/SKILL.md', killed: [leftover] }, degraded: ['verify'], ran: 1, fixRounds: 0, resolved: [] },
   { name: 'verify PASS with recipe', opts: { verify: true, verifyRuns: [vrun('PASS', '/tmp/tmp.x/SKILL.md')] },
     ok: true, verifyRun: vrun('PASS', '/tmp/tmp.x/SKILL.md'), degraded: [], ran: 1, fixRounds: 0, resolved: [] },
   { name: 'verify BLOCKED is not a finding', opts: { verify: true, verifyRuns: [vrun('BLOCKED')] },
     ok: true, verifyRun: vrun('BLOCKED'), degraded: [], ran: 1, fixRounds: 0, resolved: [] },
   { name: 'verify FAIL fixed in one round', opts: { verify: true, verifyRuns: [vrun('FAIL'), vrun('PASS')] },
     ok: true, verifyRun: vrun('PASS'), degraded: [], ran: 2, fixRounds: 1, resolved: [failFinding] },
+  { name: 'verify fix round leaves the recipe and a process behind', opts: { verify: true, verifyRuns: [vrun('FAIL', '/tmp/tmp.y/SKILL.md', [leftover]), vrun('PASS')] },
+    ok: true, verifyRun: vrun('PASS', '/tmp/tmp.y/SKILL.md', [leftover]), degraded: [], ran: 2, fixRounds: 1, resolved: [failFinding] },
   { name: 'verify FAIL never fixed', opts: { verify: true, verifyRuns: [vrun('FAIL'), vrun('FAIL'), vrun('FAIL'), vrun('FAIL')] },
     ok: false, verifyRun: vrun('FAIL'), degraded: [], ran: 4, resolved: [] },
   { name: 'verify FAIL then BLOCKED keeps the FAIL', opts: { verify: true, verifyRuns: [vrun('FAIL'), vrun('BLOCKED'), vrun('BLOCKED'), vrun('BLOCKED')] },
     ok: false, verifyRun: vrun('BLOCKED'), degraded: [], ran: 4, resolved: [] },
   { name: 'verify FAIL then unavailable keeps the FAIL', opts: { verify: true, verifyRuns: [vrun('FAIL'), unavailable, unavailable, unavailable] },
     ok: false, verifyRun: vrun('FAIL'), degraded: ['verify'], ran: 4, resolved: [] },
+  { name: 'verify FAIL then unavailable keeps its cleanup', opts: { verify: true, verifyRuns: [vrun('FAIL'), { ...unavailable, recipePath: '/tmp/tmp.z/SKILL.md', killed: [leftover] }, unavailable, unavailable] },
+    ok: false, verifyRun: vrun('FAIL', '/tmp/tmp.z/SKILL.md', [leftover]), degraded: ['verify'], ran: 4, resolved: [] },
 ]
 
 for (const row of verifyRows) {
@@ -109,6 +116,23 @@ for (const row of verifyRows) {
   assert.deepEqual(result.resolved, row.resolved, row.name)
   if (row.ok) assert.equal(result.fixRounds, row.fixRounds, row.name)
   else assert.equal(result.handBack, true, row.name)
+  console.log(`PASS ${row.name}`)
+}
+
+// The cleanup steps come before the verdict lines, so a BLOCKED or SKIP run still does them.
+const verifyPromptRows = [
+  { name: 'nested run gets the lab rule', text: '--append-system-prompt "Run no ssh' },
+  { name: 'nested run cannot ssh', text: '--disallowedTools "Bash(ssh *)"' },
+  { name: 'nested run marks its processes', text: 'DREAM_VERIFY_RUN="$D" claude -p' },
+  { name: 'leftover processes killed on every outcome', text: 'DREAM_VERIFY_RUN=<dir>', before: 'verdict BLOCKED' },
+  { name: 'leftover processes re-checked after the kill', text: '`kill -9` those PIDs', before: 'verdict BLOCKED' },
+  { name: 'recipe moved out on every outcome', text: '.claude/skills/verify/SKILL.md` prints `??`', before: 'verdict BLOCKED' },
+]
+const { prompts: verifyPrompts } = await run(lean, undefined, { verify: true, verifyRuns: [vrun('PASS')] })
+for (const row of verifyPromptRows) {
+  const prompt = verifyPrompts['review:verify']
+  assert.ok(prompt.includes(row.text), row.name)
+  if (row.before) assert.ok(prompt.indexOf(row.text) < prompt.indexOf(row.before), `${row.name}: comes first`)
   console.log(`PASS ${row.name}`)
 }
 

@@ -21,14 +21,16 @@
   finding. `unhandled` counts cuts the implementer neither applied nor disputed; above 0 → say so in
   the MR description. `null` → the phase was skipped.
 - **`verifyRun`** — the last `/verify` gate run: `verdict`, `command`, `output`, `reason`,
-  `recipePath`. `null` → the `/verify` gate did not run, or was skipped (see `degraded`). A FAIL
-  was a blocking finding for the fix loop.
+  `recipePath`, and `killed`, the leftover processes the gate killed across all runs. `null` → the
+  `/verify` gate did not run, or was skipped (see `degraded`) and left nothing. A FAIL was a
+  blocking finding for the fix loop.
   - `PASS` → put its `command` and `output` in the MR description.
   - `BLOCKED` and its `reason` needs the lab → run it as a lab step through `dream-team:lab-runner`.
   - `BLOCKED` otherwise → name the verdict and its `reason` in the report.
   - `SKIP` → name the verdict and its `reason` in the report.
   - `recipePath` non-empty → never commit the recipe on the branch; report its path for the user
     to copy to `.claude/skills/verify/SKILL.md` and commit separately.
+  - `killed` non-empty → name each process in the report.
 - **`disputes`** — the fixer refused a finding and gave evidence. Check it yourself. The fixer may
   be right; it may also be rationalizing. Apply the fix or accept the dispute.
 - **`resolved`** — blocking findings a fix round fixed, each with its reviewer (`gate`) and round.
