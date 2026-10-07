@@ -5,6 +5,14 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-10-07
+
+### Added
+
+- `friction`, a user-invoked skill (`/dream-team:friction`), reports agent friction repeated
+  across past `dream-fixer-loop` runs and offers to file an issue for each pattern.
+- `dream-fixer-loop` agents can self-report friction in an optional `friction` output field.
+
 ## [0.20.0] - 2026-10-07
 
 ### Changed
