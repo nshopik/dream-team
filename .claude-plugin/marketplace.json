@@ -3,17 +3,12 @@
   "owner": {
     "name": "Nikolay Shopik"
   },
-  "description": "Claude Code plugins: commit, MR/PR and issue text discipline, and the dream-team issue-to-MR flow.",
+  "description": "Claude Code plugin: commit, MR/PR and issue text discipline, and the dream-team issue-to-MR flow.",
   "plugins": [
     {
-      "name": "scope-style",
-      "source": "./",
-      "description": "Scoped Commits messages and short, review-facing MR/PR descriptions."
-    },
-    {
       "name": "dream-team",
-      "source": "./plugins/dream-team",
-      "description": "One tracker issue to one reviewed MR/PR: gate, implement, mechanical gate, review, bounded fix loop."
+      "source": "./",
+      "description": "One tracker issue to one reviewed MR/PR, with Scoped Commits messages and short MR/PR and issue descriptions."
     }
   ]
 }

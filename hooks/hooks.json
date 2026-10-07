@@ -6,6 +6,12 @@
         "hooks": [
           {
             "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/jit-context.py\"",
+            "timeout": 5,
+            "statusMessage": "Loading conventions"
+          },
+          {
+            "type": "command",
             "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/body-cap.py\"",
             "if": "Bash(gh *)",
             "timeout": 5,
@@ -17,6 +23,40 @@
             "if": "Bash(glab *)",
             "timeout": 5,
             "statusMessage": "Checking MR or issue description"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/branch-guard.py\"",
+            "timeout": 5,
+            "statusMessage": "Checking branch"
+          },
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/jit-context.py\"",
+            "timeout": 5,
+            "statusMessage": "Loading file conventions"
+          },
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/changelog-cap.py\"",
+            "timeout": 5,
+            "statusMessage": "Checking CHANGELOG entry length"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/jit-context.py\"",
+            "timeout": 5
           }
         ]
       }

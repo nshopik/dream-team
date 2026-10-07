@@ -1,9 +1,9 @@
 {
-  "name": "scope-style",
-  "version": "0.3.14",
-  "description": "Scoped Commits messages and short, review-facing MR/PR descriptions, enforced by a PreToolUse hook.",
+  "name": "dream-team",
+  "version": "0.19.0",
+  "description": "One tracker issue to one reviewed MR/PR: the dream-fixer skill drives the dream-fixer-loop workflow; scope-* skills and a PreToolUse hook keep commit, MR/PR and issue text short.",
   "author": { "name": "Nikolay Shopik" },
   "repository": "https://github.com/nshopik/dream-team",
   "license": "MIT",
-  "keywords": ["git", "commit", "pull-request", "merge-request", "scoped-commits"]
+  "keywords": ["workflow", "issue", "merge-request", "code-review", "git", "commit", "pull-request", "scoped-commits"]
 }
