@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PreToolUse gate: refuse to author a design/spec/plan doc on main/master.
+"""PreToolUse gate: refuse to author a design/spec doc on main/master.
 
 Carries the **Never author or commit a design/spec on `main`/`master`** rule so
 CLAUDE.md does not have to. Fires at the moment of authoring rather than at
@@ -17,23 +17,18 @@ import sys
 # Path shapes that mean "design document", not ordinary source.
 DESIGN = re.compile(r"""
     (^|/)(SPEC|DESIGN)\.md$
-  | (^|/)docs/(specs|plans|decisions)/
-  | (^|/)(specs|plans)/[^/]+\.md$
-  | -(design|plan|spec)\.md$
+  | (^|/)docs/(specs|decisions)/
+  | (^|/)specs/[^/]+\.md$
+  | -(design|spec)\.md$
 """, re.VERBOSE | re.IGNORECASE)
 
 PROTECTED = {'main', 'master'}
 
 REMINDER = """<branch_guard>
-`{path}` is a design/spec/plan document and you are on `{branch}`.
+`{path}` is a design/spec document and you are on `{branch}`.
 
-Never author or commit a design, spec, or plan on main/master.
-
-- In-place execution: `git checkout -b <topic>` first, then retry this write.
-- Worktree / parallel-agent execution: let the isolation step create the
-  branch. A `git checkout -b` in the primary checkout blocks
-  `git worktree add -b` and defeats the isolation — prefer the native
-  worktree tool over raw `git worktree add`.
+Never author or commit a design or spec on main/master. Run
+`git checkout -b <topic>` first, then retry this write.
 </branch_guard>"""
 
 
