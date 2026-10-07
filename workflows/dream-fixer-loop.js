@@ -38,11 +38,14 @@ if (!isGeneric(A.implementer) && A.implementer === A.domainReviewer) {
 // ---------------------------------------------------------------------------
 // Schemas
 // ---------------------------------------------------------------------------
+const FRICTION = { type: 'array', items: { type: 'string' }, description: 'instructions you could not follow, tools you lacked, and workarounds you used; omit when none' }
+
 const IMPL_SCHEMA = {
   type: 'object',
   required: ['committed', 'summary', 'redEvidence'],
   additionalProperties: false,
   properties: {
+    friction: FRICTION,
     committed: { type: 'boolean' },
     summary: { type: 'string' },
     redEvidence: { type: 'string', description: 'bug fix: key lines of the new test failing before the fix was applied; empty string when the issue is not a bug fix' },
@@ -58,6 +61,7 @@ const VERIFY_SCHEMA = {
   required: ['passed', 'summary', 'changedFiles', 'dirtyPaths'],
   additionalProperties: false,
   properties: {
+    friction: FRICTION,
     passed: { type: 'boolean', description: 'true only if every command exited 0' },
     summary: { type: 'string' },
     changedFiles: { type: 'array', items: { type: 'string' } },
@@ -87,6 +91,7 @@ const BUILD_FIX_SCHEMA = {
   required: ['committed', 'summary'],
   additionalProperties: false,
   properties: {
+    friction: FRICTION,
     committed: { type: 'boolean' },
     summary: { type: 'string' },
   },
@@ -98,6 +103,7 @@ const VERDICT_SCHEMA = {
   required: ['summary', 'findings'],
   additionalProperties: false,
   properties: {
+    friction: FRICTION,
     summary: { type: 'string' },
     findings: {
       type: 'array',
@@ -129,6 +135,7 @@ const SIMPLIFY_SCHEMA = {
   required: ['skillLoaded', 'findings', 'net'],
   additionalProperties: false,
   properties: {
+    friction: FRICTION,
     skillLoaded: { type: 'boolean', description: 'false when the ponytail:ponytail-review skill is not available in this session' },
     findings: {
       type: 'array',
@@ -153,6 +160,7 @@ const VERIFY_RUN_SCHEMA = {
   required: ['available', 'verdict', 'command', 'output', 'reason', 'recipePath'],
   additionalProperties: false,
   properties: {
+    friction: FRICTION,
     available: { type: 'boolean', description: 'false when `claude` is not on PATH or the nested init event does not list verify under slash_commands' },
     verdict: { type: 'string', enum: ['PASS', 'FAIL', 'BLOCKED', 'SKIP'] },
     command: { type: 'string', description: 'the command /verify drove the changed code with' },
@@ -180,6 +188,7 @@ const FIX_SCHEMA = {
   required: ['committed', 'addressed', 'disputed', 'summary'],
   additionalProperties: false,
   properties: {
+    friction: FRICTION,
     committed: { type: 'boolean' },
     addressed: { type: 'array', items: { type: 'string' } },
     disputed: {
@@ -234,20 +243,23 @@ const degrade = ({ agentType, ...o }) => o
 
 // An unknown agentType throws at dispatch, before any null-result safety net.
 // A disabled plugin is enough to make a real type vanish, so degrade instead
-// of failing the run.
+// of failing the run. Every agent call goes through here, which keeps
+// `friction` in the journal and out of the result.
 async function agentR(prompt, opts) {
   if (opts.agentType && MISSING_TYPES.has(opts.agentType)) opts = degrade(opts)
+  let r
   try {
-    return await agent(prompt, opts)
+    r = await agent(prompt, opts)
   } catch (e) {
     const msg = String((e && e.message) || e)
-    if (opts.agentType && msg.includes('not found')) {
-      if (msg.includes(opts.agentType)) MISSING_TYPES.add(opts.agentType)
-      log(`${opts.label}: ${opts.agentType} not dispatchable — retrying generically.`)
-      return await agent(prompt, degrade(opts))
-    }
-    throw e
+    if (!opts.agentType || !msg.includes('not found')) throw e
+    if (msg.includes(opts.agentType)) MISSING_TYPES.add(opts.agentType)
+    log(`${opts.label}: ${opts.agentType} not dispatchable — retrying generically.`)
+    r = await agent(prompt, degrade(opts))
   }
+  if (!r) return r
+  const { friction, ...rest } = r
+  return rest
 }
 
 // ---------------------------------------------------------------------------
@@ -477,7 +489,7 @@ const deadReviewer = (kind) => ({ dead: true, summary: `${kind} reviewer produce
 // The run continues past a writing agent only through this gate, so the head that ships is a gated one.
 async function gate(after, tag, withAspects) {
   for (let round = 0; ; round++) {
-    const verify = await agent(verifyPrompt(round ? `build-fix round ${round}` : after, withAspects), {
+    const verify = await agentR(verifyPrompt(round ? `build-fix round ${round}` : after, withAspects), {
       label: `gate:#${ISSUE}${tag ? `:${tag}` : ''}${round ? `:r${round}` : ''}`,
       phase: 'Gate',
       schema: VERIFY_SCHEMA,
@@ -524,7 +536,7 @@ if (impl.redEvidence) aspects.add('tests')
 let simplify = null
 if (aspects.has('code')) {
   phase('Simplify')
-  const review = await agent(simplifyPrompt(), { label: `simplify:#${ISSUE}`, phase: 'Simplify', schema: SIMPLIFY_SCHEMA, model: 'opus' })
+  const review = await agentR(simplifyPrompt(), { label: `simplify:#${ISSUE}`, phase: 'Simplify', schema: SIMPLIFY_SCHEMA, model: 'opus' })
   if (!review) return { ok: false, stage: 'simplify', reason: 'simplify reviewer returned no result' }
   if (!review.skillLoaded) {
     MISSING_TYPES.add(PONYTAIL_REVIEW)
@@ -554,7 +566,7 @@ if (aspects.has('code')) {
 // the new head; only its PASS resolves a prior FAIL, a run that verified nothing keeps it.
 let verifyRun = null
 async function runVerify(label, phase, prev) {
-  const r = await agent(verifyRunPrompt(), { label, phase, schema: VERIFY_RUN_SCHEMA, model: 'sonnet', effort: 'low' })
+  const r = await agentR(verifyRunPrompt(), { label, phase, schema: VERIFY_RUN_SCHEMA, model: 'sonnet', effort: 'low' })
   if (!r) return null
   if (r.available) verifyRun = { ...r, recipePath: r.recipePath || verifyRun?.recipePath || '' }
   else {

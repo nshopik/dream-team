@@ -14,6 +14,10 @@ async function run(review, cuts, { verify = false, aspects = ['code'], verifyRun
   const labels = []
   const prompts = {}
   async function agent(prompt, opts) {
+    const reply = await stub(prompt, opts)
+    return reply && { ...reply, friction: ['stub friction'] }
+  }
+  async function stub(prompt, opts) {
     labels.push(opts.label)
     prompts[opts.label] = prompt
     if (opts.phase === 'Implement') return { committed: true, summary: '', redEvidence: '' }
@@ -29,6 +33,7 @@ async function run(review, cuts, { verify = false, aspects = ['code'], verifyRun
   }
   const result = await new AsyncFunction('args', 'agent', 'phase', 'log', 'parallel', body)(
     { ...args, verify, domainReviewer, externalReview }, agent, () => {}, () => {}, (fns) => Promise.all(fns.map((f) => f())))
+  assert.ok(!JSON.stringify(result).includes('stub friction'), 'friction stays out of the result')
   return { result, labels, prompts }
 }
 
