@@ -5,6 +5,15 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Added
+
+- `dream-fixer` has the implementer add a decision record to `docs/decisions/`, numbered from
+  `0001`, when the change carries a decision that passes the record format's three-part test.
+
+### Removed
+
+- `jit-context` no longer injects a decision-record rule on writes under `docs/decisions/`.
+
 ## [0.21.0] - 2026-10-07
 
 ### Added

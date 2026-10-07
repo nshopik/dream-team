@@ -157,6 +157,10 @@ object (never a stringified one):
 
 - `notes`: decisions made in the tracker discussion, the answer the user gave at step-2 triage,
   and the lab work the implementer must leave alone. Optional.
+- The change carries a decision that passes the test in
+  [`reference/decision-record.md`](reference/decision-record.md) → name the decision in `notes`
+  with that file's absolute path, and tell the implementer to add its record to `docs/decisions/`
+  in that format, in the same commit as the change.
 - `gateCommands`: the build, test and lint commands the repo's CI config runs that also run in this
   checkout — CI config first, `CLAUDE.md` and README second. The mechanical gate runs exactly
   these after the implementation and after every fix commit. Leave out lab work. Required.

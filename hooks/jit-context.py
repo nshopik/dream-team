@@ -101,16 +101,6 @@ Prose rules still apply; they inject on the next file write of the session.
 </spec_structure>"""
 
 
-DECISION = """<decision_record>
-Writing a decision record in `docs/decisions/`.
-- Name the file `NNNN-<topic>.md`: four digits from `0000`, the next free number, kebab-case
-  topic.
-- Never renumber or reuse a number; a superseded record keeps its file.
-- The date lives in the header, not the filename.
-Prose rules still apply; they inject on the next file write of the session.
-</decision_record>"""
-
-
 NOTES = """<project_notes>
 You make a mistake, get corrected, or find something about this repo that is not
 written down → add one imperative line to its `CLAUDE.local.md` and name the line in
@@ -194,8 +184,6 @@ RULES = [
     # Same name as the row above: the sentinel dedupes, so a heredoc/sed write
     # (no file_path field) still gets the block exactly once.
     ('spec',      'command',   r'specs?/[^\s\'"]*-design\.md',        SPEC),
-    ('decision',  'file_path', r'(^|/)docs/decisions/[^/]+\.md$',  DECISION),
-    ('decision',  'command',   r'docs/decisions/',                  DECISION),
     ('claude_md', 'file_path', r'(^|/)CLAUDE(\.local)?\.md$',       CLAUDE_MD),
     ('claude_md', 'command',   r'CLAUDE(\.local)?\.md',             CLAUDE_MD),
     # First: on `glab`/`gh` this fires once, then falls through to `forge` on the
