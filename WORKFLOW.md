@@ -123,7 +123,7 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
 - Agent: `milestone-close`:
   1. Checks the exit criterion against evidence (14 days in the field, SERVFAIL ratio from
      `/metrics`), reading the `Evidence:` issue for a field gate. Not met: proposes one issue per
-     gap, files the ones you keep, and stops. A failed kill-gate proposes no issues: the redesign
+     gap, files the ones you approve, and stops. A failed kill-gate proposes no issues: the redesign
      goes back to step 0.
   2. Triage table of open issues: close, move, or blocks-close. You answer in one reply.
      `Meta:` issues stay out of the table; the agent ticks their closed children.
@@ -132,7 +132,7 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
      MRs that `docs/development.md` lacks, `CLAUDE.md` and `CLAUDE.local.md` lines to cut (with
      the lab host or tool change that would fix the gotcha, where one could), and
      `CLAUDE.local.md` lines to promote to `CLAUDE.md`. Each fact, cut and promotion is one
-     proposed line for you to keep or drop.
+     proposed line for you to approve or reject.
   4. Applies what you approved: moves, one docs MR, milestone closed, ROADMAP updated. A
      pre-1.0 project that opts in through `CLAUDE.md` gets a `v0.<n>.0` tag on the close.
 - You: the gap issues, the triage table, the proposed facts and the cuts are your decisions.

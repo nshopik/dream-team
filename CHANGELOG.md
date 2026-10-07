@@ -14,6 +14,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - `dream-fixer` names a scout's research note `docs/research/YYYY-MM-DD-<slug>.md` and gives it a
   fixed header, a short context and one section per finding.
+- `milestone-close` asks the user to approve or reject each proposal by number, and says what
+  approving it does, instead of asking which to keep.
 
 ### Removed
 
