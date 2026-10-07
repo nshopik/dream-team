@@ -21,6 +21,8 @@ Skills:
   never a restatement of the commits.
 - `scope-issue`: issues in three parts (context, problem, proposal) that can be started without
   the conversation that produced them.
+- `friction`: reports agent friction repeated across past `dream-fixer-loop` runs; run it as
+  `/dream-team:friction`.
 
 Agent:
 
@@ -73,6 +75,7 @@ claude --plugin-dir .
 python3 hooks/test_body_cap.py
 python3 hooks/test_changelog_cap.py
 python3 hooks/test_jit_context.py
+python3 skills/friction/test_friction.py
 ```
 
 ## License
