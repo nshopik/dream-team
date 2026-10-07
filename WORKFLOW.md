@@ -30,9 +30,9 @@ user-triggered release.
 ### 0. Idea to spec (once per project)
 
 - You: "I want a Rust rewrite of a DNS resolver for large public deployments."
-- Agent: asks one question at a time (scale, what is out of scope, how parity is proven), then
-  writes a lean v1 spec on a topic branch. `jit-context` injects the spec template on the spec
-  write; `branch-guard` keeps design docs off `master`.
+- Agent: asks one question at a time (scale, what is out of scope, how parity is proven).
+- You: `/dream-team:scope-spec`. The agent asks what the chat left open, then writes a lean v1
+  spec on a topic branch; `branch-guard` keeps design docs off `master`.
 - You: read the spec, push back until it matches your model, merge it.
 - Result: `docs/specs/NNNN-<project>-design.md`, about 160 lines.
 

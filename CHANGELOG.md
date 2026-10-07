@@ -5,6 +5,15 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Added
+
+- `scope-spec`, a user-invoked skill (`/dream-team:scope-spec`), writes a project spec in
+  `docs/specs/` from the spec template it carries.
+
+### Removed
+
+- `jit-context` no longer injects the spec template on writes to a `docs/specs/` design file.
+
 ### Fixed
 
 - `branch-guard` no longer blocks plan files such as `docs/plans/x.md` or `test-plan.md` on

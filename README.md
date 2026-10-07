@@ -12,6 +12,7 @@ Skills:
   workflow: implement, build/test gate, reviewers, bounded fix rounds.
 - `setup-dream-team`: checks an existing project against the flow, fixes the mechanical failures
   directly and files one issue per other failing check.
+- `scope-spec`: the project spec in `docs/specs/`, written from its template.
 - `cut-milestones`: drafts milestones from a spec, one exit gate each.
 - `milestone-close`: checks a milestone's exit criterion, triages its open issues, and checks
   docs against code.
@@ -35,7 +36,7 @@ Hooks:
   Claude, so the fix happens in the same turn. It allows anything it can't parse.
 - `branch-guard.py` (PreToolUse): blocks a design or spec document written on `main`/`master`.
 - `changelog-cap.py` (PreToolUse): blocks a CHANGELOG entry past one sentence or 40 words.
-- `jit-context.py`: injects git, forge, changelog, spec, prose and lab conventions the first time
+- `jit-context.py`: injects git, forge, changelog, prose and lab conventions the first time
   a session touches each. At session start, tells the agent to record corrections in the
   project's `CLAUDE.local.md`.
 
