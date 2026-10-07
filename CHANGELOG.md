@@ -10,6 +10,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `scope-spec`, a user-invoked skill (`/dream-team:scope-spec`), writes a project spec in
   `docs/specs/` from the spec template it carries.
 
+### Changed
+
+- `dream-fixer` names a scout's research note `docs/research/YYYY-MM-DD-<slug>.md` and gives it a
+  fixed header, a short context and one section per finding.
+
 ### Removed
 
 - `jit-context` no longer injects the spec template on writes to a `docs/specs/` design file.
