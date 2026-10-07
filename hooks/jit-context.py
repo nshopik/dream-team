@@ -83,24 +83,6 @@ If not, it is decoration. Cut it.
 </prose_style>"""
 
 
-TEMPLATE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                        'reference', 'spec-template.md')
-
-SPEC = f"""<spec_structure>
-Writing a spec (`docs/specs/NNNN-<topic>-design.md`, sequential numbering; the date
-lives in the document header, not the filename)
-— use the template at `{TEMPLATE}`; read it before writing.
-
-- Header: `**Date:**` + `**Status:**` (`Draft` → `Accepted`, terminal; or
-  `Superseded by <spec-file>`). No branch name.
-- Sections: `## Context`, `## Decision`, `## Consequences`, `## Design`,
-  `## Open items`. An empty one is deleted — never "N/A", never "None at this time".
-- No per-change detail: file lists, test cases, rejected options and milestones go in
-  issues, topic docs, `docs/decisions/` or the ROADMAP.
-Prose rules still apply; they inject on the next file write of the session.
-</spec_structure>"""
-
-
 NOTES = """<project_notes>
 You make a mistake, get corrected, or find something about this repo that is not
 written down → add one imperative line to its `CLAUDE.local.md` and name the line in
@@ -178,12 +160,10 @@ RULES = [
     # git on every matching call, so a later write into another repo is still checked.
     ('upstream',  'file_path', r'.',                              UPSTREAM, is_upstream),
     ('upstream',  'command',   PUBLISH_CMD,                       UPSTREAM, is_upstream),
+    # Paired file_path/command rows share a name: the sentinel dedupes, so a heredoc/sed
+    # write (no file_path field) still gets the block exactly once.
     ('changelog', 'file_path', r'(^|/)CHANGELOG(\.[\w-]+)?\.md$', CHANGELOG),
     ('changelog', 'command',   r'CHANGELOG(\.[\w-]+)?\.md',        CHANGELOG),
-    ('spec',      'file_path', r'/specs?/.*-design\.md$',           SPEC),
-    # Same name as the row above: the sentinel dedupes, so a heredoc/sed write
-    # (no file_path field) still gets the block exactly once.
-    ('spec',      'command',   r'specs?/[^\s\'"]*-design\.md',        SPEC),
     ('claude_md', 'file_path', r'(^|/)CLAUDE(\.local)?\.md$',       CLAUDE_MD),
     ('claude_md', 'command',   r'CLAUDE(\.local)?\.md',             CLAUDE_MD),
     # First: on `glab`/`gh` this fires once, then falls through to `forge` on the

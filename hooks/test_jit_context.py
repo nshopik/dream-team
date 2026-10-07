@@ -45,8 +45,6 @@ assert "<upstream_repo>" not in context({"command": "git commit -m x"}, upstream
 mine = repo("git@github.com:me/x.git")
 assert "<prose_style>" in context({"file_path": os.path.join(mine, "x.md")})
 
-assert jit.TEMPLATE in context({"file_path": "/r/docs/specs/0001-x-design.md"})
-assert os.path.isfile(jit.TEMPLATE)
 s = uuid.uuid4().hex                                           # vcs fires first, forge on the next call
 assert "<vcs_workflow>" in context({"command": "gh pr view 1"}, session=s)
 assert "<forge_tooling>" in context({"command": "gh pr view 1"}, session=s)
