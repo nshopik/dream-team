@@ -4,8 +4,8 @@ description: >-
   Takes one tracker issue from its number to an open MR/PR: reads and triages it, runs the
   dream-fixer-loop workflow, and opens the MR/PR from the result. Use when the user points at an
   issue by number and asks to work on, take, pick up, handle, do or close it — e.g. "work on
-  #42", "do GL-88 end to end". Not for vague feature ideas with no issue (use brainstorming), and
-  not for reviewing an existing PR (use review-pr).
+  #42", "do GL-88 end to end". Not for vague feature ideas with no issue (file one with
+  scope-issue), and not for reviewing an existing PR (use review-pr).
 argument-hint: <issue-number>
 ---
 

@@ -30,11 +30,11 @@ user-triggered release.
 ### 0. Idea to spec (once per project)
 
 - You: "I want a Rust rewrite of a DNS resolver for large public deployments."
-- Agent: `brainstorming` asks one question at a time (scale, what is out of scope, how parity is
-  proven), then writes a lean v1 spec on a topic branch. `jit-context` injects the lean-ADR
-  template on the spec write; `branch-guard` keeps design docs off `master`.
+- Agent: asks one question at a time (scale, what is out of scope, how parity is proven), then
+  writes a lean v1 spec on a topic branch. `jit-context` injects the spec template on the spec
+  write; `branch-guard` keeps design docs off `master`.
 - You: read the spec, push back until it matches your model, merge it.
-- Result: `docs/specs/<date>-<project>-v1-design.md`, about 160 lines.
+- Result: `docs/specs/NNNN-<project>-design.md`, about 160 lines.
 
 A spec is only for decisions wider than one issue: the v1 design, a cross-cutting change. Work
 that fits one issue gets no spec; a decision made during it goes into the issue description.

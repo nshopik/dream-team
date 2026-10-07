@@ -90,7 +90,6 @@ SPEC = f"""<spec_structure>
 Writing a spec (`docs/specs/NNNN-<topic>-design.md`, sequential numbering; the date
 lives in the document header, not the filename)
 — use the template at `{TEMPLATE}`; read it before writing.
-This overrides the brainstorming skill's freeform default.
 
 - Header: `**Date:**` + `**Status:**` (`Draft` → `Accepted`, terminal; or
   `Superseded by <spec-file>`). No branch name.
