@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.23.0] - 2026-10-08
+
 ### Added
 
 - `scope-spec`, a user-invoked skill (`/dream-team:scope-spec`), writes a project spec in

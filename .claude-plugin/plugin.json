@@ -1,6 +1,6 @@
 {
   "name": "dream-team",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "description": "Runs a project from spec to release: milestones, issues written as small specs, one reviewed MR/PR per issue, and milestone close. Works with GitHub and GitLab.",
   "author": { "name": "Nikolay Shopik" },
   "repository": "https://github.com/nshopik/dream-team",
