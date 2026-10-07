@@ -25,7 +25,7 @@ Agents:
 
 Hooks:
 
-- `jit-context.py`: injects git workflow, prose, spec, decision-record, changelog,
+- `jit-context.py`: injects git workflow, prose, spec, changelog,
   lab, forge and `CLAUDE.md` rules at first use, `<upstream_repo>` on the first write or commit in
   a repo with a remote outside `DREAM_TEAM_OWN_REMOTES`, and `<project_notes>` at session start.
 - `body-cap.py`: length caps on MRs and issues.
