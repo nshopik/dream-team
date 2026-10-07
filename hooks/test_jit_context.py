@@ -58,4 +58,5 @@ p = subprocess.run([sys.executable, HOOK], text=True, capture_output=True,
                    input=json.dumps({"hook_event_name": "SessionStart", "session_id": "x"}))
 start = json.loads(p.stdout)["hookSpecificOutput"]["additionalContext"]
 assert "<project_notes>" in start and "<issue_sized>" in start
+assert "issue in chat → ask" in start and "during other work" in start
 print("ok")
