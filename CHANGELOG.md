@@ -5,6 +5,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Fixed
+
+- `branch-guard` no longer blocks plan files such as `docs/plans/x.md` or `test-plan.md` on
+  `main`.
+
 ## [0.22.0] - 2026-10-07
 
 ### Added
