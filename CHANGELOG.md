@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.22.0] - 2026-10-07
+
 ### Added
 
 - `dream-fixer` has the implementer add a decision record to `docs/decisions/`, numbered from
