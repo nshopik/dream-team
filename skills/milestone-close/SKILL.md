@@ -26,7 +26,7 @@ Run or read the measurement it names: gate floors, a recorded run, a deployed ho
 gate reads its `Evidence:` issue for the deploy, the start date and how to collect.
 
 Not met → report the gap, and propose one issue per gap per `scope-issue`, in this milestone. The
-user keeps or drops each; file the kept ones and stop. The milestone stays open.
+user approves or rejects each; file the approved ones and stop. The milestone stays open.
 
 A failed kill-gate (the criterion names a redesign) gets no gap issues: report it and stop. The
 redesign goes back to the spec.
@@ -52,19 +52,19 @@ Report drift, fix nothing yet:
 - Roadmap: status of the milestone's merged work, and the row against the criterion result. Feature
   MRs leave roadmap status to this step.
 - Root-cause and behaviour sections of the milestone's merged MRs → each fact a future change must
-  respect that the contributor doc lacks, proposed as one line. The user keeps or drops each.
+  respect that the contributor doc lacks, proposed as one line. The user approves or rejects each.
 - Each project `CLAUDE.md` and `CLAUDE.local.md` line, proposed as a cut when the path or tool it
   names is gone, a hook or CI enforces it now, a global rule already says it, or a change outside
   the repo could fix the gotcha it works around (a lab host's config, a missing tool, a plugin
-  bug), recommending that change. The user keeps or drops each.
+  bug), recommending that change. The user approves or rejects each.
 - Each other `CLAUDE.local.md` line: proposed as a promotion to `CLAUDE.md` when it holds no
-  hostname, IP, internal URL or lab access, otherwise left alone. The user decides each.
+  hostname, IP, internal URL or lab access, otherwise left alone. The user approves or rejects each.
 
 ## 5. Apply
 
 The approved closes and moves, through the host's tooling skill; the `Evidence:` issue closes with
-the milestone. Docs fixes, kept facts, approved `CLAUDE.md` cuts and promotions as one MR; approved
-promotions and cuts leave `CLAUDE.local.md` directly, since it is untracked. Then close the
+the milestone. Docs fixes and the approved facts, `CLAUDE.md` cuts and promotions as one MR;
+approved promotions and cuts leave `CLAUDE.local.md` directly, since it is untracked. Then close the
 milestone and set the roadmap status. Every milestone whose `Depends on:` is now all closed
 is ready: drop the host's waiting label (`workflow::future` on GitLab) from its open issues.
 
@@ -78,3 +78,9 @@ is ready: drop the host's waiting label (`workflow::future` on GitLab) from its 
 
 Criterion result, issues closed, moved and filed, the docs MR link, the tag or the recommended
 opt-in line.
+
+Proposals from step 2 or 4:
+
+- Number them; ask the user to approve them by number.
+- Under each, name what approving it does: an issue filed, a line added, removed or moved to
+  `CLAUDE.md`, or a fix the user makes outside the repo.
