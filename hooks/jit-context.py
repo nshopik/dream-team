@@ -123,7 +123,10 @@ ISSUE_SIZED = """<issue_sized>
 A change requested in chat is issue-sized when it needs a user decision, contradicts the spec,
 adds a component, or needs a lab check.
 - Issue-sized → give your assessment, then offer to file it with `scope-issue`; edit nothing.
-- Open questions go in the issue as listed open items, or as a `Scout:` issue.
+- User asked for the issue in chat → ask its open questions, milestone included, with
+  AskUserQuestion before filing; write the answers into the issue.
+- Issue found during other work (dream-fixer, a review, a lab check) → do not prompt; list the
+  open questions as open items in the proposal, or file a `Scout:` issue.
 - Smaller → make the change inline.
 </issue_sized>"""
 

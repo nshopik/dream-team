@@ -73,8 +73,10 @@ A bug reported from outside (the dogfood router, a user) enters here too: one is
 
 A change you describe in chat enters here when it is issue-sized: it needs a decision from you,
 contradicts the spec, adds a component, or needs a lab check. The agent gives its assessment and
-offers to file the issue instead of editing; open questions go in the issue. Smaller changes it
-makes inline.
+offers to file the issue instead of editing. Before filing, it asks you the open questions,
+milestone included, and writes the answers into the issue. An issue it finds during other work,
+such as a dream-fixer run or a review, it files without asking: open questions go in the issue
+as listed items. Smaller changes it makes inline.
 
 ### 3. Issue to MR (the daily loop)
 

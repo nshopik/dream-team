@@ -29,6 +29,13 @@ Reader starts the task from the description alone — no comment threads, no cha
 - Never end at the problem.
 - Meta issue: context, then the checklist. No `## Problem` or `## Proposal`.
 
+### Open questions
+
+- User asked for the issue in chat → ask its open questions, milestone included, with
+  AskUserQuestion before writing it; write the answers into the issue.
+- Issue found during other work (dream-fixer, a review, a lab check) → do not prompt; list the
+  open questions as open items in the proposal, or file a `Scout:` issue.
+
 ### Scout
 
 - Proposal would need a guess or an assumption → scout issue, not a guessed proposal.
