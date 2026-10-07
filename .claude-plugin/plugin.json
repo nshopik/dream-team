@@ -1,9 +1,9 @@
 {
   "name": "dream-team",
   "version": "0.22.0",
-  "description": "One tracker issue to one reviewed MR/PR: the dream-fixer skill drives the dream-fixer-loop workflow; scope-* skills and a PreToolUse hook keep commit, MR/PR and issue text short.",
+  "description": "Runs a project from spec to release: milestones, issues written as small specs, one reviewed MR/PR per issue, and milestone close. Works with GitHub and GitLab.",
   "author": { "name": "Nikolay Shopik" },
   "repository": "https://github.com/nshopik/dream-team",
   "license": "MIT",
-  "keywords": ["workflow", "issue", "merge-request", "code-review", "git", "commit", "pull-request", "scoped-commits"]
+  "keywords": ["claude-code", "agent-skills", "workflow", "issue", "merge-request", "pull-request", "code-review", "git", "commit", "gitlab", "scoped-commits"]
 }

@@ -1,44 +1,60 @@
 # dream-team
 
-A Claude Code plugin that takes tracker issues to open MR/PRs, plans and closes the milestones
-around them, and keeps commit messages, MR/PR descriptions and issues short and useful to the
-people who read them. How the flow runs, step by step: [`WORKFLOW.md`](WORKFLOW.md).
+A Claude Code plugin that gives a project one development process, from first spec to release,
+on GitHub or GitLab. Work is planned as small, self-contained issues, and each one ships as a
+single reviewed MR/PR.
 
-Status: under active tuning. Rules and caps change as they're measured against real repositories.
+## How it works
 
-Skills:
+1. **Spec:** the project's design, written from a lean template.
+2. **Milestones:** cut from the spec, each with a measurable exit criterion.
+3. **Issues:** track your feature specs and bug reports, one per change, each with its context,
+   problem and next step. Anyone can start one without the chat that produced it.
+4. **MR/PR:** one per issue, implemented, gated and reviewed by agents.
+5. **Milestone close:** only when the exit criterion is met.
 
-- `dream-fixer`: takes one tracker issue to an open MR/PR by running the `dream-fixer-loop`
-  workflow: implement, build/test gate, reviewers, bounded fix rounds.
-- `setup-dream-team`: checks an existing project against the flow, fixes the mechanical failures
-  directly and files one issue per other failing check.
-- `scope-spec`: the project spec in `docs/specs/`, written from its template.
-- `cut-milestones`: drafts milestones from a spec, one exit gate each.
-- `milestone-close`: checks a milestone's exit criterion, triages its open issues, and checks
-  docs against code.
-- `scope-commit`: [Scoped Commits](https://scopedcommits.com/) subjects
-  (`<scope>: <description>`), and a body only when it carries a fact the diff can't show.
-- `scope-mr`: review-facing descriptions in up to four parts (why, how, root cause, behaviour),
-  never a restatement of the commits.
-- `scope-issue`: issues in three parts (context, problem, proposal) that can be started without
-  the conversation that produced them.
-- `friction`: reports agent friction repeated across past `dream-fixer-loop` runs; run it as
-  `/dream-team:friction`.
+It works for application code and infrastructure-as-code. The full walkthrough is in
+[`WORKFLOW.md`](WORKFLOW.md).
 
-Agent:
+## Contents
 
-- `lab-runner`: does work on a lab host, running every remote command in the foreground.
+### Skills
 
-Hooks:
+- **[dream-fixer](skills/dream-fixer/SKILL.md)**: takes one tracker issue to an open MR/PR by
+  running the `dream-fixer-loop` workflow: implement, build/test gate, reviewers, bounded fix
+  rounds.
+- **[setup-dream-team](skills/setup-dream-team/SKILL.md)**: checks an existing project against the
+  flow, fixes the mechanical failures directly and files one issue per other failing check.
+- **[scope-spec](skills/scope-spec/SKILL.md)**: the project spec in `docs/specs/`, written from its
+  template.
+- **[cut-milestones](skills/cut-milestones/SKILL.md)**: drafts milestones from a spec, one exit gate
+  each.
+- **[milestone-close](skills/milestone-close/SKILL.md)**: checks a milestone's exit criterion,
+  triages its open issues, and checks docs against code.
+- **[scope-commit](skills/scope-commit/SKILL.md)**: [Scoped Commits](https://scopedcommits.com/)
+  subjects (`<scope>: <description>`), and a body only when it carries a fact the diff can't show.
+- **[scope-mr](skills/scope-mr/SKILL.md)**: review-facing descriptions in up to four parts (why,
+  how, root cause, behaviour), never a restatement of the commits.
+- **[scope-issue](skills/scope-issue/SKILL.md)**: issues in three parts (context, problem, proposal)
+  that can be started without the conversation that produced them.
+- **[friction](skills/friction/SKILL.md)**: reports agent friction repeated across past
+  `dream-fixer-loop` runs; run it as `/dream-team:friction`.
 
-- `body-cap.py` (PreToolUse): checks `gh pr|issue create|edit` and `glab mr|issue` commands
-  before they run. It blocks rule violations and quotes the matching skill section back to
-  Claude, so the fix happens in the same turn. It allows anything it can't parse.
+### Agent
+
+- **[lab-runner](agents/lab-runner.md)**: does work on a lab host, running every remote command in
+  the foreground.
+
+### Hooks
+
+- `body-cap.py` (PreToolUse): checks `gh pr|issue create|edit` and `glab mr|issue` commands before
+  they run. It blocks rule violations and quotes the matching skill section back to Claude, so the
+  fix happens in the same turn. It allows anything it can't parse.
 - `branch-guard.py` (PreToolUse): blocks a design or spec document written on `main`/`master`.
 - `changelog-cap.py` (PreToolUse): blocks a CHANGELOG entry past one sentence or 40 words.
-- `jit-context.py`: injects git, forge, changelog, prose and lab conventions the first time
-  a session touches each. At session start, tells the agent to record corrections in the
-  project's `CLAUDE.local.md`.
+- `jit-context.py`: injects git, forge, changelog, prose and lab conventions the first time a
+  session touches each. At session start, tells the agent to record corrections in the project's
+  `CLAUDE.local.md`.
 
 ## Install
 

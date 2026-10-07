@@ -1,7 +1,7 @@
 {
   "name": "dream-team",
   "version": "0.22.0",
-  "description": "Scoped Commits messages, short MR/PR and issue descriptions, and the dream-team issue-to-MR flow.",
+  "description": "Runs a project from spec to release: milestones, issues written as small specs, one reviewed MR/PR per issue, and milestone close. Works with GitHub and GitLab.",
   "license": "MIT",
   "repository": "https://github.com/nshopik/dream-team",
   "keywords": ["pi-package", "skills", "git", "commit", "pull-request", "merge-request"],
