@@ -101,6 +101,15 @@ research docs, file one issue per gap per `scope-issue` with its milestone (step
 the note on the step-4 branch and open the MR per step 7 with `Closes #<n>`, the follow-up issues
 linked.
 
+Research note:
+
+- Path: `docs/research/YYYY-MM-DD-<slug>.md`.
+- Header: the title, then `**Date:** <date> · **Issues:** #<n>`.
+- Context: 1-3 sentences on the setup and the versions or commits measured.
+- One `##` per finding, named by its claim or topic; the answer in its first sentence.
+- A finding left unresolved → `## Open: <claim>`, naming the issue that tracks it.
+- Dead ends → one `## Ruled out` list.
+
 ## 3. Pick the roster
 
 Two slots, both from the Agent tool list in your context — that list is the catalog, and a type not
