@@ -6,31 +6,31 @@ Rules, in each project `CLAUDE.md`: listed in `setup-dream-team`, which checks f
 
 Skills:
 
-- `scope-issue` (scope-style plugin): issue shape, including `Scout:`, `Evidence:` and
+- `scope-issue`: issue shape, including `Scout:`, `Evidence:` and
   `Meta:` issues and `Blocked by` lines.
-- `dream-fixer` (dream-team plugin): one issue to one MR, with scout, light and full tiers;
+- `dream-fixer`: one issue to one MR, with scout, light and full tiers;
   stops on an open blocker; on a `Meta:` issue, works one open unblocked child.
-- `setup-dream-team` (dream-team plugin): checks a project against the flow, fixes the mechanical
+- `setup-dream-team`: checks a project against the flow, fixes the mechanical
   failures directly after one confirm, files one issue per other failing check.
-- `cut-milestones` (dream-team plugin): milestones from a spec, one exit gate each, with the
+- `cut-milestones`: milestones from a spec, one exit gate each, with the
   dependency order and ROADMAP rows; or one version milestone for a minor release.
-- `milestone-close` (dream-team plugin): exit check with gap issues, triage, docs check, facts
+- `milestone-close`: exit check with gap issues, triage, docs check, facts
   sweep, `CLAUDE.md` cuts and `CLAUDE.local.md` promotions.
 - `scope-commit`, `scope-mr`: commit and MR text.
 
 Agents:
 
-- `lab-runner` (dream-team plugin): lab-host work over ssh, every remote command in the
+- `lab-runner`: lab-host work over ssh, every remote command in the
   foreground.
 
-Hooks, in the dream-team and scope-style plugins:
+Hooks:
 
-- `jit-context.py` (dream-team): injects git workflow, prose, spec, decision-record, changelog,
+- `jit-context.py`: injects git workflow, prose, spec, decision-record, changelog,
   lab, forge and `CLAUDE.md` rules at first use, `<upstream_repo>` on the first write or commit in
   a repo with a remote outside `DREAM_TEAM_OWN_REMOTES`, and `<project_notes>` at session start.
-- `body-cap.py` (scope-style): length caps on MRs and issues.
-- `changelog-cap.py` (dream-team): one-sentence CHANGELOG entries.
-- `branch-guard.py` (dream-team): no design doc on `main`/`master`.
+- `body-cap.py`: length caps on MRs and issues.
+- `changelog-cap.py`: one-sentence CHANGELOG entries.
+- `branch-guard.py`: no design doc on `main`/`master`.
 
 A new hook is added only after its rule has failed once.
 

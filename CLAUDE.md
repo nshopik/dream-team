@@ -13,7 +13,7 @@
   https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices.md and follow it.
 - Fix one failure with one rule; never add a rule for adjacent cases the issue did not hit.
 - Keep rules out of `README.md`; it points at the skills instead of restating them.
-- Keep `skills/*/evals/` out of git; the eval corpus is local and unpublished.
+- Keep `skills/scope-*/evals/` out of git; the eval corpus is local and unpublished.
 - Run evals with `--plugin-dir .`; without it they measure the installed plugin cache, not the
   working tree.
 - In `hooks/test_body_cap.py`, match an over-cap deny on `-word ceiling`, not `ceiling`; the

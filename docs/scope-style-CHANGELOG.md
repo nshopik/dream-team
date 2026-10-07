@@ -1,0 +1,142 @@
+# Changelog
+
+All notable changes to this project are documented in this file. The format is based on
+[Keep a Changelog](https://keepachangelog.com/en/2.0.0/).
+
+## [Unreleased]
+
+## [0.3.14] - 2026-10-06
+
+### Changed
+
+- The body-cap hook no longer bounces a commit body once for a subagent committing on an `issue-<n>-*` branch; subject, style and length checks still apply.
+
+## [0.3.13] - 2026-10-06
+
+### Changed
+
+- `scope-issue` and `scope-mr` leave out details that locate a site or person, and references to issues, MRs or repos the forge's readers cannot open.
+
+## [0.3.12] - 2026-10-05
+
+### Added
+
+- `scope-issue` sets the host's waiting label on an issue filed into a milestone with an open dependency.
+
+### Changed
+
+- `scope-issue` ends the proposal with a `Done when …` paragraph after its items.
+
+## [0.3.11] - 2026-10-03
+
+### Fixed
+
+- `body-cap.py` lets a `--input` JSON whose description or body is not a string through silently instead of crashing.
+
+## [0.3.10] - 2026-09-27
+
+### Changed
+
+- **Upgrade note:** the marketplace is renamed to `dream-team`; reinstall as `scope-style@dream-team`.
+
+### Fixed
+
+- `body-cap.py` measures a commit message from the commit's own command, not a heredoc a later chained command reads.
+
+## [0.3.9] - 2026-09-26
+
+### Changed
+
+- `scope-issue` writes a `Meta:` issue as context plus a checklist, without Problem or Proposal sections.
+
+## [0.3.8] - 2026-09-26
+
+### Added
+
+- `scope-issue` writes a `Meta:` issue, a checklist of child issues, for work that spans milestones.
+
+## [0.3.7] - 2026-09-26
+
+### Added
+
+- `scope-issue` writes an `Evidence:` issue for a milestone gated on field evidence.
+- `scope-issue` ends a description with one `Blocked by #<n>` line per open blocker.
+
+## [0.3.6] - 2026-09-25
+
+### Added
+
+- `scope-issue` writes a `Scout:` issue, with questions and a time box, when a proposal would need
+  a guess.
+
+## [0.3.5] - 2026-09-25
+
+### Changed
+
+- `scope-mr` opens a bugfix description with what the code did wrong, not where it happens or what
+  it caused.
+- `scope-mr` leaves before/after measurements out of a description.
+
+## [0.3.4] - 2026-09-25
+
+### Changed
+
+- `scope-mr` writes a small fix repeated at several sites as a short why paragraph and a short how
+  paragraph.
+
+## [0.3.3] - 2026-09-20
+
+### Added
+
+- `scope-mr` puts three or more numbers a reviewer would compare in a table, not prose.
+
+### Changed
+
+- `body-cap.py` does not count table rows toward a body's word ceiling.
+
+## [0.3.2] - 2026-09-18
+
+### Changed
+
+- `scope-issue` and `scope-mr` put two or more commands in one fenced block, not inline code.
+
+### Fixed
+
+- `body-cap.py` measures `gh api` PR/issue bodies and bodies passed by `$(cat <file>)`, `--input`,
+  or a heredoc-written file.
+
+## [0.3.1] - 2026-09-18
+
+### Added
+
+- `package.json` declaring the skills as a pi package, installable with `pi install`.
+
+### Changed
+
+- `scope-issue` and `scope-mr` ban hard-wrapped lines in descriptions.
+
+## [0.3.0] - 2026-09-18
+
+### Changed
+
+- `scope-issue` renames its `## Analysis` section to `## Problem`.
+- `scope-issue` raises the issue ceiling to 500 words and the shape target to 250.
+- `body-cap.py` excludes fenced blocks from every word count.
+
+## [0.2.0] - 2026-09-18
+
+### Added
+
+- `scope-commit` and `scope-mr` skills with the `body-cap.py` PreToolUse hook.
+- `scope-issue` skill, with issue descriptions checked by the hook against a 400-word cap.
+- `scope-mr` and `scope-issue` cap code names at three backticked occurrences per description.
+
+### Changed
+
+- `scope-mr` splits its intro into a `why` part and a bugfix-only `root cause` part.
+- `scope-mr` caps code names at five distinct names, repeats free.
+
+### Fixed
+
+- `body-cap.py` returns its allow-path rules through `hookSpecificOutput`, not plain stdout.
+- `body-cap.py` denies commit bodies at 160 words, matching `scope-commit`.
