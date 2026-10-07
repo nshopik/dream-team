@@ -5,6 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-10-07
+
+### Changed
+
+- `scope-issue` asks the user its open questions before filing an issue requested in chat, and
+  still files an issue found during other work without asking.
+
 ## [0.19.0] - 2026-10-07
 
 ### Changed
