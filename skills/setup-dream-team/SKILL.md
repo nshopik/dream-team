@@ -34,6 +34,7 @@ no docs besides `CLAUDE.md`; the filed issue goes through `dream-fixer`.
 - A component table cell says only what the component's name and path don't.
 - The architecture diagram matches the code.
 - The tracker has the `type::scout` and `type::meta` labels.
+- Every label in **Label colours** that the tracker has carries its colour from there.
 - The project `CLAUDE.md` carries the meaning of every rule in **Project rules** below.
 
 ## Project rules
@@ -49,13 +50,30 @@ The project `CLAUDE.md` carries these, in its own words:
 - A milestone split takes the next free `M<n>`, never a letter.
 - The contributor doc path is named.
 
+## Label colours
+
+Values from GitLab's label-picker palette; one colour per `type::` value, one for every `area::`.
+
+| Label | Colour | Description |
+|---|---|---|
+| `type::bug` | `#D9534F` | |
+| `type::feature` | `#44AD8E` | |
+| `type::maintenance` | `#5BC0DE` | |
+| `type::meta` | `#8E44AD` | A `Meta:` checklist of child issues |
+| `type::scout` | `#F0AD4E` | Research with questions and a time box; a note and follow-up issues, no code |
+| `area::*` | `#428BCA` | |
+| Blocked label (`workflow::blocked` on GitLab) | `#34495E` | |
+| Waiting label (`workflow::future` on GitLab) | `#7F8C8D` | |
+
 ## Direct fixes
 
 - `CLAUDE.md` lacks a project rule → write it in the file's own words, merged into its existing
   structure.
 - The project has neither `CLAUDE.md` nor `AGENTS.md` → create `CLAUDE.md` with the project
   rules.
-- The tracker lacks `type::scout` or `type::meta` → create the label.
+- The tracker lacks `type::scout` or `type::meta` → create the label with its colour and
+  description from **Label colours**.
+- A label in **Label colours** has another colour → set its colour from there.
 - A milestone description has its exit criterion, gate and dependencies, but not as bold bullets
   → rewrite them as `Exit:`, `Gate:` and `Depends on:` bold bullets.
 - An issue lacks the `Blocked by #<n>` line for an open blocker → append one line per missing
@@ -72,7 +90,7 @@ The project `CLAUDE.md` carries these, in its own words:
 4. Report one line per check to the user before changing or filing anything.
 5. All checks pass → say the project is aligned and stop.
 6. No direct fix applies → go to step 12.
-7. Show one combined draft of every direct fix: the `CLAUDE.md` diff, the labels to create, the
+7. Show one combined draft of every direct fix: the `CLAUDE.md` diff, the labels to create or recolour, the
    waiting labels to add or remove per issue, and each milestone description and issue body
    before and after.
 8. Ask for one OK on the draft; a direct fix the user declines becomes an item in the
