@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.28.0] - 2026-10-08
+
 ### Changed
 
 - `dream-fixer-loop` skips a `generic` domain reviewer unless `domainLens` names its check, and
