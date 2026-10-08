@@ -10,6 +10,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `dream-fixer` no longer runs a project specialist domain reviewer when the project's `CLAUDE.md`
   asks for one; it picks a `generic` domain reviewer only for a lens the issue needs, and `none`
   otherwise.
+- **Breaking:** `dream-fixer-loop` no longer takes the `verify` arg or returns `verifyRun`;
+  `dream-fixer` no longer runs Claude Code's `/verify` as a Review gate.
 
 ## [0.25.1] - 2026-10-08
 

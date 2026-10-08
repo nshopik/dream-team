@@ -1,4 +1,4 @@
-// What dream-fixer-loop does with each Simplify review, /verify gate reply, domainReviewer and externalReview arg, and the commit rule each writing agent gets, through stub agents; no claude call.
+// What dream-fixer-loop does with each Simplify review, domainReviewer and externalReview arg, and the commit rule each writing agent gets, through stub agents; no claude call.
 // Usage: node test_simplify.mjs
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
@@ -8,9 +8,9 @@ const body = readFileSync(new URL('dream-fixer-loop.js', import.meta.url), 'utf8
 const args = { issue: '1', branch: 'issue-1', base: 'HEAD', gateCommands: ['true'] }
 
 // Every other reviewer passes, so the run ends after Review or its fix rounds.
-// verifyRuns: the /verify gate's replies, one per run. gateFails: gate runs that fail before one passes.
+// gateFails: gate runs that fail before one passes.
 // externalRuns: the external reviewer's replies, the first to its review, the rest to its re-reviews.
-async function run(review, cuts, { verify = false, aspects = ['code'], verifyRuns = [], domainReviewer, gateFails = 0, externalReview, externalRuns = [] } = {}) {
+async function run(review, cuts, { aspects = ['code'], domainReviewer, gateFails = 0, externalReview, externalRuns = [] } = {}) {
   const labels = []
   const prompts = {}
   async function agent(prompt, opts) {
@@ -25,14 +25,13 @@ async function run(review, cuts, { verify = false, aspects = ['code'], verifyRun
     if (opts.phase === 'Gate') return { passed: gateFails-- <= 0, summary: '', changedFiles: [], dirtyPaths: [], aspects }
     if (opts.label.startsWith('simplify:')) return review
     if (opts.label.startsWith('simplify-fix:')) return cuts
-    if (/^(re-)?review:verify/.test(opts.label)) return verifyRuns.shift()
     if (/^(re-)?review:external/.test(opts.label)) return externalRuns.shift()
-    if (opts.label.startsWith('fix:')) return { committed: true, addressed: ['verify'], disputed: [], summary: '' }
+    if (opts.label.startsWith('fix:')) return { committed: true, addressed: ['external'], disputed: [], summary: '' }
     if (opts.phase === 'Review') return { summary: '', findings: [] }
     throw new Error(`unexpected agent ${opts.label}`)
   }
   const result = await new AsyncFunction('args', 'agent', 'phase', 'log', 'parallel', body)(
-    { ...args, verify, domainReviewer, externalReview }, agent, () => {}, () => {}, (fns) => Promise.all(fns.map((f) => f())))
+    { ...args, domainReviewer, externalReview }, agent, () => {}, () => {}, (fns) => Promise.all(fns.map((f) => f())))
   assert.ok(!JSON.stringify(result).includes('stub friction'), 'friction stays out of the result')
   return { result, labels, prompts }
 }
@@ -74,67 +73,6 @@ for (const row of rows) {
 }
 
 const lean = loaded([], 0)
-const vrun = (verdict, recipePath = '', killed = []) => ({ available: true, verdict, command: 'curl -s localhost:8080/health', output: '{"ok":true}', reason: `${verdict} reason`, recipePath, killed })
-const unavailable = { available: false, verdict: 'SKIP', command: '', output: '', reason: '', recipePath: '', killed: [] }
-const leftover = '4242 python3 bench/server.py --port 8080'
-const failFinding = { severity: 'important', gate: 'verify', round: 1,
-  description: '/verify FAIL: FAIL reason\nCommand: curl -s localhost:8080/health\nOutput:\n{"ok":true}' }
-
-const verifyRows = [
-  { name: 'verify off', opts: {},
-    ok: true, verifyRun: null, degraded: [], ran: 0, fixRounds: 0, resolved: [] },
-  { name: 'verify on, diff has no code', opts: { verify: true, aspects: [] },
-    ok: true, verifyRun: null, degraded: [], ran: 0, fixRounds: 0, resolved: [] },
-  { name: 'verify unavailable', opts: { verify: true, verifyRuns: [unavailable] },
-    ok: true, verifyRun: null, degraded: ['verify'], ran: 1, fixRounds: 0, resolved: [] },
-  { name: 'verify unavailable after cleanup keeps it', opts: { verify: true, verifyRuns: [{ ...unavailable, recipePath: '/tmp/tmp.z/SKILL.md', killed: [leftover] }] },
-    ok: true, verifyRun: { ...unavailable, recipePath: '/tmp/tmp.z/SKILL.md', killed: [leftover] }, degraded: ['verify'], ran: 1, fixRounds: 0, resolved: [] },
-  { name: 'verify PASS with recipe', opts: { verify: true, verifyRuns: [vrun('PASS', '/tmp/tmp.x/SKILL.md')] },
-    ok: true, verifyRun: vrun('PASS', '/tmp/tmp.x/SKILL.md'), degraded: [], ran: 1, fixRounds: 0, resolved: [] },
-  { name: 'verify BLOCKED is not a finding', opts: { verify: true, verifyRuns: [vrun('BLOCKED')] },
-    ok: true, verifyRun: vrun('BLOCKED'), degraded: [], ran: 1, fixRounds: 0, resolved: [] },
-  { name: 'verify FAIL fixed in one round', opts: { verify: true, verifyRuns: [vrun('FAIL'), vrun('PASS')] },
-    ok: true, verifyRun: vrun('PASS'), degraded: [], ran: 2, fixRounds: 1, resolved: [failFinding] },
-  { name: 'verify fix round leaves the recipe and a process behind', opts: { verify: true, verifyRuns: [vrun('FAIL', '/tmp/tmp.y/SKILL.md', [leftover]), vrun('PASS')] },
-    ok: true, verifyRun: vrun('PASS', '/tmp/tmp.y/SKILL.md', [leftover]), degraded: [], ran: 2, fixRounds: 1, resolved: [failFinding] },
-  { name: 'verify FAIL never fixed', opts: { verify: true, verifyRuns: [vrun('FAIL'), vrun('FAIL'), vrun('FAIL'), vrun('FAIL')] },
-    ok: false, verifyRun: vrun('FAIL'), degraded: [], ran: 4, resolved: [] },
-  { name: 'verify FAIL then BLOCKED keeps the FAIL', opts: { verify: true, verifyRuns: [vrun('FAIL'), vrun('BLOCKED'), vrun('BLOCKED'), vrun('BLOCKED')] },
-    ok: false, verifyRun: vrun('BLOCKED'), degraded: [], ran: 4, resolved: [] },
-  { name: 'verify FAIL then unavailable keeps the FAIL', opts: { verify: true, verifyRuns: [vrun('FAIL'), unavailable, unavailable, unavailable] },
-    ok: false, verifyRun: vrun('FAIL'), degraded: ['verify'], ran: 4, resolved: [] },
-  { name: 'verify FAIL then unavailable keeps its cleanup', opts: { verify: true, verifyRuns: [vrun('FAIL'), { ...unavailable, recipePath: '/tmp/tmp.z/SKILL.md', killed: [leftover] }, unavailable, unavailable] },
-    ok: false, verifyRun: vrun('FAIL', '/tmp/tmp.z/SKILL.md', [leftover]), degraded: ['verify'], ran: 4, resolved: [] },
-]
-
-for (const row of verifyRows) {
-  const { result, labels } = await run(lean, undefined, row.opts)
-  assert.equal(result.ok, row.ok, row.name)
-  assert.equal(labels.filter((l) => /^(re-)?review:verify/.test(l)).length, row.ran, `${row.name}: /verify runs`)
-  assert.deepEqual(result.verifyRun, row.verifyRun, row.name)
-  assert.deepEqual(result.degraded, row.degraded, row.name)
-  assert.deepEqual(result.resolved, row.resolved, row.name)
-  if (row.ok) assert.equal(result.fixRounds, row.fixRounds, row.name)
-  else assert.equal(result.handBack, true, row.name)
-  console.log(`PASS ${row.name}`)
-}
-
-// The cleanup steps come before the verdict lines, so a BLOCKED or SKIP run still does them.
-const verifyPromptRows = [
-  { name: 'nested run gets the lab rule', text: '--append-system-prompt "Run no ssh' },
-  { name: 'nested run cannot ssh', text: '--disallowedTools "Bash(ssh *)"' },
-  { name: 'nested run marks its processes', text: 'DREAM_VERIFY_RUN="$D" claude -p' },
-  { name: 'leftover processes killed on every outcome', text: 'DREAM_VERIFY_RUN=<dir>', before: 'verdict BLOCKED' },
-  { name: 'leftover processes re-checked after the kill', text: '`kill -9` those PIDs', before: 'verdict BLOCKED' },
-  { name: 'recipe moved out on every outcome', text: '.claude/skills/verify/SKILL.md` prints `??`', before: 'verdict BLOCKED' },
-]
-const { prompts: verifyPrompts } = await run(lean, undefined, { verify: true, verifyRuns: [vrun('PASS')] })
-for (const row of verifyPromptRows) {
-  const prompt = verifyPrompts['review:verify']
-  assert.ok(prompt.includes(row.text), row.name)
-  if (row.before) assert.ok(prompt.indexOf(row.text) < prompt.indexOf(row.before), `${row.name}: comes first`)
-  console.log(`PASS ${row.name}`)
-}
 
 const doneWhenCheck = 'The issue\'s `Done when …` paragraph, when present, must hold on this branch'
 const domainRows = [
@@ -151,13 +89,15 @@ for (const row of domainRows) {
   console.log(`PASS ${row.name}`)
 }
 
+const cmd = 'vllm-review --stdin'
+const extFinding = { severity: 'important', description: 'off-by-one in the retry count', file: 'retry.js' }
 const fixup = 'as `fixup! <subject of the commit it repairs>`'
 const commitRows = [
   { name: 'implementer splits only independent changes', label: 'impl:#1', rule: 'commit each change separately under its own subject' },
   { name: 'build-fix commits fixups', label: 'build-fix:#1:r1', rule: fixup, opts: { gateFails: 1 } },
   { name: 'simplify-fix commits fixups', label: 'simplify-fix:#1', rule: fixup, review: loaded([cut('stdlib')], 4),
     cuts: { committed: true, addressed: ['stdlib cut'], disputed: [], summary: '' } },
-  { name: 'fix round commits fixups', label: 'fix:#1:r1', rule: fixup, opts: { verify: true, verifyRuns: [vrun('FAIL'), vrun('PASS')] } },
+  { name: 'fix round commits fixups', label: 'fix:#1:r1', rule: fixup, opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] } },
 ]
 
 for (const row of commitRows) {
@@ -167,8 +107,6 @@ for (const row of commitRows) {
   console.log(`PASS ${row.name}`)
 }
 
-const cmd = 'vllm-review --stdin'
-const extFinding = { severity: 'important', description: 'off-by-one in the retry count', file: 'retry.js' }
 const externalRows = [
   { name: 'external review unset', opts: {},
     reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [] },

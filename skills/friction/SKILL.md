@@ -34,7 +34,7 @@ For each printed pattern:
 - Find the prompt that role runs in `<base directory>/../../workflows/dream-fixer-loop.js`:
   `impl` → `implPrompt`, `gate` → `verifyPrompt`, `build-fix` → `buildFixPrompt`, `simplify` →
   `simplifyPrompt`, `simplify-fix` → `simplifyFixPrompt`, `review:domain` →
-  `domainPrompt`, `review:external` → `externalPrompt`, `review:verify` → `verifyRunPrompt`,
+  `domainPrompt`, `review:external` → `externalPrompt`,
   other `review:` → `qualityPrompt`, `re-review:` → `reReviewPrompt`, `fix` →
   `fixPrompt`.
 - Name the prompt or skill line the evidence points to: the instruction the agent could not

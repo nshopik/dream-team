@@ -156,7 +156,6 @@ object (never a stringified one):
   "gateCommands": ["cargo build --workspace", "cargo test --workspace", "cargo clippy --workspace"],
   "implementer": "<catalog type or generic>",
   "domainReviewer": "<catalog type, generic or none>",
-  "verify": false,
   "externalReview": "<command, or leave out>"
 }
 ```
@@ -170,8 +169,6 @@ object (never a stringified one):
 - `gateCommands`: the build, test and lint commands the repo's CI config runs that also run in this
   checkout — CI config first, `CLAUDE.md` and README second. The mechanical gate runs exactly
   these after the implementation and after every fix commit. Leave out lab work. Required.
-- `verify`: `true` or `false`; runs Claude Code's `/verify` as a Review gate. Default `false`.
-- The repo's `CLAUDE.md` opts in to `/verify` → set `verify` to `true`.
 - `externalReview`: a shell command that reads a diff on stdin and prints findings. Default unset.
 - A `CLAUDE.md` the session loads — global, the project's, or its `CLAUDE.local.md` — opts in to an
   external reviewer → set `externalReview` to the command it names.
@@ -304,9 +301,6 @@ The report carries only what the user must know or act on.
 - Name each adjacent defect that could not be filed, and why, one line each.
 - Say so when `redEvidence` is empty on a bug fix.
 - Give a lab step one line: its verdict, or its numbers when there are fewer than three.
-- Give a `verifyRun` SKIP, or a BLOCKED that no lab step ran, one line: the verdict and its `reason`.
-- Give a non-empty `verifyRun.recipePath` one `**Verify recipe:**` bullet: the path only, never
-  the contents.
 - Name each reviewer that could not check something, and the check you ran in its place.
 - Stopped at triage → say what is blocking and stop there.
 - Leave out minor findings, applied or dropped, and reviewer verdicts with no finding.

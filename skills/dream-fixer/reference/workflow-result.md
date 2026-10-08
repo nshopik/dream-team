@@ -13,24 +13,12 @@
   reason; the branch is where the agent left it.
 - **`degraded`** — roster types that were not dispatchable and ran as a generic agent instead,
   `ponytail:ponytail-review` when that skill was missing and the Simplify phase was skipped, and
-  `verify` when `claude` or its `/verify` was missing and the `/verify` gate was skipped, and
   `external` when the `externalReview` command was missing or exited non-zero and was skipped.
 - **`simplify`** — the over-engineering cuts made before review: `applied`, `disputed` with the
   implementer's reason, and `net`, the review's estimate of lines that could go. Put applied cuts in
   the MR description, and `net` only when nothing was disputed; treat a disputed cut like a minor
   finding. `unhandled` counts cuts the implementer neither applied nor disputed; above 0 → say so in
   the MR description. `null` → the phase was skipped.
-- **`verifyRun`** — the last `/verify` gate run: `verdict`, `command`, `output`, `reason`,
-  `recipePath`, and `killed`, the leftover processes the gate killed across all runs. `null` → the
-  `/verify` gate did not run, or was skipped (see `degraded`) and left nothing. A FAIL was a
-  blocking finding for the fix loop.
-  - `PASS` → put its `command` and `output` in the MR description.
-  - `BLOCKED` and its `reason` needs the lab → run it as a lab step through `dream-team:lab-runner`.
-  - `BLOCKED` otherwise → name the verdict and its `reason` in the report.
-  - `SKIP` → name the verdict and its `reason` in the report.
-  - `recipePath` non-empty → never commit the recipe on the branch; report its path for the user
-    to copy to `.claude/skills/verify/SKILL.md` and commit separately.
-  - `killed` non-empty → name each process in the report.
 - **`disputes`** — the fixer refused a finding and gave evidence. Check it yourself. The fixer may
   be right; it may also be rationalizing. Apply the fix or accept the dispute.
 - **`resolved`** — blocking findings a fix round fixed, each with its reviewer (`gate`) and round.
