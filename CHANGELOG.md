@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.25.1] - 2026-10-08
+
 ### Changed
 
 - `dream-fixer` reports three or more numbers compared across cases as a table instead of bullets.
