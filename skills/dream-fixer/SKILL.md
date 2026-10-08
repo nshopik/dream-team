@@ -93,7 +93,8 @@ Light-path reviewer type:
 
 - Docs, comments, help or usage text only → `gdoc-writer`, review-only.
 - Anything else → the step-3 domain reviewer type, with the failing evidence for a bug fix.
-- Type `none` or not in the catalog → `generic`.
+- Type `none` → no reviewer.
+- Type not in the catalog → `generic`.
 
 Scout tier: no workflow, no code; the research note is the one change you write. Answer the
 proposal's questions yourself within its time box. Write the answers as a note in the repo's
@@ -121,7 +122,9 @@ in it fails at dispatch.
 - **Domain reviewer**: the lens the build and test suite cannot check — the project's own rules,
   reference sources and invariants. **MUST be a different type than the implementer**.
   - No second specialist for the domain in the catalog → `none`: no domain reviewer runs.
-  - `generic` only for a specific lens this issue needs; write that lens in `notes`.
+  - `generic` only when the project's `CLAUDE.md` names a reference source or invariant and the
+    diff makes a claim checkable against it; pass the check and the source files in `domainLens`.
+  - No such claim → `none`, even when the project names a lens.
 
 Override the pick when you know better than the catalog descriptions.
 
@@ -156,6 +159,7 @@ object (never a stringified one):
   "gateCommands": ["cargo build --workspace", "cargo test --workspace", "cargo clippy --workspace"],
   "implementer": "<catalog type or generic>",
   "domainReviewer": "<catalog type, generic or none>",
+  "domainLens": "<the generic reviewer's check, or leave out>",
   "externalReview": "<command, or leave out>"
 }
 ```

@@ -93,11 +93,11 @@ as listed items. Smaller changes it makes inline.
        for the note that closes the scout issue.
      - Light (docs, comments, help text, config, rename, or a small bug fix the agent reproduced
        first): the agent makes the edit inline, runs `gateCommands`, and dispatches one reviewer
-       — `gdoc-writer` for docs, the domain reviewer type otherwise. Full criteria: dream-fixer
-       step 2a.
+       — `gdoc-writer` for docs, the domain reviewer type otherwise, none when that is `none`.
+       Full criteria: dream-fixer step 2a.
      - Full: implementer, mechanical gate, over-engineering cuts, quality reviewers, a domain
-       reviewer when the catalog has a second specialist or the issue needs a specific lens,
-       bounded fix rounds.
+       reviewer when the catalog has a second specialist or the diff makes a claim checkable
+       against a reference source the project names, bounded fix rounds.
   4. Lab work (perf gate, tests that need root) through `dream-team:lab-runner` on the host the
      repo's `CLAUDE.md` names.
   5. MR: one folded commit per change, description by `scope-mr`, with ratchet floors, the

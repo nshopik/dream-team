@@ -10,7 +10,7 @@ const args = { issue: '1', branch: 'issue-1', base: 'HEAD', gateCommands: ['true
 // Every other reviewer passes, so the run ends after Review or its fix rounds.
 // gateFails: gate runs that fail before one passes.
 // externalRuns: the external reviewer's replies, the first to its review, the rest to its re-reviews.
-async function run(review, cuts, { aspects = ['code'], domainReviewer, gateFails = 0, externalReview, externalRuns = [] } = {}) {
+async function run(review, cuts, { aspects = ['code'], domainReviewer, domainLens, gateFails = 0, externalReview, externalRuns = [] } = {}) {
   const labels = []
   const prompts = {}
   async function agent(prompt, opts) {
@@ -31,7 +31,7 @@ async function run(review, cuts, { aspects = ['code'], domainReviewer, gateFails
     throw new Error(`unexpected agent ${opts.label}`)
   }
   const result = await new AsyncFunction('args', 'agent', 'phase', 'log', 'parallel', body)(
-    { ...args, domainReviewer, externalReview }, agent, () => {}, () => {}, (fns) => Promise.all(fns.map((f) => f())))
+    { ...args, domainReviewer, domainLens, externalReview }, agent, () => {}, () => {}, (fns) => Promise.all(fns.map((f) => f())))
   assert.ok(!JSON.stringify(result).includes('stub friction'), 'friction stays out of the result')
   return { result, labels, prompts }
 }
@@ -76,16 +76,19 @@ const lean = loaded([], 0)
 
 const doneWhenCheck = 'The issue\'s `Done when …` paragraph, when present, must hold on this branch'
 const domainRows = [
-  { name: 'domain reviewer absent', domainReviewer: undefined, domainRan: true },
+  { name: 'domain reviewer absent', domainReviewer: undefined, domainRan: false },
+  { name: 'domain reviewer generic without lens', domainReviewer: 'generic', domainRan: false },
+  { name: 'domain reviewer generic with lens', domainReviewer: 'generic', domainLens: 'C parity of the log line', domainRan: true },
   { name: 'domain reviewer specialist', domainReviewer: 'rust-pro', domainRan: true },
   { name: 'domain reviewer none', domainReviewer: 'none', domainRan: false },
 ]
 
 for (const row of domainRows) {
-  const { result, labels, prompts } = await run(lean, undefined, { domainReviewer: row.domainReviewer })
+  const { result, labels, prompts } = await run(lean, undefined, { domainReviewer: row.domainReviewer, domainLens: row.domainLens })
   assert.equal(result.ok, true, row.name)
   assert.equal(labels.includes('review:domain'), row.domainRan, `${row.name}: review:domain dispatched`)
   assert.equal(prompts['review:pr-review-toolkit:code-reviewer'].includes(doneWhenCheck), !row.domainRan, `${row.name}: code-reviewer Done-when check`)
+  if (row.domainLens) assert.ok(prompts['review:domain'].includes(row.domainLens), `${row.name}: lens in domain prompt`)
   console.log(`PASS ${row.name}`)
 }
 
