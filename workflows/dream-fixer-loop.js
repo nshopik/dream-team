@@ -1,11 +1,11 @@
 export const meta = {
   name: 'dream-fixer-loop',
-  description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review simplify pass, pr-review-toolkit reviewers plus one domain reviewer unless args.domainReviewer is none, bounded fix loop',
+  description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review simplify pass, pr-review-toolkit reviewers plus one domain reviewer unless args.domainReviewer is none or generic without args.domainLens, bounded fix loop',
   phases: [
     { title: 'Implement', detail: 'one specialist writes the change and commits' },
     { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
     { title: 'Simplify', detail: 'ponytail-review cuts, applied or disputed by the implementer; skipped when the diff has no code or ponytail-review is unavailable (opus)' },
-    { title: 'Review', detail: 'pr-review-toolkit suite plus one domain reviewer unless args.domainReviewer is none (opus); opt-in external review command, its findings checked by one agent' },
+    { title: 'Review', detail: 'pr-review-toolkit suite plus one domain reviewer unless args.domainReviewer is none or generic without args.domainLens (opus); opt-in external review command, its findings checked by one agent' },
     { title: 'Fix', detail: 'blocking findings only; re-review only the reviewers that failed' },
   ],
 }
@@ -17,11 +17,13 @@ const A = args || {}
 const ISSUE = String(A.issue || '')
 const TITLE = String(A.title || '')
 const BODY = String(A.body || '')
+const isGeneric = (t) => !t || t === 'generic'
 const NOTES = String(A.notes || '')
 const BRANCH = String(A.branch || '')
 const BASE = String(A.base || '')
 const GATE_COMMANDS = Array.isArray(A.gateCommands) ? A.gateCommands.map(String).filter(Boolean) : []
-const NO_DOMAIN = A.domainReviewer === 'none'
+const DOMAIN_LENS = String(A.domainLens || '')
+const NO_DOMAIN = A.domainReviewer === 'none' || (isGeneric(A.domainReviewer) && !DOMAIN_LENS)
 const EXTERNAL = String(A.externalReview || '')
 const FIX_ROUNDS = 3
 const VERIFY_ROUNDS = 3
@@ -29,7 +31,6 @@ const VERIFY_ROUNDS = 3
 if (!ISSUE || !BRANCH || !BASE || !GATE_COMMANDS.length) {
   throw new Error('dream-fixer-loop: args.issue, args.branch, args.base and args.gateCommands are required')
 }
-const isGeneric = (t) => !t || t === 'generic'
 if (!isGeneric(A.implementer) && A.implementer === A.domainReviewer) {
   throw new Error('dream-fixer-loop: args.domainReviewer must be a different type than args.implementer')
 }
@@ -376,6 +377,7 @@ function domainPrompt() {
     'Your lens is the one the build and test suite cannot check: does this change hold against the rules, reference sources and invariants this project\'s CLAUDE.md sets out, and against the issue it claims to close.',
     DONE_WHEN,
     'Where the project names a reference implementation or spec, check the claim against that source and cite what you read — file and line.',
+    ...(DOMAIN_LENS ? [`Your specific lens for this issue: ${DOMAIN_LENS}`] : []),
     REVIEW_RULES,
   ].join('\n')
 }

@@ -5,6 +5,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Changed
+
+- `dream-fixer-loop` skips a `generic` domain reviewer unless `domainLens` names its check, and
+  `dream-fixer` runs no light-path reviewer when the domain reviewer type is `none`.
+
 ## [0.27.0] - 2026-10-08
 
 ### Added
