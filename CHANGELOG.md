@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Added
+
+- A read-only `performance-engineer` agent reviews a diff or paths for performance cost.
+
 ## [0.28.0] - 2026-10-08
 
 ### Changed

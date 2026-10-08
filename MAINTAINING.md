@@ -23,6 +23,7 @@ Agents:
 
 - `lab-runner`: lab-host work over ssh, every remote command in the
   foreground.
+- `performance-engineer`: read-only performance review of a diff or paths.
 
 Hooks:
 
