@@ -60,7 +60,12 @@ Planning stays explicit, at issue size, because you review every plan.
   exit gate cannot cover it) and not a per-item table in the repo (every MR would churn it). A
   closed child shows "(closed)" beside its mention; the box is ticked at `milestone-close`.
 - A minor release is scope-based: one headline feature plus backlog, behind standing release
-  criteria in ROADMAP. One maintainer defines a release by its feature, not a date.
+  criteria in the version milestone's `Gate:` bullet. One maintainer defines a release by its
+  feature, not a date.
+- A ROADMAP is required only when two or more milestones are open or one depends on another. With
+  one rolling version milestone each row copied its `Exit:` and its status mirrored its open or
+  closed state. Keying on `M<n>` names was rejected: a versioned project can plan several
+  headline releases ahead.
 - Release stays user-triggered ("tag v0.1"), not time-based. Pre-1.0, a project may opt in to
   a `v0.<n>.0` tag per milestone close: a version a user can find, without a release process.
 - Milestones are `M<n>`, not a bare integer: "milestone 5" reads badly in prose and collides

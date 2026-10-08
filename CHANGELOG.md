@@ -11,6 +11,9 @@ All notable changes to this plugin are documented in this file. The format is ba
   blocked label, and checks the waiting label only on issues in a milestone.
 - `setup-dream-team` files all remaining failing checks as one maintenance issue instead of one
   issue per check.
+- `setup-dream-team` and `cut-milestones` require a ROADMAP only when two or more milestones are
+  open or one depends on another, and a version milestone's release criteria live in its `Gate:`
+  bullet.
 
 ## [0.23.0] - 2026-10-08
 
