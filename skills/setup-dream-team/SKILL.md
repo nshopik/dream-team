@@ -17,7 +17,8 @@ no docs besides `CLAUDE.md`; the filed issue goes through `dream-fixer`.
 
 - Milestones are numbered `M<n>`, or `v<major>.<minor>` for a version milestone.
 - Each milestone has a measurable exit criterion in its tracker description.
-- Each milestone has a matching ROADMAP row.
+- A ROADMAP exists, two or more milestones are open, or a `Depends on:` names an open milestone
+  → each open milestone has a matching ROADMAP row.
 - A milestone gated on field evidence has one open `Evidence:` issue.
 - Every open issue has a `type::` label and an `area::` label.
 - Every open issue has a milestone, or no milestone and the waiting or blocked label (parked).
@@ -42,7 +43,7 @@ The project `CLAUDE.md` carries these, in its own words:
 - The architecture diagram changes in the same MR as a component or pipeline change.
 - Detail the code doesn't show goes in the commit, spec or a topic doc, never in module docs.
 - A fact the code and paths don't show has one reference doc, updated in the MR that changes it.
-- ROADMAP status changes only at milestone close.
+- A project with a ROADMAP: its status changes only at milestone close.
 - Ratchet floors rise in the feature MR that earns them.
 - A milestone is `M<n>`, or `v<major>.<minor>` for a version milestone.
 - A milestone split takes the next free `M<n>`, never a letter.

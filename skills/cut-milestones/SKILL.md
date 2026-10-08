@@ -51,7 +51,9 @@ the numbers.
    start, or `none`).
 6. Add the waiting label to every open issue already in a milestone whose `Depends on:` has an
    open milestone.
-7. Add one ROADMAP row per milestone, in the same table as existing ones.
+7. Add one ROADMAP row per milestone, in the same table as existing ones, when a ROADMAP exists,
+   two or more milestones are open, or a `Depends on:` names an open milestone. A new ROADMAP
+   gets a row for every open milestone.
 8. Report the milestones created and the dependency order.
 
 ## ROADMAP row
@@ -68,12 +70,13 @@ A field-evidence milestone gets its `Evidence:` issue when its issues are filed,
 A minor release of a stable project: one headline feature plus backlog.
 
 - It needs no spec.
-- Its exit criterion: the ROADMAP release criteria met and the headline issue closed.
+- Its exit criterion: the headline issue closed.
+- Its `Gate:` bullet holds the release criteria.
 - A headline with a spec takes its gate from the spec in place of the issue close.
 - The criterion may add a ship-by date, left as a `<ship-by date>` placeholder.
 - Backlog issues join the milestone as they are filed and carry no criterion of their own.
-- ROADMAP has no `## Release criteria` section → draft one for the user to edit: CI green on the
-  release commit, no breaking change in a minor version, upgrade from the previous version
-  works.
-- Steps 1–3 shrink to: read the ROADMAP and tracker milestones, ask the user for the headline
-  issue, draft the one milestone.
+- No earlier version milestone to copy the release criteria from → draft them for the user to
+  edit: CI green on the release commit, no breaking change in a minor version, upgrade from the
+  previous version works.
+- Steps 1–3 shrink to: read the tracker milestones, ask the user for the headline issue, draft
+  the one milestone.
