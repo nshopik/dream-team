@@ -9,6 +9,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - `setup-dream-team` accepts an open issue with no milestone when it carries the waiting or
   blocked label, and checks the waiting label only on issues in a milestone.
+- `setup-dream-team` files all remaining failing checks as one maintenance issue instead of one
+  issue per check.
 
 ## [0.23.0] - 2026-10-08
 

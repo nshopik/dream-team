@@ -2,16 +2,16 @@
 name: setup-dream-team
 description: >-
   Checks a project against the dream-team flow, fixes mechanical failures directly and files one
-  issue per other failing check. Not for working an issue (use dream-fixer) or closing a
-  milestone (use milestone-close).
+  maintenance issue for the other failing checks. Not for working an issue (use dream-fixer) or
+  closing a milestone (use milestone-close).
 disable-model-invocation: true
 ---
 
 # setup-dream-team
 
 Bringing a project into line is a program, not a change. This skill audits, makes the
-**Direct fixes** below after one confirm, and files issues for the rest. It changes no code and
-no docs besides `CLAUDE.md`; the filed issues go through `dream-fixer`.
+**Direct fixes** below after one confirm, and files one issue for the rest. It changes no code and
+no docs besides `CLAUDE.md`; the filed issue goes through `dream-fixer`.
 
 ## Checks
 
@@ -61,7 +61,7 @@ The project `CLAUDE.md` carries these, in its own words:
   blocker.
 - An open issue in a milestone carries the waiting label without an open milestone dependency,
   or lacks it with one → add or remove the label.
-- Any other failing check → file an issue.
+- Any other failing check → an item in the maintenance issue (step 13).
 
 ## Steps
 
@@ -74,13 +74,14 @@ The project `CLAUDE.md` carries these, in its own words:
 7. Show one combined draft of every direct fix: the `CLAUDE.md` diff, the labels to create, the
    waiting labels to add or remove per issue, and each milestone description and issue body
    before and after.
-8. Ask for one OK on the draft; a direct fix the user declines is filed as an issue with the
-   other failing checks.
+8. Ask for one OK on the draft; a direct fix the user declines becomes an item in the
+   maintenance issue.
 9. Write the `CLAUDE.md` edit and leave it uncommitted.
 10. Make the tracker changes through the host's tooling skill.
 11. No other check fails → report the fixes and the uncommitted `CLAUDE.md`, and stop.
-12. Ask which milestone takes the remaining issues, suggesting one.
-13. File one issue per remaining failing check, per `scope-issue`, in that milestone.
-14. A check that fails on many items → one issue listing them, not one issue per item.
-15. Report the fixes, the uncommitted `CLAUDE.md` and the filed issues. The issues are worked
-    through `dream-fixer`, one at a time.
+12. Ask which milestone takes the maintenance issue, suggesting one.
+13. File one `type::maintenance` issue per `scope-issue`, in that milestone, with one item per
+    remaining failing check.
+14. A check that fails on many items → one item listing them.
+15. Report the fixes, the uncommitted `CLAUDE.md` and the filed issue. It is worked through
+    `dream-fixer`.
