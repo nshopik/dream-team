@@ -5,6 +5,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Changed
+
+- `setup-dream-team` accepts an open issue with no milestone when it carries the waiting or
+  blocked label, and checks the waiting label only on issues in a milestone.
+
 ## [0.23.0] - 2026-10-08
 
 ### Added

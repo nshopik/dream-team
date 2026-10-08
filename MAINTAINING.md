@@ -69,6 +69,9 @@ Planning stays explicit, at issue size, because you review every plan.
 - Parallel milestones show readiness through the waiting label, not ROADMAP: the Board's
   default column is what can start now. `workflow::future`, not `workflow::blocked`: blocked means
   an external gate someone must chase; future clears itself when the dependency closes.
+- A parked issue has no milestone and the waiting or blocked label, not a `Future` milestone: a
+  milestone with no exit gate fails the naming, exit and ROADMAP checks and never closes. No
+  milestone and no `workflow::` label stays the untriaged state the setup check flags.
 - Issues are the log, docs the reference: a fact the code and paths don't show has one reference
   doc, updated in the MR that changes it. One large spec went stale and hard to skim; a closed
   issue is not a place anyone looks things up.

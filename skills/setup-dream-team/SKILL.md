@@ -19,9 +19,11 @@ no docs besides `CLAUDE.md`; the filed issues go through `dream-fixer`.
 - Each milestone has a measurable exit criterion in its tracker description.
 - Each milestone has a matching ROADMAP row.
 - A milestone gated on field evidence has one open `Evidence:` issue.
-- Every open issue has a `type::` label, an `area::` label and a milestone.
+- Every open issue has a `type::` label and an `area::` label.
+- Every open issue has a milestone, or no milestone and the waiting or blocked label (parked).
 - Each milestone description lists `Exit:`, `Gate:` and `Depends on:` as bold bullets.
-- An open issue carries the waiting label exactly when its milestone has an open dependency.
+- An open issue in a milestone carries the waiting label exactly when its milestone has an open
+  dependency.
 - Every open issue runs context, problem, proposal, per `scope-issue`.
 - A `Meta:` issue has no `area::` label and no milestone.
 - An issue with an open blocker ends with one `Blocked by #<n>` line per blocker.
@@ -57,8 +59,8 @@ The project `CLAUDE.md` carries these, in its own words:
   → rewrite them as `Exit:`, `Gate:` and `Depends on:` bold bullets.
 - An issue lacks the `Blocked by #<n>` line for an open blocker → append one line per missing
   blocker.
-- An open issue carries the waiting label without an open milestone dependency, or lacks it with
-  one → add or remove the label.
+- An open issue in a milestone carries the waiting label without an open milestone dependency,
+  or lacks it with one → add or remove the label.
 - Any other failing check → file an issue.
 
 ## Steps
