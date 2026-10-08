@@ -296,6 +296,8 @@ The report carries only what the user must know or act on.
   under a `**Assumptions:**` heading.
 - Put nothing else under that heading.
 - Every other item is one bullet with a bold label, e.g. `**Dispute accepted:**`, `**Lab:**`.
+- Three or more numbers compared across cases (variants, runs, before/after) → one table, a row
+  per case, under its bold label; never a bullet.
 - No blank line between bullets.
 - Assumptions above the bullets → put a `**Notes:**` line between them.
 - End with one plain line, after a blank line: `Work on #<n> is done: <MR/PR link>`.
@@ -306,7 +308,7 @@ The report carries only what the user must know or act on.
 - Name each issue filed for an adjacent defect by its link, one line each, never the defect itself.
 - Name each adjacent defect that could not be filed, and why, one line each.
 - Say so when `redEvidence` is empty on a bug fix.
-- Give a lab step one line: its measured numbers, or its verdict when it measured none.
+- Give a lab step one line: its verdict, or its numbers when there are fewer than three.
 - Give a `verifyRun` SKIP, or a BLOCKED that no lab step ran, one line: the verdict and its `reason`.
 - Give a non-empty `verifyRun.recipePath` one `**Verify recipe:**` bullet: the path only, never
   the contents.
@@ -328,7 +330,13 @@ Layout, with sections that have nothing to report left out:
 
 **Notes:**
 - **Dispute accepted:** <finding> — <why>
-- **Lab:** <measured numbers>
+- **Lab:** <verdict>
+
+**Lab, master vs branch:**
+
+| Run | master | branch |
+|---|---|---|
+| <case> | <number> | <number> |
 
 Work on #<n> is done: <MR/PR link>
 ```
