@@ -5,6 +5,12 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Removed
+
+- `dream-fixer` no longer runs a project specialist domain reviewer when the project's `CLAUDE.md`
+  asks for one; it picks a `generic` domain reviewer only for a lens the issue needs, and `none`
+  otherwise.
+
 ## [0.25.1] - 2026-10-08
 
 ### Changed
