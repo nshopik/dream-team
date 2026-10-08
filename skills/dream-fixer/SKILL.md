@@ -121,10 +121,9 @@ in it fails at dispatch.
 - **Domain reviewer**: the lens the build and test suite cannot check — the project's own rules,
   reference sources and invariants. **MUST be a different type than the implementer**.
   - No second specialist for the domain in the catalog → `none`: no domain reviewer runs.
-  - The project's `CLAUDE.md` asks for a project specialist, or for review against its own rules
-    or reference → `generic` in place of `none`.
-  - A project specialist is `generic` run with the domain prompt, checking the rules and reference
-    sources the project's `CLAUDE.md` names; it is not a catalog specialist.
+  - The project's `CLAUDE.md` asks dream-fixer for a domain reviewer and names its lens →
+    `generic`, the project specialist, in place of `none`.
+  - Never infer a project specialist from the project's other rules or reference sources.
 
 Override the pick when you know better than the catalog descriptions.
 
@@ -193,7 +192,7 @@ Report the branch, the implementer and the domain reviewer by type name, and whe
 ```
 
 - Domain reviewer is a project specialist → write `project specialist — <lens>`, never its type;
-  the lens in a few words, e.g. `project specialist — skill-rule style`.
+  the lens in a few words, from the project's line.
 
 ## 6. Judge the result
 

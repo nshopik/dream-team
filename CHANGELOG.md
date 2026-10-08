@@ -5,6 +5,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Changed
+
+- `dream-fixer` runs a project specialist domain reviewer only when the project's `CLAUDE.md` asks
+  dream-fixer for one and names its lens, never for any rule or reference the file sets out.
+
 ## [0.24.0] - 2026-10-08
 
 ### Changed
