@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.27.0] - 2026-10-08
+
 ### Added
 
 - `setup-dream-team` checks the `type::`, `area::` and workflow label colours against a fixed scheme
