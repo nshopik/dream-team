@@ -5,6 +5,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Added
+
+- `setup-dream-team` checks the `type::`, `area::` and workflow label colours against a fixed scheme
+  and recolours or creates labels to match it.
+
 ## [0.26.0] - 2026-10-08
 
 ### Removed
