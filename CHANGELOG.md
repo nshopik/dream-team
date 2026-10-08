@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.26.0] - 2026-10-08
+
 ### Removed
 
 - `dream-fixer` no longer runs a project specialist domain reviewer when the project's `CLAUDE.md`
