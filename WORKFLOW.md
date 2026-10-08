@@ -96,8 +96,8 @@ as listed items. Smaller changes it makes inline.
        — `gdoc-writer` for docs, the domain reviewer type otherwise. Full criteria: dream-fixer
        step 2a.
      - Full: implementer, mechanical gate, over-engineering cuts, quality reviewers, a domain
-       reviewer when the catalog has a second specialist or the project's `CLAUDE.md` asks
-       dream-fixer for one, bounded fix rounds.
+       reviewer when the catalog has a second specialist or the issue needs a specific lens,
+       bounded fix rounds.
   4. Lab work (perf gate, tests that need root) through `dream-team:lab-runner` on the host the
      repo's `CLAUDE.md` names.
   5. MR: one folded commit per change, description by `scope-mr`, with ratchet floors, the

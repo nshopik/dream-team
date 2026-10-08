@@ -5,7 +5,7 @@ export const meta = {
     { title: 'Implement', detail: 'one specialist writes the change and commits' },
     { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
     { title: 'Simplify', detail: 'ponytail-review cuts, applied or disputed by the implementer; skipped when the diff has no code or ponytail-review is unavailable (opus)' },
-    { title: 'Review', detail: 'pr-review-toolkit suite plus one domain reviewer unless args.domainReviewer is none (opus); opt-in /verify gate through a nested claude session, skipped when the diff has no code or claude or its /verify is unavailable; opt-in external review command, its findings checked by one agent' },
+    { title: 'Review', detail: 'pr-review-toolkit suite plus one domain reviewer unless args.domainReviewer is none (opus); opt-in external review command, its findings checked by one agent' },
     { title: 'Fix', detail: 'blocking findings only; re-review only the reviewers that failed' },
   ],
 }
@@ -21,7 +21,6 @@ const NOTES = String(A.notes || '')
 const BRANCH = String(A.branch || '')
 const BASE = String(A.base || '')
 const GATE_COMMANDS = Array.isArray(A.gateCommands) ? A.gateCommands.map(String).filter(Boolean) : []
-const VERIFY = A.verify === true
 const NO_DOMAIN = A.domainReviewer === 'none'
 const EXTERNAL = String(A.externalReview || '')
 const FIX_ROUNDS = 3
@@ -155,22 +154,6 @@ const SIMPLIFY_SCHEMA = {
   },
 }
 
-const VERIFY_RUN_SCHEMA = {
-  type: 'object',
-  required: ['available', 'verdict', 'command', 'output', 'reason', 'recipePath', 'killed'],
-  additionalProperties: false,
-  properties: {
-    friction: FRICTION,
-    available: { type: 'boolean', description: 'false when `claude` is not on PATH or the nested init event does not list verify under slash_commands' },
-    verdict: { type: 'string', enum: ['PASS', 'FAIL', 'BLOCKED', 'SKIP'] },
-    command: { type: 'string', description: 'the command /verify drove the changed code with' },
-    output: { type: 'string', description: 'that command\'s output, trimmed to the key lines' },
-    reason: { type: 'string', description: 'the reason /verify gives for its verdict' },
-    recipePath: { type: 'string', description: 'path outside the checkout of the .claude/skills/verify/SKILL.md the nested run wrote; empty string when it wrote none' },
-    killed: { type: 'array', items: { type: 'string' }, description: 'the `<pid> <args>` line of each leftover process of the nested run that you killed' },
-  },
-}
-
 // Re-reviewers reword findings, so a resolved one is named by the reviewer,
 // not diffed out of its prior verdict.
 const RE_REVIEW_SCHEMA = {
@@ -236,10 +219,9 @@ const roster = (agentType) => (isGeneric(agentType) ? {} : { agentType })
 const reviewerRoster = (agentType) => ({ ...roster(agentType), model: 'opus' })
 const implementerRoster = (agentType) => ({ ...roster(agentType), model: 'opus', effort: 'high' })
 
-// Also holds a missing ponytail-review skill or /verify, so `degraded` reports it.
+// Also holds a missing ponytail-review skill, so `degraded` reports it.
 const MISSING_TYPES = new Set()
 const PONYTAIL_REVIEW = 'ponytail:ponytail-review'
-const VERIFY_SKILL = 'verify'
 const degrade = ({ agentType, ...o }) => o
 
 // An unknown agentType throws at dispatch, before any null-result safety net.
@@ -353,29 +335,6 @@ function simplifyPrompt() {
     'Return each line the skill writes as one finding, and the N of its `net: -<N> lines possible.` as net.',
     'The skill says `Lean already. Ship.` → return no findings and net 0.',
     READ_ONLY,
-  ].join('\n')
-}
-
-// The Skill tool refuses /verify (disable-model-invocation); a nested session loads it.
-function verifyRunPrompt() {
-  return [
-    CONTEXT,
-    '',
-    'Run Claude Code\'s /verify on the branch diff in a nested session from Bash. Do not replicate /verify yourself.',
-    '`command -v claude` prints nothing → return available false and verdict SKIP.',
-    'Otherwise run this as one Bash call from the repo root, with the Bash tool\'s 600000 ms timeout and no permission flags; shell variables do not survive to the next call, so use the directory it prints as <dir> below:',
-    `  D=$(mktemp -d) && echo "$D" && DREAM_VERIFY_RUN="$D" claude -p "/verify the changes in ${BASE}..HEAD. Write every capture under $D." --append-system-prompt "Run no ssh and no lab-only command such as a perf gate; the orchestrator runs lab work after the workflow returns." --disallowedTools "Bash(ssh *)" --model opus --effort medium --output-format stream-json --verbose > "$D/stream.jsonl"`,
-    'Do the next six steps after every run, a timeout included, before you return anything.',
-    'Run `grep -lsxzF "DREAM_VERIFY_RUN=<dir>" /proc/[0-9]*/environ | cut -d/ -f3 | xargs -r ps -o pid=,args= -p` to list the processes the run left alive.',
-    'It lists any → `kill` those PIDs, and only those, and return each listed line in killed.',
-    'Then re-run that listing; it still lists any → `kill -9` those PIDs.',
-    '`git status --porcelain --untracked-files=all -- .claude/skills/verify/SKILL.md` prints `??` → move the file to <dir>/SKILL.md and return that path as recipePath.',
-    'It prints ` M` → copy the file to <dir>/SKILL.md, return that path as recipePath, and run `git restore -- .claude/skills/verify/SKILL.md`.',
-    'It prints nothing → recipePath is an empty string; leave the file alone.',
-    'The run exits non-zero, times out, or its stream has no final result event → return available true and verdict BLOCKED, with the exit status or the last stream lines as reason.',
-    'The init event (type system, subtype init) does not list verify under slash_commands → return available false and verdict SKIP.',
-    'Otherwise return available true and, from the run\'s final report: the verdict, the command it drove the changed code with, that command\'s output trimmed to the key lines, and the reason for the verdict.',
-    'Delete or restore nothing else, and do not edit, stage or commit anything: the other reviewers share this checkout.',
   ].join('\n')
 }
 
@@ -567,37 +526,12 @@ if (aspects.has('code')) {
   }
 }
 
-// A FAIL is a blocking finding for the fix loop. A re-review is a fresh run on
-// the new head; only its PASS resolves a prior FAIL, a run that verified nothing keeps it.
-let verifyRun = null
-async function runVerify(label, phase, prev) {
-  const r = await agentR(verifyRunPrompt(), { label, phase, schema: VERIFY_RUN_SCHEMA, model: 'sonnet', effort: 'low' })
-  if (!r) return null
-  const cleanup = { recipePath: r.recipePath || verifyRun?.recipePath || '', killed: [...(verifyRun?.killed || []), ...r.killed] }
-  if (r.available || (!verifyRun && (r.recipePath || r.killed.length))) verifyRun = { ...r, ...cleanup }
-  else if (verifyRun) verifyRun = { ...verifyRun, ...cleanup }
-  if (!r.available) {
-    MISSING_TYPES.add(VERIFY_SKILL)
-    log(`Review: /verify not available — skipped: ${r.reason}`)
-  }
-  const verdict = r.available ? r.verdict : 'SKIP'
-  const summary = r.available ? `/verify ${verdict}: ${r.reason}` : '/verify not available'
-  if (verdict === 'FAIL') {
-    return { summary, resolved: [], findings: [{ severity: 'important', description: `/verify FAIL: ${r.reason}\nCommand: ${r.command}\nOutput:\n${r.output}` }] }
-  }
-  if (!prev) return { summary, findings: [], resolved: [] }
-  return verdict === 'PASS'
-    ? { summary, findings: [], resolved: prev.findings }
-    : { summary, findings: prev.findings, resolved: [] }
-}
-
 // Gates are keyed so a fix round re-reviews only the ones that failed: fresh
 // reviewers oscillate, inventing a new nit each round and never converging.
 const qualityTypes = [...QUALITY_ALWAYS, ...Object.keys(ASPECT_AGENTS).filter((a) => aspects.has(a)).map((a) => ASPECT_AGENTS[a])]
 const gates = [
   ...qualityTypes.map((t) => ({ key: t, type: t, prompt: () => qualityPrompt(t, impl.redEvidence) })),
   ...(NO_DOMAIN ? [] : [{ key: 'domain', type: A.domainReviewer, prompt: domainPrompt }]),
-  ...(VERIFY && aspects.has('code') ? [{ key: VERIFY_SKILL, run: runVerify }] : []),
   // A re-review does not re-run the command.
   ...(EXTERNAL ? [{ key: 'external', type: 'generic', prompt: externalPrompt, schema: EXTERNAL_SCHEMA }] : []),
 ]
@@ -605,9 +539,8 @@ log(`Review: ${gates.length} reviewers — ${gates.map((g) => g.key).join(', ')}
 
 phase('Review')
 const state = new Map()
-const initial = await parallel(gates.map((g) => () => (g.run
-  ? g.run(`review:${g.key}`, 'Review')
-  : agentR(g.prompt(), { label: `review:${g.key}`, phase: 'Review', schema: g.schema || VERDICT_SCHEMA, ...reviewerRoster(g.type) }))))
+const initial = await parallel(gates.map((g) => () =>
+  agentR(g.prompt(), { label: `review:${g.key}`, phase: 'Review', schema: g.schema || VERDICT_SCHEMA, ...reviewerRoster(g.type) })))
 // Minors are kept from full reviews only: a re-review verdict replaces the
 // gate's state and lists outstanding findings, so it would drop them.
 const minor = []
@@ -636,7 +569,6 @@ const handBack = (reason) => ({
   degraded: [...MISSING_TYPES],
   redEvidence: impl.redEvidence,
   simplify,
-  verifyRun,
   disputes,
   resolved,
   verdicts: Object.fromEntries(state),
@@ -672,15 +604,13 @@ while (true) {
   }
 
   const again = await parallel([
-    ...failed.map((g) => () => (g.run
-      ? g.run(`re-review:${g.key}:r${round}`, 'Fix', state.get(g.key))
-      : agentR(reReviewPrompt(state.get(g.key), fix, round), {
-        label: `re-review:${g.key}:r${round}`,
-        phase: 'Fix',
-        schema: RE_REVIEW_SCHEMA,
-        ...reviewerRoster(g.type),
-      }))),
-    ...dead.map((g) => () => g.run ? g.run(`review:${g.key}:retry${round}`, 'Fix') : agentR(g.prompt(), {
+    ...failed.map((g) => () => agentR(reReviewPrompt(state.get(g.key), fix, round), {
+      label: `re-review:${g.key}:r${round}`,
+      phase: 'Fix',
+      schema: RE_REVIEW_SCHEMA,
+      ...reviewerRoster(g.type),
+    })),
+    ...dead.map((g) => () => agentR(g.prompt(), {
       label: `review:${g.key}:retry${round}`,
       phase: 'Fix',
       schema: g.schema || VERDICT_SCHEMA,
@@ -713,7 +643,6 @@ return {
   changedFiles,
   minorFindings: minor,
   simplify,
-  verifyRun,
   disputes,
   resolved,
   summaries: Object.fromEntries(gates.map((g) => [g.key, state.get(g.key).summary])),
