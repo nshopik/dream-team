@@ -40,10 +40,12 @@ It works for application code and infrastructure-as-code. The full walkthrough i
 - **[friction](skills/friction/SKILL.md)**: reports agent friction repeated across past
   `dream-fixer-loop` runs; run it as `/dream-team:friction`.
 
-### Agent
+### Agents
 
 - **[lab-runner](agents/lab-runner.md)**: does work on a lab host, running every remote command in
   the foreground.
+- **[performance-engineer](agents/performance-engineer.md)**: reviews a diff or paths for
+  performance cost, read-only; never builds, benchmarks or edits.
 
 ### Hooks
 

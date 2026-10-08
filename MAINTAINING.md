@@ -23,6 +23,7 @@ Agents:
 
 - `lab-runner`: lab-host work over ssh, every remote command in the
   foreground.
+- `performance-engineer`: read-only performance review of a diff or paths.
 
 Hooks:
 
@@ -89,6 +90,35 @@ Planning stays explicit, at issue size, because you review every plan.
 - The component table is optional. Where folder names already say what each component does, a
   table restating them is a pointer list and rots like one. A project that keeps one gives each
   component a row and a note only where the name and path fall short.
+
+## Building agents
+
+Reviewer agents start from a voltagent agent and change only what an eval shows. Evals run in a
+local harness kept out of the repo.
+
+- Start from the voltagent body; cut its Communication Protocol, progress and delivery JSON,
+  agent-integration list and process checklists (testing, monitoring, culture, capacity).
+- Keep the domain keyword lists: they are the cues that give the agent its breadth. A rewrite of
+  them into a few condensed rules missed more confirmed findings.
+- Never add a rule that filters findings ("never a redesign", "no hot path → no finding", "runs
+  once → skip", a mandatory caller chain, "review the diff file by file"); the verify pass gives
+  precision.
+- Add a line only for a miss seen in an eval, naming the missing concept, not a generic step
+  ("read the library source" changed nothing).
+- Make a reviewer read-only with its `tools` list plus two hard rules: no build, test, benchmark,
+  install or network; no file edits.
+- Never give Bash an allow-list of commands; it stops the agent reading library source.
+- Never pin `effort:` in a shipped agent; pin it in the eval harness instead.
+- Name the agent by role (`performance-engineer`); the role name is a cue too.
+- Judge a change by A/B runs of old and new agent in the same run, on real regression commits
+  with a later fix as ground truth, on haiku, sonnet and opus, followed by an opus verify pass.
+- Score expected findings against the case's fix, not the verify verdict; the verify judge is
+  unreliable on micro-performance without real benchmarks.
+- Trust only a gap that repeats across runs; one run per case flips.
+- Score from each lens's raw report; the merge step can drop findings.
+- Hold some cases back, and confirm each prompt change on one of them.
+- Before adding lines, run one critique agent over the raw reports of the misses: which line
+  suppressed each, which lines to delete, at most 3 additions, each tied to one miss.
 
 ## Open items
 
