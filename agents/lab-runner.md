@@ -1,6 +1,6 @@
 ---
 name: lab-runner
-description: Use for any work on a lab host, never inline ssh from the main session — benchmarks, deploys, builds, container/DB queries, one-off checks over ssh. Picks the host from the repo's CLAUDE.md. Runs every remote command as a blocking foreground call and returns only a compact summary; does not diagnose or redesign, the caller does that.
+description: Runs work on a lab host over ssh: benchmarks, deploys, builds, container and DB queries, one-off checks. Picks the host from the repo's CLAUDE.md, runs every remote command as a blocking foreground call and returns only a compact summary; does not diagnose or redesign, the caller does that. Use for any lab-host work instead of inline ssh from the main session.
 model: sonnet
 effort: medium
 tools: Bash, Read, Grep, Write
