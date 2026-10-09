@@ -9,6 +9,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - The `dream-fixer` skill runs `docs-reviewer` on the branch diff after the workflow and has `docs-editor` fix the drift it finds before the MR opens.
 - The `sre-engineer` agent reviews a diff or paths for failure behaviour, read-only, and `qa-sec` adds it as a lens when the scope touches I/O, persistence, network, retries, concurrency or process lifecycle.
+- The `chaos-planning` skill reviews a launch's failure-experiment plan and reports missing experiments and experiments lacking a hypothesis, injection, blast radius or pass criterion.
 
 ## [0.31.1] - 2026-10-09
 
