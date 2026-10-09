@@ -19,6 +19,7 @@ Skills:
 - `scope-commit`, `scope-mr`: commit and MR text.
 - `scope-spec`: the project spec and its template.
 - `qa-sec`: parallel read-only review or audit lenses, merged, with an opt-in verify pass.
+- `chaos-planning`: gaps in a launch's failure-experiment plan, reported in chat.
 
 Agents:
 

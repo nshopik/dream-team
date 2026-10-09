@@ -41,6 +41,10 @@ It works for application code and infrastructure-as-code. The full walkthrough i
   `dream-fixer-loop` runs; run it as `/dream-team:friction`.
 - **[qa-sec](skills/qa-sec/SKILL.md)**: reviews a branch or audits a repo with parallel read-only
   lenses and an opt-in verify pass; run it as `/dream-team:qa-sec`.
+- **[chaos-planning](skills/chaos-planning/SKILL.md)**: reviews a launch's failure-experiment
+  plan for missing experiments, hardware faults included, and for experiments lacking a hypothesis,
+  injection, blast radius or pass criterion; reports in chat and edits nothing unless the user
+  says yes.
 
 ### Agents
 
