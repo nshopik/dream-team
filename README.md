@@ -39,6 +39,8 @@ It works for application code and infrastructure-as-code. The full walkthrough i
   that can be started without the conversation that produced them.
 - **[friction](skills/friction/SKILL.md)**: reports agent friction repeated across past
   `dream-fixer-loop` runs; run it as `/dream-team:friction`.
+- **[qa-sec](skills/qa-sec/SKILL.md)**: reviews a branch or audits a repo with parallel read-only
+  lenses and an opt-in verify pass; run it as `/dream-team:qa-sec`.
 
 ### Agents
 
@@ -68,7 +70,7 @@ It works for application code and infrastructure-as-code. The full walkthrough i
 ```
 
 Requires `python3` on `PATH`. Needs the Workflow tool. Uses `pr-review-toolkit` reviewers; a
-missing agent type runs as a generic agent.
+missing agent type runs as a generic agent. qa-sec needs no third-party reviewer plugin.
 
 For the [pi](https://github.com/earendil-works/pi) harness:
 
@@ -76,7 +78,7 @@ For the [pi](https://github.com/earendil-works/pi) harness:
 pi install git:github.com/nshopik/dream-team
 ```
 
-pi loads the skills; the hooks and the workflow are Claude Code only.
+pi loads the skills; the hooks and the workflows are Claude Code only.
 
 ## Configuration
 
@@ -100,6 +102,7 @@ python3 hooks/test_jit_context.py
 python3 skills/dream-fixer/test_fold.py
 python3 skills/friction/test_friction.py
 node workflows/test_simplify.mjs
+node workflows/test_qa_sec.mjs
 ```
 
 ## License
