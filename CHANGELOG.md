@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-10
+
 ### Added
 
 - The `milestone-close` skill runs `docs-reviewer` on the milestone's merged diff in its docs check and has `docs-editor` fix the approved drift in the docs MR.

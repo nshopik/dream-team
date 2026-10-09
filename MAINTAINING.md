@@ -139,5 +139,5 @@ local harness kept out of the repo.
 ## Open items
 
 - `Evidence:` issues use `type::maintenance`; no `type::evidence` label exists.
-- Untried in practice: the scout tier and the light tier. The first real use of each is its
-  test; fix the skill from what goes wrong.
+- Untried in practice: the light tier. Its first real use is its test; fix the skill from what
+  goes wrong.
