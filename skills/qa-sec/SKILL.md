@@ -16,8 +16,8 @@ Invoking this skill is the user's opt-in to the Workflow tool. The plugin workfl
 `dream-team:qa-sec-review` runs one read-only agent per lens in parallel: a lens with `:` runs as
 that agent type, and any other lens (`security-review`, `security-audit`) runs as a workflow
 agent with its focus text. Then one `sonnet` agent merges and deduplicates their reports.
-Subagents cannot spawn subagents, so the workflow plays the coordinator. The plugin workflow
-`dream-team:qa-sec-verify` is the opt-in verification pass (step 7).
+The workflow returns schema-checked JSON and re-runs a merge that drops findings. The plugin
+workflow `dream-team:qa-sec-verify` is the opt-in verification pass (step 7).
 
 ## 1. Pick the mode and scope
 
