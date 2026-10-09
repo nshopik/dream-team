@@ -85,6 +85,7 @@ Light path, no workflow:
 - A blocking finding → fix it inline and rerun `gateCommands`, or hand the branch back.
 - A bug fix → rerun the reproduction on the branch head and see it pass.
 - Run lab work only for that rerun or a measurement the issue asks for, per step 6's lab steps.
+- Run step 6's docs drift check, unless the reviewer was `dream-team:docs-reviewer`.
 - The diff outgrows the criteria → `git reset --hard <base>` and run the full loop.
 - Open the MR per step 7.
 - Report the tier and the criterion that allowed it.
@@ -199,6 +200,16 @@ what to do with it.
 - **Lab steps** — once the result is `ok`, run the lab work on the branch head. Treat a lab failure
   like a red `gateCommands` run: fix it before the MR, or hand the branch back. Put measured
   numbers in the MR description.
+
+Docs drift, once the result is `ok`:
+
+- Dispatch `dream-team:docs-reviewer` on the branch diff before your other step-6 edits.
+- Make those edits while it runs.
+- A 🔴/🟡 finding you judge wrong → drop it, as a settled dispute.
+- 🔴/🟡 findings left → after your edits, dispatch `dream-team:docs-editor` in drift mode with the
+  diff and only the pages they name.
+- 🔵 findings → treat as minor findings.
+- The editor's edits are step-6 changes: step 7 commits and gates them.
 
 Adjacent defects — anything found outside the diff:
 
