@@ -5,6 +5,12 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-10
+
+### Fixed
+
+- The `qa-sec` skill no longer states that subagents cannot spawn subagents.
+
 ## [1.0.0] - 2026-10-10
 
 ### Added
