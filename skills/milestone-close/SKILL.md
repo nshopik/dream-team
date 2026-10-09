@@ -48,6 +48,11 @@ Report drift, fix nothing yet:
 
 - Architecture doc and diagram against the workspace's component list.
 - Specs whose decision the code no longer follows → propose a `Superseded by` status line.
+- README, `docs/` pages, help text and comments: dispatch `dream-team:docs-reviewer` on the
+  milestone's merged diff, from its first-merged MR's merge base to its last-merged MR's merge
+  commit.
+- Each 🔴/🟡 `docs-reviewer` finding, proposed as a fix; leave its 🔵 findings out. The user
+  approves or rejects each.
 - Roadmap, when the project has one: status of the milestone's merged work, and the row against
   the criterion result. Feature MRs leave roadmap status to this step.
 - Root-cause and behaviour sections of the milestone's merged MRs → each fact a future change must
@@ -68,6 +73,8 @@ milestone and set its roadmap status, if it has a row. Every milestone whose `De
 now all closed is ready: drop the host's waiting label (`workflow::future` on GitLab) from its
 open issues.
 
+- Approved `docs-reviewer` fixes → dispatch `dream-team:docs-editor` in drift mode with the merged
+  diff and only the pages they name; its edits go in the docs MR.
 - The project's `CLAUDE.md` opts in to tagging milestone closes → the docs MR bumps the project
   version to the next pre-1.0 minor (`0.<n>.0`).
 - Once that MR merges, tag its merge commit `v0.<n>.0`, the tag message naming the milestone.
@@ -76,11 +83,11 @@ open issues.
 
 ## Report back
 
-Criterion result, issues closed, moved and filed, the docs MR link, the tag or the recommended
-opt-in line.
+Criterion result, issues closed, moved and filed, the docs MR link, each approved docs fix
+`docs-editor` reported as `skipped:` or under `gaps:`, the tag or the recommended opt-in line.
 
 Proposals from step 2 or 4:
 
 - Number them; ask the user to approve them by number.
 - Under each, name what approving it does: an issue filed, a line added, removed or moved to
-  `CLAUDE.md`, or a fix the user makes outside the repo.
+  `CLAUDE.md`, a page edit in the docs MR, or a fix the user makes outside the repo.
