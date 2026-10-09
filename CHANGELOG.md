@@ -5,6 +5,12 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.29.1] - 2026-10-09
+
+### Changed
+
+- The `performance-engineer` and `lab-runner` descriptions say what each agent does before when to use it.
+
 ## [0.29.0] - 2026-10-09
 
 ### Added
