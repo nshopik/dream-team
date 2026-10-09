@@ -23,6 +23,7 @@ Skills:
 Agents:
 
 - `architect-reviewer`: read-only design review of a diff or paths.
+- `docs-reviewer`: read-only docs drift and style review of a diff or paths.
 - `lab-runner`: lab-host work over ssh, every remote command in the
   foreground.
 - `performance-engineer`: read-only performance review of a diff or paths.
@@ -112,6 +113,8 @@ local harness kept out of the repo.
 - Never give Bash an allow-list of commands; it stops the agent reading library source.
 - Never pin `effort:` in a shipped agent; pin it in the eval harness instead.
 - Name the agent by role (`performance-engineer`); the role name is a cue too.
+- Reviewed and skipped for the docs agents: voltagent `documentation-engineer`,
+  `readme-generator`, `tooling-engineer`.
 - Judge a change by A/B runs of old and new agent in the same run, on real regression commits
   with a later fix as ground truth, on haiku, sonnet and opus, followed by an opus verify pass.
 - Score expected findings against the case's fix, not the verify verdict; the verify judge is
