@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [0.30.0] - 2026-10-09
+
 ### Added
 
 - A read-only `architect-reviewer` agent reviews a diff or paths for design defects.
