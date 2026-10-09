@@ -117,13 +117,16 @@ local harness kept out of the repo.
 - Name the agent by role (`performance-engineer`); the role name is a cue too.
 - Reviewed and skipped for the docs agents: voltagent `documentation-engineer`,
   `readme-generator`, `tooling-engineer`.
+- Reviewed and skipped for an infra-config lens: voltagent `devops-engineer`; the default lenses
+  report 20 of its 23 confirmed findings (#173).
 - Judge a change by A/B runs of old and new agent in the same run, on real regression commits
   with a later fix as ground truth, on haiku, sonnet and opus, followed by an opus verify pass.
 - Score expected findings against the case's fix, not the verify verdict; the verify judge is
   unreliable on micro-performance without real benchmarks.
 - Trust only a gap that repeats across runs; one run per case flips.
 - Score from each lens's raw report; the merge step can drop findings.
-- Hold some cases back, and confirm each prompt change on one of them.
+- Hold some cases back, and confirm each prompt change on one that contains the concept the
+  line names; a held-out case without it shows only no regression.
 - Before adding lines, run one critique agent over the raw reports of the misses: which line
   suppressed each, which lines to delete, at most 3 additions, each tied to one miss.
 
