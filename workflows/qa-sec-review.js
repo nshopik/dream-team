@@ -17,7 +17,7 @@ const FOCUS = {
     'TLS options, CI supply-chain hygiene, service-unit hardening, pinned dependencies with known CVEs.',
   'architect-reviewer':
     'package boundaries and coupling, data-flow and delivery guarantees (loss, duplication), ' +
-    'backpressure, documented contracts and where docs and code disagree. Findings, not redesigns.',
+    'backpressure, documented contracts and where docs and code disagree.',
   'performance-engineer':
     'hot-path allocations, GC pressure, lock contention, I/O buffering, batch sizing. Trace the code; ' +
     'the verify pass does the measuring.',
