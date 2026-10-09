@@ -42,6 +42,8 @@ It works for application code and infrastructure-as-code. The full walkthrough i
 
 ### Agents
 
+- **[architect-reviewer](agents/architect-reviewer.md)**: reviews a diff or paths for design
+  defects, read-only; never builds, runs or edits.
 - **[lab-runner](agents/lab-runner.md)**: does work on a lab host, running every remote command in
   the foreground.
 - **[performance-engineer](agents/performance-engineer.md)**: reviews a diff or paths for
