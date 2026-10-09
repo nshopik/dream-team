@@ -25,7 +25,7 @@ const lenses = {
   'dream-team:architect-reviewer': 'dream-team:architect-reviewer',
   'pr-review-toolkit:silent-failure-hunter': 'pr-review-toolkit:silent-failure-hunter',
   'security-review': undefined,
-  'security-auditor': undefined,
+  'security-audit': undefined,
 }
 
 const reviewRows = [
@@ -44,7 +44,7 @@ for (const row of reviewRows) {
     assert.equal(review.find((c) => c.opts.label === lens).opts.agentType, type, `${row.name}: ${lens} agentType`)
   }
   assert.ok(review.find((c) => c.opts.label === 'dream-team:architect-reviewer').prompt.includes('package boundaries'), `${row.name}: architect focus`)
-  assert.ok(review.find((c) => c.opts.label === 'security-auditor').prompt.includes('secrets and credential handling'), `${row.name}: security-auditor focus`)
+  assert.ok(review.find((c) => c.opts.label === 'security-audit').prompt.includes('secrets and credential handling'), `${row.name}: security-audit focus`)
   assert.deepEqual(calls.filter((c) => c.opts.phase === 'Merge').map((c) => c.opts.label), row.labels, row.name)
   assert.equal(result.items.length, row.items, row.name)
   assert.equal(result.blocked.length, row.blocked, row.name)

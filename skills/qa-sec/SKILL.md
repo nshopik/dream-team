@@ -14,7 +14,7 @@ argument-hint: "[audit] [verify] [base-ref | path ...]"
 
 Invoking this skill is the user's opt-in to the Workflow tool. The plugin workflow
 `dream-team:qa-sec-review` runs one read-only agent per lens in parallel: a lens with `:` runs as
-that agent type, and any other lens (`security-review`, `security-auditor`) runs as a workflow
+that agent type, and any other lens (`security-review`, `security-audit`) runs as a workflow
 agent with its focus text. Then one `sonnet` agent merges and deduplicates their reports.
 Subagents cannot spawn subagents, so the workflow plays the coordinator. The plugin workflow
 `dream-team:qa-sec-verify` is the opt-in verification pass (step 7).
@@ -33,21 +33,10 @@ reviewer must read first if `CLAUDE.md` names them.
 
 ## 2. Pick the lenses
 
-Default set, every run: `dream-team:architect-reviewer`, `dream-team:performance-engineer`, and
-`security-review` in review mode or `security-auditor` in audit mode.
+Every run: `dream-team:architect-reviewer`, `dream-team:performance-engineer`,
+`dream-team:sre-engineer`, and `security-review` in review mode or `security-audit` in audit mode.
 
-- Review mode touching no runtime code (docs or CI only) → drop `dream-team:performance-engineer`.
-- Scope touches I/O, persistence, network, retries, concurrency, process lifecycle, or where a
-  resource (handle, slot, registry entry) is acquired or released → add `dream-team:sre-engineer`.
-  Pure logic, docs or CI only → skip it.
-- The user names an agent type with `:` (`pr-review-toolkit:silent-failure-hunter`) → add it as a
-  lens under that full name.
-- Never: `penetration-tester`, `qa-expert`, `test-automator`, `chaos-engineer`,
-  `ai-writing-auditor`, `code-reviewer`, `compliance-auditor`, `gdpr-ccpa-compliance`, `debugger`,
-  `error-detective`, `accessibility-tester`, `ui-ux-tester`.
-
-Before launching, list the lenses that run as a bullet list, one bold name per bullet. Do not list
-dropped lenses.
+Before launching, list the lenses that run as a bullet list, one bold name per bullet.
 
 ## 3. Open issues (optional)
 
