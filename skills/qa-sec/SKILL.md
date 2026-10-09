@@ -33,18 +33,10 @@ reviewer must read first if `CLAUDE.md` names them.
 
 ## 2. Pick the lenses
 
-Default set, every run: `dream-team:architect-reviewer`, `dream-team:performance-engineer`, and
-`security-review` in review mode or `security-auditor` in audit mode.
+Every run: `dream-team:architect-reviewer`, `dream-team:performance-engineer`,
+`dream-team:sre-engineer`, and `security-review` in review mode or `security-auditor` in audit mode.
 
-- Review mode touching no runtime code (docs or CI only) → drop `dream-team:performance-engineer`.
-- Scope touches I/O, persistence, network, retries, concurrency, process lifecycle, or where a
-  resource (handle, slot, registry entry) is acquired or released → add `dream-team:sre-engineer`.
-  Pure logic, docs or CI only → skip it.
-- The user names an agent type with `:` (`pr-review-toolkit:silent-failure-hunter`) → add it as a
-  lens under that full name.
-
-Before launching, list the lenses that run as a bullet list, one bold name per bullet. Do not list
-dropped lenses.
+Before launching, list the lenses that run as a bullet list, one bold name per bullet.
 
 ## 3. Open issues (optional)
 
