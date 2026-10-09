@@ -42,9 +42,6 @@ Default set, every run: `dream-team:architect-reviewer`, `dream-team:performance
   Pure logic, docs or CI only → skip it.
 - The user names an agent type with `:` (`pr-review-toolkit:silent-failure-hunter`) → add it as a
   lens under that full name.
-- Never: `penetration-tester`, `qa-expert`, `test-automator`, `chaos-engineer`,
-  `ai-writing-auditor`, `code-reviewer`, `compliance-auditor`, `gdpr-ccpa-compliance`, `debugger`,
-  `error-detective`, `accessibility-tester`, `ui-ux-tester`.
 
 Before launching, list the lenses that run as a bullet list, one bold name per bullet. Do not list
 dropped lenses.

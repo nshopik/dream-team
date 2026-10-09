@@ -99,10 +99,11 @@ Planning stays explicit, at issue size, because you review every plan.
 
 ## Building agents
 
-Reviewer agents start from a voltagent agent and change only what an eval shows. Evals run in a
+Reviewer agents start from the closest dream-team agent, or a voltagent body from
+`VoltAgent/awesome-claude-code-subagents`, and change only what an eval shows. Evals run in a
 local harness kept out of the repo.
 
-- Start from the voltagent body; cut its Communication Protocol, progress and delivery JSON,
+- Starting from a voltagent body, cut its Communication Protocol, progress and delivery JSON,
   agent-integration list and process checklists (testing, monitoring, culture, capacity).
 - Keep the domain keyword lists: they are the cues that give the agent its breadth. A rewrite of
   them into a few condensed rules missed more confirmed findings.
