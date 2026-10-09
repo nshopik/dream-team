@@ -54,6 +54,9 @@ It works for application code and infrastructure-as-code. The full walkthrough i
   the foreground.
 - **[performance-engineer](agents/performance-engineer.md)**: reviews a diff or paths for
   performance cost, read-only; never builds, benchmarks or edits.
+- **[sre-engineer](agents/sre-engineer.md)**: reviews a diff or paths for failure behaviour —
+  timeouts, retries, shutdown, resource exhaustion, lost errors — read-only; never builds, runs
+  experiments or edits.
 
 ### Hooks
 

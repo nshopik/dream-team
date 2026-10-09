@@ -2,8 +2,8 @@
 name: qa-sec
 description: >-
   Reviews code quality and security with parallel read-only lenses (dream-team's
-  architect-reviewer and performance-engineer agents, the built-in security-review skill or a
-  security audit), merged and deduplicated by a cheaper agent, with an opt-in verify pass that
+  architect-reviewer, performance-engineer and sre-engineer agents, the built-in security-review
+  skill or a security audit), merged and deduplicated by a cheaper agent, with an opt-in verify pass that
   checks each finding against the code. Reviews the current branch by default, or audits the whole repository.
   Use when the user runs /dream-team:qa-sec or asks for a qa-sec review, audit or verify pass.
 disable-model-invocation: true
@@ -37,6 +37,9 @@ Default set, every run: `dream-team:architect-reviewer`, `dream-team:performance
 `security-review` in review mode or `security-auditor` in audit mode.
 
 - Review mode touching no runtime code (docs or CI only) → drop `dream-team:performance-engineer`.
+- Scope touches I/O, persistence, network, retries, concurrency, process lifecycle, or where a
+  resource (handle, slot, registry entry) is acquired or released → add `dream-team:sre-engineer`.
+  Pure logic, docs or CI only → skip it.
 - The user names an agent type with `:` (`pr-review-toolkit:silent-failure-hunter`) → add it as a
   lens under that full name.
 - Never: `penetration-tester`, `qa-expert`, `test-automator`, `chaos-engineer`,
