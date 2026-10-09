@@ -1,6 +1,6 @@
-# gdoc-writer contract
+# Docs style contract
 
-The style contract for gdoc-writer output.
+The style contract for `docs-editor` output and `docs-reviewer` style findings.
 
 ## Contents
 

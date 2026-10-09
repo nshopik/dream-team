@@ -46,6 +46,8 @@ It works for application code and infrastructure-as-code. The full walkthrough i
 
 - **[architect-reviewer](agents/architect-reviewer.md)**: reviews a diff or paths for design
   defects, read-only; never builds, runs or edits.
+- **[docs-editor](agents/docs-editor.md)**: fixes docs a change made stale with minimal edits to
+  the listed pages, or writes or revises one doc from a brief; never invents facts or builds.
 - **[docs-reviewer](agents/docs-reviewer.md)**: reviews a diff or paths for docs a change made
   stale, style breaks and AI-writing patterns, read-only; never builds, runs or edits.
 - **[lab-runner](agents/lab-runner.md)**: does work on a lab host, running every remote command in

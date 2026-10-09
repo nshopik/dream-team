@@ -93,7 +93,8 @@ as listed items. Smaller changes it makes inline.
        for the note that closes the scout issue.
      - Light (docs, comments, help text, config, rename, or a small bug fix the agent reproduced
        first): the agent makes the edit inline, runs `gateCommands`, and dispatches one reviewer
-       — `gdoc-writer` for docs, the domain reviewer type otherwise, none when that is `none`.
+       — `dream-team:docs-reviewer` for docs, the domain reviewer type otherwise, none when that
+       is `none`.
        Full criteria: dream-fixer step 2a.
      - Full: implementer, mechanical gate, over-engineering cuts, quality reviewers, a domain
        reviewer when the catalog has a second specialist or the diff makes a claim checkable

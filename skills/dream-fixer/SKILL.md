@@ -91,7 +91,7 @@ Light path, no workflow:
 
 Light-path reviewer type:
 
-- Docs, comments, help or usage text only → `gdoc-writer`, review-only.
+- Docs, comments, help or usage text only → `dream-team:docs-reviewer`.
 - Anything else → the step-3 domain reviewer type, with the failing evidence for a bug fix.
 - Type `none` → no reviewer.
 - Type not in the catalog → `generic`.
