@@ -12,6 +12,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 - The `sre-engineer` agent reviews a diff or paths for failure behaviour, read-only, and `qa-sec` runs it as a lens on every review and audit.
 - The `chaos-planning` skill reviews a launch's failure-experiment plan and reports missing experiments and experiments lacking a hypothesis, injection, blast radius or pass criterion.
 
+### Changed
+
+- The `docs-editor` and `docs-reviewer` agents run on the caller's model instead of haiku.
+- The `docs-editor` agent leaves out edge cases and troubleshooting the brief did not ask for in write mode, and checks a behaviour in a command's own code before writing it for that command in drift mode.
+
 ## [0.31.1] - 2026-10-09
 
 ### Fixed
