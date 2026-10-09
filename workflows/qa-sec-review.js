@@ -12,7 +12,7 @@ const FOCUS = {
   'security-review':
     'run the `security-review` skill with the Skill tool on this scope, then report its findings ' +
     'in the output format below.',
-  'security-auditor':
+  'security-audit':
     'secrets and credential handling, file/socket permissions, exposed debug or metrics endpoints, ' +
     'TLS options, CI supply-chain hygiene, service-unit hardening, pinned dependencies with known CVEs.',
   'architect-reviewer':

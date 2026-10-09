@@ -14,7 +14,7 @@ argument-hint: "[audit] [verify] [base-ref | path ...]"
 
 Invoking this skill is the user's opt-in to the Workflow tool. The plugin workflow
 `dream-team:qa-sec-review` runs one read-only agent per lens in parallel: a lens with `:` runs as
-that agent type, and any other lens (`security-review`, `security-auditor`) runs as a workflow
+that agent type, and any other lens (`security-review`, `security-audit`) runs as a workflow
 agent with its focus text. Then one `sonnet` agent merges and deduplicates their reports.
 Subagents cannot spawn subagents, so the workflow plays the coordinator. The plugin workflow
 `dream-team:qa-sec-verify` is the opt-in verification pass (step 7).
@@ -34,7 +34,7 @@ reviewer must read first if `CLAUDE.md` names them.
 ## 2. Pick the lenses
 
 Every run: `dream-team:architect-reviewer`, `dream-team:performance-engineer`,
-`dream-team:sre-engineer`, and `security-review` in review mode or `security-auditor` in audit mode.
+`dream-team:sre-engineer`, and `security-review` in review mode or `security-audit` in audit mode.
 
 Before launching, list the lenses that run as a bullet list, one bold name per bullet.
 
