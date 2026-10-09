@@ -81,6 +81,8 @@ Style breaks:
 - Code font on non-identifiers
 - More than one bold phrase per paragraph, or bold on a keyword instead of the claim
 - please, simply, easily, just, quickly
+- Noun stacks of more than three nouns
+- Pronoun with more than one possible referent
 
 AI-writing patterns:
 - Em dash overuse

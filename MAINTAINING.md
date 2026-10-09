@@ -23,6 +23,7 @@ Skills:
 Agents:
 
 - `architect-reviewer`: read-only design review of a diff or paths.
+- `docs-editor`: minimal drift fixes to listed pages, or one doc written or revised from a brief.
 - `docs-reviewer`: read-only docs drift and style review of a diff or paths.
 - `lab-runner`: lab-host work over ssh, every remote command in the
   foreground.
