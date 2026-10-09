@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Added
+
+- The `dream-fixer` skill runs `docs-reviewer` on the branch diff after the workflow and has `docs-editor` fix the drift it finds before the MR opens.
+
 ## [0.31.1] - 2026-10-09
 
 ### Fixed
