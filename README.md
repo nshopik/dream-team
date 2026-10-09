@@ -103,6 +103,7 @@ python3 skills/dream-fixer/test_fold.py
 python3 skills/friction/test_friction.py
 node workflows/test_simplify.mjs
 node workflows/test_qa_sec.mjs
+python3 test_frontmatter.py
 ```
 
 ## License

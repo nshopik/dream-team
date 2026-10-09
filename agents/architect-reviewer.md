@@ -1,6 +1,6 @@
 ---
 name: architect-reviewer
-description: Reviews a branch diff or a set of paths for design defects, read-only: module and package boundaries, coupling, logic in the wrong layer, leaky or single-use abstractions, data-flow and delivery guarantees, and contracts the code breaks. Traces each finding from the code; never builds, runs or edits. Use for an architecture or design review, an architecture lens in a code review, or a change that moves responsibilities between components.
+description: Reviews a branch diff or a set of paths for design defects, read-only — module and package boundaries, coupling, logic in the wrong layer, leaky or single-use abstractions, data-flow and delivery guarantees, and contracts the code breaks. Traces each finding from the code; never builds, runs or edits. Use for an architecture or design review, an architecture lens in a code review, or a change that moves responsibilities between components.
 tools: Read, Grep, Glob, Bash
 ---
 

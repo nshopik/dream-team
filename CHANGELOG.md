@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Fixed
+
+- The `architect-reviewer`, `performance-engineer` and `lab-runner` agent descriptions parse as valid YAML.
+
 ## [0.31.0] - 2026-10-09
 
 ### Added
