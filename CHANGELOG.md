@@ -7,6 +7,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Added
 
+- The `milestone-close` skill runs `docs-reviewer` on the milestone's merged diff in its docs check and has `docs-editor` fix the approved drift in the docs MR.
 - The `dream-fixer` skill runs `docs-reviewer` on the branch diff after the workflow and has `docs-editor` fix the drift it finds before the MR opens.
 - The `sre-engineer` agent reviews a diff or paths for failure behaviour, read-only, and `qa-sec` runs it as a lens on every review and audit.
 - The `chaos-planning` skill reviews a launch's failure-experiment plan and reports missing experiments and experiments lacking a hypothesis, injection, blast radius or pass criterion.
