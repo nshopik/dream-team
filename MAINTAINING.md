@@ -18,6 +18,7 @@ Skills:
   sweep, `CLAUDE.md` cuts and `CLAUDE.local.md` promotions.
 - `scope-commit`, `scope-mr`: commit and MR text.
 - `scope-spec`: the project spec and its template.
+- `qa-sec`: parallel read-only review or audit lenses, merged, with an opt-in verify pass.
 
 Agents:
 

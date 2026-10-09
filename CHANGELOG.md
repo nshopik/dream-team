@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Added
+
+- A user-invoked `qa-sec` skill reviews a branch or audits a repo with parallel read-only lenses and an opt-in verify pass.
+
 ## [0.30.0] - 2026-10-09
 
 ### Added
