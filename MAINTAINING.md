@@ -119,6 +119,10 @@ local harness kept out of the repo.
   `readme-generator`, `tooling-engineer`.
 - Reviewed and skipped for an infra-config lens: voltagent `devops-engineer`; the default lenses
   report 20 of its 23 confirmed findings (#173).
+- Build a skill only for knowledge the model lacks: own conventions, behaviour after the
+  training cutoff, internal tools.
+- Name a skill in the agent body or brief that needs it; an unnamed skill is not loaded (#191).
+- Never build an agent for a broad role (DevOps) or for public platform knowledge (#172, #173).
 - Judge a change by A/B runs of old and new agent in the same run, on real regression commits
   with a later fix as ground truth, on haiku, sonnet and opus, followed by an opus verify pass.
 - Score expected findings against the case's fix, not the verify verdict; the verify judge is
