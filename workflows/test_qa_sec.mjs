@@ -21,12 +21,7 @@ const report = '🔴 a.go:1 leak\n🟡 b.go:2 race\n🚀 c.go:3 alloc'
 const item = (id) => ({ id, severity: '🔴', theme: '🛡️ Security', claim: id, location: 'a.go:1', status: 'verified', disputed: false, lenses: [], why: '', fix: '' })
 const merged = (n) => ({ items: Array.from({ length: n }, (_, i) => item(`F${i + 1}`)), questions: [], blocked: [] })
 
-const lenses = {
-  'dream-team:architect-reviewer': 'dream-team:architect-reviewer',
-  'pr-review-toolkit:silent-failure-hunter': 'pr-review-toolkit:silent-failure-hunter',
-  'security-review': undefined,
-  'security-audit': undefined,
-}
+const lenses = ['dream-team:architect-reviewer', 'pr-review-toolkit:silent-failure-hunter']
 
 const reviewRows = [
   { name: 'merge once', merges: [merged(3)], labels: ['merge'], items: 3, blocked: 0 },
@@ -37,14 +32,13 @@ const reviewRows = [
 
 for (const row of reviewRows) {
   const merges = [...row.merges]
-  const { result, calls } = await run('qa-sec-review.js', { scope: 'repo', lenses: Object.keys(lenses), model: 'opus' },
+  const { result, calls } = await run('qa-sec-review.js', { scope: 'repo', lenses, model: 'opus' },
     (prompt, opts) => opts.phase === 'Merge' ? merges.shift() : row.report ?? report)
   const review = calls.filter((c) => c.opts.phase === 'Review')
-  for (const [lens, type] of Object.entries(lenses)) {
-    assert.equal(review.find((c) => c.opts.label === lens).opts.agentType, type, `${row.name}: ${lens} agentType`)
+  for (const lens of lenses) {
+    assert.equal(review.find((c) => c.opts.label === lens).opts.agentType, lens, `${row.name}: ${lens} agentType`)
   }
   assert.ok(review.find((c) => c.opts.label === 'dream-team:architect-reviewer').prompt.includes('package boundaries'), `${row.name}: architect focus`)
-  assert.ok(review.find((c) => c.opts.label === 'security-audit').prompt.includes('secrets and credential handling'), `${row.name}: security-audit focus`)
   assert.deepEqual(calls.filter((c) => c.opts.phase === 'Merge').map((c) => c.opts.label), row.labels, row.name)
   assert.equal(result.items.length, row.items, row.name)
   assert.equal(result.blocked.length, row.blocked, row.name)
@@ -53,7 +47,7 @@ for (const row of reviewRows) {
 }
 
 {
-  const { result } = await run('qa-sec-review.js', { scope: 'repo', lenses: ['security-review', 'gone:lens', 'dream-team:architect-reviewer'], model: 'opus' },
+  const { result } = await run('qa-sec-review.js', { scope: 'repo', lenses: ['dream-team:sre-engineer', 'gone:lens', 'dream-team:architect-reviewer'], model: 'opus' },
     (prompt, opts) => {
       if (opts.agentType === 'gone:lens') throw new Error('Agent type gone:lens not found')
       if (opts.label === 'dream-team:architect-reviewer') return null

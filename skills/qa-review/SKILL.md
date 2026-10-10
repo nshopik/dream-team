@@ -1,21 +1,20 @@
 ---
-name: qa-sec
+name: qa-review
 description: >-
-  Reviews code quality and security with parallel read-only lenses (dream-team's
-  architect-reviewer, performance-engineer and sre-engineer agents, the built-in security-review
-  skill or a security audit), merged and deduplicated by a cheaper agent, with an opt-in verify pass that
-  checks each finding against the code. Reviews the current branch by default, or audits the whole repository.
-  Use when the user runs /dream-team:qa-sec or asks for a qa-sec review, audit or verify pass.
+  Reviews design, performance and reliability with parallel read-only lenses (dream-team's
+  architect-reviewer, performance-engineer and sre-engineer agents), merged and deduplicated by a
+  cheaper agent, with an opt-in verify pass that checks each finding against the code. Reviews
+  the current branch by default, or audits the whole repository. Use when the user runs
+  /dream-team:qa-review or asks for a qa-review, audit or verify pass.
 disable-model-invocation: true
 argument-hint: "[audit] [verify] [base-ref | path ...]"
 ---
 
-# qa-sec
+# qa-review
 
 Invoking this skill is the user's opt-in to the Workflow tool. The plugin workflow
-`dream-team:qa-sec-review` runs one read-only agent per lens in parallel: a lens with `:` runs as
-that agent type, and any other lens (`security-review`, `security-audit`) runs as a workflow
-agent with its focus text. Then one `sonnet` agent merges and deduplicates their reports.
+`dream-team:qa-sec-review` runs one read-only agent per lens in parallel, each as that lens's
+agent type. Then one `sonnet` agent merges and deduplicates their reports.
 The workflow returns schema-checked JSON and re-runs a merge that drops findings. The plugin
 workflow `dream-team:qa-sec-verify` is the opt-in verification pass (step 7).
 
@@ -33,8 +32,8 @@ reviewer must read first if `CLAUDE.md` names them.
 
 ## 2. Pick the lenses
 
-Every run: `dream-team:architect-reviewer`, `dream-team:performance-engineer`,
-`dream-team:sre-engineer`, and `security-review` in review mode or `security-audit` in audit mode.
+Every run: `dream-team:architect-reviewer`, `dream-team:performance-engineer` and
+`dream-team:sre-engineer`.
 
 Before launching, list the lenses that run as a bullet list, one bold name per bullet.
 
@@ -62,7 +61,7 @@ It returns `{ items, questions, blocked, raw, missing }`. Each item carries `id`
 
 ## 5. Keep the originals
 
-Write every report to `<scratchpad>/qa-sec-report.md`: `items` and `questions` as a JSON block,
+Write every report to `<scratchpad>/qa-review-report.md`: `items` and `questions` as a JSON block,
 then each `raw[i].text` under a `## <lens>` heading. Append verdicts there when
 step 7 runs. Answer later questions about a finding from this file,
 quoting the lens report verbatim.
@@ -76,7 +75,7 @@ quoting the lens report verbatim.
   `### 🚀 Performance`, `### ❓ Questions`. Omit an empty section.
 - Under 🟡, and under 🔴 when it has more than 5 items, group by `theme` with bold sub-headings.
   Omit an empty theme.
-- End with the path to `qa-sec-report.md`, then one line offering verification: "Verify the N
+- End with the path to `qa-review-report.md`, then one line offering verification: "Verify the N
   🔴/🟡/🚀 and disputed 🔵 findings against the code? (~M agents)", with M = ceil(N / 6). Then the
   offer to file issues.
 
@@ -99,6 +98,6 @@ evidence line. List ids in `missing` as not verified.
 
 - A confirmed or unverifiable item whose `severity` differs from its own → move it to that
   severity's section and append `(was <old emoji>)`.
-- Write each changed severity into the `items` JSON in `qa-sec-report.md`.
+- Write each changed severity into the `items` JSON in `qa-review-report.md`.
 
 Do not fix anything. Filing issues waits for the user to pick the items.

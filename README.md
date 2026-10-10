@@ -39,8 +39,9 @@ It works for application code and infrastructure-as-code. The full walkthrough i
   that can be started without the conversation that produced them.
 - **[friction](skills/friction/SKILL.md)**: reports agent friction repeated across past
   `dream-fixer-loop` runs; run it as `/dream-team:friction`.
-- **[qa-sec](skills/qa-sec/SKILL.md)**: reviews a branch or audits a repo with parallel read-only
-  lenses and an opt-in verify pass; run it as `/dream-team:qa-sec`.
+- **[qa-review](skills/qa-review/SKILL.md)**: reviews a branch or audits a repo for design,
+  performance and reliability with parallel read-only lenses and an opt-in verify pass; run it as
+  `/dream-team:qa-review`.
 - **[chaos-planning](skills/chaos-planning/SKILL.md)**: reviews a launch's failure-experiment
   plan for missing experiments, hardware faults included, and for experiments lacking a hypothesis,
   injection, blast radius or pass criterion; reports in chat and edits nothing unless the user
@@ -81,7 +82,7 @@ It works for application code and infrastructure-as-code. The full walkthrough i
 ```
 
 Requires `python3` on `PATH`. Needs the Workflow tool. Uses `pr-review-toolkit` reviewers; a
-missing agent type runs as a generic agent. qa-sec needs no third-party reviewer plugin.
+missing agent type runs as a generic agent. qa-review needs no third-party reviewer plugin.
 
 For the [pi](https://github.com/earendil-works/pi) harness:
 

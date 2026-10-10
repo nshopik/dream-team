@@ -1,6 +1,6 @@
 export const meta = {
   name: 'qa-sec-review',
-  description: 'Parallel read-only lens review (dream-team agents, security-review skill), merged and deduped by a cheaper agent',
+  description: 'Parallel read-only lens review (dream-team agents), merged and deduped by a cheaper agent',
   phases: [
     { title: 'Review', detail: 'one agent per lens' },
     { title: 'Merge', detail: 'dedup across lenses', model: 'sonnet' },
@@ -9,12 +9,6 @@ export const meta = {
 
 // args: { scope: string, lenses: string[], model: string, openIssues?: string }
 const FOCUS = {
-  'security-review':
-    'run the `security-review` skill with the Skill tool on this scope, then report its findings ' +
-    'in the output format below.',
-  'security-audit':
-    'secrets and credential handling, file/socket permissions, exposed debug or metrics endpoints, ' +
-    'TLS options, CI supply-chain hygiene, service-unit hardening, pinned dependencies with known CVEs.',
   'architect-reviewer':
     'package boundaries and coupling, data-flow and delivery guarantees (loss, duplication), ' +
     'backpressure, documented contracts and where docs and code disagree.',
@@ -34,8 +28,7 @@ const RULES = [
 
 const reports = await parallel(args.lenses.map(lens => () =>
   agent(`${args.scope}\n\nYour lens: ${FOCUS[lens.split(':').pop()] || lens}\n\n${RULES}`, {
-    // A lens with `:` names its agent type; any other runs on the default workflow agent.
-    ...(lens.includes(':') ? { agentType: lens } : {}),
+    agentType: lens,
     // Run every lens on the session model, overriding any model its agent file pins.
     model: args.model,
     label: lens,
