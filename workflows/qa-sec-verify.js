@@ -1,10 +1,10 @@
 export const meta = {
   name: 'qa-sec-verify',
-  description: 'Confirm or refute qa-sec findings against the code, one agent per batch of 6',
+  description: 'Confirm or refute qa-review findings against the code, one agent per batch of 6',
   phases: [{ title: 'Verify', detail: 'read cited code, trace or reproduce each claim' }],
 }
 
-// args: { items: object[] (qa-sec merge items), scope: string, model: string, scratch: string }
+// args: { items: object[] (qa-review merge items), scope: string, model: string, scratch: string }
 const VERDICTS = {
   type: 'object',
   properties: {
