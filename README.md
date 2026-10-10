@@ -90,7 +90,7 @@ For the [pi](https://github.com/earendil-works/pi) harness:
 pi install git:github.com/nshopik/dream-team
 ```
 
-pi loads the skills; the hooks and the workflows are Claude Code only.
+pi loads the skills; the hooks and the `dream-fixer-loop` workflow are Claude Code only.
 
 ## Configuration
 
@@ -114,7 +114,6 @@ python3 hooks/test_jit_context.py
 python3 skills/dream-fixer/test_fold.py
 python3 skills/friction/test_friction.py
 node workflows/test_simplify.mjs
-node workflows/test_qa_sec.mjs
 python3 test_frontmatter.py
 ```
 
