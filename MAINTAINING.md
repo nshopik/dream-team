@@ -51,6 +51,8 @@ Planning stays explicit, at issue size, because you review every plan.
 - Facts for the contributor doc are swept once per milestone by `milestone-close`. A prompt on
   every MR was rejected: it asks a question on MRs with nothing to keep.
 - A rule comes first; a hook is added only after the rule has failed once.
+- A qa-review lens with no installed agent type fails dispatch and is listed as missing; it never
+  falls back to a generic agent.
 - No global "issue-sized work gets no spec" rule: it duplicates the scope rules. The unreviewed,
   plan-like September specs came from a skill that has since been rewritten into `dream-fixer`.
 - The upstream-repo guard lives in `jit-context.py`, not a tracker skill: that skill loads only
