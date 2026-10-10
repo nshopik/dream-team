@@ -2,22 +2,20 @@
 name: qa-review
 description: >-
   Reviews design, performance and reliability with parallel read-only lenses (dream-team's
-  architect-reviewer, performance-engineer and sre-engineer agents), merged and deduplicated by a
-  cheaper agent, with an opt-in verify pass that checks each finding against the code. Reviews
-  the current branch by default, or audits the whole repository. Use when the user runs
-  /dream-team:qa-review or asks for a qa-review, audit or verify pass.
+  architect-reviewer, performance-engineer and sre-engineer agents), whose findings the main
+  session merges and deduplicates, with an opt-in verify pass that checks each finding against
+  the code. Reviews the current branch by default, or audits the whole repository. Use when the
+  user runs /dream-team:qa-review or asks for a qa-review, audit or verify pass.
 disable-model-invocation: true
 argument-hint: "[audit] [verify] [base-ref | path ...]"
 ---
 
 # qa-review
 
-Invoking this skill is the user's opt-in to the Workflow tool. The plugin workflow
-`dream-team:qa-sec-review` runs one read-only agent per lens in parallel, each as that lens's
-agent type. Then one `sonnet` agent merges and deduplicates their reports.
-The workflow returns schema-checked JSON and re-runs a merge that returns fewer items than the
-largest lens report. The plugin workflow `dream-team:qa-sec-verify` is the opt-in verification
-pass (step 7).
+The main session runs one read-only agent per lens with the Agent tool, then merges and
+deduplicates their reports itself (step 4). The plugin workflow `dream-team:qa-sec-verify` is the
+opt-in verification pass (step 6); invoking this skill is the user's opt-in to the Workflow tool
+for it.
 
 ## 1. Pick the mode and scope
 
@@ -40,50 +38,72 @@ Before launching, list the lenses that run as a bullet list, one bold name per b
 
 ## 3. Open issues (optional)
 
-If the repo's forge is reachable, list open issues as `#N title` lines and pass them as
-`openIssues`, so the merge marks findings an issue already covers. Use the host's forge tooling
+If the repo's forge is reachable, list open issues as `#N title` lines, so the step-4 merge
+marks findings an issue already covers. Use the host's forge tooling
 skill if one is loaded. Forge unreachable → skip and say so.
 
 ## 4. Run
 
+Launch one Agent per lens, all in one message, and wait for every report:
+
+- `subagent_type`: the lens.
+- `model`: the session model's tier (`opus`, `sonnet`, `haiku` or `fable`), taken from the
+  environment section of your system prompt.
+- `prompt`: the lens prompt below.
+
+A lens that errors or returns nothing goes in `missing`.
+
+Lens prompt: `<scope>`, a blank line, `Your lens: <focus>`, a blank line, then the rules block.
+Focus by the lens name after its last `:`; a lens not listed → the lens name itself:
+
+- `architect-reviewer`: package boundaries and coupling, data-flow and delivery guarantees
+  (loss, duplication), backpressure, documented contracts and where docs and code disagree.
+- `performance-engineer`: hot-path allocations, GC pressure, lock contention, I/O buffering,
+  batch sizing. Trace the code; the verify pass does the measuring.
+
+Rules block, verbatim:
+
 ```
-Workflow({
-  name: "dream-team:qa-sec-review",
-  args: { scope, lenses, model, openIssues }
-})
+Do not edit, create or delete files in the repository. Do not commit, push, or touch any forge or lab host.
+Read only: no builds, test runs, benchmarks, profiles or experiments.
+Output: findings only, ranked most severe first. Each finding: one emoji prefix (🔴 bug/security/data loss/crash, 🟡 risk/fragile/regression, 🚀 performance, 🔵 nit, ❓ genuine question), `file:line`, why, fix. Mark each [verified] (traced in code) or [suspected].
+No praise, no codebase summary. If a step could not run (tool missing, blocked), say so in one line.
 ```
 
-`model` is the session model's tier (`opus`, `sonnet`, `haiku` or `fable`), taken from the
-environment section of your system prompt. This override runs every lens, including any agent
-that pins its own model, on the session model. The merge agent stays on `sonnet`.
+Then merge the reports yourself into `items`, `questions` and `blocked`, items ranked most severe
+first:
 
-It returns `{ items, questions, blocked, raw, missing }`. Each item carries `id`, `severity`,
-`theme`, `claim`, `location`, `status`, `disputed`, `lenses`, `why`, `fix`, `coveredBy`.
+- Same defect reported by several lenses → one item; list every lens that found it; keep the
+  strongest evidence (verified beats suspected; keep repro numbers and log lines in `why`). Set
+  `disputed` when one lens marked it verified and another suspected.
+- Never drop a finding. Never soften a severity; on disagreement take the higher one.
+- ❓ findings go to `questions`, not `items`.
+- A finding an open issue from step 3 already covers → keep it, set `coveredBy` to `#N`.
+- `blocked`: lenses that reported a blocked or incomplete run, with what did not run.
 
-## 5. Keep the originals
+Each item carries `id` (`F1`, `F2`, ... in ranked order), `severity` (🔴, 🟡, 🚀 or 🔵), `theme`
+(🛡️ Security, 💾 Reliability / data loss, 🏗️ Architecture / contracts, 🧪 Tests / CI, ⚙️ Ops /
+config / deploy, 📝 Docs drift / writing), `claim`, `location` (`file:line`, comma-separated if
+several), `status` (verified or suspected), `disputed`, `lenses`, `why`, `fix`, `coveredBy`.
 
-Write every report to `<scratchpad>/qa-review-report.md`: `items` and `questions` as a JSON block,
-then each `raw[i].text` under a `## <lens>` heading. Append verdicts there when
-step 7 runs. Answer later questions about a finding from this file,
-quoting the lens report verbatim.
-
-## 6. Report to the user
+## 5. Report to the user
 
 - Top line, no heading: lenses run, lenses in `missing`, and each `blocked` entry.
 - Render `items` in compressed form, one or two lines each: `id`, status (☑️ verified, ❔
-  suspected), claim, `location`, fix. Append `[#N]` from `coveredBy`.
+  suspected), claim, `location`, fix. Append `(disputed)` when `disputed` is set and `[#N]` from
+  `coveredBy`.
 - Section headings, in this order: `### 🔴 Critical`, `### 🟡 Important`, `### 🔵 Minor`,
   `### 🚀 Performance`, `### ❓ Questions`. Omit an empty section.
 - Under 🟡, and under 🔴 when it has more than 5 items, group by `theme` with bold sub-headings.
   Omit an empty theme.
-- End with the path to `qa-review-report.md`, then one line offering verification: "Verify the N
-  🔴/🟡/🚀 and disputed 🔵 findings against the code? (~M agents)", with M = ceil(N / 6). Then the
-  offer to file issues.
+- End with one line offering verification: "Verify the N 🔴/🟡/🚀 and disputed 🔵 findings
+  against the code? (~M agents)", with M = ceil(N / 6). Then the offer to file issues.
 
-## 7. Verify (opt-in)
+## 6. Verify (opt-in)
 
 Run only when `$ARGUMENTS` contains `verify` or the user accepts the offer. Default set: every 🔴,
-🟡 and 🚀 item, plus each 🔵 item with `disputed` set; the user may name ids instead.
+🟡 and 🚀 item, plus each 🔵 item with `disputed` set; the user may name ids instead. Pass each
+item with every step-4 field.
 
 ```
 Workflow({
@@ -92,6 +112,8 @@ Workflow({
 })
 ```
 
+`scratch` is your scratchpad directory.
+
 It returns `{ verdicts, missing }`, one `{ id, verdict, evidence, severity }` per item. Re-render
 the report: replace the status emoji after each item's `id` with ✅ confirmed or ❔ unverifiable, and
 append the evidence line; move refuted items to a final `### ❌ Refuted` section with their
@@ -99,6 +121,5 @@ evidence line. List ids in `missing` as not verified.
 
 - A confirmed or unverifiable item whose `severity` differs from its own → move it to that
   severity's section and append `(was <old emoji>)`.
-- Write each changed severity into the `items` JSON in `qa-review-report.md`.
 
 Do not fix anything. Filing issues waits for the user to pick the items.
