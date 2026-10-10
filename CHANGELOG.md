@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-10
+
 ### Changed
 
 - **Breaking:** The `qa-sec` skill is renamed `qa-review` and drops the `security-review` and `security-audit` lenses; run `/dream-team:qa-review` instead of `/dream-team:qa-sec`.
