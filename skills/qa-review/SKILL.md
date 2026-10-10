@@ -34,7 +34,7 @@ Every run: `dream-team:architect-reviewer`, `dream-team:performance-engineer` an
 
 Before launching, list the lenses that run as a bullet list, one bold name per bullet.
 
-## 3. Open issues (optional)
+## 3. Existing open issues (optional)
 
 If the repo's forge is reachable, list open issues as `#N title` lines, so the step-4 merge
 marks findings an issue already covers. Use the host's forge tooling
