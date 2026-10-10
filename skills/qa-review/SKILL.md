@@ -13,9 +13,7 @@ argument-hint: "[audit] [verify] [base-ref | path ...]"
 # qa-review
 
 The main session runs one read-only agent per lens with the Agent tool, then merges and
-deduplicates their reports itself (step 4). The plugin workflow `dream-team:qa-sec-verify` is the
-opt-in verification pass (step 6); invoking this skill is the user's opt-in to the Workflow tool
-for it.
+deduplicates their reports itself (step 4).
 
 ## 1. Pick the mode and scope
 
@@ -102,24 +100,39 @@ several), `status` (verified or suspected), `disputed`, `lenses`, `why`, `fix`, 
 ## 6. Verify (opt-in)
 
 Run only when `$ARGUMENTS` contains `verify` or the user accepts the offer. Default set: every 🔴,
-🟡 and 🚀 item, plus each 🔵 item with `disputed` set; the user may name ids instead. Pass each
-item with every step-4 field.
+🟡 and 🚀 item, plus each 🔵 item with `disputed` set; the user may name ids instead. Split the set
+into batches of six items, each item with every step-4 field.
+
+Launch one Agent per batch, all in one message, and wait for every report:
+
+- `subagent_type`: `general-purpose`.
+- `model`: the session model's tier, as in step 4.
+- `effort`: `medium`.
+- `prompt`: `<scope>`, a blank line, the verify block with `<scratch>` replaced by your scratchpad
+  directory, a blank line, then the batch as JSON.
+
+Verify block, verbatim:
 
 ```
-Workflow({
-  name: "dream-team:qa-sec-verify",
-  args: { items, scope, model, scratch }
-})
+Verify each finding below against the code. Return one verdict per id.
+
+- confirmed: you traced the claim in the cited code or reproduced it. Evidence names the file:line or the command and its output.
+- refuted: the code does not do what the finding claims. Evidence names the line that shows it.
+- unverifiable: deciding needs a lab host, a real external service, root, or hardware. Evidence says what is needed.
+- You may run local tests and small repros in <scratch>. Do not edit, create or delete files in the repository; no ssh, no forge, no external network.
+- Judge each finding on its own; a confirmed bug with a wrong fix is still confirmed.
+- severity: rate what your evidence shows, not the claim (🔴 bug/security/data loss/crash, 🟡 risk/fragile/regression, 🚀 performance, 🔵 nit). A confirmed finding whose real cost is larger or smaller than claimed gets the severity of the real cost; a refuted one keeps its severity.
+
+Output: one line per finding and nothing else: `<id> | <confirmed, refuted or unverifiable> | <severity emoji> | <evidence, one line>`.
 ```
 
-`scratch` is your scratchpad directory.
+Re-render the report from the verdict lines:
 
-It returns `{ verdicts, missing }`, one `{ id, verdict, evidence, severity }` per item. Re-render
-the report: replace the status emoji after each item's `id` with ✅ confirmed or ❔ unverifiable, and
-append the evidence line; move refuted items to a final `### ❌ Refuted` section with their
-evidence line. List ids in `missing` as not verified.
-
-- A confirmed or unverifiable item whose `severity` differs from its own → move it to that
-  severity's section and append `(was <old emoji>)`.
+- Confirmed → replace the status emoji after the item's `id` with ✅ and append the evidence line.
+- Unverifiable → replace the status emoji with ❔ and append the evidence line.
+- Refuted → move the item to a final `### ❌ Refuted` section with its evidence line.
+- A sent item with no verdict line → list it as not verified.
+- A confirmed or unverifiable item whose verdict-line severity differs from its `severity` → move
+  it to that severity's section and append `(was <old emoji>)`.
 
 Do not fix anything. Filing issues waits for the user to pick the items.

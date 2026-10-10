@@ -9,6 +9,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - **Breaking:** The `qa-sec` skill is renamed `qa-review` and drops the `security-review` and `security-audit` lenses; run `/dream-team:qa-review` instead of `/dream-team:qa-sec`.
 - The `qa-review` skill runs its lenses as subagents and merges their findings in the main session instead of through the `dream-team:qa-sec-review` workflow, which is removed, and no longer writes a report file.
+- The `qa-review` skill's verify pass runs as subagents instead of through the `dream-team:qa-sec-verify` workflow, which is removed.
 
 ## [1.0.1] - 2026-10-10
 
