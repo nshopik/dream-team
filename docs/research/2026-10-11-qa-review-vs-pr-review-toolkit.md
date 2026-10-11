@@ -52,9 +52,11 @@ request's C threading bias does not apply there.
 The #217 sweep kept the roster; see [qa-review against pr-review-toolkit on Rust, Go and the
 unbound DS digest commit](2026-10-11-rust-go-sweep.md).
 
-## Open: code-reviewer's out-of-diff memory-safety tracing
+## code-reviewer's out-of-diff memory-safety tracing
 
-Not measured here; tracked in #218.
+#218 traced code-reviewer's C3 and C10 rows to the focus lines the orchestrator wrote into its
+prompt; see [code-reviewer's out-of-diff tracing on the CVE-introducing unbound
+commits](2026-10-11-code-reviewer-out-of-diff-trace.md).
 
 ## Ruled out
 
