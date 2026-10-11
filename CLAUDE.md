@@ -46,3 +46,5 @@
 - Keep scout findings mined from local session data (workflow journals, run counts) out of the repo
   and its issues; report them in chat only, even when dream-fixer's scout tier says to commit a
   research note.
+- Delegate grading of eval reports against a ledger to a subagent (Agent tool); the main session
+  only reads the scores and the marks file.
