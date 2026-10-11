@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Runs SKILL.md step 7's change count and autosquash fold on a scratch repo with two changes and
+"""Runs SKILL.md step 6's change count and autosquash fold on a scratch repo with two changes and
 their fixups. Usage: python3 test_fold.py"""
 import os
 import re

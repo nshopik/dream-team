@@ -2,7 +2,6 @@
   "ok": true,
   "issue": 74,
   "branch": "issue-74-encoder-pool",
-  "implementer": "voltagent-lang:golang-pro",
   "reviewers": [
     "dream-team:architect-reviewer",
     "dream-team:performance-engineer",

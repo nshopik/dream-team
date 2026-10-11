@@ -2,7 +2,6 @@
   "ok": true,
   "issue": 63,
   "branch": "issue-63-rotate-off-by-one",
-  "implementer": "voltagent-lang:golang-pro",
   "reviewers": [
     "dream-team:architect-reviewer",
     "dream-team:performance-engineer",

@@ -2,7 +2,7 @@ export const meta = {
   name: 'dream-fixer-loop',
   description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review simplify pass, qa-review lenses plus a self-selecting domain lens, bounded fix loop',
   phases: [
-    { title: 'Implement', detail: 'one specialist writes the change and commits' },
+    { title: 'Implement', detail: 'one agent writes the change and commits' },
     { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
     { title: 'Simplify', detail: 'ponytail-review cuts, applied or disputed by the implementer; skipped when the diff has no code or ponytail-review is unavailable (opus)' },
     { title: 'Review', detail: 'the three qa-review lenses plus a generic domain lens on every review (opus); opt-in external review command, its findings checked by one agent' },
@@ -206,7 +206,7 @@ const roster = (agentType) => (isGeneric(agentType) ? {} : { agentType })
 // that writes code pins Opus, or a fix round would silently run weaker than the
 // implementation it is repairing.
 const reviewerRoster = (agentType) => ({ ...roster(agentType), model: 'opus' })
-const implementerRoster = (agentType) => ({ ...roster(agentType), model: 'opus', effort: 'high' })
+const IMPLEMENTER = { model: 'opus', effort: 'high' }
 
 // Also holds a missing ponytail-review skill, so `degraded` reports it.
 const MISSING_TYPES = new Set()
@@ -454,7 +454,7 @@ async function gate(after, tag, withAspects) {
       label: `build-fix:#${ISSUE}${tag ? `:${tag}` : ''}:r${round + 1}`,
       phase: 'Gate',
       schema: BUILD_FIX_SCHEMA,
-      ...implementerRoster(A.implementer),
+      ...IMPLEMENTER,
     })
     if (!bf) return { ok: false, reason: 'build fixer returned no result', verify }
     if (!bf.committed) return { ok: false, reason: `build fixer committed nothing: ${bf.summary}`, verify }
@@ -466,7 +466,7 @@ const impl = await agentR(implPrompt(), {
   label: `impl:#${ISSUE}`,
   phase: 'Implement',
   schema: IMPL_SCHEMA,
-  ...implementerRoster(A.implementer),
+  ...IMPLEMENTER,
 })
 if (!impl) return { ok: false, stage: 'implement', reason: 'implementer returned no result' }
 if (!impl.committed) return { ok: false, stage: 'implement', reason: impl.summary || 'implementer committed nothing' }
@@ -492,7 +492,7 @@ if ((first.verify.aspects || []).includes('code')) {
       label: `simplify-fix:#${ISSUE}`,
       phase: 'Simplify',
       schema: FIX_SCHEMA,
-      ...implementerRoster(A.implementer),
+      ...IMPLEMENTER,
     })
     if (!cuts) return { ok: false, stage: 'simplify', reason: 'implementer returned no result on the simplify cuts' }
     if (cuts.addressed.length ? !cuts.committed : !cuts.disputed.length) {
@@ -570,7 +570,7 @@ while (true) {
       label: `fix:#${ISSUE}:r${round}`,
       phase: 'Fix',
       schema: FIX_SCHEMA,
-      ...implementerRoster(A.implementer),
+      ...IMPLEMENTER,
     })
     if (!fix) return { ok: false, stage: 'fix', reason: 'fixer returned no result', blocking, disputes, resolved }
     if (!fix.committed && !fix.addressed.length && !fix.disputed.length) {
@@ -613,7 +613,6 @@ return {
   ok: true,
   issue: ISSUE,
   branch: BRANCH,
-  implementer: A.implementer || 'generic',
   reviewers: gates.map((g) => g.key),
   degraded: [...MISSING_TYPES],
   fixRounds: round,
