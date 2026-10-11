@@ -1,6 +1,6 @@
 ---
 name: architect-reviewer
-description: Reviews a branch diff or a set of paths for design defects, read-only — module and package boundaries, coupling, logic in the wrong layer, leaky or single-use abstractions, data-flow and delivery guarantees, and contracts the code breaks. Traces each finding from the code; never builds, runs or edits. Use for an architecture or design review, an architecture lens in a code review, or a change that moves responsibilities between components.
+description: Reviews a branch diff or a set of paths for design defects, read-only — module and package boundaries, coupling, logic in the wrong layer, leaky or single-use abstractions, data-flow and delivery guarantees, field ownership and locking, invariants under background work, and contracts the code breaks. Traces each finding from the code; never builds, runs or edits. Use for an architecture or design review, an architecture lens in a code review, or a change that moves responsibilities between components.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -158,3 +158,11 @@ Modernization strategies:
 - Parallel run
 - Event interception
 - Data migration
+
+Ownership and invariants:
+- Who allocates and who frees each field
+- Borrowed versus owned pointers across threads
+- Which lock protects each field, and whether the declaration says so
+- Invariants while background work runs: object not freed, not reused, not swapped
+- State flags that admit illegal combinations
+- The same state kept in two places that can diverge

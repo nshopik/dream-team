@@ -1,11 +1,12 @@
 ---
 name: qa-review
 description: >-
-  Reviews design, performance and reliability with parallel read-only lenses (dream-team's
-  architect-reviewer, performance-engineer and sre-engineer agents), whose findings the main
-  session merges and deduplicates, with an opt-in verify pass that checks each finding against
-  the code. Reviews the current branch by default, or audits the whole repository. Use when the
-  user runs /dream-team:qa-review or asks for a qa-review, audit or verify pass.
+  Reviews design, performance, reliability and test coverage with parallel read-only lenses
+  (dream-team's architect-reviewer, performance-engineer, sre-engineer and test-coverage-reviewer
+  agents), whose findings the main session merges and deduplicates, with an opt-in verify pass
+  that checks each finding against the code. Reviews the current branch by default, or audits the
+  whole repository. Use when the user runs /dream-team:qa-review or asks for a qa-review, audit or
+  verify pass.
 disable-model-invocation: true
 argument-hint: "[audit] [verify] [base-ref | path ...]"
 ---
@@ -29,8 +30,8 @@ reviewer must read first if `CLAUDE.md` names them.
 
 ## 2. Pick the lenses
 
-Every run: `dream-team:architect-reviewer`, `dream-team:performance-engineer` and
-`dream-team:sre-engineer`.
+Every run: `dream-team:architect-reviewer`, `dream-team:performance-engineer`,
+`dream-team:sre-engineer` and `dream-team:test-coverage-reviewer`.
 
 Before launching, list the lenses that run as a bullet list, one bold name per bullet.
 
