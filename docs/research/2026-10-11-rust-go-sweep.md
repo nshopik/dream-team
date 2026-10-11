@@ -57,9 +57,11 @@ of 3 runs.
 This sweep's ledger had no test-gap rows; scored with them, the lens adds 9.1-20.9 points per run
 ([test-coverage lens recheck](2026-10-11-test-lens-recheck.md)).
 
-## Open: qa-review under-rates the DS digest overflow
+## Rechecked: how each side rates the DS digest overflow
 
-Tracked in #222.
+Three runs per side: critical in 1 of 3 for qa-review and 2 of 3 for pr-review-toolkit; see
+[how qa-review and pr-review-toolkit rate the unbound DS digest
+overflow](2026-10-11-ds-digest-rating.md).
 
 ## Ruled out
 
