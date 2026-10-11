@@ -7,13 +7,14 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Added
 
-- A read-only `test-coverage-reviewer` agent reviews a diff or paths for test gaps, and `qa-review` runs it as a lens on every review and audit.
+- A read-only `test-coverage-reviewer` agent reviews a diff or paths for test gaps, and `qa-review` runs it as a lens.
 
 ### Changed
 
 - The `architect-reviewer` agent checks who owns and frees each field, which lock guards it, and the invariants background work relies on.
 - The `dream-fixer-loop` workflow reviews with the `qa-review` lenses instead of `pr-review-toolkit` agents.
 - The `qa-review` skill and the `dream-fixer-loop` workflow no longer run the `performance-engineer` lens.
+- The `qa-review` skill skips the `test-coverage-reviewer` lens when every file in scope is docs or config, unless one is CI, build, test-runner or feature-flag config or an agent or skill prompt.
 - The `dream-fixer` skill reports the branch, whether an external reviewer runs, and a 1-3 sentence brief of the change when it starts the workflow, instead of the implementer and domain reviewer types.
 
 ### Fixed

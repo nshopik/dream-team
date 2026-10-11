@@ -29,10 +29,15 @@ reviewer must read first if `CLAUDE.md` names them.
 
 ## 2. Pick the lenses
 
-Every run: `dream-team:architect-reviewer`, `dream-team:sre-engineer` and
+Lenses: `dream-team:architect-reviewer`, `dream-team:sre-engineer` and
 `dream-team:test-coverage-reviewer`.
 
-Before launching, list the lenses that run as a bullet list, one bold name per bullet.
+- Every file in scope is docs or config (Markdown, plain text, YAML, TOML, JSON, INI), and none
+  is CI, build, test-runner or feature-flag config or an agent or skill prompt (`SKILL.md`,
+  `agents/*.md`) → skip `dream-team:test-coverage-reviewer`.
+
+Before launching, list the lenses that run as a bullet list, one bold name per bullet; list each
+skipped lens the same way with its reason.
 
 ## 3. Existing open issues (optional)
 
@@ -84,7 +89,8 @@ several), `status` (verified or suspected), `disputed`, `lenses`, `why`, `fix`, 
 
 ## 5. Report to the user
 
-- Top line, no heading: lenses run, lenses in `missing`, and each `blocked` entry.
+- Top line, no heading: lenses run, each skipped lens with its reason, lenses in `missing`, and
+  each `blocked` entry.
 - Render `items` in compressed form, one or two lines each: `id`, status (☑️ verified, ❔
   suspected), claim, `location`, fix. Append `(disputed)` when `disputed` is set and `[#N]` from
   `coveredBy`.
