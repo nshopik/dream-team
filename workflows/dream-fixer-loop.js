@@ -5,7 +5,7 @@ export const meta = {
     { title: 'Implement', detail: 'one specialist writes the change and commits' },
     { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
     { title: 'Simplify', detail: 'ponytail-review cuts, applied or disputed by the implementer; skipped when the diff has no code or ponytail-review is unavailable (opus)' },
-    { title: 'Review', detail: 'the four qa-review lenses plus one domain reviewer unless args.domainReviewer is none or generic without args.domainLens (opus); opt-in external review command, its findings checked by one agent' },
+    { title: 'Review', detail: 'the three qa-review lenses plus one domain reviewer unless args.domainReviewer is none or generic without args.domainLens (opus); opt-in external review command, its findings checked by one agent' },
     { title: 'Fix', detail: 'blocking findings only; re-review only the reviewers that failed' },
   ],
 }
@@ -196,13 +196,12 @@ const FIX_SCHEMA = {
 // Roster
 // ---------------------------------------------------------------------------
 
-// qa-review's lenses and focus lines (skills/qa-review/SKILL.md steps 2 and 4), minus its verify pass; every lens runs on every review.
+// qa-review's lenses and focus lines (skills/qa-review/SKILL.md steps 2 and 4), minus its verify pass and docs-only skip; every lens runs on every review.
 const ARCHITECT = 'dream-team:architect-reviewer'
 const TEST_LENS = 'dream-team:test-coverage-reviewer'
-const LENSES = [ARCHITECT, 'dream-team:performance-engineer', 'dream-team:sre-engineer', TEST_LENS]
+const LENSES = [ARCHITECT, 'dream-team:sre-engineer', TEST_LENS]
 const FOCUS = {
   [ARCHITECT]: 'package boundaries and coupling, data-flow and delivery guarantees (loss, duplication), backpressure, documented contracts and where docs and code disagree.',
-  'dream-team:performance-engineer': 'hot-path allocations, GC pressure, lock contention, I/O buffering, batch sizing. Trace the code; do not measure.',
 }
 
 const roster = (agentType) => (isGeneric(agentType) ? {} : { agentType })

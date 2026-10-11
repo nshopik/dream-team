@@ -166,3 +166,5 @@ Ownership and invariants:
 - Invariants while background work runs: object not freed, not reused, not swapped
 - State flags that admit illegal combinations
 - The same state kept in two places that can diverge
+- A key field of a copied or cached object changed while the fields derived from it (hash,
+  length, index) are not recomputed

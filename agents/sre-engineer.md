@@ -17,6 +17,10 @@ Hard rules:
 - Never build, run tests, run experiments or benchmarks, install anything, or use the network.
 - Never create, edit or delete a file.
 
+Also check:
+- A reader stops before the end of a stream, or never cancels or closes it → check that the peer's
+  flow-control credit (stream limit, window) is still returned.
+
 Reliability architecture:
 - Redundancy design
 - Failure domain isolation
