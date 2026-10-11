@@ -30,13 +30,14 @@ def role_of(label):
 
 
 def read_jsonl(path):
-    with open(path) as f:
-        lines = [line for line in f if line.strip()]
-    try:
-        tail = [json.loads(lines[-1])] if lines else []
-    except json.JSONDecodeError:  # a half-written last line
-        tail = []
-    return [json.loads(line) for line in lines[:-1]] + tail
+    records = []
+    with open(path, "rb") as f:
+        for line in f:
+            try:
+                records.append(json.loads(line))
+            except ValueError:  # blank, half-written, or torn mid-character
+                pass
+    return records
 
 
 def scan_agent(path, role):
@@ -50,7 +51,7 @@ def scan_agent(path, role):
         if e.get("type") == "assistant":
             usage[msg.get("id")] = msg.get("usage") or {}
         for b in content:
-            if b.get("type") == "tool_use":
+            if b.get("type") == "tool_use" and "id" in b and "name" in b:
                 uses[b["id"]] = b
                 name, inp = b["name"], b.get("input") or {}
                 cmd = inp.get("command", "") if name == "Bash" else ""
@@ -69,7 +70,7 @@ def scan_agent(path, role):
                 if isinstance(body, list):
                     body = " ".join(c.get("text", "") for c in body if isinstance(c, dict))
                 if use.get("name") == "Bash":
-                    cmd = use["input"].get("command", "")
+                    cmd = (use.get("input") or {}).get("command", "")
                     failed[cmd] += 1
                     if failed[cmd] == 2:
                         hits.append(("repeat-failure", cmd))
@@ -87,12 +88,13 @@ def scan_agent(path, role):
 def scan_run(run_dir, date, stats):
     """Returns the cache records for one run; stats holds prior per-role values and grows."""
     journal = read_jsonl(run_dir / "journal.jsonl")
-    labels = {e["agentId"]: e["label"] for e in journal if e["type"] == "started"}
+    labels = {e["agentId"]: e["label"] for e in journal if e.get("type") == "started" and "agentId" in e and "label" in e}
     run = run_dir.name
-    records = [{"type": "run", "run": run, "date": date}]
+    records, marker = [], {"type": "run", "run": run, "date": date}  # written last: a run counts once all of it is cached
     if not any(re.match(r"(impl|gate):#", label) for label in labels.values()):
-        return records
-    friction = {e["agentId"]: (e.get("result") or {}).get("friction") or [] for e in journal if e["type"] == "result"}
+        return [marker]
+    friction = {e["agentId"]: e["result"].get("friction") or [] for e in journal
+                if e.get("type") == "result" and "agentId" in e and isinstance(e.get("result"), dict)}
     new_stats = []
     for agent_id, label in labels.items():
         path = run_dir / f"agent-{agent_id}.jsonl"
@@ -116,7 +118,7 @@ def scan_run(run_dir, date, stats):
                      "agentType": agent_type, "evidence": " ".join(str(ev).split())[:160]} for p, ev in hits]
     for role, row in new_stats:
         stats[role].append(row)
-    return records
+    return records + [marker]
 
 
 def main():
@@ -130,11 +132,15 @@ def main():
     active = [p for p in unseen if max(f.stat().st_mtime for f in [p, *p.iterdir()]) > time.time() - ACTIVE_SECONDS]
     runs = sorted((p.stat().st_mtime, p) for p in unseen if p not in active)
     new = []
-    for mtime, run_dir in runs:
-        new += scan_run(run_dir, time.strftime("%Y-%m-%d", time.localtime(mtime)), stats)
     CACHE.parent.mkdir(parents=True, exist_ok=True)
-    with open(CACHE, "a") as f:
-        f.writelines(json.dumps(r) + "\n" for r in new)
+    if CACHE.exists() and not CACHE.read_bytes().endswith(b"\n"):  # a killed append's tail
+        with open(CACHE, "a") as f:
+            f.write("\n")
+    for mtime, run_dir in runs:
+        records = scan_run(run_dir, time.strftime("%Y-%m-%d", time.localtime(mtime)), stats)
+        with open(CACHE, "a") as f:
+            f.writelines(json.dumps(r) + "\n" for r in records)
+        new += records
 
     groups = defaultdict(list)
     for r in cache + new:

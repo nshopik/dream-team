@@ -45,6 +45,9 @@ def run_dir(run, label, calls, friction=(), fresh=False):
     agent = f"a{run[-3:]}"
     (d / "journal.jsonl").write_text("\n".join(json.dumps(e) for e in [
         {"type": "launched"},
+        {"type": "started"},
+        {"type": "result"},
+        {"type": "result", "agentId": "a-text", "result": "plain-text handback"},
         {"type": "started", "key": "k", "agentId": agent, "label": label, "phase": "Implement"},
         {"type": "result", "key": "k", "agentId": agent, "result": {"committed": True, "summary": "", "friction": list(friction)}},
     ]) + "\n")
@@ -77,6 +80,15 @@ for role, tool, inp, want in cases:
     got = [p for p, _ in friction.scan_agent(path, role)[0]]
     assert got == want, (role, tool, inp, got)
 print("PASS forbidden actions")
+
+transcript(path, [("Bash", {"command": "git push"}, False)] * 2)
+lines = path.read_text().splitlines()
+keyless = json.dumps({"type": "assistant", "message": {"content": [{"type": "tool_use"}]}})
+path.write_text("\n".join([*lines[:2], '{"type": "assis', keyless, *lines[2:]]) + "\n")
+with open(path, "ab") as f:
+    f.write('{"type": "assistant", "x": "\u2014'.encode()[:-1])  # torn mid-character
+assert [p for p, _ in friction.scan_agent(path, "impl")[0]] == ["forbidden"] * 2
+print("PASS a bad transcript line is skipped")
 
 hunt = "find ~/.claude -name SKILL.md"
 repeated = ["", "claude-dir | impl | 2 runs | workflow-subagent", f"  - {hunt}",
@@ -114,3 +126,40 @@ assert ("claude-dir", "gate", hunt) in hits and ("repeat-failure", "impl", "carg
 outliers = {(r["run"], r["pattern"]) for r in cache if r["type"] == "hit" and r["pattern"].endswith("-outlier")}
 assert outliers == {("wf_g-007", "tokens-outlier"), ("wf_g-007", "tools-outlier")}, outliers
 print("PASS cache keeps one-offs and every scanned run")
+
+# A run killed mid-append leaves an unterminated line that the next append joins.
+cache_path = home / ".claude/dream-team/friction.jsonl"
+lines = cache_path.read_text().splitlines()
+i = next(i for i, line in enumerate(lines) if i and '"stats"' in line)
+cache_path.write_text("\n".join([*lines[:i], '{"type": "ru' + lines[i], *lines[i + 1:]]) + "\n")
+out = scan()
+assert out.startswith("scanned 0 new runs; skipped 0 in progress") and out.splitlines()[1:] == repeated, out
+print("PASS a bad cache line is skipped")
+
+# A killed append leaves the tail unterminated; the next run's records must not join it.
+cache_path.write_text(cache_path.read_text() + '{"type": "hi')
+run_dir("wf_i-009", "impl:#11", [("make", False)])
+assert scan().startswith("scanned 1 new runs"), "the new run is scanned"
+assert scan().startswith("scanned 0 new runs"), "and not again"
+assert any(r["type"] == "stats" and r["run"] == "wf_i-009" for r in friction.read_jsonl(cache_path)), "its first record is kept"
+print("PASS a torn cache tail does not eat the next run")
+
+# A crash on one run keeps the runs scanned before it.
+home = Path(tempfile.mkdtemp())
+friction.HOME, friction.CACHE = home, home / "cache.jsonl"
+for run in ("wf_j-010", "wf_k-011"):
+    run_dir(run, "impl:#12", [("make", False)])
+scan_run, calls = friction.scan_run, []
+def crash_second(*args):
+    calls.append(args)
+    if len(calls) == 2:
+        raise RuntimeError("killed")
+    return scan_run(*args)
+friction.scan_run = crash_second
+try:
+    friction.main()
+except RuntimeError:
+    pass
+kept = {r["run"] for r in friction.read_jsonl(friction.CACHE) if r["type"] == "run"}
+assert "wf_j-010" in kept and "wf_k-011" not in kept, kept
+print("PASS a crash keeps the runs scanned before it")

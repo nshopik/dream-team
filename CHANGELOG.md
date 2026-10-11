@@ -13,6 +13,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - The `architect-reviewer` agent checks who owns and frees each field, which lock guards it, and the invariants background work relies on.
 
+### Fixed
+
+- The `friction` skill skips a corrupt JSONL line or record anywhere in its cache, journals and transcripts instead of crashing every later run.
+
 ## [1.1.0] - 2026-10-10
 
 ### Changed
