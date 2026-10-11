@@ -4,10 +4,10 @@
   "branch": "issue-63-rotate-off-by-one",
   "implementer": "voltagent-lang:golang-pro",
   "reviewers": [
-    "pr-review-toolkit:code-reviewer",
-    "pr-review-toolkit:comment-analyzer",
-    "pr-review-toolkit:silent-failure-hunter",
-    "pr-review-toolkit:pr-test-analyzer",
+    "dream-team:architect-reviewer",
+    "dream-team:performance-engineer",
+    "dream-team:sre-engineer",
+    "dream-team:test-coverage-reviewer",
     "domain"
   ],
   "degraded": [],
@@ -23,15 +23,15 @@
       "severity": "minor",
       "description": "keep variable could be named keepN for symmetry with maxN",
       "file": "internal/rotate/rotate.go",
-      "gate": "pr-review-toolkit:code-reviewer"
+      "gate": "dream-team:architect-reviewer"
     }
   ],
   "disputes": [],
   "summaries": {
-    "pr-review-toolkit:code-reviewer": "Correct fix, one naming nit.",
-    "pr-review-toolkit:comment-analyzer": "No findings.",
-    "pr-review-toolkit:silent-failure-hunter": "No findings.",
-    "pr-review-toolkit:pr-test-analyzer": "Red evidence matches the bug; test pins the boundary.",
+    "dream-team:architect-reviewer": "Correct fix, one naming nit.",
+    "dream-team:performance-engineer": "No findings.",
+    "dream-team:sre-engineer": "No findings.",
+    "dream-team:test-coverage-reviewer": "Red evidence matches the bug; test pins the boundary.",
     "domain": "Retention count now matches the documented --keep semantics. No findings."
   }
 }

@@ -5,27 +5,27 @@
   "handBack": true,
   "blocking": [],
   "deadReviewers": [
-    "pr-review-toolkit:silent-failure-hunter"
+    "dream-team:sre-engineer"
   ],
   "degraded": [],
   "redEvidence": "--- FAIL: TestFlushHonoursDeadline (2.01s)\n    flush_test.go:58: flush returned after 2s, deadline was 500ms",
   "disputes": [],
   "resolved": [],
   "verdicts": {
-    "pr-review-toolkit:code-reviewer": {
+    "dream-team:architect-reviewer": {
       "summary": "No findings.",
       "findings": []
     },
-    "pr-review-toolkit:comment-analyzer": {
+    "dream-team:performance-engineer": {
       "summary": "No findings.",
       "findings": []
     },
-    "pr-review-toolkit:silent-failure-hunter": {
+    "dream-team:sre-engineer": {
       "dead": true,
-      "summary": "pr-review-toolkit:silent-failure-hunter reviewer produced no verdict",
+      "summary": "dream-team:sre-engineer reviewer produced no verdict",
       "findings": []
     },
-    "pr-review-toolkit:pr-test-analyzer": {
+    "dream-team:test-coverage-reviewer": {
       "summary": "Red evidence matches the missed deadline. No findings.",
       "findings": []
     },

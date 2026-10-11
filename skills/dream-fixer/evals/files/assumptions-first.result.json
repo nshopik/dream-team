@@ -4,10 +4,10 @@
   "branch": "issue-57-export-since-flag",
   "implementer": "voltagent-lang:golang-pro",
   "reviewers": [
-    "pr-review-toolkit:code-reviewer",
-    "pr-review-toolkit:comment-analyzer",
-    "pr-review-toolkit:silent-failure-hunter",
-    "pr-review-toolkit:pr-test-analyzer",
+    "dream-team:architect-reviewer",
+    "dream-team:performance-engineer",
+    "dream-team:sre-engineer",
+    "dream-team:test-coverage-reviewer",
     "domain"
   ],
   "degraded": [],
@@ -27,21 +27,21 @@
       "severity": "minor",
       "description": "parseSince error message could quote the accepted format",
       "file": "cmd/flowlog/export.go",
-      "gate": "pr-review-toolkit:code-reviewer"
+      "gate": "dream-team:architect-reviewer"
     },
     {
       "severity": "minor",
       "description": "table test case names use mixed casing",
       "file": "cmd/flowlog/export_test.go",
-      "gate": "pr-review-toolkit:pr-test-analyzer"
+      "gate": "dream-team:test-coverage-reviewer"
     }
   ],
   "disputes": [],
   "summaries": {
-    "pr-review-toolkit:code-reviewer": "Clean change, one minor wording nit.",
-    "pr-review-toolkit:comment-analyzer": "Flag help text matches behaviour. No findings.",
-    "pr-review-toolkit:silent-failure-hunter": "Parse errors are returned to the CLI. No findings.",
-    "pr-review-toolkit:pr-test-analyzer": "Boundary, empty and invalid inputs covered. One minor naming nit.",
+    "dream-team:architect-reviewer": "Clean change, one minor wording nit.",
+    "dream-team:performance-engineer": "No findings.",
+    "dream-team:sre-engineer": "Parse errors are returned to the CLI. No findings.",
+    "dream-team:test-coverage-reviewer": "Boundary, empty and invalid inputs covered. One minor naming nit.",
     "domain": "Filter runs before the batch encoder, matching the existing --until path. No findings."
   }
 }

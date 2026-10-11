@@ -12,6 +12,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 ### Changed
 
 - The `architect-reviewer` agent checks who owns and frees each field, which lock guards it, and the invariants background work relies on.
+- The `dream-fixer-loop` workflow reviews with the four `qa-review` lenses instead of `pr-review-toolkit` agents.
 
 ## [1.1.0] - 2026-10-10
 

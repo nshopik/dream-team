@@ -84,8 +84,7 @@ It works for application code and infrastructure-as-code. The full walkthrough i
 /plugin install dream-team@dream-team
 ```
 
-Requires `python3` on `PATH`. Needs the Workflow tool. Uses `pr-review-toolkit` reviewers; a
-missing agent type runs as a generic agent. qa-review needs no third-party reviewer plugin.
+Requires `python3` on `PATH`. Needs the Workflow tool.
 
 For the [pi](https://github.com/earendil-works/pi) harness:
 
