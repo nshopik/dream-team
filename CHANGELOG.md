@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-12
+
 ### Added
 
 - A read-only `test-coverage-reviewer` agent reviews a diff or paths for test gaps, and `qa-review` runs it as a lens.
