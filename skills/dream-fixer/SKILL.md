@@ -13,10 +13,11 @@ argument-hint: <issue-number>
 
 One issue per invocation. If the user names several, do them one at a time.
 
-You are the orchestrator. You read, triage, roster, branch and ship. **You do not write the
-change** — the workflow's implementer does. Everything between the branch and the MR happens in
-dispatched agents. Your only edits are step 6's settled disputes and minor findings, which step 7
-reruns `gateCommands` on, a light-tier issue's edit, and a scout issue's research note (step 2a).
+You are the orchestrator. You read, triage, pick the implementer, branch and ship. **You do not
+write the change** — the workflow's implementer does. Everything between the branch and the MR
+happens in dispatched agents. Your only edits are step 6's settled disputes and minor findings,
+which step 7 reruns `gateCommands` on, a light-tier issue's edit, and a scout issue's research note
+(step 2a).
 
 **Lab work is yours, not the workflow's.** Workflow agents never ssh to a lab host. Anything the
 issue or the repo's `CLAUDE.md` needs run on a lab host — a measurement the issue asks for, a test
@@ -93,9 +94,8 @@ Light path, no workflow:
 Light-path reviewer type:
 
 - Docs, comments, help or usage text only → `dream-team:docs-reviewer`.
-- Anything else → the step-3 domain reviewer type, with the failing evidence for a bug fix.
-- Type `none` → no reviewer.
-- Type not in the catalog → `generic`.
+- Anything else → `general-purpose`, told to check the diff against the reference sources and
+  invariants the project's `CLAUDE.md` names, with the failing evidence for a bug fix.
 
 Scout tier: no workflow, no code; the research note is the one change you write. Answer the
 proposal's questions yourself within its time box. Write the answers as a note in the repo's
@@ -112,24 +112,17 @@ Research note:
 - A finding left unresolved → `## Open: <claim>`, naming the issue that tracks it.
 - Dead ends → one `## Ruled out` list.
 
-## 3. Pick the roster
+## 3. Pick the implementer
 
-Two slots, both from the Agent tool list in your context — that list is the catalog, and a type not
-in it fails at dispatch.
+Pick from the Agent tool list in your context — that list is the catalog, and a type not in it
+fails at dispatch.
 
-- **Implementer**: the specialist whose domain matches the issue. No obvious fit → `generic`. The
-  type must have Bash: it commits and runs tests. A fitting specialist without Bash → make it the
-  domain reviewer and implement with `generic`.
-- **Domain reviewer**: the lens the build and test suite cannot check — the project's own rules,
-  reference sources and invariants. **MUST be a different type than the implementer**.
-  - No second specialist for the domain in the catalog → `none`: no domain reviewer runs.
-  - `generic` only when the project's `CLAUDE.md` names a reference source or invariant and the
-    diff makes a claim checkable against it; pass the check and the source files in `domainLens`.
-  - No such claim → `none`, even when the project names a lens.
+- The specialist whose domain matches the issue. No obvious fit → `generic`.
+- The type must have Bash: it commits and runs tests. A fitting specialist without Bash → `generic`.
 
 Override the pick when you know better than the catalog descriptions.
 
-The quality reviewers are not your choice: the workflow picks them.
+The reviewers are not your choice: the workflow picks them.
 
 ## 4. Preflight and branch
 
@@ -159,8 +152,6 @@ object (never a stringified one):
   "base": "<sha from step 4>",
   "gateCommands": ["cargo build --workspace", "cargo test --workspace", "cargo clippy --workspace"],
   "implementer": "<catalog type or generic>",
-  "domainReviewer": "<catalog type, generic or none>",
-  "domainLens": "<the generic reviewer's check, or leave out>",
   "externalReview": "<command, or leave out>"
 }
 ```

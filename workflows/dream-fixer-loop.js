@@ -1,11 +1,11 @@
 export const meta = {
   name: 'dream-fixer-loop',
-  description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review simplify pass, qa-review lenses plus one domain reviewer unless args.domainReviewer is none or generic without args.domainLens, bounded fix loop',
+  description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review simplify pass, qa-review lenses plus a self-selecting domain lens, bounded fix loop',
   phases: [
     { title: 'Implement', detail: 'one specialist writes the change and commits' },
     { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
     { title: 'Simplify', detail: 'ponytail-review cuts, applied or disputed by the implementer; skipped when the diff has no code or ponytail-review is unavailable (opus)' },
-    { title: 'Review', detail: 'the three qa-review lenses plus one domain reviewer unless args.domainReviewer is none or generic without args.domainLens (opus); opt-in external review command, its findings checked by one agent' },
+    { title: 'Review', detail: 'the three qa-review lenses plus a generic domain lens on every review (opus); opt-in external review command, its findings checked by one agent' },
     { title: 'Fix', detail: 'blocking findings only; re-review only the reviewers that failed' },
   ],
 }
@@ -22,17 +22,12 @@ const NOTES = String(A.notes || '')
 const BRANCH = String(A.branch || '')
 const BASE = String(A.base || '')
 const GATE_COMMANDS = Array.isArray(A.gateCommands) ? A.gateCommands.map(String).filter(Boolean) : []
-const DOMAIN_LENS = String(A.domainLens || '')
-const NO_DOMAIN = A.domainReviewer === 'none' || (isGeneric(A.domainReviewer) && !DOMAIN_LENS)
 const EXTERNAL = String(A.externalReview || '')
 const FIX_ROUNDS = 3
 const VERIFY_ROUNDS = 3
 
 if (!ISSUE || !BRANCH || !BASE || !GATE_COMMANDS.length) {
   throw new Error('dream-fixer-loop: args.issue, args.branch, args.base and args.gateCommands are required')
-}
-if (!isGeneric(A.implementer) && A.implementer === A.domainReviewer) {
-  throw new Error('dream-fixer-loop: args.domainReviewer must be a different type than args.implementer')
 }
 
 // ---------------------------------------------------------------------------
@@ -196,7 +191,7 @@ const FIX_SCHEMA = {
 // Roster
 // ---------------------------------------------------------------------------
 
-// qa-review's lenses and focus lines (skills/qa-review/SKILL.md steps 2 and 4), minus its verify pass and docs-only skip; every lens runs on every review.
+// qa-review's lenses and focus lines (skills/qa-review/SKILL.md steps 2 and 4), minus its verify pass and docs-only skip; every lens runs on every review, the domain lens selecting itself in its prompt.
 const ARCHITECT = 'dream-team:architect-reviewer'
 const TEST_LENS = 'dream-team:test-coverage-reviewer'
 const LENSES = [ARCHITECT, 'dream-team:sre-engineer', TEST_LENS]
@@ -347,7 +342,6 @@ function lensPrompt(agentType, redEvidence) {
     `Your lens: ${FOCUS[agentType] || agentType.split(':').pop()}`,
     REVIEW_RULES,
     'Anything a linter, typechecker or the test suite would catch is out of scope — that gate already ran and passed.',
-    ...(NO_DOMAIN && agentType === ARCHITECT ? [DONE_WHEN] : []),
     ...(redEvidence && agentType === TEST_LENS ? [
       '',
       'The implementer reports this failing output from the new test, observed before the fix was applied:',
@@ -361,11 +355,10 @@ function domainPrompt() {
   return [
     CONTEXT,
     '',
-    'Review the branch diff as the domain reviewer.',
-    'Your lens is the one the build and test suite cannot check: does this change hold against the rules, reference sources and invariants this project\'s CLAUDE.md sets out, and against the issue it claims to close.',
+    'Review the branch diff as the domain lens.',
     DONE_WHEN,
-    'Where the project names a reference implementation or spec, check the claim against that source and cite what you read — file and line.',
-    ...(DOMAIN_LENS ? [`Your specific lens for this issue: ${DOMAIN_LENS}`] : []),
+    'Then find the reference source or invariant this project\'s CLAUDE.md names, and a claim in the diff checkable against it. Either one missing → raise no finding on it and say why in your summary.',
+    'Both present → check the claim against that source and cite what you read — file and line.',
     REVIEW_RULES,
   ].join('\n')
 }
@@ -517,7 +510,7 @@ if ((first.verify.aspects || []).includes('code')) {
 // reviewers oscillate, inventing a new nit each round and never converging.
 const gates = [
   ...LENSES.map((t) => ({ key: t, type: t, prompt: () => lensPrompt(t, impl.redEvidence) })),
-  ...(NO_DOMAIN ? [] : [{ key: 'domain', type: A.domainReviewer, prompt: domainPrompt }]),
+  { key: 'domain', type: 'generic', prompt: domainPrompt },
   // A re-review does not re-run the command.
   ...(EXTERNAL ? [{ key: 'external', type: 'generic', prompt: externalPrompt, schema: EXTERNAL_SCHEMA }] : []),
 ]
