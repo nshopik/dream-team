@@ -44,13 +44,13 @@ run cost 3.5-7.5 points.
 ## The performance lens, not the architect lens, is weakest here
 
 Points lost when each lens is removed from a qa-review run: sre 20.6-23.9, architect 6.6-8.9,
-performance 0-6.1. #217 decides whether to keep it, on Rust and Go commits where this pull
-request's C threading bias does not apply.
+performance 0-6.1. The #217 sweep of Rust and Go commits kept the performance lens; this pull
+request's C threading bias does not apply there.
 
-## Open: recheck on other languages and on the DS digest commit
+## Rechecked on Rust, Go and the DS digest commit
 
-Tracked in #217: the shipped roster on 10 Rust and Go commits, and on the unbound DS digest commit
-that #215's sre line lost.
+The #217 sweep kept the roster; see [qa-review against pr-review-toolkit on Rust, Go and the
+unbound DS digest commit](2026-10-11-rust-go-sweep.md).
 
 ## Open: code-reviewer's out-of-diff memory-safety tracing
 
