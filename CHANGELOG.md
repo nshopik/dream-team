@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Changed
+
+- The `architect-reviewer` agent checks who owns and frees each field, which lock guards it, and the invariants background work relies on.
+
 ## [1.1.0] - 2026-10-10
 
 ### Changed
