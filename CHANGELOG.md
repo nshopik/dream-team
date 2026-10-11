@@ -12,8 +12,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 ### Changed
 
 - **Breaking:** The `dream-fixer-loop` workflow drops its `domainReviewer` and `domainLens` args and runs a generic domain lens on every review, and `qa-review` runs that lens when a claim in scope is checkable against the project's reference sources.
+- **Breaking:** The `dream-fixer-loop` workflow requires a `diffFile` arg, the file its gate writes the branch diff to for the reviewers.
 - **Breaking:** The `dream-fixer-loop` workflow drops its `implementer` arg and runs every stage that writes code as a generic agent.
 - **Breaking:** The `dream-fixer` skill no longer picks an implementer or a domain reviewer, and its light path runs a `general-purpose` reviewer checking the project's reference sources on every non-docs change.
+- **Breaking:** The `architect-reviewer`, `performance-engineer`, `sre-engineer`, `test-coverage-reviewer` and `docs-reviewer` agents no longer have Bash and read the diff from a file that `qa-review`, `dream-fixer`, `milestone-close` and `dream-fixer-loop` write.
 - The `architect-reviewer` agent checks who owns and frees each field, which lock guards it, and the invariants background work relies on.
 - The `dream-fixer-loop` workflow reviews with the `qa-review` lenses instead of `pr-review-toolkit` agents.
 - The `qa-review` skill and the `dream-fixer-loop` workflow no longer run the `performance-engineer` lens.

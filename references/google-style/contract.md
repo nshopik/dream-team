@@ -176,7 +176,7 @@ to end.
 
 | File | Read it for |
 |---|---|
-| `word-list.md` | Any single term: *sign in* or *log in*, *allowlist* or *whitelist*. ~700 entries, 120 KB. Entries start at the left margin: `grep -i -A6 '^TERM' word-list.md`. |
+| `word-list.md` | Any single term: *sign in* or *log in*, *allowlist* or *whitelist*. ~700 entries, 120 KB. Entries start at the left margin: Grep `^TERM` with `-i -A 6`. |
 
 ## Before you call a document done
 
