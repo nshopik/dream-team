@@ -14,7 +14,7 @@
       "severity": "important",
       "description": "Backoff has no upper bound; a sink down for an hour blocks shutdown for the whole backoff",
       "file": "internal/sink/http.go",
-      "gate": "pr-review-toolkit:code-reviewer"
+      "gate": "dream-team:architect-reviewer"
     }
   ],
   "deadReviewers": [],
@@ -23,7 +23,7 @@
   "disputes": [],
   "resolved": [],
   "verdicts": {
-    "pr-review-toolkit:code-reviewer": {
+    "dream-team:architect-reviewer": {
       "summary": "Unbounded backoff.",
       "findings": [
         {
@@ -33,15 +33,15 @@
         }
       ]
     },
-    "pr-review-toolkit:comment-analyzer": {
+    "dream-team:performance-engineer": {
       "summary": "No findings.",
       "findings": []
     },
-    "pr-review-toolkit:silent-failure-hunter": {
+    "dream-team:sre-engineer": {
       "summary": "No findings.",
       "findings": []
     },
-    "pr-review-toolkit:pr-test-analyzer": {
+    "dream-team:test-coverage-reviewer": {
       "summary": "No findings.",
       "findings": []
     },

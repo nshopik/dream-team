@@ -1,11 +1,11 @@
 export const meta = {
   name: 'dream-fixer-loop',
-  description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review simplify pass, pr-review-toolkit reviewers plus one domain reviewer unless args.domainReviewer is none or generic without args.domainLens, bounded fix loop',
+  description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review simplify pass, qa-review lenses plus one domain reviewer unless args.domainReviewer is none or generic without args.domainLens, bounded fix loop',
   phases: [
     { title: 'Implement', detail: 'one specialist writes the change and commits' },
     { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
     { title: 'Simplify', detail: 'ponytail-review cuts, applied or disputed by the implementer; skipped when the diff has no code or ponytail-review is unavailable (opus)' },
-    { title: 'Review', detail: 'pr-review-toolkit suite plus one domain reviewer unless args.domainReviewer is none or generic without args.domainLens (opus); opt-in external review command, its findings checked by one agent' },
+    { title: 'Review', detail: 'the four qa-review lenses plus one domain reviewer unless args.domainReviewer is none or generic without args.domainLens (opus); opt-in external review command, its findings checked by one agent' },
     { title: 'Fix', detail: 'blocking findings only; re-review only the reviewers that failed' },
   ],
 }
@@ -54,8 +54,8 @@ const IMPL_SCHEMA = {
 }
 
 // The verify agent is the neutral party that already runs git, so it also
-// reports which review aspects the diff touches. Asking the implementer would
-// be self-assessment, and a second agent for a `git diff --name-only` is waste.
+// reports whether the diff touches code. Asking the implementer would be
+// self-assessment, and a second agent for a `git diff --name-only` is waste.
 const VERIFY_SCHEMA = {
   type: 'object',
   required: ['passed', 'summary', 'changedFiles', 'dirtyPaths'],
@@ -68,8 +68,8 @@ const VERIFY_SCHEMA = {
     dirtyPaths: { type: 'array', items: { type: 'string' }, description: 'paths from `git status --porcelain` taken before the gate ran' },
     aspects: {
       type: 'array',
-      description: 'which review aspects this diff touches; only when the prompt asks for them',
-      items: { type: 'string', enum: ['tests', 'types', 'code'] },
+      description: 'whether this diff touches code; only when the prompt asks for it',
+      items: { type: 'string', enum: ['code'] },
     },
     failures: {
       type: 'array',
@@ -196,19 +196,13 @@ const FIX_SCHEMA = {
 // Roster
 // ---------------------------------------------------------------------------
 
-// review-pr is a command, not a dispatchable type, so its applicability rules
-// (commands/review-pr.md:41) live here. Comments and error handling change in
-// nearly every diff, so those reviewers always run; only tests and types are
-// detected, by the verify agent's greps.
-const CODE_REVIEWER = 'pr-review-toolkit:code-reviewer'
-const QUALITY_ALWAYS = [
-  CODE_REVIEWER,
-  'pr-review-toolkit:comment-analyzer',
-  'pr-review-toolkit:silent-failure-hunter',
-]
-const ASPECT_AGENTS = {
-  tests: 'pr-review-toolkit:pr-test-analyzer',
-  types: 'pr-review-toolkit:type-design-analyzer',
+// qa-review's lenses and focus lines (skills/qa-review/SKILL.md steps 2 and 4), minus its verify pass; every lens runs on every review.
+const ARCHITECT = 'dream-team:architect-reviewer'
+const TEST_LENS = 'dream-team:test-coverage-reviewer'
+const LENSES = [ARCHITECT, 'dream-team:performance-engineer', 'dream-team:sre-engineer', TEST_LENS]
+const FOCUS = {
+  [ARCHITECT]: 'package boundaries and coupling, data-flow and delivery guarantees (loss, duplication), backpressure, documented contracts and where docs and code disagree.',
+  'dream-team:performance-engineer': 'hot-path allocations, GC pressure, lock contention, I/O buffering, batch sizing. Trace the code; do not measure.',
 }
 
 const roster = (agentType) => (isGeneric(agentType) ? {} : { agentType })
@@ -302,14 +296,8 @@ function verifyPrompt(after, withAspects) {
     'Do not review style or design — that is a later stage. Report what the tooling says.',
     `Report changedFiles from \`git diff --name-only ${BASE}..HEAD\`.`,
     ...(withAspects ? [
-      'Also report which review aspects the diff touches. Do not judge this by reading — run the commands.',
-      `Let D=\`git diff -U0 ${BASE}..HEAD\`. Report an aspect when, and only when, its command produces output:`,
-      `  tests - \`git diff --name-only ${BASE}..HEAD | grep -Ei '(^|/)(tests?|spec)/|_(test|spec)\\.|\\.(test|spec)\\.'\`,`,
-      '          or D matches `^\\+.*(#\\[test\\]|#\\[cfg\\(test\\)\\]|\\bdef test_|\\bit\\(|\\btest\\()`',
-      '  types - D matches `^\\+\\s*(pub )?(struct|enum|trait|type|impl|interface|class|dataclass)\\b`',
-      `  code  - \`git diff --name-only ${BASE}..HEAD | grep -Ei '\\.(c|cc|cpp|cs|css|ex|exs|go|h|hpp|html|java|js|jsx|kt|lua|mjs|cjs|php|py|rb|rs|scala|sh|svelte|swift|ts|tsx|vue|zig)$'\``,
-      'Adapt the patterns to this repo\'s language if it is not one the patterns cover, keeping them mechanical.',
-      'These over-report on purpose. An extra check is cheap; a missing one is silent. Never drop an aspect whose command matched.',
+      'Return the aspects field: ["code"] when this command produces output, [] when it does not (adapt the extensions to this repo\'s language, keep it mechanical):',
+      `  \`git diff --name-only ${BASE}..HEAD | grep -Ei '\\.(c|cc|cpp|cs|css|ex|exs|go|h|hpp|html|java|js|jsx|kt|lua|mjs|cjs|php|py|rb|rs|scala|sh|svelte|swift|ts|tsx|vue|zig)$'\``,
     ] : []),
   ].join('\n')
 }
@@ -352,15 +340,16 @@ function simplifyFixPrompt(findings) {
 
 const DONE_WHEN = 'The issue\'s `Done when …` paragraph, when present, must hold on this branch: check it by reading and cite what you read. A condition that does not hold is an important finding; one only a build or test run can show is left to the gate.'
 
-function qualityPrompt(agentType, redEvidence) {
+function lensPrompt(agentType, redEvidence) {
   return [
     CONTEXT,
     '',
-    `Review the branch diff as ${agentType}, on your own specialty only.`,
+    'Review the branch diff.',
+    `Your lens: ${FOCUS[agentType] || agentType.split(':').pop()}`,
     REVIEW_RULES,
     'Anything a linter, typechecker or the test suite would catch is out of scope — that gate already ran and passed.',
-    ...(NO_DOMAIN && agentType === CODE_REVIEWER ? [DONE_WHEN] : []),
-    ...(redEvidence && agentType === ASPECT_AGENTS.tests ? [
+    ...(NO_DOMAIN && agentType === ARCHITECT ? [DONE_WHEN] : []),
+    ...(redEvidence && agentType === TEST_LENS ? [
       '',
       'The implementer reports this failing output from the new test, observed before the fix was applied:',
       redEvidence,
@@ -495,12 +484,9 @@ const first = await gate('', '', true)
 if (!first.ok) return { ok: false, stage: 'gate', reason: first.reason, verify: first.verify }
 let changedFiles = first.verify.changedFiles
 
-const aspects = new Set(first.verify.aspects || [])
-if (impl.redEvidence) aspects.add('tests')
-
 // Must precede Review: a cut made after it ships unreviewed.
 let simplify = null
-if (aspects.has('code')) {
+if ((first.verify.aspects || []).includes('code')) {
   phase('Simplify')
   const review = await agentR(simplifyPrompt(), { label: `simplify:#${ISSUE}`, phase: 'Simplify', schema: SIMPLIFY_SCHEMA, model: 'opus' })
   if (!review) return { ok: false, stage: 'simplify', reason: 'simplify reviewer returned no result' }
@@ -530,9 +516,8 @@ if (aspects.has('code')) {
 
 // Gates are keyed so a fix round re-reviews only the ones that failed: fresh
 // reviewers oscillate, inventing a new nit each round and never converging.
-const qualityTypes = [...QUALITY_ALWAYS, ...Object.keys(ASPECT_AGENTS).filter((a) => aspects.has(a)).map((a) => ASPECT_AGENTS[a])]
 const gates = [
-  ...qualityTypes.map((t) => ({ key: t, type: t, prompt: () => qualityPrompt(t, impl.redEvidence) })),
+  ...LENSES.map((t) => ({ key: t, type: t, prompt: () => lensPrompt(t, impl.redEvidence) })),
   ...(NO_DOMAIN ? [] : [{ key: 'domain', type: A.domainReviewer, prompt: domainPrompt }]),
   // A re-review does not re-run the command.
   ...(EXTERNAL ? [{ key: 'external', type: 'generic', prompt: externalPrompt, schema: EXTERNAL_SCHEMA }] : []),

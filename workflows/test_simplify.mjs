@@ -1,4 +1,4 @@
-// What dream-fixer-loop does with each Simplify review, domainReviewer and externalReview arg, and the commit rule each writing agent gets, through stub agents; no claude call.
+// What dream-fixer-loop does with each Simplify review, domainReviewer and externalReview arg, which lenses review, and the prompt rules agents get, through stub agents; no claude call.
 // Usage: node test_simplify.mjs
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
@@ -10,7 +10,7 @@ const args = { issue: '1', branch: 'issue-1', base: 'HEAD', gateCommands: ['true
 // Every other reviewer passes, so the run ends after Review or its fix rounds.
 // gateFails: gate runs that fail before one passes.
 // externalRuns: the external reviewer's replies, the first to its review, the rest to its re-reviews.
-async function run(review, cuts, { aspects = ['code'], domainReviewer, domainLens, gateFails = 0, externalReview, externalRuns = [] } = {}) {
+async function run(review, cuts, { aspects = ['code'], domainReviewer, domainLens, gateFails = 0, externalReview, externalRuns = [], redEvidence = '' } = {}) {
   const labels = []
   const prompts = {}
   async function agent(prompt, opts) {
@@ -20,7 +20,7 @@ async function run(review, cuts, { aspects = ['code'], domainReviewer, domainLen
   async function stub(prompt, opts) {
     labels.push(opts.label)
     prompts[opts.label] = prompt
-    if (opts.phase === 'Implement') return { committed: true, summary: '', redEvidence: '' }
+    if (opts.phase === 'Implement') return { committed: true, summary: '', redEvidence }
     if (opts.label.startsWith('build-fix:')) return { committed: true, summary: '' }
     if (opts.phase === 'Gate') return { passed: gateFails-- <= 0, summary: '', changedFiles: [], dirtyPaths: [], aspects }
     if (opts.label.startsWith('simplify:')) return review
@@ -75,6 +75,7 @@ for (const row of rows) {
 const lean = loaded([], 0)
 
 const doneWhenCheck = 'The issue\'s `Done when …` paragraph, when present, must hold on this branch'
+const lensLabels = ['architect-reviewer', 'performance-engineer', 'sre-engineer', 'test-coverage-reviewer'].map((l) => `review:dream-team:${l}`)
 const domainRows = [
   { name: 'domain reviewer absent', domainReviewer: undefined, domainRan: false },
   { name: 'domain reviewer generic without lens', domainReviewer: 'generic', domainRan: false },
@@ -87,7 +88,9 @@ for (const row of domainRows) {
   const { result, labels, prompts } = await run(lean, undefined, { domainReviewer: row.domainReviewer, domainLens: row.domainLens })
   assert.equal(result.ok, true, row.name)
   assert.equal(labels.includes('review:domain'), row.domainRan, `${row.name}: review:domain dispatched`)
-  assert.equal(prompts['review:pr-review-toolkit:code-reviewer'].includes(doneWhenCheck), !row.domainRan, `${row.name}: code-reviewer Done-when check`)
+  assert.deepEqual(labels.filter((l) => l.startsWith('review:dream-team:')), lensLabels, `${row.name}: lenses dispatched`)
+  assert.ok(!labels.some((l) => l.includes('pr-review-toolkit:')), `${row.name}: no pr-review-toolkit agent`)
+  assert.equal(prompts['review:dream-team:architect-reviewer'].includes(doneWhenCheck), !row.domainRan, `${row.name}: architect Done-when check`)
   if (row.domainLens) assert.ok(prompts['review:domain'].includes(row.domainLens), `${row.name}: lens in domain prompt`)
   console.log(`PASS ${row.name}`)
 }
@@ -95,15 +98,17 @@ for (const row of domainRows) {
 const cmd = 'vllm-review --stdin'
 const extFinding = { severity: 'important', description: 'off-by-one in the retry count', file: 'retry.js' }
 const fixup = 'as `fixup! <subject of the commit it repairs>`'
-const commitRows = [
+const red = '--- FAIL: TestRotateKeepsN (0.00s)\n    rotate_test.go:41: kept 4 files, want 5'
+const promptRows = [
   { name: 'implementer splits only independent changes', label: 'impl:#1', rule: 'commit each change separately under its own subject' },
   { name: 'build-fix commits fixups', label: 'build-fix:#1:r1', rule: fixup, opts: { gateFails: 1 } },
   { name: 'simplify-fix commits fixups', label: 'simplify-fix:#1', rule: fixup, review: loaded([cut('stdlib')], 4),
     cuts: { committed: true, addressed: ['stdlib cut'], disputed: [], summary: '' } },
   { name: 'fix round commits fixups', label: 'fix:#1:r1', rule: fixup, opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] } },
+  { name: 'test lens checks red evidence', label: 'review:dream-team:test-coverage-reviewer', rule: red, opts: { redEvidence: red } },
 ]
 
-for (const row of commitRows) {
+for (const row of promptRows) {
   const { result, prompts } = await run(row.review || lean, row.cuts, row.opts)
   assert.equal(result.ok, true, row.name)
   assert.ok(prompts[row.label].includes(row.rule), row.name)

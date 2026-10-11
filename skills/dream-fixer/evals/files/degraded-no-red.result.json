@@ -4,9 +4,10 @@
   "branch": "issue-66-dns-timeout-leak",
   "implementer": "voltagent-lang:golang-pro",
   "reviewers": [
-    "pr-review-toolkit:code-reviewer",
-    "pr-review-toolkit:comment-analyzer",
-    "pr-review-toolkit:silent-failure-hunter",
+    "dream-team:architect-reviewer",
+    "dream-team:performance-engineer",
+    "dream-team:sre-engineer",
+    "dream-team:test-coverage-reviewer",
     "domain"
   ],
   "degraded": [
@@ -22,9 +23,10 @@
   "minorFindings": [],
   "disputes": [],
   "summaries": {
-    "pr-review-toolkit:code-reviewer": "No findings.",
-    "pr-review-toolkit:comment-analyzer": "No findings.",
-    "pr-review-toolkit:silent-failure-hunter": "Timeout error is wrapped and returned. No findings.",
+    "dream-team:architect-reviewer": "No findings.",
+    "dream-team:performance-engineer": "No findings.",
+    "dream-team:sre-engineer": "Timeout error is wrapped and returned. No findings.",
+    "dream-team:test-coverage-reviewer": "No findings.",
     "domain": "Context now cancels the pending lookup on timeout. No findings."
   }
 }
