@@ -180,16 +180,17 @@ object (never a stringified one):
 - The project's line and the global one disagree → the project's wins, including a project line
   that turns it off.
 
-Report the branch, the implementer and the domain reviewer by type name, and whether
-`externalReview` is set, no prose — the roster is the one thing the user cannot read off
-`/workflows`. Four lines, the label in bold:
+Then report, before the workflow returns:
 
-```
+- Two bullets, the label in bold: the branch, and whether `externalReview` is set.
+- After them, 1-3 sentences on what the change builds, from the issue.
+
+Layout:
+
 - **Branch:** `issue-42-slug`
-- **Implementer:** `<type>`
-- **Domain reviewer:** `<type>`
 - **External reviewer:** `yes`|`no`
-```
+
+<1-3 sentences: what the change builds.>
 
 ## 6. Judge the result
 

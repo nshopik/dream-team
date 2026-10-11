@@ -13,6 +13,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - The `architect-reviewer` agent checks who owns and frees each field, which lock guards it, and the invariants background work relies on.
 - The `dream-fixer-loop` workflow reviews with the four `qa-review` lenses instead of `pr-review-toolkit` agents.
+- The `dream-fixer` skill reports the branch, whether an external reviewer runs, and a 1-3 sentence brief of the change when it starts the workflow, instead of the implementer and domain reviewer types.
 
 ### Fixed
 
