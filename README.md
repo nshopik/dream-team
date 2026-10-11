@@ -40,8 +40,8 @@ It works for application code and infrastructure-as-code. The full walkthrough i
 - **[friction](skills/friction/SKILL.md)**: reports agent friction repeated across past
   `dream-fixer-loop` runs; run it as `/dream-team:friction`.
 - **[qa-review](skills/qa-review/SKILL.md)**: reviews a branch or audits a repo for design,
-  performance and reliability with parallel read-only lenses and an opt-in verify pass; run it as
-  `/dream-team:qa-review`.
+  performance, reliability and test coverage with parallel read-only lenses and an opt-in verify
+  pass; run it as `/dream-team:qa-review`.
 - **[chaos-planning](skills/chaos-planning/SKILL.md)**: reviews a launch's failure-experiment
   plan for missing experiments, hardware faults included, and for experiments lacking a hypothesis,
   injection, blast radius or pass criterion; reports in chat and edits nothing unless the user
@@ -62,6 +62,9 @@ It works for application code and infrastructure-as-code. The full walkthrough i
 - **[sre-engineer](agents/sre-engineer.md)**: reviews a diff or paths for failure behaviour —
   timeouts, retries, shutdown, resource exhaustion, lost errors — read-only; never builds, runs
   experiments or edits.
+- **[test-coverage-reviewer](agents/test-coverage-reviewer.md)**: reviews a diff or paths for test
+  gaps — behaviour no CI test runs, tests that pass when it breaks, untested failure paths —
+  read-only; never builds, runs tests or edits.
 
 ### Hooks
 

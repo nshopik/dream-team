@@ -18,8 +18,8 @@ Skills:
   sweep, `CLAUDE.md` cuts and `CLAUDE.local.md` promotions.
 - `scope-commit`, `scope-mr`: commit and MR text.
 - `scope-spec`: the project spec and its template.
-- `qa-review`: parallel read-only design, performance and reliability lenses, merged, with an
-  opt-in verify pass.
+- `qa-review`: parallel read-only design, performance, reliability and test-coverage lenses,
+  merged, with an opt-in verify pass.
 - `chaos-planning`: gaps in a launch's failure-experiment plan, reported in chat.
 
 Agents:
@@ -31,6 +31,7 @@ Agents:
   foreground.
 - `performance-engineer`: read-only performance review of a diff or paths.
 - `sre-engineer`: read-only failure-behaviour review of a diff or paths.
+- `test-coverage-reviewer`: read-only test-gap review of a diff or paths.
 
 Hooks:
 
@@ -102,9 +103,9 @@ Planning stays explicit, at issue size, because you review every plan.
 
 ## Building agents
 
-Reviewer agents start from the closest dream-team agent, or a voltagent body from
-`VoltAgent/awesome-claude-code-subagents`, and change only what an eval shows. Evals run in a
-local harness kept out of the repo.
+Reviewer agents start from the closest dream-team agent, a voltagent body from
+`VoltAgent/awesome-claude-code-subagents`, or a `pr-review-toolkit` agent, and change only what an
+eval shows. Evals run in a local harness kept out of the repo.
 
 - Starting from a voltagent body, cut its Communication Protocol, progress and delivery JSON,
   agent-integration list and process checklists (testing, monitoring, culture, capacity).
