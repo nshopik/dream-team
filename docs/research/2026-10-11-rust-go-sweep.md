@@ -25,7 +25,7 @@ noise; on unbound pull request 1525
 ([qa-review against pr-review-toolkit](2026-10-11-qa-review-vs-pr-review-toolkit.md)), runs of
 one variant spread 11-14 points.
 
-## The lenses overlap; none adds much to the other three
+## On defect rows the lenses overlap; none adds much to the other three
 
 | Lens | Quality alone | Marginal | Share of lens cost |
 |---|---|---|---|
@@ -52,11 +52,10 @@ found one row no other lens found: hickory-dns loses the same-server UDP-to-TCP 
 server entry holds both transports. On pull request 1525 the list added two ownership rows in 3
 of 3 runs.
 
-## Open: the test-coverage lens earns its cost
+## The test-coverage lens earns its cost on test gaps
 
-It added nothing on these 11 commits and costs about as much as the architect lens. On pull
-request 1525 it added 3.5-7.5 points per run. These commits are small security fixes with little
-test surface. The lens stays; #221 rechecks it on branches with test changes.
+This sweep's ledger had no test-gap rows; scored with them, the lens adds 9.1-20.9 points per run
+([test-coverage lens recheck](2026-10-11-test-lens-recheck.md)).
 
 ## Open: qa-review under-rates the DS digest overflow
 
