@@ -44,13 +44,9 @@ handler is reclaimed, and code-reviewer went on to the auth-xfr callback that fr
 (C10). The t4 prompt named no space check, and C2 sits inside the diff, so C2 needed no trace
 outside it.
 
-## Open: diff-specific focus lines per lens find C3
-
-Untested claim: when qa-review's main session writes diff-specific questions into each lens
-prompt, as the toolkit's orchestrator does, a lens finds C3. Not run here: the only text that found C3 names t1's own buffer, so a
-cue written from t1 and tested on t1 proves nothing. Tracked in #226.
-
 ## Ruled out
 
 - A separate agent for the trace: code-reviewer's agent text has no trace cue; its C3 and C10
   came from focus lines in its prompt.
+- Diff-specific questions per lens from qa-review's main session: C3 still at half credit in 3
+  of 3 runs (#226, [diff questions in lens prompts](2026-10-11-diff-questions-in-lens-prompts.md)).

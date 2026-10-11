@@ -62,12 +62,9 @@ The sre lens alone averaged 54.0 against 57.5 on main. Main alone found N11 (a p
 in one run; the line's runs alone found I12, I14 and N12, each in one run. The line is not
 shipped.
 
-## Open: diff-specific focus lines per lens raise the rating
-
-Untested claim: when qa-review's main session writes diff-specific questions into each lens
-prompt, as the toolkit's orchestrator does, a lens rates the overflow critical more often.
-Tracked in #226, which now covers t3 beside t1.
-
 ## Ruled out
 
 - The sre bound line: sre lens rating unchanged on t3, within noise on pull request 1525.
+- Diff-specific questions per lens from qa-review's main session: merged report critical in 2 of
+  3 runs, within noise (#226,
+  [diff questions in lens prompts](2026-10-11-diff-questions-in-lens-prompts.md)).
