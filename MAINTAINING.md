@@ -53,7 +53,8 @@ Planning stays explicit, at issue size, because you review every plan.
   every MR was rejected: it asks a question on MRs with nothing to keep.
 - A rule comes first; a hook is added only after the rule has failed once.
 - In the `qa-review` skill, a lens with no installed agent type fails dispatch and is listed as
-  missing; it never falls back to a generic agent.
+  missing; it never falls back to a generic agent. `dream-fixer-loop` instead retries that lens
+  as a generic agent and lists its type in `degraded`.
 - No global "issue-sized work gets no spec" rule: it duplicates the scope rules. The unreviewed,
   plan-like September specs came from a skill that has since been rewritten into `dream-fixer`.
 - The upstream-repo guard lives in `jit-context.py`, not a tracker skill: that skill loads only
@@ -100,6 +101,12 @@ Planning stays explicit, at issue size, because you review every plan.
 - The component table is optional. Where folder names already say what each component does, a
   table restating them is a pointer list and rots like one. A project that keeps one gives each
   component a row and a note only where the name and path fall short.
+- `dream-fixer-loop` reviews with the `qa-review` lenses, not `pr-review-toolkit`: the lenses
+  scored as well at about 64% of the cost (#217, #219).
+- `performance-engineer` runs in neither lens roster: it added 0-6 points over the other lenses
+  at about a fifth of the lens cost (#224). It still ships as an agent.
+- `dream-fixer` picks no implementer or domain reviewer: specialist implementers made no
+  difference (#192), and the domain check is a `qa-review` lens (#225).
 
 ## Building agents
 
