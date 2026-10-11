@@ -2,7 +2,6 @@
   "ok": true,
   "issue": 81,
   "branch": "issue-81-scrub-foreign-rrsig",
-  "implementer": "voltagent-lang:golang-pro",
   "reviewers": [
     "dream-team:architect-reviewer",
     "dream-team:performance-engineer",

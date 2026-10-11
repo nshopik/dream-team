@@ -2,7 +2,6 @@
   "ok": true,
   "issue": 66,
   "branch": "issue-66-dns-timeout-leak",
-  "implementer": "voltagent-lang:golang-pro",
   "reviewers": [
     "dream-team:architect-reviewer",
     "dream-team:performance-engineer",

@@ -2,7 +2,6 @@
   "ok": true,
   "issue": 57,
   "branch": "issue-57-export-since-flag",
-  "implementer": "voltagent-lang:golang-pro",
   "reviewers": [
     "dream-team:architect-reviewer",
     "dream-team:performance-engineer",

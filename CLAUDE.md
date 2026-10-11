@@ -43,9 +43,6 @@
   repo consistent with each prompt, or the agent stops before loading any skill.
 - In a headless `claude -p` run, pipe the prompt on stdin or put it before `--allowed-tools`; that
   flag is variadic and swallows a trailing prompt ("Input must be provided").
-- Pass a dream-fixer-loop roster slot with no specialist as the literal `generic`, never
-  `general-purpose`; the workflow rejects an implementer and domain reviewer of the same
-  non-`generic` type.
 - Keep scout findings mined from local session data (workflow journals, run counts) out of the repo
   and its issues; report them in chat only, even when dream-fixer's scout tier says to commit a
   research note.

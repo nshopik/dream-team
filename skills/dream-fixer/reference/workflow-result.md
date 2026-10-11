@@ -5,7 +5,7 @@
     back.
   - *The fixer disputed every finding and the reviewers held.* Settle each entry in `disputes`
     yourself, per the `disputes` bullet below. With every entry in `blocking` settled and
-    `deadReviewers` empty, carry on to step 6's lab steps and step 7; otherwise hand the branch
+    `deadReviewers` empty, carry on to step 5's lab steps and step 6; otherwise hand the branch
     back.
   - `deadReviewers` non-empty → those reviewers returned nothing on every try. Do not open the MR;
     hand the branch back.

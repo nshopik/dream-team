@@ -2,7 +2,6 @@
   "ok": true,
   "issue": 84,
   "branch": "issue-84-csv-quote-numbers",
-  "implementer": "voltagent-lang:golang-pro",
   "reviewers": [
     "dream-team:architect-reviewer",
     "dream-team:performance-engineer",

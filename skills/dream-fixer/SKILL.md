@@ -13,14 +13,14 @@ argument-hint: <issue-number>
 
 One issue per invocation. If the user names several, do them one at a time.
 
-You are the orchestrator. You read, triage, roster, branch and ship. **You do not write the
-change** — the workflow's implementer does. Everything between the branch and the MR happens in
-dispatched agents. Your only edits are step 6's settled disputes and minor findings, which step 7
-reruns `gateCommands` on, a light-tier issue's edit, and a scout issue's research note (step 2a).
+You are the orchestrator. You read, triage, branch and ship. **You do not write the change** — the
+workflow's implementer does. Everything between the branch and the MR happens in dispatched
+agents. Your only edits are step 5's settled disputes and minor findings, which step 6 reruns
+`gateCommands` on, a light-tier issue's edit, and a scout issue's research note (step 2a).
 
 **Lab work is yours, not the workflow's.** Workflow agents never ssh to a lab host. Anything the
 issue or the repo's `CLAUDE.md` needs run on a lab host — a measurement the issue asks for, a test
-that needs root, a perf gate — you dispatch after the workflow returns (step 6), through
+that needs root, a perf gate — you dispatch after the workflow returns (step 5), through
 `dream-team:lab-runner`. A light-tier issue has lab work only when it asks for a measurement
 or its bug reproduces there (step 2a). No lab host named → there is no lab work. Say so in the
 workflow's `notes` so the implementer does not try, and does not report it as an assumption.
@@ -78,29 +78,28 @@ full (step 3 on):
 
 Light path, no workflow:
 
-- Branch per step 4.
+- Branch per step 3.
 - Make the edit inline.
 - Run every `gateCommands` entry.
 - Dispatch one reviewer with the issue and the diff, its type picked below.
 - A blocking finding → fix it inline and rerun `gateCommands`, or hand the branch back.
 - A bug fix → rerun the reproduction on the branch head and see it pass.
-- Run lab work only for that rerun or a measurement the issue asks for, per step 6's lab steps.
-- Run step 6's docs drift check, unless the reviewer was `dream-team:docs-reviewer`.
+- Run lab work only for that rerun or a measurement the issue asks for, per step 5's lab steps.
+- Run step 5's docs drift check, unless the reviewer was `dream-team:docs-reviewer`.
 - The diff outgrows the criteria → `git reset --hard <base>` and run the full loop.
-- Open the MR per step 7.
+- Open the MR per step 6.
 - Report the tier and the criterion that allowed it.
 
 Light-path reviewer type:
 
 - Docs, comments, help or usage text only → `dream-team:docs-reviewer`.
-- Anything else → the step-3 domain reviewer type, with the failing evidence for a bug fix.
-- Type `none` → no reviewer.
-- Type not in the catalog → `generic`.
+- Anything else → `general-purpose`, told to check the diff against the reference sources and
+  invariants the project's `CLAUDE.md` names, with the failing evidence for a bug fix.
 
 Scout tier: no workflow, no code; the research note is the one change you write. Answer the
 proposal's questions yourself within its time box. Write the answers as a note in the repo's
-research docs, file one issue per gap per `scope-issue` with its milestone (step 6), then commit
-the note on the step-4 branch and open the MR per step 7 with `Closes #<n>`, the follow-up issues
+research docs, file one issue per gap per `scope-issue` with its milestone (step 5), then commit
+the note on the step-3 branch and open the MR per step 6 with `Closes #<n>`, the follow-up issues
 linked.
 
 Research note:
@@ -112,26 +111,7 @@ Research note:
 - A finding left unresolved → `## Open: <claim>`, naming the issue that tracks it.
 - Dead ends → one `## Ruled out` list.
 
-## 3. Pick the roster
-
-Two slots, both from the Agent tool list in your context — that list is the catalog, and a type not
-in it fails at dispatch.
-
-- **Implementer**: the specialist whose domain matches the issue. No obvious fit → `generic`. The
-  type must have Bash: it commits and runs tests. A fitting specialist without Bash → make it the
-  domain reviewer and implement with `generic`.
-- **Domain reviewer**: the lens the build and test suite cannot check — the project's own rules,
-  reference sources and invariants. **MUST be a different type than the implementer**.
-  - No second specialist for the domain in the catalog → `none`: no domain reviewer runs.
-  - `generic` only when the project's `CLAUDE.md` names a reference source or invariant and the
-    diff makes a claim checkable against it; pass the check and the source files in `domainLens`.
-  - No such claim → `none`, even when the project names a lens.
-
-Override the pick when you know better than the catalog descriptions.
-
-The quality reviewers are not your choice: the workflow picks them.
-
-## 4. Preflight and branch
+## 3. Preflight and branch
 
 Stop and report when either holds:
 
@@ -144,7 +124,7 @@ unless the project's `CLAUDE.md` names another: `git switch -c issue-<n>-<slug> 
 Never work on `master`/`main`.
 Record `git rev-parse HEAD` — it is the workflow's `base`.
 
-## 5. Run the workflow
+## 4. Run the workflow
 
 Invoke the **Workflow** tool with `name: "dream-team:dream-fixer-loop"` and `args` as a real JSON
 object (never a stringified one):
@@ -156,11 +136,8 @@ object (never a stringified one):
   "body": "<issue description, verbatim>",
   "notes": "<what the description does not carry>",
   "branch": "issue-42-slug",
-  "base": "<sha from step 4>",
+  "base": "<sha from step 3>",
   "gateCommands": ["cargo build --workspace", "cargo test --workspace", "cargo clippy --workspace"],
-  "implementer": "<catalog type or generic>",
-  "domainReviewer": "<catalog type, generic or none>",
-  "domainLens": "<the generic reviewer's check, or leave out>",
   "externalReview": "<command, or leave out>"
 }
 ```
@@ -194,7 +171,7 @@ Layout:
 <1-3 sentences: what the change builds.>
 ```
 
-## 6. Judge the result
+## 5. Judge the result
 
 The workflow returns structured, not final. Once it returns, read
 [`reference/workflow-result.md`](reference/workflow-result.md): what each result field means and
@@ -206,13 +183,13 @@ what to do with it.
 
 Docs drift, once the result is `ok`:
 
-- Dispatch `dream-team:docs-reviewer` on the branch diff before your other step-6 edits.
+- Dispatch `dream-team:docs-reviewer` on the branch diff before your other step-5 edits.
 - Make those edits while it runs.
 - A 🔴/🟡 finding you judge wrong → drop it, as a settled dispute.
 - 🔴/🟡 findings left → after your edits, dispatch `dream-team:docs-editor` in drift mode with the
   diff and only the pages they name.
 - 🔵 findings → treat as minor findings.
-- The editor's edits are step-6 changes: step 7 commits and gates them.
+- The editor's edits are step-5 changes: step 6 commits and gates them.
 
 Adjacent defects — anything found outside the diff:
 
@@ -228,9 +205,9 @@ label when that milestone has an open dependency. Pick the milestone from the re
 roadmap milestone table (`ROADMAP.md` or `docs/ROADMAP.md`); no roadmap → the tracker's open
 milestones. None clearly fits → ask.
 
-## 7. Open the MR/PR
+## 6. Open the MR/PR
 
-Commit anything you changed in step 6 as `fixup! <subject of the commit it repairs>`, one fixup
+Commit anything you changed in step 5 as `fixup! <subject of the commit it repairs>`, one fixup
 per commit an edit repairs. If you changed anything, run every `gateCommands` entry on the new
 head yourself and carry on only when all exit 0. A red run → fix it, or hand the branch back.
 
@@ -278,7 +255,7 @@ Then push and open the MR/PR against the branch the project's `CLAUDE.md` names.
 Link the issue so it auto-closes (`Closes #<n>`). Write the description review-facing; a `scope-mr`
 skill, if present, is the source of truth for it.
 
-## 8. Watch the MR/PR
+## 7. Watch the MR/PR
 
 Once the MR/PR is open, start a Bash `run_in_background` poll that exits on a final state,
 `merged` or `closed` — never on "not open": GitLab reports a transient `locked` while it merges.

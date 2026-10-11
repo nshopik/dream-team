@@ -1,8 +1,9 @@
 ---
 name: qa-review
 description: >-
-  Reviews design, reliability and test coverage with parallel read-only lenses (dream-team's
-  architect-reviewer, sre-engineer and test-coverage-reviewer agents), whose findings the main
+  Reviews design, reliability, test coverage and claims against the project's reference sources
+  with parallel read-only lenses (dream-team's architect-reviewer, sre-engineer and
+  test-coverage-reviewer agents, and a generic domain lens), whose findings the main
   session merges and deduplicates, with an opt-in verify pass that checks each finding against the
   code. Reviews the current branch by default, or audits the whole repository. Use when the user
   runs /dream-team:qa-review or asks for a qa-review, audit or verify pass.
@@ -29,12 +30,14 @@ reviewer must read first if `CLAUDE.md` names them.
 
 ## 2. Pick the lenses
 
-Lenses: `dream-team:architect-reviewer`, `dream-team:sre-engineer` and
-`dream-team:test-coverage-reviewer`.
+Lenses: `dream-team:architect-reviewer`, `dream-team:sre-engineer`,
+`dream-team:test-coverage-reviewer` and `domain`.
 
 - Every file in scope is docs or config (Markdown, plain text, YAML, TOML, JSON, INI), and none
   is CI, build, test-runner or feature-flag config or an agent or skill prompt (`SKILL.md`,
   `agents/*.md`) → skip `dream-team:test-coverage-reviewer`.
+- The project's `CLAUDE.md` names no reference source or invariant, or nothing in scope makes a
+  claim checkable against one → skip `domain`.
 
 Before launching, list the lenses that run as a bullet list, one bold name per bullet; list each
 skipped lens the same way with its reason.
@@ -49,7 +52,7 @@ skill if one is loaded. Forge unreachable → skip and say so.
 
 Launch one Agent per lens, all in one message, and wait for every report:
 
-- `subagent_type`: the lens.
+- `subagent_type`: the lens; `general-purpose` for `domain`.
 - `model`: the session model's tier (`opus`, `sonnet`, `haiku` or `fable`), taken from the
   environment section of your system prompt.
 - `prompt`: the lens prompt below.
@@ -61,6 +64,8 @@ Focus by the lens name after its last `:`; a lens not listed → the lens name i
 
 - `architect-reviewer`: package boundaries and coupling, data-flow and delivery guarantees
   (loss, duplication), backpressure, documented contracts and where docs and code disagree.
+- `domain`: `<claim>` checked against `<source files>` and `<invariant>`, as the project's
+  `CLAUDE.md` names them; cite file and line on both sides.
 
 Rules block, verbatim:
 
