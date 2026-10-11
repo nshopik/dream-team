@@ -116,9 +116,10 @@ eval shows. Evals run in a local harness kept out of the repo.
   precision.
 - Add a line only for a miss seen in an eval, naming the missing concept, not a generic step
   ("read the library source" changed nothing).
-- Make a reviewer read-only with its `tools` list plus two hard rules: no build, test, benchmark,
-  install or network; no file edits.
-- Never give Bash an allow-list of commands; it stops the agent reading library source.
+- Make a reviewer read-only with `tools: Read, Grep, Glob`; a prompt rule does not keep it off
+  Bash (#229).
+- Never give a reviewer Bash for git; its dispatcher, or the workflow's gate, writes the diff to
+  a scratchpad file and the brief names the path.
 - Never pin `effort:` in a shipped agent; pin it in the eval harness instead.
 - Name the agent by role (`performance-engineer`); the role name is a cue too.
 - Reviewed and skipped for the docs agents: voltagent `documentation-engineer`,

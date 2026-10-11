@@ -48,9 +48,11 @@ Report drift, fix nothing yet:
 
 - Architecture doc and diagram against the workspace's component list.
 - Specs whose decision the code no longer follows → propose a `Superseded by` status line.
-- README, `docs/` pages, help text and comments: dispatch `dream-team:docs-reviewer` on the
-  milestone's merged diff, from its first-merged MR's merge base to its last-merged MR's merge
-  commit.
+- README, `docs/` pages, help text and comments: write the milestone's merged diff, from its
+  first-merged MR's merge base to its last-merged MR's merge commit, to
+  `<scratchpad>/milestone.diff`, `<scratchpad>` spelled as your scratchpad directory's literal
+  path.
+- Dispatch `dream-team:docs-reviewer` with that file's path.
 - Each 🔴/🟡 `docs-reviewer` finding, proposed as a fix; leave its 🔵 findings out. The user
   approves or rejects each.
 - Roadmap, when the project has one: status of the milestone's merged work, and the row against

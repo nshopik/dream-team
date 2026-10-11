@@ -23,11 +23,12 @@ const BRANCH = String(A.branch || '')
 const BASE = String(A.base || '')
 const GATE_COMMANDS = Array.isArray(A.gateCommands) ? A.gateCommands.map(String).filter(Boolean) : []
 const EXTERNAL = String(A.externalReview || '')
+const DIFF_FILE = String(A.diffFile || '')
 const FIX_ROUNDS = 3
 const VERIFY_ROUNDS = 3
 
-if (!ISSUE || !BRANCH || !BASE || !GATE_COMMANDS.length) {
-  throw new Error('dream-fixer-loop: args.issue, args.branch, args.base and args.gateCommands are required')
+if (!ISSUE || !BRANCH || !BASE || !GATE_COMMANDS.length || !DIFF_FILE) {
+  throw new Error('dream-fixer-loop: args.issue, args.branch, args.base, args.gateCommands and args.diffFile are required')
 }
 
 // ---------------------------------------------------------------------------
@@ -53,7 +54,7 @@ const IMPL_SCHEMA = {
 // self-assessment, and a second agent for a `git diff --name-only` is waste.
 const VERIFY_SCHEMA = {
   type: 'object',
-  required: ['passed', 'summary', 'changedFiles', 'dirtyPaths'],
+  required: ['passed', 'summary', 'changedFiles', 'dirtyPaths', 'diffWritten'],
   additionalProperties: false,
   properties: {
     friction: FRICTION,
@@ -61,6 +62,7 @@ const VERIFY_SCHEMA = {
     summary: { type: 'string' },
     changedFiles: { type: 'array', items: { type: 'string' } },
     dirtyPaths: { type: 'array', items: { type: 'string' }, description: 'paths from `git status --porcelain` taken before the gate ran' },
+    diffWritten: { type: 'boolean', description: 'true only if the diff-file write exited 0' },
     aspects: {
       type: 'array',
       description: 'whether this diff touches code; only when the prompt asks for it',
@@ -244,7 +246,7 @@ const CONTEXT = [
   ...(NOTES ? ['', 'Orchestrator notes — tracker discussion, decisions the user already made, work that is not yours:', NOTES] : []),
   '',
   `Branch: ${BRANCH} (already created and checked out; work in the repo as it stands).`,
-  `Base: ${BASE} — the branch diff is \`git diff ${BASE}..HEAD\`.`,
+  `Base: ${BASE}.`,
   'The repo CLAUDE.md files are already in your context — they carry this project\'s conventions and domain rules. Follow them.',
   'Never push, never open or edit an MR/PR, and never create, comment on or edit an issue, whatever the repo context says; the orchestrator does all of that after this workflow.',
 ].join('\n')
@@ -257,6 +259,9 @@ const GATE = [
 const COMMIT_ALL = 'Commit every edit you make as `fixup! <subject of the commit it repairs>`, with that subject copied from `git log`. An edit that repairs two commits is two fixup commits, never a plain commit: stage per path, and stage the hunks of a shared file with a partial patch through `git apply --cached`. Do not bump a version or add a release section: only the implementer\'s commit carries the release.'
 
 const READ_ONLY = 'Read-only: do not edit, stage or commit anything, and do not run the build or the test suite — the gate already ran them, and the other reviewers share this checkout.'
+
+// The lens agents have no Bash, so each gate run refreshes this file for them.
+const READ_DIFF = `The branch diff is in \`${DIFF_FILE}\`; read it with the Read tool.`
 
 const REVIEW_RULES = [
   READ_ONLY,
@@ -289,6 +294,7 @@ function verifyPrompt(after, withAspects) {
     'Report pass only if every command exited 0.',
     'Do not review style or design — that is a later stage. Report what the tooling says.',
     `Report changedFiles from \`git diff --name-only ${BASE}..HEAD\`.`,
+    `Last, write the branch diff for the reviewers: \`git diff ${BASE}..HEAD > '${DIFF_FILE}'\`. Report diffWritten true only if it exited 0.`,
     ...(withAspects ? [
       'Return the aspects field: ["code"] when this command produces output, [] when it does not (adapt the extensions to this repo\'s language, keep it mechanical):',
       `  \`git diff --name-only ${BASE}..HEAD | grep -Ei '\\.(c|cc|cpp|cs|css|ex|exs|go|h|hpp|html|java|js|jsx|kt|lua|mjs|cjs|php|py|rb|rs|scala|sh|svelte|swift|ts|tsx|vue|zig)$'\``,
@@ -314,6 +320,7 @@ function simplifyPrompt() {
     CONTEXT,
     '',
     `Load the ${PONYTAIL_REVIEW} skill with the Skill tool and review the branch diff with it.`,
+    READ_DIFF,
     'Not available in this session → return skillLoaded false, no findings and net 0. Never review without it.',
     'Return each line the skill writes as one finding, and the N of its `net: -<N> lines possible.` as net.',
     'The skill says `Lean already. Ship.` → return no findings and net 0.',
@@ -339,6 +346,7 @@ function lensPrompt(agentType, redEvidence) {
     CONTEXT,
     '',
     'Review the branch diff.',
+    READ_DIFF,
     `Your lens: ${FOCUS[agentType] || agentType.split(':').pop()}`,
     REVIEW_RULES,
     'Anything a linter, typechecker or the test suite would catch is out of scope — that gate already ran and passed.',
@@ -356,6 +364,7 @@ function domainPrompt() {
     CONTEXT,
     '',
     'Review the branch diff as the domain lens.',
+    READ_DIFF,
     DONE_WHEN,
     'Then find the reference source or invariant this project\'s CLAUDE.md names, and a claim in the diff checkable against it. Either one missing → raise no finding on it and say why in your summary.',
     'Both present → check the claim against that source and cite what you read — file and line.',
@@ -390,6 +399,7 @@ function reReviewPrompt(prev, fix, round) {
     fix.disputed.length ? `Disputed: ${fix.disputed.map((d) => `${d.finding} — ${d.reason}`).join('; ')}` : '',
     '',
     READ_ONLY,
+    READ_DIFF,
     'Re-review ONLY your own outstanding findings against the current branch state.',
     'Do not raise new findings unrelated to them — a fresh sweep each round makes this loop never converge.',
     'List under resolved each of your prior findings the current branch now fixes, severity unchanged.',
@@ -445,6 +455,7 @@ async function gate(after, tag, withAspects) {
     })
     if (!verify) return { ok: false, reason: 'gate agent returned no result' }
     if (verify.dirtyPaths.length) return { ok: false, reason: `uncommitted edits in the working tree: ${verify.dirtyPaths.join(', ')}`, verify }
+    if (!verify.diffWritten) return { ok: false, reason: `diff file ${DIFF_FILE} not written; the reviewers would judge a missing or stale diff`, verify }
     if (verify.passed) return { ok: true, verify }
     if (round === VERIFY_ROUNDS) {
       return { ok: false, reason: `build/test still failing after ${VERIFY_ROUNDS} fix rounds`, verify }
