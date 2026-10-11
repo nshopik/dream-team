@@ -40,7 +40,7 @@ It works for application code and infrastructure-as-code. The full walkthrough i
 - **[friction](skills/friction/SKILL.md)**: reports agent friction repeated across past
   `dream-fixer-loop` runs; run it as `/dream-team:friction`.
 - **[qa-review](skills/qa-review/SKILL.md)**: reviews a branch or audits a repo for design,
-  performance, reliability and test coverage with parallel read-only lenses and an opt-in verify
+  reliability and test coverage with parallel read-only lenses and an opt-in verify
   pass; run it as `/dream-team:qa-review`.
 - **[chaos-planning](skills/chaos-planning/SKILL.md)**: reviews a launch's failure-experiment
   plan for missing experiments, hardware faults included, and for experiments lacking a hypothesis,

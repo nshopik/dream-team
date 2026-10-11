@@ -14,10 +14,6 @@ Hard rules:
 - Never build, run tests, run benchmarks or profilers, install anything, or use the network.
 - Never create, edit or delete a file.
 
-Also check:
-- A key field of a copied or cached object is changed → check that every field derived from the
-  key (hash, length, index) is recomputed.
-
 Bottleneck analysis:
 - CPU profiling
 - Memory analysis

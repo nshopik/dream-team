@@ -75,12 +75,13 @@ for (const row of rows) {
 const lean = loaded([], 0)
 
 const doneWhenCheck = 'The issue\'s `Done when …` paragraph, when present, must hold on this branch'
-const lensLabels = ['architect-reviewer', 'performance-engineer', 'sre-engineer', 'test-coverage-reviewer'].map((l) => `review:dream-team:${l}`)
+const lensLabels = ['architect-reviewer', 'sre-engineer', 'test-coverage-reviewer'].map((l) => `review:dream-team:${l}`)
 const domainRows = [
   { name: 'domain reviewer absent', domainReviewer: undefined, domainRan: false },
   { name: 'domain reviewer generic without lens', domainReviewer: 'generic', domainRan: false },
   { name: 'domain reviewer generic with lens', domainReviewer: 'generic', domainLens: 'C parity of the log line', domainRan: true },
   { name: 'domain reviewer specialist', domainReviewer: 'rust-pro', domainRan: true },
+  { name: 'domain reviewer former lens', domainReviewer: 'dream-team:performance-engineer', domainRan: true },
   { name: 'domain reviewer none', domainReviewer: 'none', domainRan: false },
 ]
 

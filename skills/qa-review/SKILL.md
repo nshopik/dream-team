@@ -1,12 +1,11 @@
 ---
 name: qa-review
 description: >-
-  Reviews design, performance, reliability and test coverage with parallel read-only lenses
-  (dream-team's architect-reviewer, performance-engineer, sre-engineer and test-coverage-reviewer
-  agents), whose findings the main session merges and deduplicates, with an opt-in verify pass
-  that checks each finding against the code. Reviews the current branch by default, or audits the
-  whole repository. Use when the user runs /dream-team:qa-review or asks for a qa-review, audit or
-  verify pass.
+  Reviews design, reliability and test coverage with parallel read-only lenses (dream-team's
+  architect-reviewer, sre-engineer and test-coverage-reviewer agents), whose findings the main
+  session merges and deduplicates, with an opt-in verify pass that checks each finding against the
+  code. Reviews the current branch by default, or audits the whole repository. Use when the user
+  runs /dream-team:qa-review or asks for a qa-review, audit or verify pass.
 disable-model-invocation: true
 argument-hint: "[audit] [verify] [base-ref | path ...]"
 ---
@@ -30,10 +29,15 @@ reviewer must read first if `CLAUDE.md` names them.
 
 ## 2. Pick the lenses
 
-Every run: `dream-team:architect-reviewer`, `dream-team:performance-engineer`,
-`dream-team:sre-engineer` and `dream-team:test-coverage-reviewer`.
+Lenses: `dream-team:architect-reviewer`, `dream-team:sre-engineer` and
+`dream-team:test-coverage-reviewer`.
 
-Before launching, list the lenses that run as a bullet list, one bold name per bullet.
+- Every file in scope is docs or config (Markdown, plain text, YAML, TOML, JSON, INI), and none
+  is CI, build, test-runner or feature-flag config or an agent or skill prompt (`SKILL.md`,
+  `agents/*.md`) → skip `dream-team:test-coverage-reviewer`.
+
+Before launching, list the lenses that run as a bullet list, one bold name per bullet; list each
+skipped lens the same way with its reason.
 
 ## 3. Existing open issues (optional)
 
@@ -57,8 +61,6 @@ Focus by the lens name after its last `:`; a lens not listed → the lens name i
 
 - `architect-reviewer`: package boundaries and coupling, data-flow and delivery guarantees
   (loss, duplication), backpressure, documented contracts and where docs and code disagree.
-- `performance-engineer`: hot-path allocations, GC pressure, lock contention, I/O buffering,
-  batch sizing. Trace the code; the verify pass does the measuring.
 
 Rules block, verbatim:
 
@@ -87,7 +89,8 @@ several), `status` (verified or suspected), `disputed`, `lenses`, `why`, `fix`, 
 
 ## 5. Report to the user
 
-- Top line, no heading: lenses run, lenses in `missing`, and each `blocked` entry.
+- Top line, no heading: lenses run, each skipped lens with its reason, lenses in `missing`, and
+  each `blocked` entry.
 - Render `items` in compressed form, one or two lines each: `id`, status (☑️ verified, ❔
   suspected), claim, `location`, fix. Append `(disputed)` when `disputed` is set and `[#N]` from
   `coveredBy`.

@@ -187,10 +187,12 @@ Then report, before the workflow returns:
 
 Layout:
 
+```
 - **Branch:** `issue-42-slug`
 - **External reviewer:** `yes`|`no`
 
 <1-3 sentences: what the change builds.>
+```
 
 ## 6. Judge the result
 

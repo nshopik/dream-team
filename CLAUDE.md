@@ -28,8 +28,8 @@
 - Call a plugin workflow by its prefixed name (`dream-team:<name>`), never by `scriptPath`; skill
   text does not expand `${CLAUDE_PLUGIN_ROOT}`; a plugin agent body does.
 - Release a plugin by bumping its `plugin.json` version and CHANGELOG; never tag it or offer a tag.
-- Show example skill output as rendered markdown, never inside a code fence; the fence hides the
-  bold labels being judged.
+- Fence a chat-output layout in a skill, so the model reproduces its markdown; show example
+  skill output in docs or evals as rendered markdown, where a fence hides the bold labels judged.
 - Lay out a skill's chat output for a monospace terminal: tight `- **Label:**` bullets, no blank
   lines between items; paragraph spacing wastes fixed-height lines.
 - Commit `skills/*/evals/` (cases, fixtures, runner) except `skills/scope-*/evals/`; those and

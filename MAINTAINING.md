@@ -18,8 +18,8 @@ Skills:
   sweep, `CLAUDE.md` cuts and `CLAUDE.local.md` promotions.
 - `scope-commit`, `scope-mr`: commit and MR text.
 - `scope-spec`: the project spec and its template.
-- `qa-review`: parallel read-only design, performance, reliability and test-coverage lenses,
-  merged, with an opt-in verify pass.
+- `qa-review`: parallel read-only design, reliability and test-coverage lenses, merged,
+  with an opt-in verify pass.
 - `chaos-planning`: gaps in a launch's failure-experiment plan, reported in chat.
 
 Agents:
