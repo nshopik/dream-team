@@ -3,12 +3,14 @@
 - **`ok: false` with `handBack: true`** — blocking findings survived. `reason` says which case:
   - *Fix rounds ran out.* Do not open an MR. Report the outstanding findings and hand the branch
     back.
-  - *The fixer disputed every finding and the reviewers held.* Settle each entry in `disputes`
-    yourself, per the `disputes` bullet below. With every entry in `blocking` settled and
-    `deadReviewers` empty, carry on to step 5's lab steps and step 6; otherwise hand the branch
+  - *The fixer disputed every finding it was given and the reviewers held.* Settle each entry in
+    `disputes` yourself, per the `disputes` bullet below. A `blocking` entry with no `disputes`
+    entry was not given to the fixer that round → hand the branch back. With every entry in
+    `blocking` settled and `deadReviewers` empty, carry on to step 5's lab steps and step 6;
+    otherwise hand the branch back.
+  - `deadReviewers` non-empty → those reviewers returned nothing on their last try; one that died
+    on a re-review keeps its earlier findings in `blocking`. Do not open the MR; hand the branch
     back.
-  - `deadReviewers` non-empty → those reviewers returned nothing on every try. Do not open the MR;
-    hand the branch back.
 - **`ok: false` otherwise** — the implement, gate, simplify or fix stage failed. Report the
   reason; the branch is where the agent left it.
 - **`degraded`** — roster types whose agent call threw, after which every call of that type ran
