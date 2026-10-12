@@ -5,10 +5,6 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
-### Added
-
-- A `debugger` skill diagnoses errors, failing tests, regressions and slow paths to a root cause, and `dream-fixer` loads it for a lab failure with no visible cause.
-
 ### Changed
 
 - The `scope-issue` skill puts a small amendment in a new comment and, when it rewrites an issue description, comments why it changed.
