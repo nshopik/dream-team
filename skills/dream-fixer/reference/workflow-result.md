@@ -11,9 +11,12 @@
     hand the branch back.
 - **`ok: false` otherwise** — the implement, gate, simplify or fix stage failed. Report the
   reason; the branch is where the agent left it.
-- **`degraded`** — roster types that were not dispatchable and ran as a generic agent instead,
-  `ponytail:ponytail-review` when that skill was missing and the Simplify phase was skipped, and
-  `external` when the `externalReview` command was missing or exited non-zero and was skipped.
+- **`degraded`** — roster types whose agent call threw, after which every call of that type ran
+  as a generic agent; `ponytail:ponytail-review` when that skill was missing or its review
+  returned nothing and the Simplify phase was skipped, and `external` when the `externalReview` command was missing or
+  exited non-zero and was skipped.
+- **`untrackedPaths`** — untracked paths `git status --porcelain` listed before the latest gate run;
+  they do not fail the gate. Returned on an `ok` result, a `handBack`, or a `gate` stage failure.
 - **`simplify`** — the over-engineering cuts made before review: `applied`, `disputed` with the
   implementer's reason, and `net`, the review's estimate of lines that could go. Put applied cuts in
   the MR description, and `net` only when nothing was disputed; treat a disputed cut like a minor
