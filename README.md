@@ -46,9 +46,6 @@ It works for application code and infrastructure-as-code. The full walkthrough i
   plan for missing experiments, hardware faults included, and for experiments lacking a hypothesis,
   injection, blast radius or pass criterion; reports in chat and edits nothing unless the user
   says yes.
-- **[debugger](skills/debugger/SKILL.md)**: diagnoses errors, failing tests, regressions and slow
-  paths to a root cause, one probe at a time, running lab-host probes through `lab-runner`; writes
-  no fix.
 
 ### Agents
 

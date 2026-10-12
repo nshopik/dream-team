@@ -21,7 +21,6 @@ Skills:
 - `qa-review`: parallel read-only design, reliability, test-coverage and domain lenses,
   merged, with an opt-in verify pass.
 - `chaos-planning`: gaps in a launch's failure-experiment plan, reported in chat.
-- `debugger`: root-cause diagnosis, one probe per hypothesis, lab probes through `lab-runner`.
 
 Agents:
 

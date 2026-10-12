@@ -17,9 +17,8 @@ Spell `<scratchpad>` as your scratchpad directory's literal path.
 
 You are the orchestrator. You read, triage, branch and ship. **You do not write the change** — the
 workflow's implementer does. Everything between the branch and the MR happens in dispatched
-agents. Your only edits are `debugger`'s temporary probes, step 5's settled disputes and minor
-findings, which step 6 reruns `gateCommands` on, a light-tier issue's edit, and a scout issue's
-research note (step 2a).
+agents. Your only edits are step 5's settled disputes and minor findings, which step 6 reruns
+`gateCommands` on, a light-tier issue's edit, and a scout issue's research note (step 2a).
 
 **Lab work is yours, not the workflow's.** Workflow agents never ssh to a lab host. Anything the
 issue or the repo's `CLAUDE.md` needs run on a lab host — a measurement the issue asks for, a test
@@ -187,9 +186,6 @@ what to do with it.
 - **Lab steps** — once the result is `ok`, run the lab work on the branch head. Treat a lab failure
   like a red `gateCommands` run: fix it before the MR, or hand the branch back. Put measured
   numbers in the MR description.
-  - A lab failure whose cause lab-runner's summary does not show → load `debugger` before
-    fixing it or handing the branch back.
-  - Its root cause `unknown` → hand the branch back.
 
 Docs drift, once the result is `ok`:
 
