@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""PreToolUse gate: over-long bodies, descriptions that outrun the diff they
-describe, `--fill` MRs, and MR descriptions that stamp a rung rubric as a
-heading/lead-in. Text passed by file is measured the same as
+"""PreToolUse gate: over-long MR descriptions, descriptions that outrun the
+diff they describe, `--fill` MRs, and MR descriptions that stamp a rung rubric
+as a heading/lead-in. Text passed by file is measured the same as
 text on the flag.
 
 Reads the hook payload on stdin. Allows silently (exit 0, no output) on anything
 it cannot confidently parse — a false block is worse than a missed one.
 
-All rules live in the `scope-mr` and `scope-issue` skills, not here: this file
-detects and measures, then quotes back the matching `## <id>` section of the skill for
-that kind. Rule edits go to the skill; only detection logic, the caps and deny headers belong here.
+All rules live in the `scope-mr` skill, not here: this file detects and measures,
+then quotes back the matching `## <id>` section of the skill. Rule edits go to the
+skill; only detection logic, the caps and deny headers belong here.
 
 Caps derive from measured baselines; the commit that sets a cap records its derivation.
 """
@@ -22,17 +22,16 @@ import subprocess
 import sys
 from pathlib import Path
 
-CAPS = {'mr': 300, 'issue': 500}
+CAP = 300
 
-SKILLS_DIR = Path(__file__).resolve().parent.parent / 'skills'
-SKILL = {'mr': 'scope-mr', 'issue': 'scope-issue'}
+SKILL = Path(__file__).resolve().parent.parent / 'skills' / 'scope-mr' / 'SKILL.md'
 FALLBACK = 'Follow Scoped Commits — https://scopedcommits.com/'
 
 # Prepended to the style block when the body is also over the ceiling. The style
 # block itself ships on every body — the content rules apply at any length, and
 # gating them behind the ceiling is how a short body made entirely of restatement
 # and verification output reaches history unchallenged.
-OVER_CAP = "{what} is {n} words — over the {cap}-word ceiling. Rewrite it, then re-run.\n\n"
+OVER_CAP = "MR description is {n} words — over the {cap}-word ceiling. Rewrite it, then re-run.\n\n"
 
 FILL = ("`--fill` writes the description from the commit message. Drop it, pass the "
         "description explicitly (`--description`, `-f description=`), then re-run.\n\n")
@@ -49,15 +48,13 @@ def sections(text):
             if re.fullmatch(r'[a-z-]+', k)}
 
 
-def reminder(kind, section):
-    """That kind's skill section, wrapped in its style tag."""
-    path = SKILLS_DIR / SKILL[kind] / 'SKILL.md'
+def reminder(section):
+    """The skill section, wrapped in its style tag."""
     try:
-        body = sections(path.read_text(encoding='utf-8'))[section]
+        body = sections(SKILL.read_text(encoding='utf-8'))[section]
     except Exception:
         body = FALLBACK
-    tag = f'{kind}_style'
-    return f'<{tag}>\n{body}\n</{tag}>'
+    return f'<mr_style>\n{body}\n</mr_style>'
 
 
 FILL_FLAGS = {'--fill', '--fill-first', '--fill-verbose'}
@@ -75,24 +72,19 @@ def uses_fill(cmd):
         return False
 
 
-# `gh api` on a PR/issue itself, only when it sends a body: a read piped into
+# `gh api` on a PR itself, only when it sends a body: a read piped into
 # `python3 - <<EOF` would otherwise have its script measured as the description.
 # The path must be the first argument, or a path quoted in a comment body matches.
-# The `(?![/\w])` guards keep sub-resources (comments, notes) out of both forges.
 GH_API = (r'\bgh\s+api'
           r'(?=[^\n|;&]*\s(?:-[fF]|--(?:raw-)?field)\s+[\'"]?body=|[^\n|;&]*\s--input\s)'
           r'(?:\s+(?:-X|--method)[\s=]\w+|\s+--[\w-]+)*'
           r'\s+[\'"]?/?repos/[^\s\'"]+/{}(?:/\d+)?[\'"]?(?=\s|$)')
 
+# The `(?![/\w])` guard keeps glab sub-resources (notes) out.
 MR_CMD = re.compile(r'\bglab\b(?:[^\n|;&]*\bmerge_requests(?:/\d+)?(?![/\w])'
                     r'|\s+mr\s+(?:create|update|edit)\b)'
                     r'|\bgh\b\s+pr\s+(?:create|edit)\b'
                     r'|' + GH_API.format('pulls'))
-
-ISSUE_CMD = re.compile(r'\bglab\b(?:[^\n|;&]*\bissues(?:/\d+)?(?![/\w])'
-                       r'|\s+issue\s+(?:create|update|edit)\b)'
-                       r'|\bgh\b\s+issue\s+(?:create|edit)\b'
-                       r'|' + GH_API.format('issues'))
 
 # Rung-4 leaders, bounced once in an MR: "deliberately left out" is the one line
 # that reliably smuggles unrelated findings into an MR. The explicit phrases are
@@ -233,26 +225,6 @@ def seen(body, gate):
     except OSError:
         return True                             # cannot remember — do not nag twice
     return False
-
-
-def classify(cmd, spans):
-    """(kind, offset) of the MR/issue-writing command, or (None, None).
-
-    Matches inside a heredoc body are skipped: that text is data, not shell — a
-    script or payload that merely mentions `gh pr create` is not one.
-    """
-    def first_outside(pattern):
-        # Both ends: a match that starts on the command line and reaches into a
-        # heredoc body is still reading data as shell.
-        return next((m.start() for m in pattern.finditer(cmd)
-                     if not any(s <= m.start() < e or s < m.end() <= e
-                                for s, e, _ in spans)), None)
-
-    at = first_outside(MR_CMD)
-    if at is not None:
-        return 'mr', at
-    at = first_outside(ISSUE_CMD)
-    return ('issue', at) if at is not None else (None, None)
 
 
 # [^\n]* after the delimiter: a heredoc opener may be followed by more of the
@@ -402,8 +374,11 @@ def main():
         return
     # Start is at the `<<`.
     spans = [(m.start(), m.end(), m.group(3)) for m in HEREDOC.finditer(cmd)]
-    kind, at = classify(cmd, spans)
-    if not kind:
+    # A match touching a heredoc body at either end is data, not shell.
+    at = next((m.start() for m in MR_CMD.finditer(cmd)
+               if not any(s <= m.start() < e or s < m.end() <= e
+                          for s, e, _ in spans)), None)
+    if at is None:
         return
     # A denied call runs none of the command. Re-issuing only the PR half of
     # `git push && gh pr create` then runs it without the push before it.
@@ -415,8 +390,8 @@ def main():
 
     # Checked before the text lookup: --fill puts no description on the command
     # line, so there is nothing for the ceiling check to measure.
-    if kind == 'mr' and uses_fill(without_heredocs(cmd, spans)):
-        return deny(FILL + reminder('mr', 'fill'))
+    if uses_fill(without_heredocs(cmd, spans)):
+        return deny(FILL + reminder('fill'))
     remember_writes(cmd, spans)
     # Heredocs blanked: a body shlex cannot split (an apostrophe) hides every flag.
     field = 'body=' if cmd.startswith('gh', at) else 'description='
@@ -428,24 +403,19 @@ def main():
     n = count(body)
     if not n:
         return
-    cap = CAPS[kind]
-    over = '' if n <= cap else OVER_CAP.format(
-        what={'mr': 'MR description', 'issue': 'Issue description'}[kind],
-        n=n, cap=cap)
-    out = reminder(kind, f'{kind}-style')
-    if over:
-        return deny(over + out)
-    if kind == 'mr':
-        m = MR_RUBRIC.search('\n'.join(strip_trailers(body)))
-        if m:
-            return deny(RUBRIC_DENY.format(hit=m.group(0).strip()) + out)
-        if RUNG4.search('\n'.join(body)) and not seen(body, 'rung4'):
-            return deny(RUNG4_CONFIRM + reminder('mr', 'rung-four'))
-        lines = diff_lines(cmd_cwd(cmd, at))
-        budget = (max(DIFF_FLOOR, DIFF_FACTOR * lines) if lines is not None
-                  else None)
-        if budget and n > budget and not seen(body, 'budget'):
-            return deny(OVER_DIFF.format(n=n, lines=lines, allow=budget) + out)
+    out = reminder('mr-style')
+    if n > CAP:
+        return deny(OVER_CAP.format(n=n, cap=CAP) + out)
+    m = MR_RUBRIC.search('\n'.join(strip_trailers(body)))
+    if m:
+        return deny(RUBRIC_DENY.format(hit=m.group(0).strip()) + out)
+    if RUNG4.search('\n'.join(body)) and not seen(body, 'rung4'):
+        return deny(RUNG4_CONFIRM + reminder('rung-four'))
+    lines = diff_lines(cmd_cwd(cmd, at))
+    budget = (max(DIFF_FLOOR, DIFF_FACTOR * lines) if lines is not None
+              else None)
+    if budget and n > budget and not seen(body, 'budget'):
+        return deny(OVER_DIFF.format(n=n, lines=lines, allow=budget) + out)
     emit(additionalContext=out)
 
 

@@ -62,7 +62,7 @@ section in ROADMAP the first time. Backlog issues join it as they are filed.
   (`type::scout`) with questions and a time box instead, e.g. one for the canary rollback
   baseline. An issue that cannot start before another closes ends with a `Blocked by #<n>` line.
   A milestone gated on field evidence gets one `Evidence:` issue: what to deploy and where, the
-  start date, and how to collect the measurement. `body-cap` bounces an issue that runs too long.
+  start date, and how to collect the measurement.
   Work spanning milestones, or waiting on features not built yet, gets one `Meta:` issue
   (`type::meta`, no milestone): a checklist of child issues, plus plain lines naming the feature
   a piece waits on. A child is filed only when its work can start.
