@@ -586,10 +586,15 @@ while (true) {
   }
   round++
   phase('Fix')
-  const failed = gates.filter((g) => blockingOf(state.get(g.key)).length)
+  // A gate whose re-review died is re-reviewed against the fix it missed, not sent to the fixer again.
+  const stale = dead.filter((g) => blockingOf(state.get(g.key)).length)
+  const failed = gates.filter((g) => !state.get(g.key).dead && blockingOf(state.get(g.key)).length)
+  const retry = dead.filter((g) => !stale.includes(g))
+  const given = blocking.filter((f) => !state.get(f.gate).dead)
+  const reReviewed = [...failed, ...stale]
   let fix = null
-  if (blocking.length) {
-    fix = await agentR(fixPrompt(blocking, disputes, round), {
+  if (given.length) {
+    fix = await agentR(fixPrompt(given, disputes, round), {
       label: `fix:#${ISSUE}:r${round}`,
       phase: 'Fix',
       schema: FIX_SCHEMA,
@@ -606,28 +611,30 @@ while (true) {
   }
 
   const again = await parallel([
-    ...failed.map((g) => () => agentR(reReviewPrompt(state.get(g.key), fix, round), {
+    ...reReviewed.map((g) => () => agentR(reReviewPrompt(state.get(g.key), state.get(g.key).dead ? state.get(g.key).fix : fix, round), {
       label: `re-review:${g.key}:r${round}`,
       phase: 'Fix',
       schema: RE_REVIEW_SCHEMA,
       ...reviewerRoster(g.type),
     })),
-    ...dead.map((g) => () => agentR(g.prompt(), {
+    ...retry.map((g) => () => agentR(g.prompt(), {
       label: `review:${g.key}:retry${round}`,
       phase: 'Fix',
       schema: g.schema || VERDICT_SCHEMA,
       ...reviewerRoster(g.type),
     })),
   ])
-  failed.forEach((g, i) => {
-    state.set(g.key, again[i] || deadReviewer(g.key))
+  reReviewed.forEach((g, i) => {
+    const prev = state.get(g.key)
+    state.set(g.key, again[i] || (prev.dead ? prev : { ...prev, dead: true, fix }))
     if (again[i]) resolved.push(...blockingOf({ findings: again[i].resolved }).map((f) => ({ ...f, gate: g.key, round })))
   })
-  dead.forEach((g, i) => record(g, again[failed.length + i]))
+  retry.forEach((g, i) => record(g, again[reReviewed.length + i]))
 
   // The same fixer would get the same findings and dispute them again. The
   // orchestrator settles a standing dispute against the source.
-  if (fix && !fix.addressed.length && fix.disputed.length && outstanding().length) {
+  // Only a re-review that answered on findings the fixer was given counts as holding.
+  if (fix && !fix.addressed.length && fix.disputed.length && failed.some((g, i) => again[i] && blockingOf(again[i]).length)) {
     return handBack('the fixer disputed every finding it was given and the reviewers held')
   }
 }
