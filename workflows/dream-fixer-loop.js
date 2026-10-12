@@ -4,7 +4,7 @@ export const meta = {
   phases: [
     { title: 'Implement', detail: 'one agent writes the change and commits' },
     { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
-    { title: 'Simplify', detail: 'ponytail-review cuts, applied or disputed by the implementer; skipped when the diff has no code or ponytail-review is unavailable (opus)' },
+    { title: 'Simplify', detail: 'ponytail-review cuts, applied or disputed by the implementer; skipped when the diff has no code, ponytail-review is unavailable, or its review returns nothing after the retry (opus)' },
     { title: 'Review', detail: 'the three qa-review lenses plus a generic domain lens on every review (opus); opt-in external review command, its findings checked by one agent' },
     { title: 'Fix', detail: 'blocking findings only; re-review only the reviewers that failed' },
   ],
@@ -54,14 +54,14 @@ const IMPL_SCHEMA = {
 // self-assessment, and a second agent for a `git diff --name-only` is waste.
 const VERIFY_SCHEMA = {
   type: 'object',
-  required: ['passed', 'summary', 'changedFiles', 'dirtyPaths', 'diffWritten'],
+  required: ['passed', 'summary', 'changedFiles', 'status', 'diffWritten'],
   additionalProperties: false,
   properties: {
     friction: FRICTION,
     passed: { type: 'boolean', description: 'true only if every command exited 0' },
     summary: { type: 'string' },
     changedFiles: { type: 'array', items: { type: 'string' } },
-    dirtyPaths: { type: 'array', items: { type: 'string' }, description: 'paths from `git status --porcelain` taken before the gate ran' },
+    status: { type: 'array', items: { type: 'string' }, description: 'the lines `git status --porcelain` printed before the gate ran, verbatim' },
     diffWritten: { type: 'boolean', description: 'true only if the diff-file write exited 0' },
     aspects: {
       type: 'array',
@@ -215,21 +215,26 @@ const MISSING_TYPES = new Set()
 const PONYTAIL_REVIEW = 'ponytail:ponytail-review'
 const degrade = ({ agentType, ...o }) => o
 
-// An unknown agentType throws at dispatch, before any null-result safety net.
-// A disabled plugin is enough to make a real type vanish, so degrade instead
-// of failing the run. Every agent call goes through here, which keeps
-// `friction` in the journal and out of the result.
+// A disabled plugin is enough to make a real type vanish, so a call with an
+// agentType that throws degrades instead of failing the run. Every agent call
+// goes through here: a null result gets one retry, and `friction` stays in the
+// journal and out of the result.
 async function agentR(prompt, opts) {
-  if (opts.agentType && MISSING_TYPES.has(opts.agentType)) opts = degrade(opts)
-  let r
-  try {
-    r = await agent(prompt, opts)
-  } catch (e) {
-    const msg = String((e && e.message) || e)
-    if (!opts.agentType || !msg.includes('not found')) throw e
-    if (msg.includes(opts.agentType)) MISSING_TYPES.add(opts.agentType)
-    log(`${opts.label}: ${opts.agentType} not dispatchable — retrying generically.`)
-    r = await agent(prompt, degrade(opts))
+  let r = null
+  for (let tries = 0; !r && tries < 2; tries++) {
+    if (tries) {
+      log(`${opts.label}: no result — retrying once.`)
+      prompt += `\n\nA previous attempt at this task returned no result and may already have committed part of it: check \`git log ${BASE}..HEAD\` and \`git status\` first, and report work it committed as your own instead of redoing it.`
+    }
+    if (opts.agentType && MISSING_TYPES.has(opts.agentType)) opts = degrade(opts)
+    try {
+      r = await agent(prompt, opts)
+    } catch (e) {
+      if (!opts.agentType) throw e
+      MISSING_TYPES.add(opts.agentType)
+      log(`${opts.label}: ${opts.agentType} not dispatchable (${(e && e.message) || e}) — retrying generically.`)
+      r = await agent(prompt, degrade(opts))
+    }
   }
   if (!r) return r
   const { friction, ...rest } = r
@@ -289,7 +294,7 @@ function verifyPrompt(after, withAspects) {
     CONTEXT,
     '',
     after ? `Re-run the mechanical gate after ${after}.` : 'Run the mechanical gate on the current branch state.',
-    'Before any gate command, run `git status --porcelain` and report every path it lists as dirtyPaths; do not stage, commit or clean them.',
+    'Before any gate command, run `git status --porcelain` and report every line it prints, verbatim, as status; do not stage, commit or clean anything.',
     GATE,
     'Report pass only if every command exited 0.',
     'Do not review style or design — that is a later stage. Report what the tooling says.',
@@ -443,6 +448,10 @@ const blockingOf = (v) => v.findings.filter((f) => BLOCKING.has(f.severity))
 // prompt, and never handed to the fixer as a finding.
 const deadReviewer = (kind) => ({ dead: true, summary: `${kind} reviewer produced no verdict`, findings: [] })
 
+// `??` paths from the latest gate run; an artifact and a forgotten source file look alike, so the user sees them.
+const UNTRACKED = new Set()
+const gateFail = (g) => ({ ok: false, stage: 'gate', reason: g.reason, verify: g.verify, untrackedPaths: [...UNTRACKED] })
+
 // The run continues past a writing agent only through this gate, so the head that ships is a gated one.
 async function gate(after, tag, withAspects) {
   for (let round = 0; ; round++) {
@@ -454,7 +463,10 @@ async function gate(after, tag, withAspects) {
       effort: 'low',
     })
     if (!verify) return { ok: false, reason: 'gate agent returned no result' }
-    if (verify.dirtyPaths.length) return { ok: false, reason: `uncommitted edits in the working tree: ${verify.dirtyPaths.join(', ')}`, verify }
+    UNTRACKED.clear()
+    verify.status.filter((l) => l.startsWith('??')).forEach((l) => UNTRACKED.add(l.slice(3)))
+    const dirty = verify.status.filter((l) => !l.startsWith('??'))
+    if (dirty.length) return { ok: false, reason: `uncommitted edits in the working tree: ${dirty.join(', ')}`, verify }
     if (!verify.diffWritten) return { ok: false, reason: `diff file ${DIFF_FILE} not written; the reviewers would judge a missing or stale diff`, verify }
     if (verify.passed) return { ok: true, verify }
     if (round === VERIFY_ROUNDS) {
@@ -484,7 +496,7 @@ if (!impl.committed) return { ok: false, stage: 'implement', reason: impl.summar
 
 phase('Gate')
 const first = await gate('', '', true)
-if (!first.ok) return { ok: false, stage: 'gate', reason: first.reason, verify: first.verify }
+if (!first.ok) return gateFail(first)
 let changedFiles = first.verify.changedFiles
 
 // Must precede Review: a cut made after it ships unreviewed.
@@ -492,10 +504,9 @@ let simplify = null
 if ((first.verify.aspects || []).includes('code')) {
   phase('Simplify')
   const review = await agentR(simplifyPrompt(), { label: `simplify:#${ISSUE}`, phase: 'Simplify', schema: SIMPLIFY_SCHEMA, model: 'opus' })
-  if (!review) return { ok: false, stage: 'simplify', reason: 'simplify reviewer returned no result' }
-  if (!review.skillLoaded) {
+  if (!review?.skillLoaded) {
     MISSING_TYPES.add(PONYTAIL_REVIEW)
-    log(`Simplify: ${PONYTAIL_REVIEW} not available — skipped.`)
+    log(`Simplify: ${PONYTAIL_REVIEW} ${review ? 'not available' : 'returned no result'} — skipped.`)
   } else if (!review.findings.length) {
     simplify = { net: 0, applied: [], disputed: [], unhandled: 0 }
   } else {
@@ -510,7 +521,7 @@ if ((first.verify.aspects || []).includes('code')) {
       return { ok: false, stage: 'simplify', reason: `simplify implementer applied nothing it committed and disputed nothing: ${cuts.summary}` }
     }
     const g = await gate('the simplify cuts', 'simplify', false)
-    if (!g.ok) return { ok: false, stage: 'gate', reason: g.reason, verify: g.verify }
+    if (!g.ok) return gateFail(g)
     changedFiles = g.verify.changedFiles
     const unhandled = Math.max(0, review.findings.length - cuts.addressed.length - cuts.disputed.length)
     simplify = { net: review.net, applied: cuts.addressed, disputed: cuts.disputed, unhandled }
@@ -557,6 +568,7 @@ const handBack = (reason) => ({
   blocking: outstanding(),
   deadReviewers: deadGates().map((g) => g.key),
   degraded: [...MISSING_TYPES],
+  untrackedPaths: [...UNTRACKED],
   redEvidence: impl.redEvidence,
   simplify,
   disputes,
@@ -589,7 +601,7 @@ while (true) {
     }
     disputes.push(...fix.disputed.map((d) => ({ ...d, round })))
     const g = await gate(`review-fix round ${round}`, `fix${round}`, false)
-    if (!g.ok) return { ok: false, stage: 'gate', reason: g.reason, verify: g.verify, blocking, disputes, resolved }
+    if (!g.ok) return { ...gateFail(g), blocking, disputes, resolved }
     changedFiles = g.verify.changedFiles
   }
 
@@ -630,6 +642,7 @@ return {
   assumptions: impl.assumptions || [],
   redEvidence: impl.redEvidence,
   changedFiles,
+  untrackedPaths: [...UNTRACKED],
   minorFindings: minor,
   simplify,
   disputes,

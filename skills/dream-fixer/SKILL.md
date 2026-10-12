@@ -256,6 +256,8 @@ OLD=$(git rev-parse HEAD) && echo "$OLD" &&
 After either fold, `git diff --quiet "$OLD" HEAD` non-zero → stop and report: the fold changed the
 tree.
 
+- `untrackedPaths` non-empty → list them to the user before you push.
+
 Then push and open the MR/PR against the branch the project's `CLAUDE.md` names.
 
 Link the issue so it auto-closes (`Closes #<n>`). Write the description review-facing; a `scope-mr`
@@ -296,6 +298,7 @@ The report carries only what the user must know or act on.
 - End with one plain line, after a blank line: `Work on #<n> is done: <MR/PR link>`.
 - No MR/PR → end with `Work on #<n> is handed back: <branch> — <why>`.
 - Name each `degraded` roster type, and each dead reviewer the hand-back `<why>` does not name.
+- No MR/PR and `untrackedPaths` non-empty → list them under one bold label.
 - Name each dispute you settled, which way, and why.
 - Name each `resolved` entry, one line each.
 - Name each issue filed for an adjacent defect by its link, one line each, never the defect itself.

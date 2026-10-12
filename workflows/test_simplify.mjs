@@ -10,11 +10,16 @@ const args = { issue: '1', branch: 'issue-1', base: 'HEAD', gateCommands: ['true
 // Every other reviewer passes, so the run ends after Review or its fix rounds.
 // gateFails: gate runs that fail before one passes.
 // externalRuns: the external reviewer's replies, the first to its review, the rest to its re-reviews.
-async function run(review, cuts, { aspects = ['code'], gateFails = 0, diffWritten = true, externalReview, externalRuns = [], redEvidence = '' } = {}) {
+// status: the gate's `git status --porcelain` lines. nullOnce: labels whose first call returns null.
+// throwFor: agent types whose dispatch throws.
+async function run(review, cuts, { aspects = ['code'], gateFails = 0, diffWritten = true, externalReview, externalRuns = [], redEvidence = '', status = [], nullOnce = [], throwFor = [] } = {}) {
   const labels = []
   const prompts = {}
   const types = {}
+  const nulls = new Set(nullOnce)
   async function agent(prompt, opts) {
+    if (throwFor.includes(opts.agentType)) throw new Error('agent dispatch failed')
+    if (nulls.delete(opts.label)) return null
     const reply = await stub(prompt, opts)
     return reply && { ...reply, friction: ['stub friction'] }
   }
@@ -24,7 +29,7 @@ async function run(review, cuts, { aspects = ['code'], gateFails = 0, diffWritte
     types[opts.label] = opts.agentType
     if (opts.phase === 'Implement') return { committed: true, summary: '', redEvidence }
     if (opts.label.startsWith('build-fix:')) return { committed: true, summary: '' }
-    if (opts.phase === 'Gate') return { passed: gateFails-- <= 0, summary: '', changedFiles: [], dirtyPaths: [], diffWritten, aspects }
+    if (opts.phase === 'Gate') return { passed: gateFails-- <= 0, summary: '', changedFiles: [], status, diffWritten, aspects }
     if (opts.label.startsWith('simplify:')) return review
     if (opts.label.startsWith('simplify-fix:')) return cuts
     if (/^(re-)?review:external/.test(opts.label)) return externalRuns.shift()
@@ -42,11 +47,12 @@ const cut = (tag) => ({ tag, location: 'latency.py:L3', cut: `${tag} cut`, repla
 const loaded = (findings, net) => ({ skillLoaded: true, findings, net })
 const dispute = { finding: 'delete cut', reason: 'main() calls it' }
 
+const leanSimplify = { net: 0, applied: [], disputed: [], unhandled: 0 }
 const rows = [
   { name: 'skill missing', review: { skillLoaded: false, findings: [], net: 0 },
     ok: true, simplify: null, degraded: ['ponytail:ponytail-review'], fixRan: false },
   { name: 'lean', review: loaded([], 0),
-    ok: true, simplify: { net: 0, applied: [], disputed: [], unhandled: 0 }, degraded: [], fixRan: false },
+    ok: true, simplify: leanSimplify, degraded: [], fixRan: false },
   { name: 'one applied, one disputed', review: loaded([cut('stdlib'), cut('delete')], 9),
     cuts: { committed: true, addressed: ['stdlib cut'], disputed: [dispute], summary: '' },
     ok: true, simplify: { net: 9, applied: ['stdlib cut'], disputed: [dispute], unhandled: 0 }, degraded: [], fixRan: true },
@@ -61,6 +67,16 @@ const rows = [
     ok: false, stage: 'simplify', fixRan: true },
   { name: 'diff file not written', review: loaded([], 0), opts: { diffWritten: false },
     ok: false, stage: 'gate', fixRan: false },
+  { name: 'untracked path', review: loaded([], 0), opts: { status: ['?? coverage.out'] },
+    ok: true, simplify: leanSimplify, degraded: [], untracked: ['coverage.out'], fixRan: false },
+  { name: 'modified tracked file', review: loaded([], 0), opts: { status: [' M main.py', '?? coverage.out'] },
+    ok: false, stage: 'gate', untracked: ['coverage.out'], fixRan: false },
+  { name: 'one null from the implementer and the gate', review: loaded([], 0), opts: { nullOnce: ['impl:#1', 'gate:#1'] },
+    ok: true, simplify: leanSimplify, degraded: [], fixRan: false },
+  { name: 'simplify review empty', review: null,
+    ok: true, simplify: null, degraded: ['ponytail:ponytail-review'], fixRan: false },
+  { name: 'agent type fails to dispatch', review: loaded([], 0), opts: { throwFor: ['dream-team:sre-engineer'] },
+    ok: true, simplify: leanSimplify, degraded: ['dream-team:sre-engineer'], fixRan: false },
 ]
 
 for (const row of rows) {
@@ -70,8 +86,10 @@ for (const row of rows) {
   if (row.ok) {
     assert.deepEqual(result.simplify, row.simplify, row.name)
     assert.deepEqual(result.degraded, row.degraded, row.name)
+    assert.deepEqual(result.untrackedPaths, row.untracked || [], `${row.name}: untrackedPaths`)
   } else {
     assert.equal(result.stage, row.stage, row.name)
+    if (row.untracked) assert.deepEqual(result.untrackedPaths, row.untracked, `${row.name}: untrackedPaths`)
   }
   console.log(`PASS ${row.name}`)
 }
@@ -106,6 +124,7 @@ const promptRows = [
   { name: 'test lens checks red evidence', label: 'review:dream-team:test-coverage-reviewer', rule: red, opts: { redEvidence: red } },
   { name: 'domain lens skips without a source', label: 'review:domain', rule: 'Either one missing → raise no finding on it and say why in your summary' },
   { name: 'domain lens cites its source', label: 'review:domain', rule: 'cite what you read — file and line' },
+  { name: 'retry after a null result checks earlier commits', label: 'impl:#1', rule: 'may already have committed part of it', opts: { nullOnce: ['impl:#1'] } },
   { name: 'gate writes the diff file', label: 'gate:#1', rule: "git diff HEAD..HEAD > '/scratch/issue-1.diff'" },
   { name: 'lens reads the diff file', label: 'review:dream-team:sre-engineer', rule: 'The branch diff is in `/scratch/issue-1.diff`' },
   { name: 'domain lens reads the diff file', label: 'review:domain', rule: 'The branch diff is in `/scratch/issue-1.diff`' },
@@ -140,4 +159,14 @@ for (const row of externalRows) {
   assert.equal(result.fixRounds, row.fixRounds, row.name)
   assert.deepEqual(result.resolved, row.resolved, row.name)
   console.log(`PASS ${row.name}`)
+}
+
+{
+  const name = 'hand-back carries untracked paths'
+  const stuck = { summary: '', findings: [extFinding], resolved: [] }
+  const { result } = await run(lean, undefined, { externalReview: cmd, status: ['?? coverage.out'],
+    externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, stuck, stuck, stuck] })
+  assert.equal(result.handBack, true, name)
+  assert.deepEqual(result.untrackedPaths, ['coverage.out'], `${name}: untrackedPaths`)
+  console.log(`PASS ${name}`)
 }
