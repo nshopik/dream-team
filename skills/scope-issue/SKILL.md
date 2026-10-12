@@ -114,7 +114,9 @@ Reader starts the task from the description alone — no comment threads, no cha
 ### Updates
 
 - Findings, decisions, progress → comments.
-- A finding changes the work remaining → update the description too.
+- Small amendment that leaves the work remaining unchanged → a new comment; leave the
+  description as written.
+- A finding changes the work remaining → rewrite the description, then comment why it changed.
 - Description is the current spec. Comments are the log.
 
 ### Length

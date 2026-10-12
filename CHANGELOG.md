@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Changed
+
+- The `scope-issue` skill puts a small amendment in a new comment and, when it rewrites an issue description, comments why it changed.
+
 ### Removed
 
 - The `body-cap` hook no longer checks issue bodies; the `scope-issue` skill carries the issue rules.
