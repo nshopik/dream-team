@@ -19,8 +19,6 @@
   working tree.
 - In `hooks/test_body_cap.py`, match an over-cap deny on `-word ceiling`, not `ceiling`; the
   skill text the hook quotes back contains the bare word.
-- A cap-exemption test (fenced block, table row) runs through `gh issue create`, not `mr()`; the
-  MR path also has a per-diff-line budget that fires first inside this repo.
 - Judge a `scope-mr` change on in-repo runs too (`REPO=<checkout>` in `run_baseline.sh`);
   diff-only runs lack the context real sessions read and hide what the skill does there.
 - Run the hook tests as `python3 <file>` each, never `python3 -m unittest`; they are plain

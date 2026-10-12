@@ -38,7 +38,7 @@ Hooks:
 - `jit-context.py`: injects git workflow, prose, changelog,
   lab, forge and `CLAUDE.md` rules at first use, `<upstream_repo>` on the first write or commit in
   a repo with a remote outside `DREAM_TEAM_OWN_REMOTES`, and `<project_notes>` at session start.
-- `body-cap.py`: length caps on MRs and issues.
+- `body-cap.py`: length caps on MRs.
 - `changelog-cap.py`: one-sentence CHANGELOG entries.
 - `branch-guard.py`: no design doc on `main`/`master`.
 

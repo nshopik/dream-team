@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Removed
+
+- The `body-cap` hook no longer checks issue bodies; the `scope-issue` skill carries the issue rules.
+
 ### Fixed
 
 - The `dream-fixer-loop` workflow no longer fails its gate on an untracked file; it returns those paths as `untrackedPaths`, which `dream-fixer` shows the user before it opens the MR.

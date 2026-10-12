@@ -132,35 +132,33 @@ print(f"{'per-gate bounce':34} {'OK':12} 2 deny / 1 pass")
 assert run("git commit -F - <<'EOF'\n" + BODY + "\nEOF") == ("ALLOW-SILENT", "")
 print(f"{'commit passes silently':34} {'OK':12}")
 
-# 11. issues: scope-issue section rides along under the cap, 500-word cap denies.
-under = "gh issue create --title t --body " + json.dumps("word " * 490)
-over = "glab issue create -t t -d " + json.dumps("word " * 510)
-show("issue under cap", under)
-show("issue over cap", over)
-v, r = run(under)
-assert v == "ALLOW+RULES" and "<issue_style>" in r and "## Proposal" in r
-v, r = run(over)
-assert v == "DENY" and "over the 500-word ceiling" in r
-print(f"{'issue gate':34} {'OK':12} 1 deny / 1 pass")
+# 11. issues are the scope-issue skill's job: the hook stays silent on them.
+for cmd in ("gh issue create --title t --body " + json.dumps("word " * 600),
+            "glab issue create -t t -d " + json.dumps("word " * 600),
+            "gh issue edit 7 --body " + json.dumps("word " * 600),
+            "gh api -X PATCH repos/o/r/issues/7 -f body=" + shlex.quote("word " * 600),
+            "glab api -X PUT projects/1/issues/7 -f description=" + shlex.quote("word " * 600)):
+    assert run(cmd) == ("ALLOW-SILENT", ""), cmd
+print(f"{'issue passes silently':34} {'OK':12} 5 cases")
 
 # 11b. a fenced log is evidence, not prose: it does not count toward the ceiling.
+# Outside a repo, so the diff budget cannot fire first.
 log = "```\n" + "\n".join("word " * 40 for _ in range(10)) + "\n```"
 for prefix, want in (("", "ALLOW+RULES"), ("```\n", "DENY")):
-    cmd = "gh issue create --title t --body " + shlex.quote("word " * 480 + "\n\n" + prefix + log)
-    show("issue with fenced log", cmd)
-    v, r = run(cmd)
-    assert v == want and ("ceiling" in r) == (want == "DENY")
-print(f"{'issue fenced evidence':34} {'OK':12} 400 fenced words free")
+    cmd = "gh pr create --body " + shlex.quote("word " * 280 + "\n\n" + prefix + log)
+    v, r = run_in(cmd, fd)
+    assert v == want and ("-word ceiling" in r) == (want == "DENY")
+    assert want == "DENY" or ("<mr_style>" in r and "Reviewer has the diff open" in r)
+print(f"{'mr fenced evidence':34} {'OK':12} 400 fenced words free")
 
 # 11c. table rows are measurements too: charging per cell would price the table
 # above the paragraph it replaces.
 table = "\n".join("| " + " | ".join(["word"] * 6) + " |" for _ in range(20))
 for rows, want in ((table, "ALLOW+RULES"), (table.replace("|", " "), "DENY")):
-    cmd = "gh issue create --title t --body " + shlex.quote("word " * 480 + "\n\n" + rows)
-    show("issue with table", cmd)
-    v, r = run(cmd)
-    assert v == want and ("ceiling" in r) == (want == "DENY")
-print(f"{'issue table rows free':34} {'OK':12} 120 table words free")
+    cmd = "gh pr create --body " + shlex.quote("word " * 280 + "\n\n" + rows)
+    v, r = run_in(cmd, fd)
+    assert v == want and ("-word ceiling" in r) == (want == "DENY")
+print(f"{'mr table rows free':34} {'OK':12} 120 table words free")
 
 # 13. bodies reached indirectly: `$(cat)`, `--input` JSON, `gh api`, heredoc-written files.
 words = "word " * 350
@@ -179,7 +177,6 @@ shapes = [
     ("gh api --input body key",   "DENY", f"gh api -X PATCH repos/o/r/pulls/9 --input {gh_js}"),
     ("--input non-string value", "ALLOW-SILENT", f"glab api -X PUT projects/1/merge_requests/9 --input {wrote('list.json', json.dumps({'description': ['a', 'b']}))}"),
     ("gh api pulls -f body=",     "DENY", f'gh api -X PATCH repos/o/r/pulls/9 -f body="$(cat {md})"'),
-    ("gh api issues -f body=",    "DENY", f"gh api -X PATCH repos/o/r/issues/7 -f body={q('word ' * 550)}"),
     ("heredoc then --body-file",  "DENY", f"cat > {fresh} <<'EOF'\nit's {words}\nEOF\ngh pr edit 9 --body-file {fresh}"),
     ("heredoc then @path",        "DENY", f"cat <<'EOF' > {fresh}\n{words}\nEOF\nglab api projects/1/merge_requests -F description=@{fresh}"),
     ("heredoc appended",          "DENY", f"cat > {fresh} <<'EOF'\n{half}\nEOF\ncat >> {fresh} <<'EOF'\n{half}\nEOF\ngh pr edit 9 --body-file {fresh}"),
@@ -225,7 +222,6 @@ headers = [
 for name, cmd, head, tag in headers:
     v, r = run(cmd)
     assert v == "DENY" and r.startswith(head) and tag in r and "{" not in r, (name, r)
-for kind in ("scope-issue", "scope-mr"):
-    text = open(os.path.join(HERE, "..", "skills", kind, "SKILL.md")).read()
-    assert not re.search(r"\{\w+\}", text) and "re-run" not in text, kind
+text = open(os.path.join(HERE, "..", "skills", "scope-mr", "SKILL.md")).read()
+assert not re.search(r"\{\w+\}", text) and "re-run" not in text
 print(f"{'deny headers in hook':34} {'OK':12} {len(headers)} cases")

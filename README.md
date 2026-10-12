@@ -68,9 +68,10 @@ It works for application code and infrastructure-as-code. The full walkthrough i
 
 ### Hooks
 
-- `body-cap.py` (PreToolUse): checks `gh pr|issue create|edit` and `glab mr|issue` commands before
-  they run. It blocks rule violations and quotes the matching skill section back to Claude, so the
-  fix happens in the same turn. It allows anything it can't parse.
+- `body-cap.py` (PreToolUse): checks `gh pr create|edit`, `glab mr create|update|edit` and
+  `gh|glab api` PR/MR writes before they run. It blocks rule violations and quotes the matching
+  skill section back to Claude, so the fix happens in the same turn. It allows anything it can't
+  parse.
 - `branch-guard.py` (PreToolUse): blocks a design or spec document written on `main`/`master`.
 - `changelog-cap.py` (PreToolUse): blocks a CHANGELOG entry past one sentence or 40 words.
 - `jit-context.py`: injects git, forge, changelog, prose and lab conventions the first time a
@@ -100,10 +101,10 @@ pi loads the skills; the hooks and the `dream-fixer-loop` workflow are Claude Co
 
 ## Development
 
-Rules live in the `## <id>` sections of each `SKILL.md`; the hook holds only detection logic, caps
-and deny headers. `hooks/body-cap.py` quotes a section back verbatim, after its deny header, when
-it blocks a command. Keep heading ids stable and sub-headings at `###`, since any `##` closes a
-section.
+Rules live in the skills; the hook holds only detection logic, caps and deny headers.
+`hooks/body-cap.py` quotes a `## <id>` section of the `scope-mr` `SKILL.md` back verbatim, after
+its deny header, when it blocks a command. Keep its heading ids stable and sub-headings at `###`,
+since any `##` closes a section.
 
 Test a local checkout with:
 
