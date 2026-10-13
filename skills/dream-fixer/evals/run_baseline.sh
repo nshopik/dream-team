@@ -36,7 +36,7 @@ The issue body is in {here}/files/{slug}.issue.md and the project's CLAUDE.md is
 {here}/files/{slug}.CLAUDE.md — read both. Step 1 is done and step 2 found nothing blocking.
 
 Use only the Read, Grep, Glob and Skill tools. Make only the step-2a tier decision. Output the
-tier alone on the first line — scout, light or full — then one line naming what decided it.""")
+tier alone on the first line — research, light or full — then one line naming what decided it.""")
     sys.exit()
 result = f"{here}/files/{slug}.result.json"
 branch = e.get('branch') or json.load(open(result))['branch']

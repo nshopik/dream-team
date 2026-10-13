@@ -24,7 +24,7 @@ Reader starts the task from the description alone — no comment threads, no cha
 - Context opens the description unlabeled. No `## Context` heading.
 - Problem: the defect or gap the context leads to, under `## Problem`.
 - Proposal: the next step, under `## Proposal`. Always present.
-- Proposal is concrete: a list of actions, a person to engage, or a scout's questions.
+- Proposal is concrete: a list of actions, a person to engage, or a research issue's questions.
 - Proposal ends with a `Done when …` paragraph after its items, naming an observable check. Never a bullet.
 - Never end at the problem.
 - Meta issue: context, then the checklist. No `## Problem` or `## Proposal`.
@@ -34,12 +34,12 @@ Reader starts the task from the description alone — no comment threads, no cha
 - User asked for the issue in chat → ask its open questions, milestone included, with
   AskUserQuestion before writing it; write the answers into the issue.
 - Issue found during other work (dream-fixer, a review, a lab check) → do not prompt; list the
-  open questions as open items in the proposal, or file a `Scout:` issue.
+  open questions as open items in the proposal, or file a `Research:` issue.
 
-### Scout
+### Research
 
-- Proposal would need a guess or an assumption → scout issue, not a guessed proposal.
-- Title starts `Scout:`.
+- Proposal would need a guess or an assumption → research issue, not a guessed proposal.
+- Title starts `Research:`.
 - Proposal lists the questions to answer and a time box.
 - Deliverable: a note in the repo's research docs plus one follow-up issue per gap found. No code.
 - Done when every question has an answer or its own issue.

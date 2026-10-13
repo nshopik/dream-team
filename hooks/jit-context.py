@@ -97,7 +97,7 @@ adds a component, or needs a lab check.
 - User asked for the issue in chat → ask its open questions, milestone included, with
   AskUserQuestion before filing; write the answers into the issue.
 - Issue found during other work (dream-fixer, a review, a lab check) → do not prompt; list the
-  open questions as open items in the proposal, or file a `Scout:` issue.
+  open questions as open items in the proposal, or file a `Research:` issue.
 - Smaller → make the change inline.
 </issue_sized>"""
 

@@ -33,7 +33,7 @@ no docs besides `CLAUDE.md`; the filed issue goes through `dream-fixer`.
 - A component table, if the contributor doc has one, matches the code.
 - A component table cell says only what the component's name and path don't.
 - The architecture diagram matches the code.
-- The tracker has the `type::scout` and `type::meta` labels.
+- The tracker has the `type::research` and `type::meta` labels.
 - Every label in **Label colours** that the tracker has carries its colour from there.
 - The project `CLAUDE.md` carries the meaning of every rule in **Project rules** below.
 
@@ -60,7 +60,7 @@ Values from GitLab's label-picker palette; one colour per `type::` value, one fo
 | `type::feature` | `#44AD8E` | |
 | `type::maintenance` | `#5BC0DE` | |
 | `type::meta` | `#8E44AD` | A `Meta:` checklist of child issues |
-| `type::scout` | `#F0AD4E` | Research with questions and a time box; a note and follow-up issues, no code |
+| `type::research` | `#F0AD4E` | Research with questions and a time box; a note and follow-up issues, no code |
 | `area::*` | `#428BCA` | |
 | Blocked label (`workflow::blocked` on GitLab) | `#34495E` | |
 | Waiting label (`workflow::future` on GitLab) | `#7F8C8D` | |
@@ -71,7 +71,7 @@ Values from GitLab's label-picker palette; one colour per `type::` value, one fo
   structure.
 - The project has neither `CLAUDE.md` nor `AGENTS.md` → create `CLAUDE.md` with the project
   rules.
-- The tracker lacks `type::scout` or `type::meta` → create the label with its colour and
+- The tracker lacks `type::research` or `type::meta` → create the label with its colour and
   description from **Label colours**.
 - A label in **Label colours** has another colour → set its colour from there.
 - A milestone description has its exit criterion, gate and dependencies, but not as bold bullets
