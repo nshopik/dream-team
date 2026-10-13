@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-10-13
+
 ### Changed
 
 - **Upgrade note:** `scope-issue` and `dream-fixer` call a scout issue a research issue: titles start `Research:` instead of `Scout:`, and `setup-dream-team` expects the `type::research` label instead of `type::scout`; retitle open `Scout:` issues and create the label.
