@@ -38,16 +38,19 @@ The issue body is in {here}/files/{slug}.issue.md and the project's CLAUDE.md is
 Use only the Read, Grep, Glob and Skill tools. Make only the step-2a tier decision. Output the
 tier alone on the first line — research, light or full — then one line naming what decided it.""")
     sys.exit()
-result = f"{here}/files/{slug}.result.json"
-branch = e.get('branch') or json.load(open(result))['branch']
-print(f"""Use the dream-team:dream-fixer skill. You are its orchestrator on issue #{e['issue']}
-of github.com/acme/flowlog, "{e['title']}", labels {', '.join(e['labels'])}.
-
-Steps 1-5 are done. The branch is {branch}; gateCommands were {top['gateCommands']}.
+steps = ''
+if 'result' in e:
+    result = f"{here}/files/{slug}.result.json"
+    branch = e.get('branch') or json.load(open(result))['branch']
+    steps = f"""Steps 1-5 are done. The branch is {branch}; gateCommands were {top['gateCommands']}.
 No lab host is named unless stated below. The dream-fixer-loop workflow returned the JSON in
 {result} — read it.
 
-{e['after']}
+"""
+print(f"""Use the dream-team:dream-fixer skill. You are its orchestrator on issue #{e['issue']}
+of github.com/acme/flowlog, "{e['title']}", labels {', '.join(e['labels'])}.
+
+{steps}{e['after']}
 
 Use only the Read, Grep, Glob and Skill tools. Output only the final message you send the user
 under the skill's "Report back" section — no preamble, no code fence.""")

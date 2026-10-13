@@ -8,8 +8,9 @@ Skills:
 
 - `scope-issue`: issue shape, including `Research:`, `Evidence:` and
   `Meta:` issues and `Blocked by` lines.
-- `dream-fixer`: one issue to one MR, with research, light and full tiers;
-  stops on an open blocker; on a `Meta:` issue, works one open unblocked child.
+- `dream-fixer`: one issue to one MR, or to a findings comment on a research
+  issue; research, light and full tiers; stops on an open blocker; on a `Meta:`
+  issue, works one open unblocked child.
 - `setup-dream-team`: checks a project against the flow, fixes the mechanical
   failures directly after one confirm, files one maintenance issue for the other failing checks.
 - `cut-milestones`: milestones from a spec, one exit gate each, with the

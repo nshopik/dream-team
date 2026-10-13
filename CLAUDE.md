@@ -44,13 +44,13 @@
   flag is variadic and swallows a trailing prompt ("Input must be provided").
 - Keep research findings mined from local session data (workflow journals, run counts) out of the
   repo and its issues; report them in chat only, even when dream-fixer's research tier says to
-  commit a research note.
+  post a findings comment.
 - Delegate grading of eval reports against a ledger to a subagent (Agent tool); the main session
   only reads the scores and the marks file.
 - Cite an outside pull request in commits, PRs, issues and notes in plain words ("unbound pull
   request 1525"), never `#1525`; GitHub links `#N` to this repo.
 - Before filing a follow-up issue, list the milestone's open issues; a matching one gets a comment
   with the new evidence, not a new issue (#231 duplicated #226).
-- Skip a research or eval issue's research note when its follow-up issues carry the answers or
-  its gate finds nothing to change; post the findings as a comment on the issue and close it,
-  committing nothing (#238, #256).
+- Skip an eval issue's research note when its follow-up issues carry the answers or its gate
+  finds nothing to change; post the findings as a comment on the issue and close it, committing
+  nothing (#238, #256).
