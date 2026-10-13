@@ -47,7 +47,7 @@ Map block, verbatim:
 
 ```
 Map this repository's code by module. Read only. Facts only: no judgments, findings or advice.
-- A table of the directories holding code: path, code lines, one-line role. Split a directory over 10K lines into its subdirectories. Count lines with `wc -l` over `git ls-files`; skip vendored, generated and lock files.
+- A table of the directories holding code: path, code lines, one-line role. Split a directory over 10K lines into its subdirectories. Count lines with `wc -l` over `git ls-files`; skip vendored, generated and lock files, test data, fixtures and docs. Test source code counts as code.
 Output: the table, then the total code lines, then one line naming the directories you did not map, or `none`, and nothing else.
 ```
 

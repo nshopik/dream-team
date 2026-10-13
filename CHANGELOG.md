@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Added
+
+- A `qa-review` audit of a repository with over about 10K lines of source code maps it by module, leaving out test data, fixtures and docs, and asks which paths to audit.
+
 ### Changed
 
 - **Upgrade note:** `setup-dream-team` adds two project rules for CHANGELOG entries, one plain sentence each and bold only for the `**Breaking:**` and `**Upgrade note:**` prefixes; rerun it or add them to your project's `CLAUDE.md` by hand.
