@@ -257,7 +257,7 @@ const GATE = [
   ...GATE_COMMANDS.map((c) => `  ${c}`),
 ].join('\n')
 
-const COMMIT_ALL = 'Commit every edit you make as `fixup! <subject of the commit it repairs>`, with that subject copied from `git log`. An edit that repairs two commits is two fixup commits, never a plain commit: stage per path, and stage the hunks of a shared file with a partial patch through `git apply --cached`. Do not bump a version or add a release section: only the implementer\'s commit carries the release.'
+const COMMIT_ALL = 'Commit every edit you make as `fixup! <subject of the commit it repairs>`, with that subject copied from `git log`. An edit that repairs two commits is two fixup commits, never a plain commit: stage per path, and stage the hunks of a shared file with a partial patch through `git apply --cached`. A finding about a commit\'s message → write `amend! <its subject>`, with that subject copied from `git log`, a blank line and the full new message to a file, then run `GIT_EDITOR=\'cp <absolute path of that file>\' git commit --cleanup=whitespace --fixup=reword:<sha>`; never amend or reword the commit itself. Do not bump a version or add a release section: only the implementer\'s commit carries the release.'
 
 const READ_ONLY = 'Read-only: do not edit, stage or commit anything, and do not run the build or the test suite — the gate already ran them, and the other reviewers share this checkout.'
 

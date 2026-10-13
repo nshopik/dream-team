@@ -17,6 +17,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Fixed
 
+- The `dream-fixer-loop` fix stages repair a wrong commit message with an `amend!` commit (`git commit --fixup=reword`), and `dream-fixer` folds its message into the commit it names.
 - The `dream-fixer-loop` workflow no longer fails its gate on an untracked file; it returns those paths as `untrackedPaths`, which `dream-fixer` shows the user before it opens the MR.
 - The `dream-fixer-loop` workflow retries once any agent that returns no result, and skips Simplify instead of failing when its review still returns nothing.
 - The `dream-fixer-loop` workflow runs every call of an agent type as a generic agent once a call of that type throws, and always lists the type in `degraded`, whatever the error says.

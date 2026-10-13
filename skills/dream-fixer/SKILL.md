@@ -219,33 +219,37 @@ per commit an edit repairs. If you changed anything, run every `gateCommands` en
 head yourself and carry on only when all exit 0. A red run → fix it, or hand the branch back.
 
 Fold the branch to one commit per change. The implementer commits once per independent change;
-the simplify cuts, build-fix and fix rounds add `fixup! <subject>` commits. Count the changes:
+the simplify cuts, build-fix and fix rounds add `fixup! <subject>` and `amend! <subject>`
+commits. Count the changes:
 
 ```sh
-git log --format=%s <base>..HEAD | grep -vc '^fixup! '
+git log --format=%s <base>..HEAD | grep -Evc '^(fixup|amend)! '
 ```
 
-More than `1` → fold each fixup into the commit it names:
+More than `1` → fold each `fixup!` and `amend!` commit into the commit it names:
 
 ```sh
 OLD=$(git rev-parse HEAD) && echo "$OLD" &&
   git -c sequence.editor=: rebase -i --autosquash <base> &&
   git diff --quiet "$OLD" HEAD &&
-  ! git log --format=%s <base>..HEAD | grep -q '^fixup! '
+  ! git log --format=%s <base>..HEAD | grep -Eq '^(fixup|amend)! '
 ```
 
 - Rebase stops on a conflict → `git rebase --abort`, fold to one commit as below, and say so in
   the report.
 - After that fallback → amend the fold commit to add every other change's subject.
-- A `fixup!` commit survives the rebase → `git reset --hard <the sha it printed>`, then stop and
-  report its subject.
+- A `fixup!` or `amend!` commit survives the rebase → `git reset --hard <the sha it printed>`,
+  then stop and report its subject.
 
-`1` → fold onto the first commit's message in one Bash call:
+`1` → fold onto the last `amend!` commit's body, or else the first commit's message, in one Bash
+call:
 
 ```sh
 OLD=$(git rev-parse HEAD) && echo "$OLD" &&
   F=$(git rev-list --reverse <base>..HEAD | head -1) && [ -n "$F" ] &&
-  git log -1 --format=%B "$F" > <scratchpad>/fold-msg &&
+  A=$(git log --format='%H %s' <base>..HEAD | awk '$2 == "amend!" { print $1; exit }') &&
+  { if [ -n "$A" ]; then git log -1 --format=%b "$A"; else git log -1 --format=%B "$F"; fi; } \
+    > <scratchpad>/fold-msg &&
   git reset --soft <base> && git commit -F <scratchpad>/fold-msg &&
   git diff --quiet "$OLD" HEAD
 ```
