@@ -144,8 +144,7 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
 ### 6. Release
 
 - You: "tag v0.1."
-- Agent: writes the first CHANGELOG section (empty until then); `changelog-cap` keeps entries
-  to one sentence. CI builds the release.
+- Agent: writes the first CHANGELOG section (empty until then). CI builds the release.
 
 ## Where your time goes
 

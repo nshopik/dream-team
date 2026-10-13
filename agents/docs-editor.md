@@ -22,6 +22,8 @@ Style guide:
 - Read `${CLAUDE_PLUGIN_ROOT}/references/google-style/contract.md` before writing or revising.
 - For one term, Grep `^TERM` with `-i -A 6` in
   `${CLAUDE_PLUGIN_ROOT}/references/google-style/word-list.md`; never Read it whole.
+- A CHANGELOG among the pages or the target → read
+  `${CLAUDE_PLUGIN_ROOT}/references/changelog-style.md`.
 - Any `CLAUDE.md` in context (user or repo) or the repo's house style wins where it disagrees
   with the guide.
 

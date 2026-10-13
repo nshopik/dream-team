@@ -26,6 +26,7 @@
 - Call a plugin workflow by its prefixed name (`dream-team:<name>`), never by `scriptPath`; skill
   text does not expand `${CLAUDE_PLUGIN_ROOT}`; a plugin agent body does.
 - Release a plugin by bumping its `plugin.json` version and CHANGELOG; never tag it or offer a tag.
+- Before editing `CHANGELOG.md`, read `references/changelog-style.md`.
 - Fence a chat-output layout in a skill, so the model reproduces its markdown; show example
   skill output in docs or evals as rendered markdown, where a fence hides the bold labels judged.
 - Lay out a skill's chat output for a monospace terminal: tight `- **Label:**` bullets, no blank

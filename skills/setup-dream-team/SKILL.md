@@ -36,6 +36,7 @@ no docs besides `CLAUDE.md`; the filed issue goes through `dream-fixer`.
 - The tracker has the `type::research` and `type::meta` labels.
 - Every label in **Label colours** that the tracker has carries its colour from there.
 - The project `CLAUDE.md` carries the meaning of every rule in **Project rules** below.
+- A CHANGELOG's header links the Keep a Changelog version it follows.
 
 ## Project rules
 
@@ -46,6 +47,9 @@ The project `CLAUDE.md` carries these, in its own words:
 - A fact the code and paths don't show has one reference doc, updated in the MR that changes it.
 - A project with a ROADMAP: its status changes only at milestone close.
 - Ratchet floors rise in the feature MR that earns them.
+- A project with a CHANGELOG: each entry is one plain sentence on a notable change, with no
+  rationale.
+- A CHANGELOG entry has no bold except a `**Breaking:**` or `**Upgrade note:**` prefix.
 - A milestone is `M<n>`, or `v<major>.<minor>` for a version milestone.
 - A milestone split takes the next free `M<n>`, never a letter.
 - The contributor doc path is named.

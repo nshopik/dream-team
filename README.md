@@ -57,7 +57,6 @@ The reviewer agents review a diff or paths, read-only.
 
 - `body-cap.py` (PreToolUse): blocks MR/PR descriptions that break `scope-mr` rules.
 - `branch-guard.py` (PreToolUse): blocks a design or spec document written on `main`/`master`.
-- `changelog-cap.py` (PreToolUse): blocks a CHANGELOG entry past one sentence or 40 words.
 - `jit-context.py`: injects project conventions the first time a session touches each, and asks
   the agent to record corrections in `CLAUDE.local.md`.
 
@@ -90,7 +89,6 @@ Test a local checkout with:
 claude --plugin-dir .
 python3 hooks/test_body_cap.py
 python3 hooks/test_branch_guard.py
-python3 hooks/test_changelog_cap.py
 python3 hooks/test_jit_context.py
 python3 skills/dream-fixer/test_fold.py
 python3 skills/friction/test_friction.py
