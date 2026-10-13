@@ -129,6 +129,8 @@ eval shows. Evals run in a local harness kept out of the repo.
   a scratchpad file and the brief names the path.
 - Never pin `effort:` in a shipped agent; pin it in the eval harness instead.
 - Name the agent by role (`performance-engineer`); the role name is a cue too.
+- Give a qa-review lens its bare name as its focus; a focus line naming some of an agent's
+  sections steered it off the rest (#261).
 - Reviewed and skipped for the docs agents: voltagent `documentation-engineer`,
   `readme-generator`, `tooling-engineer`.
 - Reviewed and skipped for an infra-config lens: voltagent `devops-engineer`; the default lenses
