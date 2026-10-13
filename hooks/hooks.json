@@ -40,12 +40,6 @@
             "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/jit-context.py\"",
             "timeout": 5,
             "statusMessage": "Loading file conventions"
-          },
-          {
-            "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/changelog-cap.py\"",
-            "timeout": 5,
-            "statusMessage": "Checking CHANGELOG entry length"
           }
         ]
       }

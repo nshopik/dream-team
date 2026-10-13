@@ -18,6 +18,7 @@ Style guide:
 - Read `${CLAUDE_PLUGIN_ROOT}/references/google-style/contract.md` before reviewing style.
 - For one term, Grep `^TERM` with `-i -A 6` in
   `${CLAUDE_PLUGIN_ROOT}/references/google-style/word-list.md`; never Read it whole.
+- A CHANGELOG in the diff or the paths → read `${CLAUDE_PLUGIN_ROOT}/references/changelog-style.md`.
 - The target repo's `CLAUDE.md` or house style wins where it disagrees with the guide.
 
 Output: findings only, most severe first. Each finding: one emoji prefix, `file:line`, why, fix.

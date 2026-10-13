@@ -17,28 +17,6 @@ import sys
 STATE = '/tmp/claude-jit-context'
 
 
-CHANGELOG = """<changelog_style>
-Editing a CHANGELOG — keep it to Keep a Changelog 2.0.0
-(https://keepachangelog.com/en/2.0.0/).
-
-- `## [Unreleased]` accumulates entries as work lands, grouped
-  `### Added` / `Changed` / `Deprecated` / `Removed` / `Fixed` / `Security`.
-- Release: rename `[Unreleased]` to `[<version>] - <date>`, add a fresh empty
-  one above. CI sources the GitLab/GitHub Release description from the section
-  matching the tag, not from commits or the tag message.
-- Entries are one plain, complete sentence — enough to understand what was
-  added/changed/fixed/removed, no more. No rationale, benchmarks, or metric
-  names — those belong in the commit body. Kernel/Prometheus density, not blog
-  post.
-- No bold, no `**lead** — clause` shape (mixing styles): `**Breaking:**` and
-  `**Upgrade note:**` are the only bold, as entry prefixes.
-- Curate: notable changes only. Skip internal refactors, test-only changes,
-  anything with no observable effect. Machines draft, humans decide.
-- Breaking changes: prefix the entry `**Breaking:**` and name the interface
-  that breaks (CLI, API, protocol, config, schema).
-- A required operator action on upgrade: prefix the entry `**Upgrade note:**`.
-</changelog_style>"""
-
 VCS = """<vcs_workflow>
 About to touch git history or a forge. Feature work complete → push the branch and
 open an MR/PR against the default branch (`glab mr create` / `gh pr create`). Don't
@@ -121,7 +99,7 @@ UPSTREAM = """<upstream_repo>
 This repo has a git remote outside the namespaces in `DREAM_TEAM_OWN_REMOTES`: it is
 an upstream project, not mine.
 - Its CONTRIBUTING, commit style, changelog and tracker conventions override mine
-  (scope-commit, scope-mr, Keep a Changelog, vcs workflow).
+  (scope-commit, scope-mr, vcs workflow).
 - Agent notes go in untracked `CLAUDE.local.md` only; never add or edit a
   checked-in `CLAUDE.md`.
 - Add no docs, issues, milestones or labels unasked.
@@ -162,8 +140,6 @@ RULES = [
     ('upstream',  'command',   PUBLISH_CMD,                       UPSTREAM, is_upstream),
     # Paired file_path/command rows share a name: the sentinel dedupes, so a heredoc/sed
     # write (no file_path field) still gets the block exactly once.
-    ('changelog', 'file_path', r'(^|/)CHANGELOG(\.[\w-]+)?\.md$', CHANGELOG),
-    ('changelog', 'command',   r'CHANGELOG(\.[\w-]+)?\.md',        CHANGELOG),
     ('claude_md', 'file_path', r'(^|/)CLAUDE(\.local)?\.md$',       CLAUDE_MD),
     ('claude_md', 'command',   r'CLAUDE(\.local)?\.md',             CLAUDE_MD),
     # First: on `glab`/`gh` this fires once, then falls through to `forge` on the
@@ -171,7 +147,7 @@ RULES = [
     ('vcs',       'command',   PUBLISH_CMD,                       VCS),
     ('forge',     'command',   FORGE_CMD,                         FORGE),
     ('lab',       'command',   r'(?<![\w.-])ssh\b',               LAB),
-    # Last: main() returns on first match, so CHANGELOG keeps its own block.
+    # Last: main() returns on first match, so CLAUDE.md keeps its own block.
     ('prose',     'file_path', r'.',                              PROSE),
 ]
 

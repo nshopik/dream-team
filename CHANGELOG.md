@@ -5,6 +5,16 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Changed
+
+- **Upgrade note:** `setup-dream-team` adds two project rules for CHANGELOG entries, one plain sentence each and bold only for the `**Breaking:**` and `**Upgrade note:**` prefixes; rerun it or add them to your project's `CLAUDE.md` by hand.
+
+- The `docs-reviewer` and `docs-editor` agents read the plugin's CHANGELOG style rules when a CHANGELOG is in their diff or pages.
+
+### Removed
+
+- The `changelog-cap` hook and the `jit-context` CHANGELOG style block; the project `CLAUDE.md` carries the entry rules instead.
+
 ## [1.3.0] - 2026-10-13
 
 ### Changed
