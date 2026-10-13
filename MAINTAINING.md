@@ -39,6 +39,8 @@ Hooks:
   lab, forge and `CLAUDE.md` rules at first use, `<upstream_repo>` on the first write or commit in
   a repo with a remote outside `DREAM_TEAM_OWN_REMOTES`, and `<project_notes>` at session start.
 - `body-cap.py`: length caps on MRs.
+  It quotes a `## <id>` section of the `scope-mr` `SKILL.md` back verbatim after its deny header;
+  keep those heading ids stable and sub-headings at `###`, since any `##` closes a section.
 - `changelog-cap.py`: one-sentence CHANGELOG entries.
 - `branch-guard.py`: no design doc on `main`/`master`.
 
