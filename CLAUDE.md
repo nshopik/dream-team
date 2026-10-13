@@ -46,3 +46,10 @@
   research note.
 - Delegate grading of eval reports against a ledger to a subagent (Agent tool); the main session
   only reads the scores and the marks file.
+- Cite an outside pull request in commits, PRs, issues and notes in plain words ("unbound pull
+  request 1525"), never `#1525`; GitHub links `#N` to this repo.
+- Before filing a follow-up issue, list the milestone's open issues; a matching one gets a comment
+  with the new evidence, not a new issue (#231 duplicated #226).
+- Skip a scout's or eval issue's research note when its follow-up issues carry the answers or
+  its gate finds nothing to change; post the findings as a comment on the issue and close it,
+  committing nothing (#238, #256).
