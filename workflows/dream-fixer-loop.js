@@ -193,13 +193,9 @@ const FIX_SCHEMA = {
 // Roster
 // ---------------------------------------------------------------------------
 
-// qa-review's lenses and focus lines (skills/qa-review/SKILL.md steps 2 and 4), minus its verify pass and docs-only skip; every lens runs on every review, the domain lens selecting itself in its prompt.
-const ARCHITECT = 'dream-team:architect-reviewer'
+// qa-review's lenses (skills/qa-review/SKILL.md steps 2 and 4), minus its verify pass and docs-only skip; every lens runs on every review, the domain lens selecting itself in its prompt.
 const TEST_LENS = 'dream-team:test-coverage-reviewer'
-const LENSES = [ARCHITECT, 'dream-team:sre-engineer', TEST_LENS]
-const FOCUS = {
-  [ARCHITECT]: 'package boundaries and coupling, data-flow and delivery guarantees (loss, duplication), backpressure, documented contracts and where docs and code disagree.',
-}
+const LENSES = ['dream-team:architect-reviewer', 'dream-team:sre-engineer', TEST_LENS]
 
 const roster = (agentType) => (isGeneric(agentType) ? {} : { agentType })
 
@@ -352,7 +348,7 @@ function lensPrompt(agentType, redEvidence) {
     '',
     'Review the branch diff.',
     READ_DIFF,
-    `Your lens: ${FOCUS[agentType] || agentType.split(':').pop()}`,
+    `Your lens: ${agentType.split(':').pop()}`,
     REVIEW_RULES,
     'Anything a linter, typechecker or the test suite would catch is out of scope — that gate already ran and passed.',
     ...(redEvidence && agentType === TEST_LENS ? [

@@ -7,6 +7,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Changed
 
+- The `qa-review` skill and the `dream-fixer-loop` workflow give the `architect-reviewer` lens its bare name as its focus, like the `sre-engineer` and `test-coverage-reviewer` lenses.
 - The `scope-issue` skill puts a small amendment in a new comment and, when it rewrites an issue description, comments why it changed.
 
 ### Removed
