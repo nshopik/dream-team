@@ -5,8 +5,9 @@ description: >-
   with parallel read-only lenses (dream-team's architect-reviewer, sre-engineer and
   test-coverage-reviewer agents, and a generic domain lens), whose findings the main
   session merges and deduplicates, with an opt-in verify pass that checks each finding against the
-  code. Reviews the current branch by default, or audits the whole repository. Use when the user
-  runs /dream-team:qa-review or asks for a qa-review, audit or verify pass.
+  code. Reviews the current branch by default, or audits the whole repository, asking the user to
+  pick paths when it maps over ~10K lines of code. Use when the user runs /dream-team:qa-review or
+  asks for a qa-review, audit or verify pass.
 disable-model-invocation: true
 argument-hint: "[audit] [verify] [base-ref | path ...]"
 ---
@@ -19,17 +20,36 @@ deduplicates their reports itself (step 4).
 ## 1. Pick the mode and scope
 
 - `$ARGUMENTS` contains `audit` or `full`, or the user asked for an audit → **audit**: scope is the
-  whole repository.
+  whole repository, or on a large repository the paths the user picks from the audit map below.
 - Otherwise → **review**: changes from `git merge-base HEAD origin/<default-branch>` to the working
   tree, or from the base ref the user named. Empty diff → say so and stop.
 - Paths in `$ARGUMENTS` narrow either mode to those paths.
-- Review → write the diff to `<scratchpad>/qa-review.diff`, `<scratchpad>` spelled as your
-  scratchpad directory's literal path.
+- Review → write the diff to `<scratchpad>/qa-review.diff`.
+- Spell `<scratchpad>` as your scratchpad directory's literal path wherever it appears.
+- Audit with no paths in `$ARGUMENTS` → build the audit map below before writing `scope`.
 
 Write `scope` as 2–4 sentences: repo path, what the project is (one line from its `CLAUDE.md` or
 README), the mode, and for review the base ref, `git diff --stat` output and the diff file's path,
 to read with the Read tool. Name the repo docs a reviewer must read first if `CLAUDE.md` names
 them.
+
+### Audit map
+
+- Launch one Agent: `subagent_type` `Explore`, `model` `haiku`, `prompt` the map block below.
+- Map agent errors, returns nothing or gives no total → say so, then ask the user for the paths
+  to audit.
+- Mapped code over ~10K lines → print the module table (path, lines, role) and the unmapped
+  directories line, and end your turn.
+- The user's reply names the paths to audit, at any depth → they become the scope.
+- Mapped code at or under ~10K lines → keep the whole repository as scope.
+
+Map block, verbatim:
+
+```
+Map this repository's code by module. Read only. Facts only: no judgments, findings or advice.
+- A table of the directories holding code: path, code lines, one-line role. Split a directory over 10K lines into its subdirectories. Count lines with `wc -l` over `git ls-files`; skip vendored, generated and lock files.
+Output: the table, then the total code lines, then one line naming the directories you did not map, or `none`, and nothing else.
+```
 
 ## 2. Pick the lenses
 
@@ -74,6 +94,7 @@ Do not edit, create or delete files in the repository. Do not commit, push, or t
 Read only: no builds, test runs, benchmarks, profiles or experiments.
 Output: findings only, ranked most severe first. Each finding: one emoji prefix (🔴 bug/security/data loss/crash, 🟡 risk/fragile/regression, 🚀 performance, 🔵 nit, ❓ genuine question), `file:line`, why, fix. Mark each [verified] (traced in code) or [suspected].
 No praise, no codebase summary. If a step could not run (tool missing, blocked), say so in one line.
+End with one line naming the in-scope areas you did not read, or `none`.
 ```
 
 Then merge the reports yourself into `items`, `questions` and `blocked`, items ranked most severe
@@ -85,7 +106,9 @@ first:
 - Never drop a finding. Never soften a severity; on disagreement take the higher one.
 - ❓ findings go to `questions`, not `items`.
 - A finding an open issue from step 3 already covers → keep it, set `coveredBy` to `#N`.
-- `blocked`: lenses that reported a blocked or incomplete run, with what did not run.
+- `blocked`: lenses that reported a blocked or incomplete run, with what did not run, and the
+  areas each lens did not read, unless it answered `none`.
+- A report without the closing unread-areas line → list its lens in `blocked` as incomplete.
 
 Each item carries `id` (`F1`, `F2`, ... in ranked order), `severity` (🔴, 🟡, 🚀 or 🔵), `theme`
 (🛡️ Security, 💾 Reliability / data loss, 🏗️ Architecture / contracts, 🧪 Tests / CI, ⚙️ Ops /
