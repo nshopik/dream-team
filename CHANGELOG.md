@@ -11,6 +11,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - The `docs-reviewer` and `docs-editor` agents read the plugin's CHANGELOG style rules when a CHANGELOG is in their diff or pages.
 
+- The `dream-fixer` research tier posts its findings as a comment on the research issue and closes it without an MR, unless it writes output a later task reuses as a note in `docs/research/`, whose MR closes the issue.
+
 ### Removed
 
 - The `changelog-cap` hook and the `jit-context` CHANGELOG style block; the project `CLAUDE.md` carries the entry rules instead.

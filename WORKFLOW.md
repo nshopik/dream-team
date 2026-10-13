@@ -89,8 +89,9 @@ as listed items. Smaller changes it makes inline.
   2. Triage: an open decision gets a dialog with 2–3 options and their costs. The answer is
      written into the issue description. A `Blocked by` line naming an open issue stops here.
   3. Tier:
-     - Research: answers within the time box, a note in `docs/research/`, follow-up issues, an MR
-       for the note that closes the research issue.
+     - Research: answers within the time box, follow-up issues, and a findings comment on the
+       research issue, which closes with no MR. Output a later task reuses goes in a note in
+       `docs/research/`, by an MR that closes the issue.
      - Light (docs, comments, help text, config, rename, or a small bug fix the agent reproduced
        first): the agent makes the edit inline, runs `gateCommands`, and dispatches one reviewer
        — `dream-team:docs-reviewer` for docs, a `general-purpose` reviewer checking the project's

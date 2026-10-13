@@ -18,7 +18,7 @@ Spell `<scratchpad>` as your scratchpad directory's literal path.
 You are the orchestrator. You read, triage, branch and ship. **You do not write the change** — the
 workflow's implementer does. Everything between the branch and the MR happens in dispatched
 agents. Your only edits are step 5's settled disputes and minor findings, which step 6 reruns
-`gateCommands` on, a light-tier issue's edit, and a research issue's note (step 2a).
+`gateCommands` on, a light-tier issue's edit, and a research issue's reusable note (step 2a).
 
 **Lab work is yours, not the workflow's.** Workflow agents never ssh to a lab host. Anything the
 issue or the repo's `CLAUDE.md` needs run on a lab host — a measurement the issue asks for, a test
@@ -100,15 +100,20 @@ Light-path reviewer type:
 - Anything else → `general-purpose`, told to check the diff against the reference sources and
   invariants the project's `CLAUDE.md` names, with the failing evidence for a bug fix.
 
-Research tier: no workflow, no code; the research note is the one change you write. Answer the
-proposal's questions yourself within its time box. Write the answers as a note in the repo's
-research docs, file one issue per gap per `scope-issue` with its milestone (step 5), then commit
-the note on the step-3 branch and open the MR per step 6 with `Closes #<n>`, the follow-up issues
-linked.
+Research tier: no workflow, no code. Answer the proposal's questions yourself within its time
+box, then:
 
-Research note:
+- File one issue per gap per `scope-issue` with its milestone (step 5).
+- Output a later task reuses (a baseline table, a rubric, a case list) → write that output as a
+  note in the format below, commit it on the step-3 branch, and open the MR per step 6 with
+  `Closes #<n>`.
+- Post the other findings as one comment on the research issue, in the format below, the
+  follow-up issues and any MR linked.
+- No note → close the issue; skip step 3 and steps 6-7.
 
-- Path: `docs/research/YYYY-MM-DD-<slug>.md`.
+Findings format:
+
+- A note's path: `docs/research/YYYY-MM-DD-<slug>.md`. A comment has no path line.
 - Header: the title, then `**Date:** <date> · **Issues:** #<n>`.
 - Context: 1-3 sentences on the setup and the versions or commits measured.
 - One `##` per finding, named by its claim or topic; the answer in its first sentence.
@@ -301,7 +306,8 @@ The report carries only what the user must know or act on.
 - No blank line between bullets.
 - Assumptions above the bullets → put a `**Notes:**` line between them.
 - End with one plain line, after a blank line: `Work on #<n> is done: <MR/PR link>`.
-- No MR/PR → end with `Work on #<n> is handed back: <branch> — <why>`.
+- Research issue closed by its findings comment → end with `Work on #<n> is done: <comment link>`.
+- Otherwise no MR/PR → end with `Work on #<n> is handed back: <branch> — <why>`.
 - Name each `degraded` roster type, and each dead reviewer the hand-back `<why>` does not name.
 - No MR/PR and `untrackedPaths` non-empty → list them under one bold label.
 - Name each dispute you settled, which way, and why.
