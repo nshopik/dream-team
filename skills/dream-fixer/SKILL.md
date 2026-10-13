@@ -29,8 +29,9 @@ workflow's `notes` so the implementer does not try, and does not report it as an
 
 ## 1. Read the issue
 
-Fetch body, title, labels and discussion — `gh issue view <n> --comments`, `glab issue view <n>
---comments`, or whatever the host's tooling skill says to use instead.
+Fetch body, title, labels and discussion — `gh issue view <n> --json title,body,labels,comments`,
+`glab issue view <n> --comments --output json -P 100`, or whatever the host's tooling skill says to
+use instead.
 
 A `Meta:` issue is not a work item. Pick an open child from its checklist with no open blocker,
 say which, and run the rest of this skill on that child. None left → report it and stop.

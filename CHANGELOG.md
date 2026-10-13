@@ -15,6 +15,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - The `changelog-cap` hook and the `jit-context` CHANGELOG style block; the project `CLAUDE.md` carries the entry rules instead.
 
+### Fixed
+
+- `dream-fixer` reads both an issue's description and its comments on GitHub and GitLab.
+
 ## [1.3.0] - 2026-10-13
 
 ### Changed
