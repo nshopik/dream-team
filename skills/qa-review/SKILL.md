@@ -63,12 +63,9 @@ Launch one Agent per lens, all in one message, and wait for every report:
 A lens that errors or returns nothing goes in `missing`.
 
 Lens prompt: `<scope>`, a blank line, `Your lens: <focus>`, a blank line, then the rules block.
-Focus by the lens name after its last `:`; a lens not listed → the lens name itself:
-
-- `architect-reviewer`: package boundaries and coupling, data-flow and delivery guarantees
-  (loss, duplication), backpressure, documented contracts and where docs and code disagree.
-- `domain`: `<claim>` checked against `<source files>` and `<invariant>`, as the project's
-  `CLAUDE.md` names them; cite file and line on both sides.
+Focus: the lens name after its last `:`; for `domain`, `<claim>` checked against
+`<source files>` and `<invariant>`, as the project's `CLAUDE.md` names them; cite file and line
+on both sides.
 
 Rules block, verbatim:
 
