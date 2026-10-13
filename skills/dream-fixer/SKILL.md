@@ -18,7 +18,7 @@ Spell `<scratchpad>` as your scratchpad directory's literal path.
 You are the orchestrator. You read, triage, branch and ship. **You do not write the change** — the
 workflow's implementer does. Everything between the branch and the MR happens in dispatched
 agents. Your only edits are step 5's settled disputes and minor findings, which step 6 reruns
-`gateCommands` on, a light-tier issue's edit, and a scout issue's research note (step 2a).
+`gateCommands` on, a light-tier issue's edit, and a research issue's note (step 2a).
 
 **Lab work is yours, not the workflow's.** Workflow agents never ssh to a lab host. Anything the
 issue or the repo's `CLAUDE.md` needs run on a lab host — a measurement the issue asks for, a test
@@ -67,8 +67,8 @@ Never open a dialog whose options you had to invent to fill the slots.
 
 A tier the project's `CLAUDE.md` sets for the issue overrides the criteria below.
 
-Scout tier when the title starts `Scout:` (below). Otherwise light tier when all hold; otherwise
-full (step 3 on):
+Research tier when the title starts `Research:` (below). Otherwise light tier when all hold;
+otherwise full (step 3 on):
 
 - No runtime behaviour change: docs, comments, help or usage text, CI config, test fixtures, or a
   rename. Or a bug fix you reproduced yourself before the edit: a lab probe or a test seen failing.
@@ -99,7 +99,7 @@ Light-path reviewer type:
 - Anything else → `general-purpose`, told to check the diff against the reference sources and
   invariants the project's `CLAUDE.md` names, with the failing evidence for a bug fix.
 
-Scout tier: no workflow, no code; the research note is the one change you write. Answer the
+Research tier: no workflow, no code; the research note is the one change you write. Answer the
 proposal's questions yourself within its time box. Write the answers as a note in the repo's
 research docs, file one issue per gap per `scope-issue` with its milestone (step 5), then commit
 the note on the step-3 branch and open the MR per step 6 with `Closes #<n>`, the follow-up issues
@@ -200,7 +200,7 @@ Docs drift, once the result is `ok`:
 
 Adjacent defects — anything found outside the diff:
 
-- A scout finding, a review-panel survivor outside the diff, a bug hit running evals or
+- A research finding, a review-panel survivor outside the diff, a bug hit running evals or
   `gateCommands`, or a spec consequence nobody owns → file it as an issue before the session
   ends, per the repo's own rules.
 - The finding is a minor nit → file nothing.
