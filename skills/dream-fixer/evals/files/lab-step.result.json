@@ -20,9 +20,9 @@
     "internal/encode/pool_test.go",
     "internal/encode/batch.go"
   ],
-  "minorFindings": [
+  "nitFindings": [
     {
-      "severity": "minor",
+      "severity": "nit",
       "description": "pool_test.go could use t.Parallel",
       "file": "internal/encode/pool_test.go",
       "gate": "dream-team:test-coverage-reviewer"
@@ -33,7 +33,7 @@
     "dream-team:architect-reviewer": "No findings.",
     "dream-team:performance-engineer": "No findings.",
     "dream-team:sre-engineer": "No findings.",
-    "dream-team:test-coverage-reviewer": "One minor nit.",
+    "dream-team:test-coverage-reviewer": "One nit.",
     "domain": "Encoders are reset before reuse. No findings."
   }
 }

@@ -17,9 +17,9 @@
     "internal/rotate/rotate.go",
     "internal/rotate/rotate_test.go"
   ],
-  "minorFindings": [
+  "nitFindings": [
     {
-      "severity": "minor",
+      "severity": "nit",
       "description": "keep variable could be named keepN for symmetry with maxN",
       "file": "internal/rotate/rotate.go",
       "gate": "dream-team:architect-reviewer"

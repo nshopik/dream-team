@@ -21,13 +21,13 @@
   they do not fail the gate. Returned on an `ok` result, a `handBack`, or a `gate` stage failure.
 - **`simplify`** — the over-engineering cuts made before review: `applied`, `disputed` with the
   implementer's reason, and `net`, the review's estimate of lines that could go. Put applied cuts in
-  the MR description, and `net` only when nothing was disputed; treat a disputed cut like a minor
-  finding. `unhandled` counts cuts the implementer neither applied nor disputed; above 0 → say so in
+  the MR description, and `net` only when nothing was disputed; treat a disputed cut like a nit.
+  `unhandled` counts cuts the implementer neither applied nor disputed; above 0 → say so in
   the MR description. `null` → the phase was skipped.
 - **`disputes`** — the fixer refused a finding and gave evidence. Check it yourself. The fixer may
   be right; it may also be rationalizing. Apply the fix or accept the dispute.
 - **`resolved`** — blocking findings a fix round fixed, each with its reviewer (`gate`) and round.
-- **`minorFindings`** — never auto-fixed. Apply the ones worth applying, drop the rest.
+- **`nitFindings`** — never auto-fixed. Apply the ones worth applying, drop the rest.
 - **`assumptions`** — anything the implementer had to invent.
 - **`redEvidence`** — the new test's failing output from before the fix; the test reviewer checked
   it. Empty on a bug-fix issue means nobody saw the test fail.

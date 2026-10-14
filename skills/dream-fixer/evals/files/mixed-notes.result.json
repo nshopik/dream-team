@@ -21,7 +21,7 @@
     "internal/scrub/scrub_test.go",
     "internal/resolve/resolver_test.go"
   ],
-  "minorFindings": [],
+  "nitFindings": [],
   "disputes": [],
   "summaries": {
     "dream-team:architect-reviewer": "No findings.",

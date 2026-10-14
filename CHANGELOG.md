@@ -13,6 +13,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - **Upgrade note:** `setup-dream-team` adds two project rules for CHANGELOG entries, one plain sentence each and bold only for the `**Breaking:**` and `**Upgrade note:**` prefixes; rerun it or add them to your project's `CLAUDE.md` by hand.
 
+- The 🔵 severity is named `nit` instead of `minor`: the `qa-review` report section, the `dream-fixer-loop` severity value and its `nitFindings` result key, formerly `minorFindings`.
+
 - The `docs-reviewer` and `docs-editor` agents read the plugin's CHANGELOG style rules when a CHANGELOG is in their diff or pages.
 
 - The `dream-fixer` research tier posts its findings as a comment on the research issue and closes it without an MR, unless it writes output a later task reuses as a note in `docs/research/`, whose MR closes the issue.

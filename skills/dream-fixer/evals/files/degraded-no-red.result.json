@@ -19,7 +19,7 @@
     "internal/resolve/client.go",
     "internal/resolve/client_test.go"
   ],
-  "minorFindings": [],
+  "nitFindings": [],
   "disputes": [],
   "summaries": {
     "dream-team:architect-reviewer": "No findings.",
