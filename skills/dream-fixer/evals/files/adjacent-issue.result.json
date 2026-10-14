@@ -17,7 +17,7 @@
     "internal/export/csv.go",
     "internal/export/csv_test.go"
   ],
-  "minorFindings": [],
+  "nitFindings": [],
   "disputes": [],
   "summaries": {
     "dream-team:architect-reviewer": "No findings.",

@@ -21,15 +21,15 @@
     "cmd/flowlog/export_test.go",
     "README.md"
   ],
-  "minorFindings": [
+  "nitFindings": [
     {
-      "severity": "minor",
+      "severity": "nit",
       "description": "parseSince error message could quote the accepted format",
       "file": "cmd/flowlog/export.go",
       "gate": "dream-team:architect-reviewer"
     },
     {
-      "severity": "minor",
+      "severity": "nit",
       "description": "table test case names use mixed casing",
       "file": "cmd/flowlog/export_test.go",
       "gate": "dream-team:test-coverage-reviewer"
@@ -37,10 +37,10 @@
   ],
   "disputes": [],
   "summaries": {
-    "dream-team:architect-reviewer": "Clean change, one minor wording nit.",
+    "dream-team:architect-reviewer": "Clean change, one wording nit.",
     "dream-team:performance-engineer": "No findings.",
     "dream-team:sre-engineer": "Parse errors are returned to the CLI. No findings.",
-    "dream-team:test-coverage-reviewer": "Boundary, empty and invalid inputs covered. One minor naming nit.",
+    "dream-team:test-coverage-reviewer": "Boundary, empty and invalid inputs covered. One naming nit.",
     "domain": "Filter runs before the batch encoder, matching the existing --until path. No findings."
   }
 }

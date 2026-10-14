@@ -122,7 +122,7 @@ several), `status` (verified or suspected), `disputed`, `lenses`, `why`, `fix`, 
 - Render `items` in compressed form, one or two lines each: `id`, status (☑️ verified, ❔
   suspected), claim, `location`, fix. Append `(disputed)` when `disputed` is set and `[#N]` from
   `coveredBy`.
-- Section headings, in this order: `### 🔴 Critical`, `### 🟡 Important`, `### 🔵 Minor`,
+- Section headings, in this order: `### 🔴 Critical`, `### 🟡 Important`, `### 🔵 Nit`,
   `### 🚀 Performance`, `### ❓ Questions`. Omit an empty section.
 - Under 🟡, and under 🔴 when it has more than 5 items, group by `theme` with bold sub-headings.
   Omit an empty theme.

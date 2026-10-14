@@ -17,7 +17,7 @@ Spell `<scratchpad>` as your scratchpad directory's literal path.
 
 You are the orchestrator. You read, triage, branch and ship. **You do not write the change** — the
 workflow's implementer does. Everything between the branch and the MR happens in dispatched
-agents. Your only edits are step 5's settled disputes and minor findings, which step 6 reruns
+agents. Your only edits are step 5's settled disputes and nits, which step 6 reruns
 `gateCommands` on, a light-tier issue's edit, and a research issue's reusable note (step 2a).
 
 **Lab work is yours, not the workflow's.** Workflow agents never ssh to a lab host. Anything the
@@ -201,7 +201,7 @@ Docs drift, once the result is `ok`:
 - A 🔴/🟡 finding you judge wrong → drop it, as a settled dispute.
 - 🔴/🟡 findings left → after your edits, dispatch `dream-team:docs-editor` in drift mode with the
   diff and only the pages they name.
-- 🔵 findings → treat as minor findings.
+- 🔵 findings → treat as nits.
 - The editor's edits are step-5 changes: step 6 commits and gates them.
 
 Adjacent defects — anything found outside the diff:
@@ -209,7 +209,7 @@ Adjacent defects — anything found outside the diff:
 - A research finding, a review-panel survivor outside the diff, a bug hit running evals or
   `gateCommands`, or a spec consequence nobody owns → file it as an issue before the session
   ends, per the repo's own rules.
-- The finding is a minor nit → file nothing.
+- The finding is a nit → file nothing.
 - Filed → never leave the finding in the MR description or the chat summary.
 - Filing fails or yields no issue link → name the defect in the report as unfiled, with the reason.
 
@@ -318,7 +318,7 @@ The report carries only what the user must know or act on.
 - Give a lab step one line: its verdict, or its numbers when there are fewer than three.
 - Name each reviewer that could not check something, and the check you ran in its place.
 - Stopped at triage → say what is blocking and stop there.
-- Leave out minor findings, applied or dropped, and reviewer verdicts with no finding.
+- Leave out nits, applied or dropped, and reviewer verdicts with no finding.
 - Leave out `gateCommands` entries that passed and a summary of the change: the MR carries it.
 - Leave out a present `redEvidence` and lab work that did not run.
 - A review with no blocking finding, no dispute and no fix round gets no line.

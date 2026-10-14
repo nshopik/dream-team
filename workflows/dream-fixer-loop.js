@@ -109,7 +109,7 @@ const VERDICT_SCHEMA = {
         required: ['severity', 'description'],
         additionalProperties: false,
         properties: {
-          severity: { type: 'string', enum: ['critical', 'important', 'minor'] },
+          severity: { type: 'string', enum: ['critical', 'important', 'nit'] },
           description: { type: 'string' },
           file: { type: 'string' },
         },
@@ -267,7 +267,7 @@ const READ_DIFF = `The branch diff is in \`${DIFF_FILE}\`; read it with the Read
 const REVIEW_RULES = [
   READ_ONLY,
   'Judge only lines this diff changed. A pre-existing problem outside the diff is not a finding here.',
-  'Rate each finding critical, important or minor. Critical and important block the MR. Minor is a nit that is never auto-fixed, so do not inflate severity to force action.',
+  'Rate each finding critical, important or nit. Critical and important block the MR. A nit is never auto-fixed, so do not inflate severity to force action.',
 ].join('\n')
 
 function implPrompt() {
@@ -430,7 +430,7 @@ function fixPrompt(blocking, disputes, round) {
       disputes.map((d) => `- (round ${d.round}) ${d.finding} — ${d.reason}`).join('\n'),
     ] : []),
     '',
-    'Do not fix minor findings.',
+    'Do not fix nits.',
     ...APPLY_RULES,
   ].join('\n')
 }
@@ -538,9 +538,9 @@ phase('Review')
 const state = new Map()
 const initial = await parallel(gates.map((g) => () =>
   agentR(g.prompt(), { label: `review:${g.key}`, phase: 'Review', schema: g.schema || VERDICT_SCHEMA, ...reviewerRoster(g.type) })))
-// Minors are kept from full reviews only: a re-review verdict replaces the
+// Nits are kept from full reviews only: a re-review verdict replaces the
 // gate's state and lists outstanding findings, so it would drop them.
-const minor = []
+const nits = []
 const record = (g, v) => {
   if (v?.ran === false) {
     MISSING_TYPES.add(g.key)
@@ -548,7 +548,7 @@ const record = (g, v) => {
     v = { ...v, findings: [] }
   }
   state.set(g.key, v || deadReviewer(g.key))
-  if (v) minor.push(...v.findings.filter((f) => f.severity === 'minor').map((f) => ({ ...f, gate: g.key })))
+  if (v) nits.push(...v.findings.filter((f) => f.severity === 'nit').map((f) => ({ ...f, gate: g.key })))
 }
 gates.forEach((g, i) => record(g, initial[i]))
 
@@ -646,7 +646,7 @@ return {
   redEvidence: impl.redEvidence,
   changedFiles,
   untrackedPaths: [...UNTRACKED],
-  minorFindings: minor,
+  nitFindings: nits,
   simplify,
   disputes,
   resolved,
