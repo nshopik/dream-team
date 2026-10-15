@@ -7,7 +7,8 @@ ledger.
 
 - Run qa-review as warm-up: 3 runs at effort high, then 2 at max.
 - The grader verifies every row against the code before it enters the ledger.
-- Freeze the ledger as version 1 after the fifth run.
+- Freeze the ledger as version 1 after the fifth run: set `frozen` to true.
+- After freezing, delete each warm-up run's `marks.txt` and rerun `run.sh` to regrade it.
 
 ## Frozen ledger
 
@@ -25,10 +26,12 @@ ledger.
 `ledger.json`:
 
 ```json
-{"version": 1, "rows": [{"id": "C1", "finding": "…", "location": "src/a.c:412",
+{"version": 1, "frozen": true, "rows": [{"id": "C1", "finding": "…", "location": "src/a.c:412",
   "severity": "critical", "plausible": false, "nit": false}]}
 ```
 
+- `frozen`: true or false; default false (absent).
+- `id`: the severity's letter (C, I, P, T, or N for minor) and the next free number.
 - `severity`: `critical` (crash, use-after-free, deadlock, data loss, build break), `important`
   (risk, race, regression, silent failure), `performance`, `test` (test gap) or `minor` (bug or
   nit).
@@ -70,6 +73,8 @@ Candidate (QR1.arch, CR1): <claim>.
   reviewer, prefix plus number the run.
 - Bare ID: full credit (1). ID with `~`: partial credit (0.5).
 - A run with no credited finding still gets a bare `<PREFIX><run>` line.
+- An early-exit run (errored, empty report, or its main turn ended before its subagents) gets a
+  bare line: it scores 0.
 - Other lines (`#` comments, `Rejected`, `Excluded`, `Candidate`) are not scored.
 
 ## Scoring
