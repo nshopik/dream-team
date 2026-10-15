@@ -1,0 +1,12 @@
+# Fixture marks: one line per run or lens; "~" = partial credit.
+QR1.arch C1 I1 P1
+QR1.sre C1 C2~ T1 N1
+QR2.arch C1 C2 I1~
+QR2.sre I1 P1 N2
+CR1 C1~ I1 N1 N2
+CR2 I1 P1 T1
+SR1 C2 N1
+GR1 I1 N1
+Rejected (CR2): pool_resize races with task pickup (the pool lock is held across both).
+Excluded (QR2.sre): sleep-based retry in test/xfr_test.c (same as the existing tests).
+Candidate (QR1.arch, CR1): a zone reload during a transfer drops the transfer (unverified).

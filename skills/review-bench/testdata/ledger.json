@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "rows": [
+    {"id": "C1", "finding": "loader thread frees the zone while a worker still reads it (use-after-free)", "location": "src/loader.c:412", "severity": "critical", "plausible": false, "nit": false},
+    {"id": "C2", "finding": "shutdown waits on a condition no thread signals once the task queue is empty (deadlock)", "location": "src/pool.c:188", "severity": "critical", "plausible": true, "nit": false},
+    {"id": "I1", "finding": "a failed transfer is logged and never retried, so the zone keeps a stale serial", "location": "src/xfr.c:930", "severity": "important", "plausible": false, "nit": false},
+    {"id": "P1", "finding": "every task allocates a fresh 64 KiB read buffer", "location": "src/pool.c:240", "severity": "performance", "plausible": false, "nit": false},
+    {"id": "T1", "finding": "no test sets the thread count to 0", "location": "test/pool_test.c", "severity": "test", "plausible": false, "nit": false},
+    {"id": "N1", "finding": "log line reports the task count one too high", "location": "src/pool.c:301", "severity": "minor", "plausible": false, "nit": false},
+    {"id": "N2", "finding": "variable name misspelled (`recieved`)", "location": "src/xfr.c:877", "severity": "minor", "plausible": false, "nit": true}
+  ]
+}
