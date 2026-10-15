@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Scores reviewer runs against a frozen findings ledger; see METHODOLOGY.md.
+"""Scores reviewer runs against a findings ledger; see METHODOLOGY.md.
 
 Usage: python3 score.py <ledger.json> <marks.txt>
 """

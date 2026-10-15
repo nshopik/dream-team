@@ -93,6 +93,8 @@ python3 hooks/test_jit_context.py
 python3 skills/dream-fixer/test_fold.py
 python3 skills/friction/test_friction.py
 python3 skills/review-bench/test_score.py
+python3 skills/review-bench/test_extract.py
+python3 skills/review-bench/test_run.py
 node workflows/test_simplify.mjs
 python3 test_frontmatter.py
 ```
