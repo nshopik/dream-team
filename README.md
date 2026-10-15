@@ -38,6 +38,8 @@ It works for application code and infrastructure-as-code.
   read-only lenses.
 - **[chaos-planning](skills/chaos-planning/SKILL.md)**: reviews a launch's failure-experiment plan
   for gaps.
+- **[review-bench](skills/review-bench/SKILL.md)**: benchmarks code reviewers against qa-review on
+  one pull request and prints a score table.
 
 ### Agents
 
@@ -76,6 +78,7 @@ pi install git:github.com/nshopik/dream-team
 ```
 
 pi loads the skills; the hooks and the `dream-fixer-loop` workflow are Claude Code only.
+`review-bench` needs `git`, `gh` and the `claude` CLI on `PATH`.
 
 ## Configuration
 

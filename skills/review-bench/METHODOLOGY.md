@@ -61,12 +61,12 @@ ledger.
 One line per run, or per lens of a run:
 
 ```
-QR1.arch C1 I1 P1 T1~
-QR1.sre C1 C2~
+QAHIGH1.arch C1 I1 P1 T1~
+QAHIGH1.sre C1 C2~
 CR1 C1~ I1
 Rejected (CR1): <claim> (<why the code refutes it>).
-Excluded (QR1.sre): <claim> (<pre-existing or own-rule>).
-Candidate (QR1.arch, CR1): <claim>.
+Excluded (QAHIGH1.sre): <claim> (<pre-existing or own-rule>).
+Candidate (QAHIGH1.arch, CR1): <claim>.
 ```
 
 - Scored line: `<PREFIX><run>[.<lens>] ID ID~ …`; the prefix (capital letters A-Z) names the
