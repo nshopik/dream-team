@@ -38,14 +38,14 @@ report, ended = max((read(t) for t in projects.glob(f"*/{run['session_id']}.json
                     key=lambda r: len(r[0]), default=("", ""))
 result = run.get("result", "")
 if result.strip() not in report:
-    report += "\n\n---\n\n" + result
+    report = (report + "\n\n---\n\n" if report.strip() else "") + result
 (d / "report.md").write_text(report.strip() + "\n")
 
 late = False
 subagents = sorted(projects.glob(f"*/{run['session_id']}/subagents/*.meta.json"))
 for meta in subagents:
     text, last = read(meta.with_name(meta.name[: -len(".meta.json")] + ".jsonl"), True)
-    late |= last > ended
+    late |= bool(ended) and last > ended  # a forked skill has no main-thread turn
     if sys.argv[2:] != ["lenses"]:
         continue
     name = json.loads(meta.read_text())["agentType"].split(":")[-1]
