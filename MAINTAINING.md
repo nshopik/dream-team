@@ -21,7 +21,11 @@ Skills:
 - `scope-spec`: the project spec and its template.
 - `qa-review`: parallel read-only design, reliability, test-coverage and domain lenses,
   merged, with an opt-in verify pass.
+- `review-bench`: benchmarks `qa-review`, and any reviewer the user names against it, on one
+  pull request; `run.sh` runs and grades, `score.py` scores against the ledger.
 - `chaos-planning`: gaps in a launch's failure-experiment plan, reported in chat.
+- `friction`: friction patterns seen in two or more past `dream-fixer-loop` runs, each with the
+  prompt line it points to.
 
 Agents:
 
