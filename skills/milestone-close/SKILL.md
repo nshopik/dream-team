@@ -2,8 +2,8 @@
 name: milestone-close
 description: >-
   Closes a tracker milestone: checks its exit criterion, triages its open issues, checks docs
-  against code. Use when the user asks to close, wrap up or review a milestone — "close milestone
-  4", "is M4 done", "wrap up the dogfood milestone".
+  against code and offers a minor release. Use when the user asks to close, wrap up or review a
+  milestone — "close milestone 4", "is M4 done", "wrap up the dogfood milestone".
 argument-hint: <milestone id or title>
 ---
 
@@ -44,7 +44,7 @@ this milestone; tick the boxes of closed children in its description.
 
 ## 4. Docs check
 
-Report drift, fix nothing yet:
+Report drift and propose the release, fix nothing yet:
 
 - Architecture doc and diagram against the workspace's component list.
 - Specs whose decision the code no longer follows → propose a `Superseded by` status line.
@@ -65,6 +65,12 @@ Report drift, fix nothing yet:
   bug), recommending that change. The user approves or rejects each.
 - Each other `CLAUDE.local.md` line: proposed as a promotion to `CLAUDE.md` when it holds no
   hostname, IP, internal URL or lab access, otherwise left alone. The user approves or rejects each.
+- Every close, `M<n>` and `v<x.y>` alike → propose a release at the next minor version; the user
+  approves it, names another version or declines.
+- A `v<x.y>` milestone whose major is above the version file's → warn in the release proposal
+  that its name says a major release, naming both versions.
+- No version file or no CHANGELOG `[Unreleased]` entries → say so in the release proposal; create
+  neither.
 
 ## 5. Apply
 
@@ -77,19 +83,22 @@ open issues.
 
 - Approved `docs-reviewer` fixes → dispatch `dream-team:docs-editor` in drift mode with the merged
   diff and only the pages they name; its edits go in the docs MR.
-- The project's `CLAUDE.md` opts in to tagging milestone closes → the docs MR bumps the project
-  version to the next pre-1.0 minor (`0.<n>.0`).
-- Once that MR merges, tag its merge commit `v0.<n>.0`, the tag message naming the milestone.
-- No opt-in line and no `v1.0.0` tag yet → recommend the opt-in in the report, as the one
-  `CLAUDE.md` line to add.
+- Approved release → the docs MR bumps each version file, renames the CHANGELOG `[Unreleased]`
+  to `[<version>] - <date>` and adds an empty `[Unreleased]` above it; with nothing else
+  approved, the release alone opens it.
+- Once that MR merges → offer a `v<version>` tag on its merge commit, the tag message naming the
+  milestone.
+- The project's `CLAUDE.md` forbids tagging → skip the tag offer.
 
 ## Report back
 
 Criterion result, issues closed, moved and filed, the docs MR link, each approved docs fix
-`docs-editor` reported as `skipped:` or under `gaps:`, the tag or the recommended opt-in line.
+`docs-editor` reported as `skipped:` or under `gaps:`, the release version and its tag, or the
+tag pending the docs MR's merge, or the declined release.
 
 Proposals from step 2 or 4:
 
 - Number them; ask the user to approve them by number.
 - Under each, name what approving it does: an issue filed, a line added, removed or moved to
-  `CLAUDE.md`, a page edit in the docs MR, or a fix the user makes outside the repo.
+  `CLAUDE.md`, a page edit in the docs MR, a version bump and CHANGELOG move in the docs MR, or a
+  fix the user makes outside the repo.

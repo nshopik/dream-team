@@ -16,7 +16,7 @@ Skills:
 - `cut-milestones`: milestones from a spec, one exit gate each, with the
   dependency order and ROADMAP rows; or one version milestone for a minor release.
 - `milestone-close`: exit check with gap issues, triage, docs check, facts
-  sweep, `CLAUDE.md` cuts and `CLAUDE.local.md` promotions.
+  sweep, `CLAUDE.md` cuts and `CLAUDE.local.md` promotions, minor release offer.
 - `scope-commit`, `scope-mr`: commit and MR text.
 - `scope-spec`: the project spec and its template.
 - `qa-review`: parallel read-only design, reliability, test-coverage and domain lenses,
@@ -77,15 +77,17 @@ Planning stays explicit, at issue size, because you review every plan.
 - Work spanning milestones (full RFC 8914 coverage) is a `Meta:` issue, not a milestone (one
   exit gate cannot cover it) and not a per-item table in the repo (every MR would churn it). A
   closed child shows "(closed)" beside its mention; the box is ticked at `milestone-close`.
-- A minor release is scope-based: one headline feature plus backlog, behind standing release
-  criteria in the version milestone's `Gate:` bullet. One maintainer defines a release by its
-  feature, not a date.
+- A version milestone's minor release is scope-based: one headline feature plus backlog, behind
+  standing release criteria in the version milestone's `Gate:` bullet. One maintainer defines a
+  release by its feature, not a date.
 - A ROADMAP is required only when two or more milestones are open or one depends on another. With
   one rolling version milestone each row copied its `Exit:` and its status mirrored its open or
   closed state. Keying on `M<n>` names was rejected: a versioned project can plan several
   headline releases ahead.
-- Release stays user-triggered ("tag v0.1"), not time-based. Pre-1.0, a project may opt in to
-  a `v0.<n>.0` tag per milestone close: a version a user can find, without a release process.
+- Release stays user-approved, not time-based: `milestone-close` offers the next minor version
+  at every close, `M<n>` and `v<x.y>` alike, and patch releases happen between closes. A
+  milestone close is the release point for most projects; a pre-1.0 opt-in line left the rest
+  closing milestones with no release.
 - Milestones are `M<n>`, not a bare integer: "milestone 5" reads badly in prose and collides
   with counts ("all 5 sites"). One generic prefix beats a per-project codename; the repo name
   disambiguates the rare cross-project mention.
