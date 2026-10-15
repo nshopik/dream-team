@@ -1,8 +1,16 @@
 # dream-team
 
-A Claude Code plugin that gives a project one development process, from first spec to release,
-on GitHub or GitLab. Work is planned as small, self-contained issues, and each one ships as a
-single reviewed MR/PR. The full walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
+Say "dream team" to anyone who has shipped software and you'll get a laugh. It was always a
+joke: the team where everyone is sharp, nobody drops the ball, and the impossible task still
+gets done. Finding one was about as likely as winning the lottery.
+
+This plugin is that team, for Claude Code. It started as more than 20 agents and was cut down
+to the few that earn their place. They turn your spec into milestones, split the milestones
+into issues small enough to finish, take each issue to a reviewed MR/PR, and stay with you
+through release. Bring them your biggest task.
+
+It works on GitHub and GitLab, for application code and infrastructure-as-code. The full
+walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
 
 ## How it works
 
@@ -11,8 +19,6 @@ single reviewed MR/PR. The full walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
 3. **Issues:** one per change.
 4. **MR/PR:** one per issue, implemented, gated and reviewed by agents.
 5. **Milestone close:** only when the exit criterion is met.
-
-It works for application code and infrastructure-as-code.
 
 ## Contents
 
