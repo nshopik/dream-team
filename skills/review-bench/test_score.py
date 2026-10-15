@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+"""score.py over the fixture ledger and marks in testdata/.
+
+Usage: python3 test_score.py
+"""
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+HERE = Path(__file__).parent
+TMP = tempfile.TemporaryDirectory()
+LEDGER = HERE / "testdata/ledger.json"
+
+
+def score(marks):
+    return subprocess.run([sys.executable, HERE / "score.py", LEDGER, marks], capture_output=True, text=True)
+
+
+out = score(HERE / "testdata/marks.txt")
+assert out.returncode == 0, out.stderr
+assert out.stdout == """\
+ledger v1: 7 findings, weight 26.5, 2 criticals
+tier  reviewer  runs  quality     sd  criticals
+   1  QR           2     86.8    2.7  1.5/2
+   2  CR           2     38.7    1.3  0.0/2
+   2  SR           1     22.6         1.0/2
+   3  GR           1     18.9         0.0/2
+""", out.stdout
+print("PASS fixture table")
+
+for marks, want, case in [
+    ("QR1.arch C1 C9~\n", "QR1.arch: C9 is not in the ledger", "an ID outside the ledger fails"),
+    ("QR1:arch C1\n", "QR1:arch: not a <PREFIX><run>[.<lens>] token", "a malformed run token fails"),
+]:
+    bad = Path(TMP.name) / "marks.txt"
+    bad.write_text(marks)
+    out = score(bad)
+    assert out.returncode != 0 and want in out.stderr, out
+    print("PASS", case)
+
+bare = Path(TMP.name) / "marks.txt"
+bare.write_text("QR1 C1\nQR2")
+out = score(bare)
+assert "   1  QR           2     18.9   26.7  0.5/2\n" in out.stdout, out
+print("PASS a bare last line with no newline is a scored run")
