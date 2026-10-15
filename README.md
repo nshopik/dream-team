@@ -28,6 +28,8 @@ It works for application code and infrastructure-as-code.
   each.
 - **[milestone-close](skills/milestone-close/SKILL.md)**: checks a milestone's exit criterion,
   triages its open issues, checks docs against code, and offers a minor release.
+- **[ship-it](skills/ship-it/SKILL.md)**: releases main, with or without a milestone: version
+  bump, CHANGELOG move and tag offer.
 - **[scope-commit](skills/scope-commit/SKILL.md)**: commit messages in
   [Scoped Commits](https://scopedcommits.com/) format.
 - **[scope-mr](skills/scope-mr/SKILL.md)**: MR/PR descriptions.

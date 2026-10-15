@@ -147,8 +147,9 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
   file and renames the CHANGELOG `[Unreleased]` section to the new version; once it merges, the
   agent offers a tag on its merge commit, unless the project's `CLAUDE.md` forbids tagging. CI
   builds the release from the tag.
-- You: approve, name another version, or decline. Patch releases between closes are yours to ask
-  for.
+- You: approve, name another version, or decline. Patch releases between closes, and releases
+  of a project without milestones, are yours to ask for: "cut a release" or "ship 1.4.1" runs
+  `ship-it`.
 
 ## Where your time goes
 

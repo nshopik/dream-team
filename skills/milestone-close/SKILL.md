@@ -65,12 +65,9 @@ Report drift and propose the release, fix nothing yet:
   bug), recommending that change. The user approves or rejects each.
 - Each other `CLAUDE.local.md` line: proposed as a promotion to `CLAUDE.md` when it holds no
   hostname, IP, internal URL or lab access, otherwise left alone. The user approves or rejects each.
-- Every close, `M<n>` and `v<x.y>` alike → propose a release at the next minor version; the user
-  approves it, names another version or declines.
+- Every close, `M<n>` and `v<x.y>` alike → load `ship-it`; propose a release per its Propose step.
 - A `v<x.y>` milestone whose major is above the version file's → warn in the release proposal
   that its name says a major release, naming both versions.
-- No version file or no CHANGELOG `[Unreleased]` entries → say so in the release proposal; create
-  neither.
 
 ## 5. Apply
 
@@ -83,12 +80,8 @@ open issues.
 
 - Approved `docs-reviewer` fixes → dispatch `dream-team:docs-editor` in drift mode with the merged
   diff and only the pages they name; its edits go in the docs MR.
-- Approved release → the docs MR bumps each version file, renames the CHANGELOG `[Unreleased]`
-  to `[<version>] - <date>` and adds an empty `[Unreleased]` above it; with nothing else
-  approved, the release alone opens it.
-- Once that MR merges → offer a `v<version>` tag on its merge commit, the tag message naming the
-  milestone.
-- The project's `CLAUDE.md` forbids tagging → skip the tag offer.
+- Approved release → `ship-it` Bump and Tag steps, its bump in the docs MR and its tag message
+  naming the milestone; with nothing else approved, the release alone opens the MR.
 
 ## Report back
 
