@@ -135,21 +135,22 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
      milestone's merged diff, ROADMAP status for the milestone's merged work, facts from its merged
      MRs that `docs/development.md` lacks, `CLAUDE.md` and `CLAUDE.local.md` lines to cut (with
      the lab host or tool change that would fix the gotcha, where one could), and
-     `CLAUDE.local.md` lines to promote to `CLAUDE.md`. Each fact, cut and promotion is one
-     proposed line for you to approve or reject.
+     `CLAUDE.local.md` lines to promote to `CLAUDE.md`, and the next minor release (step 6). Each
+     fact, cut and promotion is one proposed line for you to approve or reject.
   4. Applies what you approved: moves, one docs MR with `docs-editor`'s fixes for the approved
      drift, milestone closed, ROADMAP updated, and the release you approve (step 6).
-- You: the gap issues, the triage table, the proposed facts and the cuts are your decisions.
+- You: the gap issues, the triage table, the proposed facts, the cuts and the release are your
+  decisions.
 
 ### 6. Release
 
 - Agent: at every milestone close, proposes the next minor version. The docs MR bumps each version
-  file and renames the CHANGELOG `[Unreleased]` section to the new version; once it merges, the
-  agent offers a tag on its merge commit, unless the project's `CLAUDE.md` forbids tagging. CI
-  builds the release from the tag.
+  file and renames the CHANGELOG `[Unreleased]` section to the new version, where they exist;
+  once it merges, the agent offers a tag on its merge commit, unless the project's `CLAUDE.md`
+  forbids tagging. CI builds the release from the tag.
 - You: approve, name another version, or decline. Patch releases between closes, and releases
-  of a project without milestones, are yours to ask for: "cut a release" or "ship 1.4.1" runs
-  `ship-it`.
+  of a project without milestones, are yours to ask for: "cut a release" runs `ship-it`, and you
+  name the patch version when it proposes the next minor.
 
 ## Where your time goes
 
