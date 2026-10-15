@@ -7,6 +7,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Added
 
+- The `review-bench` skill benchmarks `qa-review`, and any reviewer you name against it, on one pull request: its `run.sh` runs each reviewer headless, grades every run against a verified findings ledger, and prints a score table.
+
 - A `qa-review` audit of a repository with over about 10K lines of source code maps it by module, leaving out test data, fixtures and docs, and asks which paths to audit.
 
 ### Changed
