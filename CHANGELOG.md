@@ -13,6 +13,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Changed
 
+- `milestone-close` offers a release at the next minor version on every milestone close, bumping each version file and renaming the CHANGELOG `[Unreleased]` section in its docs MR, and offers a tag unless the project's `CLAUDE.md` forbids tagging, replacing the pre-1.0 opt-in line, which you can remove from your project's `CLAUDE.md`.
+
 - **Upgrade note:** `setup-dream-team` adds two project rules for CHANGELOG entries, one plain sentence each and bold only for the `**Breaking:**` and `**Upgrade note:**` prefixes; rerun it or add them to your project's `CLAUDE.md` by hand.
 
 - The 🔵 severity is named `nit` instead of `minor`: the `qa-review` report section, the `dream-fixer-loop` severity value and its `nitFindings` result key, formerly `minorFindings`.

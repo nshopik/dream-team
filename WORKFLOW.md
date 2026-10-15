@@ -16,14 +16,14 @@ flowchart TD
   S5 -->|next milestone| S2
   S5 -->|gaps| S3
   S5 -->|kill-gate failed| S0
-  S5 -.->|when you choose| S6(["6 · Release"])
+  S5 -.->|you approve| S6(["6 · Release"])
   classDef gate stroke:#d98a2b,stroke-width:2px
   class S1,S5 gate
   linkStyle 9,10 stroke:#d9534f,stroke-width:2px
 ```
 
 Amber: exit gates. Red: loop-backs from a failed gate. Dotted: side entries and the
-user-triggered release.
+user-approved release.
 
 ## Walkthrough
 
@@ -138,14 +138,17 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
      `CLAUDE.local.md` lines to promote to `CLAUDE.md`. Each fact, cut and promotion is one
      proposed line for you to approve or reject.
   4. Applies what you approved: moves, one docs MR with `docs-editor`'s fixes for the approved
-     drift, milestone closed, ROADMAP updated. A pre-1.0 project that opts in through
-     `CLAUDE.md` gets a `v0.<n>.0` tag on the close.
+     drift, milestone closed, ROADMAP updated, and the release you approve (step 6).
 - You: the gap issues, the triage table, the proposed facts and the cuts are your decisions.
 
 ### 6. Release
 
-- You: "tag v0.1."
-- Agent: writes the first CHANGELOG section (empty until then). CI builds the release.
+- Agent: at every milestone close, proposes the next minor version. The docs MR bumps each version
+  file and renames the CHANGELOG `[Unreleased]` section to the new version; once it merges, the
+  agent offers a tag on its merge commit, unless the project's `CLAUDE.md` forbids tagging. CI
+  builds the release from the tag.
+- You: approve, name another version, or decline. Patch releases between closes are yours to ask
+  for.
 
 ## Where your time goes
 
@@ -156,4 +159,4 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
 | 2 | Is anything missing from the issue list |
 | 3 | Which issue is next; triage dialogs, only when a decision is open |
 | 4 | Read the MR, note what you learned, merge |
-| 5 | Gap issues to file; close or move per leftover issue; each proposed fact and cut |
+| 5 | Gap issues to file; close or move per leftover issue; each fact and cut; the release |
