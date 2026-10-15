@@ -54,3 +54,7 @@
 - Skip an eval issue's research note when its follow-up issues carry the answers or its gate
   finds nothing to change; post the findings as a comment on the issue and close it, committing
   nothing (#238, #256).
+- Start an interactive session in this repo without `--plugin-dir .`; with it, every Write and
+  Edit here prompts even in accept-edits mode. Keep the flag for headless evals.
+- Give a headless `pi -p` run without piped input `< /dev/null`; under a Claude Bash call it
+  waits forever on the harness stdin socket, 0% CPU, empty output.
