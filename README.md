@@ -1,13 +1,12 @@
 # dream-team
 
-Say "dream team" to anyone who has shipped software and you'll get a laugh. It was always a
-joke: the team where everyone is sharp, nobody drops the ball, and the impossible task still
-gets done. Finding one was about as likely as winning the lottery.
+Every developer has wished for a dream team: everyone sharp, nobody dropping the ball, and the
+impossible task still getting done. Before LLMs, putting one together was about as likely as
+winning the lottery.
 
-This plugin is that team, for Claude Code. It started as more than 20 agents and was cut down
-to the few that earn their place. They turn your spec into milestones, split the milestones
-into issues small enough to finish, take each issue to a reviewed MR/PR, and stay with you
-through release. Bring them your biggest task.
+This plugin is that team, for Claude Code: agents that turn your spec into milestones, split the
+milestones into issues small enough to finish, take each issue to a reviewed MR/PR, and stay
+with you through release. Bring them your biggest task.
 
 It works on GitHub and GitLab, for application code and infrastructure-as-code. The full
 walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
