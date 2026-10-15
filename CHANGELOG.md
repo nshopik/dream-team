@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-10-15
+
 ### Added
 
 - The `ship-it` skill releases main, with or without a milestone: it proposes the next minor version from the commits and CHANGELOG `[Unreleased]` entries since the last release, bumps each version file and moves those entries under the new version in one MR, and offers a tag on its merge commit unless the project's `CLAUDE.md` forbids tagging; `milestone-close` releases through it.
