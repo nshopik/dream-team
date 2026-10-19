@@ -93,18 +93,20 @@ Rules block, verbatim:
 Do not edit, create or delete files in the repository. Do not commit, push, or touch any forge or lab host.
 Read only: no builds, test runs, benchmarks, profiles or experiments.
 Output: findings only, ranked most severe first. Each finding: one emoji prefix (🔴 bug/security/data loss/crash, 🟡 risk/fragile/regression, 🚀 performance, 🔵 nit, ❓ genuine question), `file:line`, why, fix. Mark each [verified] (traced in code) or [suspected].
+With a base ref in scope: also mark a finding [pre-existing] when its defect already exists at the base ref and the change neither introduces, newly reaches, nor worsens it.
 No praise, no codebase summary. If a step could not run (tool missing, blocked), say so in one line.
 End with one line naming the in-scope areas you did not read, or `none`.
 ```
 
 Then merge the reports yourself into `items`, `questions` and `blocked`, items ranked most severe
-first:
+first, `preExisting` items after the rest:
 
 - Same defect reported by several lenses → one item; list every lens that found it; keep the
   strongest evidence (verified beats suspected; keep repro numbers and log lines in `why`). Set
   `disputed` when one lens marked it verified and another suspected.
 - Never drop a finding. Never soften a severity; on disagreement take the higher one.
 - ❓ findings go to `questions`, not `items`.
+- Set `preExisting` only when every lens that reported the defect marked it pre-existing.
 - A finding an open issue from step 3 already covers → keep it, set `coveredBy` to `#N`.
 - `blocked`: lenses that reported a blocked or incomplete run, with what did not run, and the
   areas each lens did not read, unless it answered `none`.
@@ -113,7 +115,8 @@ first:
 Each item carries `id` (`F1`, `F2`, ... in ranked order), `severity` (🔴, 🟡, 🚀 or 🔵), `theme`
 (🛡️ Security, 💾 Reliability / data loss, 🏗️ Architecture / contracts, 🧪 Tests / CI, ⚙️ Ops /
 config / deploy, 📝 Docs drift / writing), `claim`, `location` (`file:line`, comma-separated if
-several), `status` (verified or suspected), `disputed`, `lenses`, `why`, `fix`, `coveredBy`.
+several), `status` (verified or suspected), `disputed`, `lenses`, `why`, `fix`, `coveredBy`,
+`preExisting`.
 
 ## 5. Report to the user
 
@@ -123,7 +126,9 @@ several), `status` (verified or suspected), `disputed`, `lenses`, `why`, `fix`, 
   suspected), claim, `location`, fix. Append `(disputed)` when `disputed` is set and `[#N]` from
   `coveredBy`.
 - Section headings, in this order: `### 🔴 Critical`, `### 🟡 Important`, `### 🔵 Nit`,
-  `### 🚀 Performance`, `### ❓ Questions`. Omit an empty section.
+  `### 🚀 Performance`, `### ❓ Questions`, `### 🟣 Pre-existing`. Omit an empty section.
+- Render `preExisting` items under `### 🟣 Pre-existing` only, each line led by its `severity`
+  emoji.
 - Under 🟡, and under 🔴 when it has more than 5 items, group by `theme` with bold sub-headings.
   Omit an empty theme.
 - End with one line offering verification: "Verify the N 🔴/🟡/🚀 and disputed 🔵 findings
@@ -166,5 +171,7 @@ Re-render the report from the verdict lines:
 - A sent item with no verdict line → list it as not verified.
 - A confirmed or unverifiable item whose verdict-line severity differs from its `severity` → move
   it to that severity's section and append `(was <old emoji>)`.
+- A confirmed or unverifiable `preExisting` item whose verdict-line severity differs → swap its
+  lead emoji and append `(was <old emoji>)` instead.
 
 Do not fix anything. Filing issues waits for the user to pick the items.
