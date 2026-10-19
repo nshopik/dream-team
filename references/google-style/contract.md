@@ -119,7 +119,9 @@ no bold at all.
 
 **Code font for identifiers only.** A file, path, command, config key, label, version, or
 symbol. Not for emphasis, not for ordinary nouns: every backtick that isn't a real
-identifier costs the ones that are.
+identifier costs the ones that are. In prose, code font marks a name's first mention in a
+paragraph or list item; write later mentions plain, or rephrase. Tables, code blocks and a
+list item's lead term are exempt: they are scan targets.
 
 ## Length
 
@@ -181,5 +183,6 @@ to end.
 ## Before you call a document done
 
 Reread once for: unclear actor, banned words, a heading or link that doesn't say what's
-behind it, two-idea paragraphs, term drift, stray bold or backticks, perishable figures.
+behind it, two-idea paragraphs, term drift, stray bold or backticks, a name in code font
+twice in one prose paragraph or list item, perishable figures.
 Then the word count against the budget.

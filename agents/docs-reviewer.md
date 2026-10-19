@@ -79,6 +79,7 @@ Style breaks:
 - Title-case headings
 - Link text "here" or "this link"
 - Code font on non-identifiers
+- Code font on a repeat mention of a name in one prose paragraph or list item
 - More than one bold phrase per paragraph, or bold on a keyword instead of the claim
 - please, simply, easily, just, quickly
 - Noun stacks of more than three nouns
