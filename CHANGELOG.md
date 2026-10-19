@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Changed
+
+- The `docs-reviewer` agent flags, and the `docs-editor` agent avoids, a name set in code font more than once in one prose paragraph or list item; tables, code blocks and a list item's lead term are exempt.
+
 ## [1.4.0] - 2026-10-15
 
 ### Added
