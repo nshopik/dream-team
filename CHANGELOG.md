@@ -13,6 +13,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - A `qa-review` of a branch lists findings whose defect already exists at the base ref in a 🟣 Pre-existing section after the questions, each keeping its severity emoji; audit reports are unchanged.
 
+- `qa-review` rates a performance finding 🔴, 🟡 or 🔵 by its cost instead of 🚀, and groups it under a 🚀 Performance theme like the other themes; the verify pass includes it when it is 🔴 or 🟡.
+
 ## [1.4.0] - 2026-10-15
 
 ### Added

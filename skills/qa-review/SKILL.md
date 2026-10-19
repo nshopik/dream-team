@@ -92,7 +92,7 @@ Rules block, verbatim:
 ```
 Do not edit, create or delete files in the repository. Do not commit, push, or touch any forge or lab host.
 Read only: no builds, test runs, benchmarks, profiles or experiments.
-Output: findings only, ranked most severe first. Each finding: one emoji prefix (🔴 bug/security/data loss/crash, 🟡 risk/fragile/regression, 🚀 performance, 🔵 nit, ❓ genuine question), `file:line`, why, fix. Mark each [verified] (traced in code) or [suspected].
+Output: findings only, ranked most severe first. Each finding: one emoji prefix (🔴 bug/security/data loss/crash, 🟡 risk/fragile/regression, 🔵 nit, ❓ genuine question), `file:line`, why, fix. Mark each [verified] (traced in code) or [suspected].
 With a base ref in scope: also mark a finding [pre-existing] when its defect already exists at the base ref and the change neither introduces, newly reaches, nor worsens it.
 No praise, no codebase summary. If a step could not run (tool missing, blocked), say so in one line.
 End with one line naming the in-scope areas you did not read, or `none`.
@@ -112,11 +112,11 @@ first, `preExisting` items after the rest:
   areas each lens did not read, unless it answered `none`.
 - A report without the closing unread-areas line → list its lens in `blocked` as incomplete.
 
-Each item carries `id` (`F1`, `F2`, ... in ranked order), `severity` (🔴, 🟡, 🚀 or 🔵), `theme`
+Each item carries `id` (`F1`, `F2`, ... in ranked order), `severity` (🔴, 🟡 or 🔵), `theme`
 (🛡️ Security, 💾 Reliability / data loss, 🏗️ Architecture / contracts, 🧪 Tests / CI, ⚙️ Ops /
-config / deploy, 📝 Docs drift / writing), `claim`, `location` (`file:line`, comma-separated if
-several), `status` (verified or suspected), `disputed`, `lenses`, `why`, `fix`, `coveredBy`,
-`preExisting`.
+config / deploy, 📝 Docs drift / writing, 🚀 Performance), `claim`, `location` (`file:line`,
+comma-separated if several), `status` (verified or suspected), `disputed`, `lenses`, `why`, `fix`,
+`coveredBy`, `preExisting`.
 
 ## 5. Report to the user
 
@@ -126,18 +126,18 @@ several), `status` (verified or suspected), `disputed`, `lenses`, `why`, `fix`, 
   suspected), claim, `location`, fix. Append `(disputed)` when `disputed` is set and `[#N]` from
   `coveredBy`.
 - Section headings, in this order: `### 🔴 Critical`, `### 🟡 Important`, `### 🔵 Nit`,
-  `### 🚀 Performance`, `### ❓ Questions`, `### 🟣 Pre-existing`. Omit an empty section.
+  `### ❓ Questions`, `### 🟣 Pre-existing`. Omit an empty section.
 - Render `preExisting` items under `### 🟣 Pre-existing` only, each line led by its `severity`
   emoji.
 - Under 🟡, and under 🔴 when it has more than 5 items, group by `theme` with bold sub-headings.
   Omit an empty theme.
-- End with one line offering verification: "Verify the N 🔴/🟡/🚀 and disputed 🔵 findings
+- End with one line offering verification: "Verify the N 🔴/🟡 and disputed 🔵 findings
   against the code? (~M agents)", with M = ceil(N / 6). Then the offer to file issues.
 
 ## 6. Verify (opt-in)
 
-Run only when `$ARGUMENTS` contains `verify` or the user accepts the offer. Default set: every 🔴,
-🟡 and 🚀 item, plus each 🔵 item with `disputed` set; the user may name ids instead. Split the set
+Run only when `$ARGUMENTS` contains `verify` or the user accepts the offer. Default set: every 🔴
+and 🟡 item, plus each 🔵 item with `disputed` set; the user may name ids instead. Split the set
 into batches of six items, each item with every step-4 field.
 
 Launch one Agent per batch, all in one message, and wait for every report:
@@ -158,7 +158,7 @@ Verify each finding below against the code. Return one verdict per id.
 - unverifiable: deciding needs a lab host, a real external service, root, or hardware. Evidence says what is needed.
 - You may run local tests and small repros in <scratch>. Do not edit, create or delete files in the repository; no ssh, no forge, no external network.
 - Judge each finding on its own; a confirmed bug with a wrong fix is still confirmed.
-- severity: rate what your evidence shows, not the claim (🔴 bug/security/data loss/crash, 🟡 risk/fragile/regression, 🚀 performance, 🔵 nit). A confirmed finding whose real cost is larger or smaller than claimed gets the severity of the real cost; a refuted one keeps its severity.
+- severity: rate what your evidence shows, not the claim (🔴 bug/security/data loss/crash, 🟡 risk/fragile/regression, 🔵 nit). A confirmed finding whose real cost is larger or smaller than claimed gets the severity of the real cost; a refuted one keeps its severity.
 
 Output: one line per finding and nothing else: `<id> | <confirmed, refuted or unverifiable> | <severity emoji> | <evidence, one line>`.
 ```
