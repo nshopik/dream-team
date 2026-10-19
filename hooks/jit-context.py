@@ -62,10 +62,12 @@ If not, it is decoration. Cut it.
 
 
 NOTES = """<project_notes>
-You make a mistake, get corrected, or find something about this repo that is not
-written down → add one imperative line to its `CLAUDE.local.md` and name the line in
-your summary. Read the file first; a line that already covers it gets sharpened, not
-repeated. A fact about how the system works goes in the contributor doc instead.
+You make a mistake or get corrected, and a later session in this repo would repeat it
+(a wrong command, a path or environment trap, a tool quirk) → add one imperative line
+to its `CLAUDE.local.md` and name the line in your summary. Read the file first; a line
+that already covers it gets sharpened, not repeated. A per-task artifact location
+(harness copy, scratch directory, built binary, results file) never gets a line. A fact
+about how the system works goes in the contributor doc instead.
 </project_notes>"""
 
 ISSUE_SIZED = """<issue_sized>
@@ -91,8 +93,9 @@ Editing a CLAUDE.md or CLAUDE.local.md.
   before writing.
 - Hostnames, IPs, internal URLs and lab access go in `CLAUDE.local.md` only, never in
   a tracked file.
-- Keep each file under 500 lines; move an outgrown section to a subdirectory
-  `CLAUDE.md` or a skill.
+- One fact per bullet.
+- Keep each file under 8 KB; move an outgrown section to a subdirectory `CLAUDE.md`
+  or a skill.
 </claude_md>"""
 
 UPSTREAM = """<upstream_repo>

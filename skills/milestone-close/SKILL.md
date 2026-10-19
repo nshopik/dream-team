@@ -60,9 +60,10 @@ Report drift and propose the release, fix nothing yet:
 - Root-cause and behaviour sections of the milestone's merged MRs → each fact a future change must
   respect that the contributor doc lacks, proposed as one line. The user approves or rejects each.
 - Each project `CLAUDE.md` and `CLAUDE.local.md` line, proposed as a cut when the path or tool it
-  names is gone, a hook or CI enforces it now, a global rule already says it, or a change outside
-  the repo could fix the gotcha it works around (a lab host's config, a missing tool, a plugin
-  bug), recommending that change. The user approves or rejects each.
+  names is gone, its only content is one closed issue's artifacts rather than a gotcha, a hook or
+  CI enforces it now, a global rule already says it, or a change outside the repo could fix the
+  gotcha it works around (a lab host's config, a missing tool, a plugin bug), recommending that
+  change. The user approves or rejects each.
 - Each other `CLAUDE.local.md` line: proposed as a promotion to `CLAUDE.md` when it holds no
   hostname, IP, internal URL or lab access, otherwise left alone. The user approves or rejects each.
 - Every close, `M<n>` and `v<x.y>` alike → load `ship-it`; propose a release per its Propose step.

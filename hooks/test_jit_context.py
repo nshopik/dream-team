@@ -55,4 +55,6 @@ p = subprocess.run([sys.executable, HOOK], text=True, capture_output=True,
 start = json.loads(p.stdout)["hookSpecificOutput"]["additionalContext"]
 assert "<project_notes>" in start and "<issue_sized>" in start
 assert "issue in chat → ask" in start and "during other work" in start
+assert "per-task artifact location" in start
+assert "under 8 KB" in context({"file_path": os.path.join(mine, "CLAUDE.md")})
 print("ok")
