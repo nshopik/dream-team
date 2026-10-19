@@ -9,6 +9,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - The `docs-reviewer` agent flags, and the `docs-editor` agent avoids, a name set in code font more than once in one prose paragraph or list item; tables, code blocks and a list item's lead term are exempt.
 
+- The `review-bench` score table shows each reviewer's mean rejected claims and mean cost per run, and its methodology adds a clean-PR case that counts a reviewer's findings graded critical or important on a change with no known defect, minus any the code confirms, as false alarms.
+
 - A `qa-review` of a branch lists findings whose defect already exists at the base ref in a 🟣 Pre-existing section after the questions, each keeping its severity emoji; audit reports are unchanged.
 
 ## [1.4.0] - 2026-10-15

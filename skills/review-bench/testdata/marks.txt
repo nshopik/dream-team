@@ -8,5 +8,7 @@ CR2 I1 P1 T1
 SR1 C2 N1
 GR1 I1 N1
 Rejected (CR2): pool_resize races with task pickup (the pool lock is held across both).
+Rejected (QR1.arch, QR1.sre, CR1): xfr_free leaks the zone ref (xfr_done drops it).
+Rejected: the retry loop never exits (no run named).
 Excluded (QR2.sre): sleep-based retry in test/xfr_test.c (same as the existing tests).
 Candidate (QR1.arch, CR1): a zone reload during a transfer drops the transfer (unverified).

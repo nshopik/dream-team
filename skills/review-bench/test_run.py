@@ -89,7 +89,7 @@ for case, ok in [
      and "not frozen" in graders[0]["prompt"]),
     ("marks keep the marks lines only", (OUT / "QR1/marks.txt").read_text()
      == "QR1 C1\nRejected (QR1): b.go races (one goroutine).\n"),
-    ("score.py prints the reviewer's row", "   1  QR           2     50.0" in out.stdout),
+    ("score.py prints the reviewer's row", "   1  QR           2     50.0   70.7  0.5/1           0.5   $0.75\n" in out.stdout),
     ("the worktrees are removed", len(git("worktree", "list").stdout.splitlines()) == 1),
 ]:
     assert ok, (case, out.stdout, out.stderr)

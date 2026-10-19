@@ -2,12 +2,14 @@
 """Scores reviewer runs against a findings ledger; see METHODOLOGY.md.
 
 Usage: python3 score.py <ledger.json> <marks.txt>
+Reads each run's cost from <dir of marks.txt>/<run>/stats.txt.
 """
 import json
 import random
 import re
 import statistics
 import sys
+from pathlib import Path
 
 WEIGHT = {"critical": 10, "important": 4, "performance": 3, "test": 3, "minor": 1}
 B = 2000
@@ -20,7 +22,12 @@ for r in ledger["rows"]:
 crit = [r["id"] for r in ledger["rows"] if r["severity"] == "critical"]
 
 runs = {}  # run -> {id: best credit across its lenses}
+rejected = {}  # run -> refuted claims
 for line in open(sys.argv[2]):
+    m = re.match(r"Rejected \(([^)]*)\)", line)
+    if m:
+        for run in {t.strip().split(".")[0] for t in m[1].split(",")}:
+            rejected[run] = rejected.get(run, 0) + 1
     toks = line.split()
     if not toks or not re.match(r"[A-Z]+\d", toks[0]):
         continue
@@ -42,6 +49,12 @@ def run_quality(run, rows):
     return 100 * sum(weight[i] * runs[run].get(i, 0) for i in rows) / sum(weight[i] for i in rows)
 
 
+def cost(run):
+    f = Path(sys.argv[2]).parent / run / "stats.txt"
+    m = f.exists() and re.search(r"cost=\$([\d.]+)", f.read_text())
+    return float(m[1]) if m else None
+
+
 def mean_quality(rows):
     return {g: statistics.mean(run_quality(r, rows) for r in rs) for g, rs in reviewers.items()}
 
@@ -58,9 +71,14 @@ for g in order:
 
 print(f"ledger v{ledger['version']}: {len(weight)} findings, weight {sum(weight.values()):g}, "
       f"{len(crit)} criticals")
-print(f"{'tier':>4}  {'reviewer':<8}  {'runs':>4}  {'quality':>7}  {'sd':>5}  criticals")
+print(f"{'tier':>4}  {'reviewer':<8}  {'runs':>4}  {'quality':>7}  {'sd':>5}  "
+      f"criticals  rejected  {'$/run':>6}")
 for g in order:
     qs = [run_quality(r, list(weight)) for r in reviewers[g]]
     sd = f"{statistics.stdev(qs):.1f}" if len(qs) > 1 else ""
     c = statistics.mean(sum(runs[r].get(i) == 1 for i in crit) for r in reviewers[g])
-    print(f"{tiers[g]:>4}  {g:<8}  {len(qs):>4}  {q[g]:>7.1f}  {sd:>5}  {c:.1f}/{len(crit)}")
+    rej = statistics.mean(rejected.get(r, 0) for r in reviewers[g])
+    cs = [cost(r) for r in reviewers[g]]
+    usd = f"${statistics.mean(cs):.2f}" if None not in cs else ""
+    print(f"{tiers[g]:>4}  {g:<8}  {len(qs):>4}  {q[g]:>7.1f}  {sd:>5}  "
+          f"{f'{c:.1f}/{len(crit)}':<9}  {rej:>8.1f}  {usd:>6}".rstrip())
