@@ -1,0 +1,1 @@
+model=opus effort=high exit=0 wall=118s cost=$0.53 report=5644 lenses=1

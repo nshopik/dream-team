@@ -93,6 +93,7 @@ After each `run.sh` call from step 3 on:
 - **Ledger:** <score.py summary line>; pending candidates: <n or none>
 - **Table:**
   <score.py table, verbatim, in a code block>
-- **Reading:** <tiers in words; gaps within sd called noise>
+- **Reading:** <tiers in words; gaps within sd called noise; rejected claims and $/run beside
+  quality; a multi-lens reviewer's rejected claims are raw lens claims>
 - **Early exits:** <runs, or none>
 ```
