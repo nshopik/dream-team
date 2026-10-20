@@ -1,9 +1,9 @@
 ---
 name: scope-issue
 description: >
-  Writes issue descriptions: context, problem, proposal. Use when writing or editing an issue
-  (`gh issue create`, `gh api …/issues`, `glab issue create`, `-f description=`). Commit
-  messages: use `scope-commit`; MR/PR descriptions: use `scope-mr`.
+  Writes issue descriptions: a problem paragraph opening with the defect, then a proposal. Use
+  when writing or editing an issue (`gh issue create`, `gh api …/issues`, `glab issue create`,
+  `-f description=`). Commit messages: use `scope-commit`; MR/PR descriptions: use `scope-mr`.
 ---
 
 Issue is actionable items, not prose. Read days or weeks later with zero conversation context.
@@ -19,15 +19,19 @@ Reader starts the task from the description alone — no comment threads, no cha
 
 ### Shape
 
-- Three parts, in order: context, problem, proposal.
-- Context: the conditions that led here.
-- Context opens the description unlabeled. No `## Context` heading.
-- Problem: the defect or gap the context leads to, under `## Problem`.
+- Two parts, in order: problem, proposal.
+- Problem opens the description unlabeled. No `## Problem` heading.
+- Problem opens with the defect or gap, bolded.
+- Background the defect or gap needs follows it.
+- Several defects, effects or sites → a `-` list after the opening sentence.
+- Evidence (a table, a fenced block) sits under the claim it backs.
+- Origin is one clause ("Found by a docs review").
+- Each fact appears once.
 - Proposal: the next step, under `## Proposal`. Always present.
 - Proposal is concrete: a list of actions, a person to engage, or a research issue's questions.
 - Proposal ends with a `Done when …` paragraph after its items, naming an observable check. Never a bullet.
 - Never end at the problem.
-- Meta issue: context, then the checklist. No `## Problem` or `## Proposal`.
+- Meta issue: a paragraph on the work it tracks, then the checklist. No bolded defect, no `## Proposal`.
 
 ### Open questions
 
@@ -56,7 +60,7 @@ Reader starts the task from the description alone — no comment threads, no cha
 
 - Work spans milestones, or waits on features not built yet → one meta issue tracking it.
 - Title starts `Meta:`.
-- The checklist follows the context, under no heading; one line per piece of work.
+- The checklist follows the opening paragraph, under no heading; one line per piece of work.
 - A line is a child issue link, or plain text naming the feature it waits on.
 - File a child issue only when its work can start; tick its box when it closes.
 - No milestone; each child carries its own.
@@ -86,8 +90,7 @@ Reader starts the task from the description alone — no comment threads, no cha
 
 ### Skimming
 
-- Context: one paragraph, ~80 words. Never two.
-- Context holds only what's needed to act. The reader already works on the project.
+- Problem holds only what's needed to act. The reader already works on the project.
 - Cite the brief or docs for depth; don't repeat them.
 - Problem carries the substance. Longest part.
 - Proposal is the outro.
@@ -124,4 +127,4 @@ Reader starts the task from the description alone — no comment threads, no cha
 
 - ~250 words the shape. 500 hard cap.
 - Fenced blocks are evidence, not prose; they don't count toward the cap.
-- Context overgrows first. Cut it first.
+- Background overgrows first. Cut it first.

@@ -57,7 +57,7 @@ section in ROADMAP the first time. Backlog issues join it as they are filed.
 ### 2. Milestone to issues
 
 - You: "File the issues for M4."
-- Agent: writes each issue with `scope-issue` (context, problem, proposal), sets `type::`,
+- Agent: writes each issue with `scope-issue` (problem, proposal), sets `type::`,
   `area::` and the milestone. When a proposal would need a guess, it files a `Research:` issue
   (`type::research`) with questions instead, e.g. one for the canary rollback
   baseline. An issue that cannot start before another closes ends with a `Blocked by #<n>` line.
