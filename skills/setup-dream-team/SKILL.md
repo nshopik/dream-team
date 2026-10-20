@@ -25,7 +25,8 @@ no docs besides `CLAUDE.md`; the filed issue goes through `dream-fixer`.
 - Each milestone description lists `Exit:`, `Gate:` and `Depends on:` as bold bullets.
 - An open issue in a milestone carries the waiting label exactly when its milestone has an open
   dependency.
-- Every open issue runs context, problem, proposal, per `scope-issue`.
+- Every open issue runs problem, proposal, per `scope-issue`, or the older context, problem,
+  proposal.
 - A `Meta:` issue has no `area::` label and no milestone.
 - An issue with an open blocker ends with one `Blocked by #<n>` line per blocker.
 - `docs/specs/` holds only specs the code still follows; every other spec carries a

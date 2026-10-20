@@ -38,7 +38,7 @@ walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
 - **[scope-commit](skills/scope-commit/SKILL.md)**: commit messages in
   [Scoped Commits](https://scopedcommits.com/) format.
 - **[scope-mr](skills/scope-mr/SKILL.md)**: MR/PR descriptions.
-- **[scope-issue](skills/scope-issue/SKILL.md)**: tracker issues (context, problem, proposal).
+- **[scope-issue](skills/scope-issue/SKILL.md)**: tracker issues (problem, proposal).
 - **[friction](skills/friction/SKILL.md)**: reports agent friction repeated across past
   `dream-fixer-loop` runs.
 - **[qa-review](skills/qa-review/SKILL.md)**: reviews a branch or audits a repo with parallel
