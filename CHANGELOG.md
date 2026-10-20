@@ -17,6 +17,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - The session-start project notes rule adds a `CLAUDE.local.md` line only for a mistake or correction a later session would repeat, never for a per-task artifact location; the `CLAUDE.md` editing rule caps each file at 8 KB instead of 500 lines and asks for one fact per line; `milestone-close` proposes cutting a line whose only content is one closed issue's artifacts.
 
+### Removed
+
+- `scope-issue` drops the time box from a `Research:` issue's proposal.
+
 ## [1.4.0] - 2026-10-15
 
 ### Added

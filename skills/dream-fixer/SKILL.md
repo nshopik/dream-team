@@ -100,8 +100,7 @@ Light-path reviewer type:
 - Anything else → `general-purpose`, told to check the diff against the reference sources and
   invariants the project's `CLAUDE.md` names, with the failing evidence for a bug fix.
 
-Research tier: no workflow, no code. Answer the proposal's questions yourself within its time
-box, then:
+Research tier: no workflow, no code. Answer the proposal's questions yourself, then:
 
 - File one issue per gap per `scope-issue` with its milestone (step 5).
 - Output a later task reuses (a baseline table, a rubric, a case list) → write that output as a

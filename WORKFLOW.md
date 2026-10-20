@@ -59,7 +59,7 @@ section in ROADMAP the first time. Backlog issues join it as they are filed.
 - You: "File the issues for M4."
 - Agent: writes each issue with `scope-issue` (context, problem, proposal), sets `type::`,
   `area::` and the milestone. When a proposal would need a guess, it files a `Research:` issue
-  (`type::research`) with questions and a time box instead, e.g. one for the canary rollback
+  (`type::research`) with questions instead, e.g. one for the canary rollback
   baseline. An issue that cannot start before another closes ends with a `Blocked by #<n>` line.
   A milestone gated on field evidence gets one `Evidence:` issue: what to deploy and where, the
   start date, and how to collect the measurement.
@@ -89,7 +89,7 @@ as listed items. Smaller changes it makes inline.
   2. Triage: an open decision gets a dialog with 2–3 options and their costs. The answer is
      written into the issue description. A `Blocked by` line naming an open issue stops here.
   3. Tier:
-     - Research: answers within the time box, follow-up issues, and a findings comment on the
+     - Research: answers, follow-up issues, and a findings comment on the
        research issue, which closes with no MR. Output a later task reuses goes in a note in
        `docs/research/`, by an MR that closes the issue.
      - Light (docs, comments, help text, config, rename, or a small bug fix the agent reproduced
