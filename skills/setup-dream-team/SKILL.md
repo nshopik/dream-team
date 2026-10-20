@@ -64,7 +64,7 @@ Values from GitLab's label-picker palette; one colour per `type::` value, one fo
 | `type::feature` | `#44AD8E` | |
 | `type::maintenance` | `#5BC0DE` | |
 | `type::meta` | `#8E44AD` | A `Meta:` checklist of child issues |
-| `type::research` | `#F0AD4E` | Research with questions and a time box; a findings comment and follow-up issues, no code |
+| `type::research` | `#F0AD4E` | Research with questions; a findings comment and follow-up issues, no code |
 | `area::*` | `#428BCA` | |
 | Blocked label (`workflow::blocked` on GitLab) | `#34495E` | |
 | Waiting label (`workflow::future` on GitLab) | `#7F8C8D` | |

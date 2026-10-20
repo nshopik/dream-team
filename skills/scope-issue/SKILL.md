@@ -40,7 +40,7 @@ Reader starts the task from the description alone — no comment threads, no cha
 
 - Proposal would need a guess or an assumption → research issue, not a guessed proposal.
 - Title starts `Research:`.
-- Proposal lists the questions to answer and a time box.
+- Proposal lists the questions to answer.
 - Deliverable: a findings comment on the issue plus one follow-up issue per gap found. No code.
 - Output a later task reuses → a note in the repo's research docs; the comment carries the rest.
 - Done when every question has an answer or its own issue.
