@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-10-21
+
 ### Added
 
 - `qa-review` runs its lenses on pi through the `pi-sub-agent` extension; the README shows how to install it.
