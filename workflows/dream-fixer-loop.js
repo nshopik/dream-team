@@ -261,7 +261,7 @@ const COMMIT_ALL = 'Commit every edit you make as `fixup! <subject of the commit
 
 const READ_ONLY = 'Read-only: do not edit, stage or commit anything, and do not run the build or the test suite — the gate already ran them, and the other reviewers share this checkout.'
 
-// The lens agents have no Bash, so each gate run refreshes this file for them.
+// Each gate run refreshes this file so every lens reads the same diff.
 const READ_DIFF = `The branch diff is in \`${DIFF_FILE}\`; read it with the Read tool.`
 
 const REVIEW_RULES = [
