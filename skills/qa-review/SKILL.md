@@ -17,6 +17,14 @@ argument-hint: "[audit] [verify] [base-ref | path ...]"
 The main session runs one read-only agent per lens with the Agent tool, then merges and
 deduplicates their reports itself (step 4).
 
+On pi, read every Agent launch below this way:
+
+- The Agent tool is `subagent`; launch every agent of one step in one call, one `tasks` entry
+  `{agent, task}` each, `task` the prompt.
+- `subagent_type` `Explore` is agent `scout`; `general-purpose` is `worker`.
+- Drop the `dream-team:` prefix from a lens name.
+- Pass no `model` or `effort`.
+
 ## 1. Pick the mode and scope
 
 - `$ARGUMENTS` contains `audit` or `full`, or the user asked for an audit → **audit**: scope is the

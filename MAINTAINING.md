@@ -132,9 +132,11 @@ eval shows. Evals run in a local harness kept out of the repo.
   precision.
 - Add a line only for a miss seen in an eval, naming the missing concept, not a generic step
   ("read the library source" changed nothing).
-- Make a reviewer read-only with `tools: Read, Grep, Glob`; a prompt rule does not keep it off
-  Bash (#229).
-- Never give a reviewer Bash for git; its dispatcher, or the workflow's gate, writes the diff to
+- Keep a reviewer off Edit and Write with `disallowedTools: Edit, Write, NotebookEdit`, never a
+  `tools:` allowlist; pi's subagent extension reads `tools:` in its own tool names (#278).
+- Count Bash as a reviewer's open write path: only its prompt guards it, and a prompt rule did
+  not keep a reviewer off Bash (#229).
+- Hand a reviewer the diff as a file; its dispatcher, or the workflow's gate, writes the diff to
   a scratchpad file and the brief names the path.
 - Never pin `effort:` in a shipped agent; pin it in the eval harness instead.
 - Name the agent by role (`performance-engineer`); the role name is a cue too.

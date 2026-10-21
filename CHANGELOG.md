@@ -5,7 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Added
+
+- `qa-review` runs its lenses on pi through pi's example subagent extension; the README shows how to install the extension and the dream-team agents.
+
 ### Changed
+
+- The reviewer agents keep off Edit, Write and NotebookEdit through `disallowedTools` instead of a `Read, Grep, Glob` allowlist, so they get Bash; `docs-editor` and `lab-runner` drop their `tools:` line and get every tool.
 
 - The `docs-reviewer` agent flags, and the `docs-editor` agent avoids, a name set in code font more than once in one prose paragraph or list item; tables, code blocks and a list item's lead term are exempt.
 
