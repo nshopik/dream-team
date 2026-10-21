@@ -7,7 +7,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Added
 
-- `qa-review` runs its lenses on pi through pi's example subagent extension; the README shows how to install the extension and the dream-team agents.
+- `qa-review` runs its lenses on pi through the `pi-sub-agent` extension; the README shows how to install it.
 
 ### Changed
 
@@ -26,6 +26,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `scope-issue` opens an issue with an unlabeled problem paragraph that leads with the defect, bolded, then `## Proposal`, replacing the context paragraph and the `## Problem` heading; `setup-dream-team` accepts both shapes.
 
 ### Removed
+
+- **Breaking:** The `dream-fixer-loop` workflow no longer takes a `diffFile` arg; its reviewers read the branch diff with `git diff`, as do the reviewers `qa-review`, `dream-fixer` and `milestone-close` dispatch.
 
 - `scope-issue` drops the time box from a `Research:` issue's proposal.
 

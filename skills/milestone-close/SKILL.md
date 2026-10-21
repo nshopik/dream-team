@@ -48,11 +48,9 @@ Report drift and propose the release, fix nothing yet:
 
 - Architecture doc and diagram against the workspace's component list.
 - Specs whose decision the code no longer follows → propose a `Superseded by` status line.
-- README, `docs/` pages, help text and comments: write the milestone's merged diff, from its
-  first-merged MR's merge base to its last-merged MR's merge commit, to
-  `<scratchpad>/milestone.diff`, `<scratchpad>` spelled as your scratchpad directory's literal
-  path.
-- Dispatch `dream-team:docs-reviewer` with that file's path.
+- README, `docs/` pages, help text and comments: dispatch `dream-team:docs-reviewer`, told to
+  read the milestone's merged diff with `git diff <base>..<head>`, `<base>` the first-merged MR's
+  merge base and `<head>` the last-merged MR's merge commit.
 - Each 🔴/🟡 `docs-reviewer` finding, proposed as a fix; leave its 🔵 findings out. The user
   approves or rejects each.
 - Roadmap, when the project has one: status of the milestone's merged work, and the row against
@@ -79,8 +77,8 @@ milestone and set its roadmap status, if it has a row. Every milestone whose `De
 now all closed is ready: drop the host's waiting label (`workflow::future` on GitLab) from its
 open issues.
 
-- Approved `docs-reviewer` fixes → dispatch `dream-team:docs-editor` in drift mode with the merged
-  diff and only the pages they name; its edits go in the docs MR.
+- Approved `docs-reviewer` fixes → dispatch `dream-team:docs-editor` in drift mode with
+  `git diff <base>..<head>` from step 4 and only the pages they name; its edits go in the docs MR.
 - Approved release → `ship-it` Bump and Tag steps, its bump in the docs MR and its tag message
   naming the milestone; with nothing else approved, the release alone opens the MR.
 

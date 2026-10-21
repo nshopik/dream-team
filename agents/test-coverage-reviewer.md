@@ -1,6 +1,6 @@
 ---
 name: test-coverage-reviewer
-description: Reviews a diff file the caller supplies, or a set of paths, for test gaps, read-only — new behaviour no test runs in CI, tests that still pass when the behaviour breaks, failure and concurrency paths with no test. Use for a test review, a test lens in a code review, or a change that adds behaviour.
+description: Reviews the diff from a base ref or range the caller names, or a set of paths, for test gaps, read-only — new behaviour no test runs in CI, tests that still pass when the behaviour breaks, failure and concurrency paths with no test. Use for a test review, a test lens in a code review, or a change that adds behaviour.
 disallowedTools: Edit, Write, NotebookEdit
 ---
 

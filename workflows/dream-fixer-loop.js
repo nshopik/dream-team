@@ -23,12 +23,11 @@ const BRANCH = String(A.branch || '')
 const BASE = String(A.base || '')
 const GATE_COMMANDS = Array.isArray(A.gateCommands) ? A.gateCommands.map(String).filter(Boolean) : []
 const EXTERNAL = String(A.externalReview || '')
-const DIFF_FILE = String(A.diffFile || '')
 const FIX_ROUNDS = 3
 const VERIFY_ROUNDS = 3
 
-if (!ISSUE || !BRANCH || !BASE || !GATE_COMMANDS.length || !DIFF_FILE) {
-  throw new Error('dream-fixer-loop: args.issue, args.branch, args.base, args.gateCommands and args.diffFile are required')
+if (!ISSUE || !BRANCH || !BASE || !GATE_COMMANDS.length) {
+  throw new Error('dream-fixer-loop: args.issue, args.branch, args.base and args.gateCommands are required')
 }
 
 // ---------------------------------------------------------------------------
@@ -54,7 +53,7 @@ const IMPL_SCHEMA = {
 // self-assessment, and a second agent for a `git diff --name-only` is waste.
 const VERIFY_SCHEMA = {
   type: 'object',
-  required: ['passed', 'summary', 'changedFiles', 'status', 'diffWritten'],
+  required: ['passed', 'summary', 'changedFiles', 'status'],
   additionalProperties: false,
   properties: {
     friction: FRICTION,
@@ -62,7 +61,6 @@ const VERIFY_SCHEMA = {
     summary: { type: 'string' },
     changedFiles: { type: 'array', items: { type: 'string' } },
     status: { type: 'array', items: { type: 'string' }, description: 'the lines `git status --porcelain` printed before the gate ran, verbatim' },
-    diffWritten: { type: 'boolean', description: 'true only if the diff-file write exited 0' },
     aspects: {
       type: 'array',
       description: 'whether this diff touches code; only when the prompt asks for it',
@@ -261,8 +259,7 @@ const COMMIT_ALL = 'Commit every edit you make as `fixup! <subject of the commit
 
 const READ_ONLY = 'Read-only: do not edit, stage or commit anything, and do not run the build or the test suite — the gate already ran them, and the other reviewers share this checkout.'
 
-// Each gate run refreshes this file so every lens reads the same diff.
-const READ_DIFF = `The branch diff is in \`${DIFF_FILE}\`; read it with the Read tool.`
+const READ_DIFF = `Read the branch diff with \`git diff ${BASE}..HEAD\`.`
 
 const REVIEW_RULES = [
   READ_ONLY,
@@ -295,7 +292,6 @@ function verifyPrompt(after, withAspects) {
     'Report pass only if every command exited 0.',
     'Do not review style or design — that is a later stage. Report what the tooling says.',
     `Report changedFiles from \`git diff --name-only ${BASE}..HEAD\`.`,
-    `Last, write the branch diff for the reviewers: \`git diff ${BASE}..HEAD > '${DIFF_FILE}'\`. Report diffWritten true only if it exited 0.`,
     ...(withAspects ? [
       'Return the aspects field: ["code"] when this command produces output, [] when it does not (adapt the extensions to this repo\'s language, keep it mechanical):',
       `  \`git diff --name-only ${BASE}..HEAD | grep -Ei '\\.(c|cc|cpp|cs|css|ex|exs|go|h|hpp|html|java|js|jsx|kt|lua|mjs|cjs|php|py|rb|rs|scala|sh|svelte|swift|ts|tsx|vue|zig)$'\``,
@@ -463,7 +459,6 @@ async function gate(after, tag, withAspects) {
     verify.status.filter((l) => l.startsWith('??')).forEach((l) => UNTRACKED.add(l.slice(3)))
     const dirty = verify.status.filter((l) => !l.startsWith('??'))
     if (dirty.length) return { ok: false, reason: `uncommitted edits in the working tree: ${dirty.join(', ')}`, verify }
-    if (!verify.diffWritten) return { ok: false, reason: `diff file ${DIFF_FILE} not written; the reviewers would judge a missing or stale diff`, verify }
     if (verify.passed) return { ok: true, verify }
     if (round === VERIFY_ROUNDS) {
       return { ok: false, reason: `build/test still failing after ${VERIFY_ROUNDS} fix rounds`, verify }

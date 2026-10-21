@@ -86,14 +86,10 @@ pi install git:github.com/nshopik/dream-team
 
 pi loads the skills; the hooks and the `dream-fixer-loop` workflow are Claude Code only.
 
-`qa-review` runs its lenses through pi's example subagent extension. Install it and the agents:
+`qa-review` runs its lenses through the `pi-sub-agent` extension:
 
 ```
-ex="$(npm root -g)/@earendil-works/pi-coding-agent/examples/extensions/subagent"
-dt=~/.pi/agent/git/github.com/nshopik/dream-team
-mkdir -p ~/.pi/agent/extensions/subagent ~/.pi/agent/agents
-ln -sf "$ex/index.ts" "$ex/agents.ts" ~/.pi/agent/extensions/subagent/
-ln -sf "$dt"/agents/*.md "$ex/agents/scout.md" "$ex/agents/worker.md" ~/.pi/agent/agents/
+pi install npm:pi-sub-agent
 ```
 
 On pi the agents get pi's default tools, `write` and `edit` included.

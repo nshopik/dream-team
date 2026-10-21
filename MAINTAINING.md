@@ -136,8 +136,6 @@ eval shows. Evals run in a local harness kept out of the repo.
   `tools:` allowlist; pi's subagent extension reads `tools:` in its own tool names (#278).
 - Count Bash as a reviewer's open write path: only its prompt guards it, and a prompt rule did
   not keep a reviewer off Bash (#229).
-- Hand a reviewer the diff as a file; its dispatcher, or the workflow's gate, writes the diff to
-  a scratchpad file and the brief names the path.
 - Never pin `effort:` in a shipped agent; pin it in the eval harness instead.
 - Name the agent by role (`performance-engineer`); the role name is a cue too.
 - Give a qa-review lens its bare name as its focus; a focus line naming some of an agent's
