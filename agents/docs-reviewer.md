@@ -1,6 +1,6 @@
 ---
 name: docs-reviewer
-description: Reviews a diff file the caller supplies, or a set of doc paths, for documentation drift, read-only — README, docs pages, CLAUDE.md, help text, comments and examples that a code change made stale (renamed or removed commands, flags, config keys, env vars, paths, defaults, APIs), claims the repo does not back, style breaks against the Google developer documentation style guide, and AI-writing patterns. Names each stale page and line with why; never builds, runs or edits. Use for a docs review, a docs lens in a code review, a docs-against-code check, or a change that may leave docs out of date.
+description: Reviews the diff from a base ref or range the caller names, or a set of doc paths, for documentation drift, read-only — README, docs pages, CLAUDE.md, help text, comments and examples that a code change made stale (renamed or removed commands, flags, config keys, env vars, paths, defaults, APIs), claims the repo does not back, style breaks against the Google developer documentation style guide, and AI-writing patterns. Names each stale page and line with why; never builds, runs or edits. Use for a docs review, a docs lens in a code review, a docs-against-code check, or a change that may leave docs out of date.
 disallowedTools: Edit, Write, NotebookEdit
 ---
 

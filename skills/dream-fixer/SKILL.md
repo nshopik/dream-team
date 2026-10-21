@@ -84,8 +84,8 @@ Light path, no workflow:
 - Branch per step 3.
 - Make the edit inline.
 - Run every `gateCommands` entry.
-- Write `git diff <base>` to `<scratchpad>/issue-<n>.diff`.
-- Dispatch one reviewer with the issue and that file's path, its type picked below.
+- Dispatch one reviewer with the issue and the base, told to read the diff with `git diff <base>`,
+  its type picked below.
 - A blocking finding → fix it inline and rerun `gateCommands`, or hand the branch back.
 - A bug fix → rerun the reproduction on the branch head and see it pass.
 - Run lab work only for that rerun or a measurement the issue asks for, per step 5's lab steps.
@@ -146,8 +146,7 @@ object (never a stringified one):
   "branch": "issue-42-slug",
   "base": "<sha from step 3>",
   "gateCommands": ["cargo build --workspace", "cargo test --workspace", "cargo clippy --workspace"],
-  "externalReview": "<command, or leave out>",
-  "diffFile": "<scratchpad>/issue-42.diff"
+  "externalReview": "<command, or leave out>"
 }
 ```
 
@@ -161,8 +160,6 @@ object (never a stringified one):
   checkout — CI config first, `CLAUDE.md` and README second. The mechanical gate runs exactly
   these after the implementation and after every fix commit. Leave out lab work. Required.
 - `externalReview`: a shell command that reads a diff on stdin and prints findings. Default unset.
-- `diffFile`: the file each gate run writes the branch diff to, for the reviewers to read;
-  `<scratchpad>/issue-<n>.diff`. Required.
 - A `CLAUDE.md` the session loads — global, the project's, or its `CLAUDE.local.md` — opts in to an
   external reviewer → set `externalReview` to the command it names.
 - The project's line and the global one disagree → the project's wins, including a project line
@@ -194,12 +191,12 @@ what to do with it.
 
 Docs drift, once the result is `ok`:
 
-- Write `git diff <base>` to `<scratchpad>/issue-<n>.diff`.
-- Dispatch `dream-team:docs-reviewer` with that file's path before your other step-5 edits.
+- Dispatch `dream-team:docs-reviewer`, told to read the diff with `git diff <base>..HEAD`, before
+  your other step-5 edits.
 - Make those edits while it runs.
 - A 🔴/🟡 finding you judge wrong → drop it, as a settled dispute.
-- 🔴/🟡 findings left → after your edits, dispatch `dream-team:docs-editor` in drift mode with the
-  diff and only the pages they name.
+- 🔴/🟡 findings left → after your edits, dispatch `dream-team:docs-editor` in drift mode with
+  `git diff <base>..HEAD` and only the pages they name.
 - 🔵 findings → treat as nits.
 - The editor's edits are step-5 changes: step 6 commits and gates them.
 

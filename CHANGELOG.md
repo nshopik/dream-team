@@ -27,6 +27,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Removed
 
+- **Breaking:** The `dream-fixer-loop` workflow no longer takes a `diffFile` arg; its reviewers read the branch diff with `git diff`, as do the reviewers `qa-review`, `dream-fixer` and `milestone-close` dispatch.
+
 - `scope-issue` drops the time box from a `Research:` issue's proposal.
 
 ## [1.4.0] - 2026-10-15

@@ -1,6 +1,6 @@
 ---
 name: architect-reviewer
-description: Reviews a diff file the caller supplies, or a set of paths, for design defects, read-only — module and package boundaries, coupling, logic in the wrong layer, leaky or single-use abstractions, data-flow and delivery guarantees, field ownership and locking, invariants under background work, and contracts the code breaks. Traces each finding from the code; never builds, runs or edits. Use for an architecture or design review, an architecture lens in a code review, or a change that moves responsibilities between components.
+description: Reviews the diff from a base ref or range the caller names, or a set of paths, for design defects, read-only — module and package boundaries, coupling, logic in the wrong layer, leaky or single-use abstractions, data-flow and delivery guarantees, field ownership and locking, invariants under background work, and contracts the code breaks. Traces each finding from the code; never builds, runs or edits. Use for an architecture or design review, an architecture lens in a code review, or a change that moves responsibilities between components.
 disallowedTools: Edit, Write, NotebookEdit
 ---
 

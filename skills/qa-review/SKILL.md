@@ -32,14 +32,12 @@ On pi, read every Agent launch below this way:
 - Otherwise → **review**: changes from `git merge-base HEAD origin/<default-branch>` to the working
   tree, or from the base ref the user named. Empty diff → say so and stop.
 - Paths in `$ARGUMENTS` narrow either mode to those paths.
-- Review → write the diff to `<scratchpad>/qa-review.diff`.
-- Spell `<scratchpad>` as your scratchpad directory's literal path wherever it appears.
 - Audit with no paths in `$ARGUMENTS` → build the audit map below before writing `scope`.
 
 Write `scope` as 2–4 sentences: repo path, what the project is (one line from its `CLAUDE.md` or
-README), the mode, and for review the base ref, `git diff --stat` output and the diff file's path,
-to read with the Read tool. Name the repo docs a reviewer must read first if `CLAUDE.md` names
-them.
+README), the mode, and for review the base ref, `git diff --stat` output and the line "Read the
+diff with `git diff <base>`.", with ` -- <paths>` appended when paths narrow the review. Name the
+repo docs a reviewer must read first if `CLAUDE.md` names them.
 
 ### Audit map
 

@@ -1,6 +1,6 @@
 ---
 name: sre-engineer
-description: Reviews a diff file the caller supplies, or a set of paths, for failure behaviour, read-only — timeouts, retries, partial failure, backpressure and overload, shutdown and restart, resource exhaustion, and errors that are lost or mis-reported. Traces each failure from the code and says what happens to data, whether the failure is observable, and whether the behaviour matches the docs; never builds, runs experiments or edits. Use for a reliability review, a failure-mode lens in a code review, or a change that touches I/O, persistence, network, retries, concurrency or process lifecycle.
+description: Reviews the diff from a base ref or range the caller names, or a set of paths, for failure behaviour, read-only — timeouts, retries, partial failure, backpressure and overload, shutdown and restart, resource exhaustion, and errors that are lost or mis-reported. Traces each failure from the code and says what happens to data, whether the failure is observable, and whether the behaviour matches the docs; never builds, runs experiments or edits. Use for a reliability review, a failure-mode lens in a code review, or a change that touches I/O, persistence, network, retries, concurrency or process lifecycle.
 disallowedTools: Edit, Write, NotebookEdit
 ---
 

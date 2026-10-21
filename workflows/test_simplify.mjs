@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs'
 
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
 const body = readFileSync(new URL('dream-fixer-loop.js', import.meta.url), 'utf8').replace(/^export /m, '')
-const args = { issue: '1', branch: 'issue-1', base: 'HEAD', gateCommands: ['true'], diffFile: '/scratch/issue-1.diff' }
+const args = { issue: '1', branch: 'issue-1', base: 'abc1234', gateCommands: ['true'] }
 
 // Every other reviewer passes, so the run ends after Review or its fix rounds.
 // gateFails: gate runs that fail before one passes.
@@ -13,7 +13,7 @@ const args = { issue: '1', branch: 'issue-1', base: 'HEAD', gateCommands: ['true
 // domainRuns: the same for the domain reviewer, which passes once they run out. fixes: fix-round replies, then defaults.
 // status: the gate's `git status --porcelain` lines. nullOnce: labels whose first call returns null.
 // throwFor: agent types whose dispatch throws.
-async function run(review, cuts, { aspects = ['code'], gateFails = 0, diffWritten = true, externalReview, externalRuns = [], domainRuns = [], fixes = [], redEvidence = '', status = [], nullOnce = [], throwFor = [] } = {}) {
+async function run(review, cuts, { aspects = ['code'], gateFails = 0, externalReview, externalRuns = [], domainRuns = [], fixes = [], redEvidence = '', status = [], nullOnce = [], throwFor = [] } = {}) {
   const labels = []
   const prompts = {}
   const types = {}
@@ -30,7 +30,7 @@ async function run(review, cuts, { aspects = ['code'], gateFails = 0, diffWritte
     types[opts.label] = opts.agentType
     if (opts.phase === 'Implement') return { committed: true, summary: '', redEvidence }
     if (opts.label.startsWith('build-fix:')) return { committed: true, summary: '' }
-    if (opts.phase === 'Gate') return { passed: gateFails-- <= 0, summary: '', changedFiles: [], status, diffWritten, aspects }
+    if (opts.phase === 'Gate') return { passed: gateFails-- <= 0, summary: '', changedFiles: [], status, aspects }
     if (opts.label.startsWith('simplify:')) return review
     if (opts.label.startsWith('simplify-fix:')) return cuts
     if (/^(re-)?review:external/.test(opts.label)) return externalRuns.shift()
@@ -67,8 +67,6 @@ const rows = [
   { name: 'applied without a commit', review: loaded([cut('stdlib'), cut('delete')], 9),
     cuts: { committed: false, addressed: ['stdlib cut'], disputed: [dispute], summary: 'forgot' },
     ok: false, stage: 'simplify', fixRan: true },
-  { name: 'diff file not written', review: loaded([], 0), opts: { diffWritten: false },
-    ok: false, stage: 'gate', fixRan: false },
   { name: 'untracked path', review: loaded([], 0), opts: { status: ['?? coverage.out'] },
     ok: true, simplify: leanSimplify, degraded: [], untracked: ['coverage.out'], fixRan: false },
   { name: 'modified tracked file', review: loaded([], 0), opts: { status: [' M main.py', '?? coverage.out'] },
@@ -130,11 +128,10 @@ const promptRows = [
   { name: 'domain lens skips without a source', label: 'review:domain', rule: 'Either one missing → raise no finding on it and say why in your summary' },
   { name: 'domain lens cites its source', label: 'review:domain', rule: 'cite what you read — file and line' },
   { name: 'retry after a null result checks earlier commits', label: 'impl:#1', rule: 'may already have committed part of it', opts: { nullOnce: ['impl:#1'] } },
-  { name: 'gate writes the diff file', label: 'gate:#1', rule: "git diff HEAD..HEAD > '/scratch/issue-1.diff'" },
-  { name: 'lens reads the diff file', label: 'review:dream-team:sre-engineer', rule: 'The branch diff is in `/scratch/issue-1.diff`' },
-  { name: 'domain lens reads the diff file', label: 'review:domain', rule: 'The branch diff is in `/scratch/issue-1.diff`' },
+  { name: 'lens reads the diff through git', label: 'review:dream-team:sre-engineer', rule: '`git diff abc1234..HEAD`' },
+  { name: 'domain lens reads the diff through git', label: 'review:domain', rule: '`git diff abc1234..HEAD`' },
   { name: 'dead re-review is retried against the fix it missed', label: 're-review:external:r2', rule: `Disputed: ${dispute.finding}`, opts: deadDispute() },
-  { name: 're-review reads the diff file', label: 're-review:external:r1', rule: 'The branch diff is in `/scratch/issue-1.diff`', opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] } },
+  { name: 're-review reads the diff through git', label: 're-review:external:r1', rule: '`git diff abc1234..HEAD`', opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] } },
 ]
 
 for (const row of promptRows) {
