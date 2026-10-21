@@ -7,7 +7,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Added
 
-- `qa-review` runs its lenses on pi through pi's example subagent extension; the README shows how to install the extension and the dream-team agents.
+- `qa-review` runs its lenses on pi through the `pi-sub-agent` extension; the README shows how to install it.
 
 ### Changed
 
