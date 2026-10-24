@@ -11,6 +11,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Changed
 
+- `review-bench` skips its one-run check for a reviewer whose prompt and plugin already ran on the pull request, and runs its three runs in one `run.sh` call.
 - **Upgrade note:** `review-bench` reviewer codes may hold digits and `-`, such as `QA-OPUS-4-6`, and a run is named `<code>-r<k>`, such as `QA-OPUS-4-6-r1`; rename the run directories and marks lines of an existing output directory to this form by hand before rescoring it.
 
 ### Fixed

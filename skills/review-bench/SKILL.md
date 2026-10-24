@@ -62,10 +62,11 @@ description: >-
 - `:lenses` only for a reviewer whose subagents each return a report.
 - Write the prompt so the reviewer reviews `<base-sha>..<head-sha>`; `{base}` alone is a base
   ref only to qa-review; another reviewer may read a bare SHA as one commit.
-- Run `N=1` first and check its `report.md` covers the pull request's files before the rest.
 - A reviewer differing only in model or effort needs its own prefix, such as `QA-OPUS-4-6`, and
   its own `model=` or `effort=` field; one `run.sh` call can hold all such reviewers.
-- Then run `N=3` per reviewer; the rerun skips the first run.
+- A reviewer whose prompt and plugin have not run on this pull request → run `N=1`, check its
+  `report.md` covers the pull request's files, then rerun with `N=3`; the rerun skips the first run.
+- A reviewer whose prompt and plugin already ran on this pull request → run `N=3` in one call.
 - `run.sh` grades each new run against the frozen ledger and prints the score table.
 
 ## 5. Promote candidates
