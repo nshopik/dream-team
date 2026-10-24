@@ -34,10 +34,10 @@ description: >-
 
 ## 2. Warm up the ledger
 
-- Name a qa-review reviewer file `<out>/qa-<effort>.txt` and its prefix `QA<EFFORT>`, so its run
-  directories read `QAHIGH1`, `QAMAX1`.
-- Write `<out>/qa-high.txt` as `QAHIGH:lenses /dream-team:qa-review {base}`.
-- Write `<out>/qa-max.txt` as `QAMAX:lenses /dream-team:qa-review {base}`.
+- Name a qa-review reviewer file `<out>/qa-<effort>.txt` and its prefix `QA-<EFFORT>`, so its run
+  directories read `QA-HIGH-r1`, `QA-MAX-r1`.
+- Write `<out>/qa-high.txt` as `QA-HIGH:lenses /dream-team:qa-review {base}`.
+- Write `<out>/qa-max.txt` as `QA-MAX:lenses /dream-team:qa-review {base}`.
 - Run `N=3 EFFORT=high <skill-dir>/run.sh <clone> <base-sha> <head-sha> <out>/qa-high.txt <out>`.
 - Then run `N=2 EFFORT=max <skill-dir>/run.sh <clone> <base-sha> <head-sha> <out>/qa-max.txt <out>`.
 - These five runs are the warm-up; no stop rule ends it earlier or later.
@@ -48,7 +48,7 @@ description: >-
 ## 3. Freeze the ledger
 
 - Set `"frozen": true` in `<out>/ledger.json`; leave `version` at 1.
-- Delete `<out>/QAHIGH1..QAHIGH3/marks.txt` and `<out>/QAMAX1..QAMAX2/marks.txt`.
+- Delete `<out>/QA-HIGH-r{1..3}/marks.txt` and `<out>/QA-MAX-r{1,2}/marks.txt`.
 - Rerun the step 2 `qa-high.txt` command to regrade all five; the warm-up runs stay scored runs.
 
 ## 4. Run each reviewer the user named
@@ -57,12 +57,13 @@ description: >-
 - qa-review at another effort → `<out>/qa-<effort>.txt` per step 2, run with `EFFORT=<effort>`.
 - A reviewer named later → reuse the same `<out>` and run steps 4 to 6.
 - Write each reviewer as a `<PREFIX>[:lenses] <prompt>` line in a file under `<out>`; prefix
-  is capital letters, unique per reviewer.
+  is capital letters, digits and `-`, unique per reviewer; write a version `4-6`, never `4.6`.
 - `:lenses` only for a reviewer whose subagents each return a report.
 - Write the prompt so the reviewer reviews `<base-sha>..<head-sha>`; `{base}` alone is a base
   ref only to qa-review; another reviewer may read a bare SHA as one commit.
 - Run `N=1` first and check its `report.md` covers the pull request's files before the rest.
-- A reviewer differing only in `MODEL` or `EFFORT` needs its own prefix and its own `run.sh` call.
+- A reviewer differing only in `MODEL` or `EFFORT` needs its own prefix, such as
+  `QA-OPUS-4-6`, and its own `run.sh` call.
 - Then run `N=3` per reviewer; the rerun skips the first run.
 - `run.sh` grades each new run against the frozen ledger and prints the score table.
 

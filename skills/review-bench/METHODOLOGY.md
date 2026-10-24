@@ -61,18 +61,18 @@ ledger and, on a clean change, by false alarms.
 One line per run, or per lens of a run:
 
 ```
-QAHIGH1.arch C1 I1 P1 T1~
-QAHIGH1.sre C1 C2~
-CR1 C1~ I1
-Rejected (CR1): <claim> (<why the code refutes it>).
-Excluded (QAHIGH1.sre): <claim> (<pre-existing or own-rule>).
-Candidate (QAHIGH1.arch, CR1): <claim>.
+QA-HIGH-r1.arch C1 I1 P1 T1~
+QA-HIGH-r1.sre C1 C2~
+CR-OPUS-4-8-r1 C1~ I1
+Rejected (CR-OPUS-4-8-r1): <claim> (<why the code refutes it>).
+Excluded (QA-HIGH-r1.sre): <claim> (<pre-existing or own-rule>).
+Candidate (QA-HIGH-r1.arch, CR-OPUS-4-8-r1): <claim>.
 ```
 
-- Scored line: `<PREFIX><run>[.<lens>] ID ID~ …`; the prefix (capital letters A-Z) names the
-  reviewer, prefix plus number the run.
+- Scored line: `<PREFIX>-r<k>[.<lens>] ID ID~ …`; the prefix (capital letters, digits and `-`,
+  no dot) names the reviewer, prefix plus `-r<number>` the run.
 - Bare ID: full credit (1). ID with `~`: partial credit (0.5).
-- A run with no credited finding still gets a bare `<PREFIX><run>` line.
+- A run with no credited finding still gets a bare `<PREFIX>-r<k>` line.
 - An early-exit run (errored, empty report, or its main turn ended before its subagents) gets a
   bare line: it scores 0.
 - Other lines (`#` comments, `Rejected`, `Excluded`, `Candidate`) are not scored for quality.
