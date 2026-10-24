@@ -12,6 +12,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Changed
 
+- `review-bench` drops a pull request whose frozen ledger holds no critical or important row and picks another.
 - `review-bench` skips its one-run check for a reviewer whose prompt and plugin already ran on the pull request, and runs its three runs in one `run.sh` call.
 - **Breaking:** a `review-bench` reviewer line requires a `model=` field.
 - **Upgrade note:** `review-bench` reviewer prefixes may hold lowercase letters, digits and `-`, such as `qa-opus-4-6`, and a run is named `<prefix>-r<k>`, such as `qa-opus-4-6-r1`; add `model=<model-id>` to every existing reviewer line, since `run.sh` exits 2 without it, and rename the run directories and marks lines of an existing output directory to this form before rescoring it; adding `reviewer=<command>` to each old run's `stats.txt` and replacing a `model=` alias there with its full model ID fills the new reviewer and model columns but is not required.
