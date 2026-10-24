@@ -1,0 +1,1 @@
+reviewer=vllm-review model=claude-opus-4-8 effort=high shown=qwen3-coder exit=0 wall=212s cost=$0.12 report=1830 lenses=0

@@ -2,7 +2,7 @@
 """Scores reviewer runs against a findings ledger; see METHODOLOGY.md.
 
 Usage: python3 score.py <ledger.json> <marks.txt>
-Reads each run's cost from <dir of marks.txt>/<run>/stats.txt.
+Reads each run's reviewer, model, effort and cost from <dir of marks.txt>/<run>/stats.txt.
 """
 import json
 import random
@@ -49,10 +49,20 @@ def run_quality(run, rows):
     return 100 * sum(weight[i] * runs[run].get(i, 0) for i in rows) / sum(weight[i] for i in rows)
 
 
-def cost(run):
+def stats(run):
     f = Path(sys.argv[2]).parent / run / "stats.txt"
-    m = f.exists() and re.search(r"cost=\$([\d.]+)", f.read_text())
+    return dict(re.findall(r"(\w+)=(\S+)", f.read_text())) if f.exists() else {}
+
+
+def cost(run):
+    m = re.fullmatch(r"\$([\d.]+)", stats(run).get("cost", ""))
     return float(m[1]) if m else None
+
+
+def label(g):
+    s = stats(reviewers[g][0])
+    model = s.get("shown") or s.get("model", "").removeprefix("claude-")
+    return g, s.get("reviewer", ""), f"{model}-{s.get('effort', '')}" if model else ""
 
 
 def mean_quality(rows):
@@ -71,8 +81,11 @@ for g in order:
 
 print(f"ledger v{ledger['version']}: {len(weight)} findings, weight {sum(weight.values()):g}, "
       f"{len(crit)} criticals")
-w = max(len("reviewer"), *map(len, order))
-print(f"{'tier':>4}  {'reviewer':<{w}}  {'runs':>4}  {'quality':>7}  {'sd':>5}  "
+cols = ("prefix", "reviewer", "model")
+labels = {g: label(g) for g in order}
+w = [max(map(len, c)) for c in zip(cols, *labels.values())]
+name = lambda lb: "  ".join(f"{c:<{n}}" for c, n in zip(lb, w))
+print(f"{'tier':>4}  {name(cols)}  {'runs':>4}  {'quality':>7}  {'sd':>5}  "
       f"criticals  rejected  {'$/run':>6}")
 for g in order:
     qs = [run_quality(r, list(weight)) for r in reviewers[g]]
@@ -81,5 +94,5 @@ for g in order:
     rej = statistics.mean(rejected.get(r, 0) for r in reviewers[g])
     cs = [cost(r) for r in reviewers[g]]
     usd = f"${statistics.mean(cs):.2f}" if None not in cs else ""
-    print(f"{tiers[g]:>4}  {g:<{w}}  {len(qs):>4}  {q[g]:>7.1f}  {sd:>5}  "
+    print(f"{tiers[g]:>4}  {name(labels[g])}  {len(qs):>4}  {q[g]:>7.1f}  {sd:>5}  "
           f"{f'{c:.1f}/{len(crit)}':<9}  {rej:>8.1f}  {usd:>6}".rstrip())
