@@ -21,11 +21,11 @@ out = score(HERE / "testdata/marks.txt")
 assert out.returncode == 0, out.stderr
 assert out.stdout == """\
 ledger v1: 7 findings, weight 26.5, 2 criticals
-tier  prefix  reviewer     model             runs  quality     sd  criticals  rejected   $/run
-   1  QR      qa-review    opus-4-8-high        2     86.8    2.7  1.5/2           0.5   $0.56
-   2  CR      code-review  opus-4-8-high        2     38.7    1.3  0.0/2           1.0   $0.33
-   2  SR-5                                      1     22.6         1.0/2           0.0
-   3  GR      vllm-review  qwen3-coder-high     1     18.9         0.0/2           0.0   $0.12
+tier  reviewer     model             runs  quality     sd  criticals  rejected   $/run
+   1  qa-review    opus-4-8-high        2     86.8    2.7  1.5/2           0.5   $0.56
+   2  code-review  opus-4-8-high        2     38.7    1.3  0.0/2           1.0   $0.33
+   2                                    1     22.6         1.0/2           0.0
+   3  vllm-review  qwen3-coder-high     1     18.9         0.0/2           0.0   $0.12
 """, out.stdout
 print("PASS fixture table: shown= replaces the model; a run without stats blanks its labels")
 
@@ -47,6 +47,6 @@ for run, stats in [("QR-r1", "exit=0 wall=118s cost=$0.53 report=5644 lenses=1")
     (Path(TMP.name) / run / "stats.txt").write_text(
         f"reviewer=qa-review model=claude-opus-4-8 effort=high {stats}\n")
 out = score(bare)
-row = "   1  QR      qa-review  opus-4-8-high     2     18.9   26.7  0.5/2           0.0\n"
+row = "   1  qa-review  opus-4-8-high     2     18.9   26.7  0.5/2           0.0\n"
 assert row in out.stdout, out
 print("PASS a bare last line with no newline is a scored run; an uncosted run blanks $/run")

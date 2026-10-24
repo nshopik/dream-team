@@ -99,10 +99,11 @@ quality = 100 × Σ_i w_i·c_i / Σ_i w_i        per run, c_i in {1, 0.5, 0}
 - Order inside a tier is noise; tiers capture ledger-sampling noise, sd run-to-run noise.
 
 Run `python3 score.py <ledger.json> <marks.txt>`; it prints a ledger summary line (version,
-findings, weight, criticals), then one row per prefix: tier, prefix, reviewer (the prompt's
-first word without a leading `/` and plugin prefix, such as `qa-review`), model (`shown=`, else
-`model=` without a leading `claude-`, then `-<effort>`, from the prefix's first run's
-`stats.txt`), runs, mean quality, sd, mean criticals, mean rejected claims, mean $/run.
+findings, weight, criticals), then one row per prefix, named by its reviewer and model: tier,
+reviewer (the prompt's first word without a leading `/` and plugin prefix, such as
+`qa-review`), model (`shown=`, else `model=` without a leading `claude-`, then `-<effort>`,
+from the prefix's first run's `stats.txt`), runs, mean quality, sd, mean criticals, mean
+rejected claims, mean $/run.
 
 ## Clean-PR case
 

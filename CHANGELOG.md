@@ -8,7 +8,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 ### Added
 
 - A `review-bench` reviewer line takes optional `effort=` and `shown=` fields after its prefix, `shown=` naming the model an external reviewer runs on, and `run.sh` grades up to `P` runs at once on a frozen ledger.
-- The `review-bench` score table shows each prefix's reviewer, the prompt's first word without a leading `/` and plugin prefix (such as `qa-review`), and its model, `shown=` or else `model=` without a leading `claude-`, then `-<effort>`, in their own columns, read from the prefix's first run's `stats.txt`, where `run.sh` writes a `reviewer=` field.
+- The `review-bench` score table names each row by reviewer and model columns instead of its prefix: the reviewer is the prompt's first word without a leading `/` and plugin prefix (such as `qa-review`), and the model is `shown=`, or else `model=` without a leading `claude-`, then `-<effort>`, both read from the prefix's first run's `stats.txt`, where `run.sh` writes a `reviewer=` field.
 
 ### Changed
 

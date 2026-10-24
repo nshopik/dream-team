@@ -62,7 +62,7 @@ def cost(run):
 def label(g):
     s = stats(reviewers[g][0])
     model = s.get("shown") or s.get("model", "").removeprefix("claude-")
-    return g, s.get("reviewer", ""), f"{model}-{s.get('effort', '')}" if model else ""
+    return s.get("reviewer", ""), f"{model}-{s.get('effort', '')}" if model else ""
 
 
 def mean_quality(rows):
@@ -81,7 +81,7 @@ for g in order:
 
 print(f"ledger v{ledger['version']}: {len(weight)} findings, weight {sum(weight.values()):g}, "
       f"{len(crit)} criticals")
-cols = ("prefix", "reviewer", "model")
+cols = ("reviewer", "model")
 labels = {g: label(g) for g in order}
 w = [max(map(len, c)) for c in zip(cols, *labels.values())]
 name = lambda lb: "  ".join(f"{c:<{n}}" for c, n in zip(lb, w))

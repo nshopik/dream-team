@@ -106,12 +106,12 @@ for case, ok in [
      and "not frozen" in graders[0]["prompt"]),
     ("marks keep the marks lines only", (OUT / "qa-opus-4-6-r1/marks.txt").read_text()
      == "qa-opus-4-6-r1 C1\nRejected (qa-opus-4-6-r1): b.go races (one goroutine).\n"),
-    ("score.py prints each reviewer's prefix, command and model in columns as wide as the widest",
-     "tier  prefix       reviewer     model            runs  quality     sd  criticals  rejected"
+    ("score.py prints each reviewer's command and model in columns as wide as the widest",
+     "tier  reviewer     model            runs  quality     sd  criticals  rejected"
      "   $/run\n"
-     "   1  qa-opus-4-6  qa-review    opus-4-6-low        2     50.0   70.7  0.5/1           0.5"
+     "   1  qa-review    opus-4-6-low        2     50.0   70.7  0.5/1           0.5"
      "   $0.75\n"
-     "   1  vllm         vllm-review  qwen3-coder-max     2     50.0   70.7  0.5/1           0.5"
+     "   1  vllm-review  qwen3-coder-max     2     50.0   70.7  0.5/1           0.5"
      "   $0.75\n" in out.stdout),
     ("the worktrees are removed", len(git("worktree", "list").stdout.splitlines()) == 1),
 ]:
