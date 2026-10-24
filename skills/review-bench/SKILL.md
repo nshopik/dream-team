@@ -101,5 +101,5 @@ After each `run.sh` call from step 3 on:
   <score.py table as a markdown table, its columns and values verbatim>
 - **Reading:** <tiers in words; gaps within sd called noise; rejected claims and $/run beside
   quality; a multi-lens reviewer's rejected claims are raw lens claims>
-- **Early exits:** <runs, or none>
+- **Early exits:** <runs with their reviewer and model, or none>
 ```
