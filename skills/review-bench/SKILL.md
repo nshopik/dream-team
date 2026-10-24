@@ -17,7 +17,7 @@ description: >-
 - `run.sh` runs, grades and scores; this skill covers the calls it cannot make.
 - Run every `run.sh` call with Bash `run_in_background`.
 - Run `run.sh` calls on one `<out>` one at a time: wait for each to finish before the next; use
-  `P` for parallel runs inside one call.
+  `P` for parallel runs, and parallel grades on a frozen ledger, inside one call.
 - Before step 3 and before reporting, check every `<out>/<run>/marks.txt` exists and is non-empty;
   if one is not, rerun the same `run.sh` command, which regrades only the ungraded runs.
 
@@ -56,14 +56,15 @@ description: >-
 - No reviewer named → skip to step 6; the table holds qa-review alone.
 - qa-review at another effort → `<out>/qa-<effort>.txt` per step 2, run with `EFFORT=<effort>`.
 - A reviewer named later → reuse the same `<out>` and run steps 4 to 6.
-- Write each reviewer as a `<PREFIX>[:lenses] <prompt>` line in a file under `<out>`; prefix
-  is capital letters, digits and `-`, unique per reviewer; write a version `4-6`, never `4.6`.
+- Write each reviewer as a `<PREFIX>[:lenses] [model=<m>] [effort=<e>] <prompt>` line in a file
+  under `<out>`; prefix is capital letters, digits and `-`, unique per reviewer; write a version
+  `4-6`, never `4.6`.
 - `:lenses` only for a reviewer whose subagents each return a report.
 - Write the prompt so the reviewer reviews `<base-sha>..<head-sha>`; `{base}` alone is a base
   ref only to qa-review; another reviewer may read a bare SHA as one commit.
 - Run `N=1` first and check its `report.md` covers the pull request's files before the rest.
-- A reviewer differing only in `MODEL` or `EFFORT` needs its own prefix, such as
-  `QA-OPUS-4-6`, and its own `run.sh` call.
+- A reviewer differing only in model or effort needs its own prefix, such as `QA-OPUS-4-6`, and
+  its own `model=` or `effort=` field; one `run.sh` call can hold all such reviewers.
 - Then run `N=3` per reviewer; the rerun skips the first run.
 - `run.sh` grades each new run against the frozen ledger and prints the score table.
 
