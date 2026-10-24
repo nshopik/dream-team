@@ -31,6 +31,7 @@ On pi, read every Agent launch below this way:
   whole repository, or on a large repository the paths the user picks from the audit map below.
 - Otherwise → **review**: changes from `git merge-base HEAD origin/<default-branch>` to the working
   tree, or from the base ref the user named. Empty diff → say so and stop.
+  - A SHA or ref in `$ARGUMENTS` is that base ref, never a commit to review on its own.
 - Paths in `$ARGUMENTS` narrow either mode to those paths.
 - Audit with no paths in `$ARGUMENTS` → build the audit map below before writing `scope`.
 

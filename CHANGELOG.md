@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Fixed
+
+- `qa-review` treats a SHA or ref in its arguments as the base of the diff to review, not as one commit to review on its own.
+
 ## [1.5.0] - 2026-10-21
 
 ### Added
