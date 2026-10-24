@@ -61,15 +61,15 @@ ledger and, on a clean change, by false alarms.
 One line per run, or per lens of a run:
 
 ```
-QA-HIGH-r1.arch C1 I1 P1 T1~
-QA-HIGH-r1.sre C1 C2~
-CR-OPUS-4-8-r1 C1~ I1
-Rejected (CR-OPUS-4-8-r1): <claim> (<why the code refutes it>).
-Excluded (QA-HIGH-r1.sre): <claim> (<pre-existing or own-rule>).
-Candidate (QA-HIGH-r1.arch, CR-OPUS-4-8-r1): <claim>.
+QA-high-r1.arch C1 I1 P1 T1~
+QA-high-r1.sre C1 C2~
+CR-opus-4-8-r1 C1~ I1
+Rejected (CR-opus-4-8-r1): <claim> (<why the code refutes it>).
+Excluded (QA-high-r1.sre): <claim> (<pre-existing or own-rule>).
+Candidate (QA-high-r1.arch, CR-opus-4-8-r1): <claim>.
 ```
 
-- Scored line: `<PREFIX>-r<k>[.<lens>] ID ID~ …`; the prefix (capital letters, digits and `-`,
+- Scored line: `<PREFIX>-r<k>[.<lens>] ID ID~ …`; the prefix (ASCII letters, digits and `-`,
   no dot) names the reviewer, prefix plus `-r<number>` the run.
 - Bare ID: full credit (1). ID with `~`: partial credit (0.5).
 - A run with no credited finding still gets a bare `<PREFIX>-r<k>` line.

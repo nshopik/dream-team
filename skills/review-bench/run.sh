@@ -87,7 +87,7 @@ $mode
 Output only the run's marks lines, then its Rejected, Excluded and Candidate lines; no fence, no
 commentary.
 EOF
-  grep -E '^([A-Z0-9-]+-r[0-9]|Rejected|Excluded|Candidate)' "$d/grade.txt" > "$d/marks.txt" ||
+  grep -E '^([A-Za-z0-9-]+-r[0-9]|Rejected|Excluded|Candidate)' "$d/grade.txt" > "$d/marks.txt" ||
     echo "$name: grader wrote no marks lines, see $d/grade.txt" >&2
   cat "$d/marks.txt"
 }

@@ -29,9 +29,9 @@ for line in open(sys.argv[2]):
         for run in {t.strip().split(".")[0] for t in m[1].split(",")}:
             rejected[run] = rejected.get(run, 0) + 1
     toks = line.split()
-    if not toks or not re.match(r"[A-Z0-9-]+-r\d", toks[0]):
+    if not toks or not re.match(r"[A-Za-z0-9-]+-r\d", toks[0]):
         continue
-    m = re.fullmatch(r"([A-Z0-9-]+-r\d+)(\.\S+)?", toks[0])
+    m = re.fullmatch(r"([A-Za-z0-9-]+-r\d+)(\.\S+)?", toks[0])
     if not m:
         sys.exit(f"{toks[0]}: not a <PREFIX>-r<k>[.<lens>] token")
     credit = runs.setdefault(m[1], {})

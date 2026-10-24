@@ -60,12 +60,12 @@ git("switch", "-q", "-c", "feat")
 git("add", "a.go")
 git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "feat")
 (TMP / "reviewers.txt").write_text(
-    "# qa-review\nQA-OPUS-4-6:lenses model=claude-opus-4-6 /dream-team:qa-review {base}\n"
-    "QA-MAX:lenses effort=max model=claude-opus-5 /dream-team:qa-review {base}\n")
+    "# qa-review\nQA-opus-4-6:lenses model=claude-opus-4-6 /dream-team:qa-review {base}\n"
+    "QA-max:lenses effort=max model=claude-opus-5 /dream-team:qa-review {base}\n")
 env = {**os.environ, "PATH": f"{BIN}:{os.environ['PATH']}", "STUB_LOG": str(TMP / "log"),
        "STUB_OUT": str(OUT), "CLAUDE_CONFIG_DIR": str(TMP / "config"), "N": "2", "P": "2",
        "EFFORT": "low"}
-RUNS = ["QA-MAX-r1", "QA-MAX-r2", "QA-OPUS-4-6-r1", "QA-OPUS-4-6-r2"]
+RUNS = ["QA-max-r1", "QA-max-r2", "QA-opus-4-6-r1", "QA-opus-4-6-r2"]
 overlap = lambda g: max(m["t"][0] for m in g) < min(m["t"][1] for m in g)
 
 out = subprocess.run(["bash", HERE / "run.sh", REPO, "main", "feat", TMP / "reviewers.txt", OUT],
@@ -98,18 +98,18 @@ for case, ok in [
         (OUT / r / "report.md").exists() and "wall=" in (OUT / r / "stats.txt").read_text()
         for r in RUNS)),
     ("an error result is an early exit, scored 0 without a grader",
-     "early-exit" in (OUT / "QA-OPUS-4-6-r2/stats.txt").read_text() and len(graders) == 2
-     and (OUT / "QA-OPUS-4-6-r2/marks.txt").read_text() == "QA-OPUS-4-6-r2\n"),
+     "early-exit" in (OUT / "QA-opus-4-6-r2/stats.txt").read_text() and len(graders) == 2
+     and (OUT / "QA-opus-4-6-r2/marks.txt").read_text() == "QA-opus-4-6-r2\n"),
     ("a warm-up ledger grades one run at a time under P=2", not overlap(graders)),
     ("the grader runs on opus at effort high, warm-up may edit the ledger", "--model opus --effort high"
      in " ".join(graders[0]["grader"]) and f"Edit(/{OUT}/ledger.json)" in graders[0]["grader"]
      and "not frozen" in graders[0]["prompt"]),
-    ("marks keep the marks lines only", (OUT / "QA-OPUS-4-6-r1/marks.txt").read_text()
-     == "QA-OPUS-4-6-r1 C1\nRejected (QA-OPUS-4-6-r1): b.go races (one goroutine).\n"),
+    ("marks keep the marks lines only", (OUT / "QA-opus-4-6-r1/marks.txt").read_text()
+     == "QA-opus-4-6-r1 C1\nRejected (QA-opus-4-6-r1): b.go races (one goroutine).\n"),
     ("score.py prints each reviewer's row, named by its code, under a header as wide",
      "tier  reviewer     runs  quality     sd  criticals  rejected   $/run\n"
-     "   1  QA-MAX          2     50.0   70.7  0.5/1           0.5   $0.75\n"
-     "   1  QA-OPUS-4-6     2     50.0   70.7  0.5/1           0.5   $0.75\n" in out.stdout),
+     "   1  QA-max          2     50.0   70.7  0.5/1           0.5   $0.75\n"
+     "   1  QA-opus-4-6     2     50.0   70.7  0.5/1           0.5   $0.75\n" in out.stdout),
     ("the worktrees are removed", len(git("worktree", "list").stdout.splitlines()) == 1),
 ]:
     assert ok, (case, out.stdout, out.stderr)
@@ -119,8 +119,8 @@ for case, ok in [
 # edits.
 ledger = json.loads((OUT / "ledger.json").read_text())
 (OUT / "ledger.json").write_text(json.dumps({**ledger, "frozen": True}))
-(OUT / "QA-OPUS-4-6-r1/marks.txt").unlink()
-(OUT / "QA-MAX-r1/marks.txt").unlink()
+(OUT / "QA-opus-4-6-r1/marks.txt").unlink()
+(OUT / "QA-max-r1/marks.txt").unlink()
 out = subprocess.run(["bash", HERE / "run.sh", REPO, "main", "feat", TMP / "reviewers.txt", OUT],
                      env=env, capture_output=True, text=True)
 log = [json.loads(line) for line in (TMP / "log").read_text().splitlines()]
