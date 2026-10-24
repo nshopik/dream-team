@@ -61,12 +61,12 @@ ledger and, on a clean change, by false alarms.
 One line per run, or per lens of a run:
 
 ```
-QA-high-r1.arch C1 I1 P1 T1~
-QA-high-r1.sre C1 C2~
-CR-opus-4-8-r1 C1~ I1
-Rejected (CR-opus-4-8-r1): <claim> (<why the code refutes it>).
-Excluded (QA-high-r1.sre): <claim> (<pre-existing or own-rule>).
-Candidate (QA-high-r1.arch, CR-opus-4-8-r1): <claim>.
+qa-high-r1.arch C1 I1 P1 T1~
+qa-high-r1.sre C1 C2~
+code-review-r1 C1~ I1
+Rejected (code-review-r1): <claim> (<why the code refutes it>).
+Excluded (qa-high-r1.sre): <claim> (<pre-existing or own-rule>).
+Candidate (qa-high-r1.arch, code-review-r1): <claim>.
 ```
 
 - Scored line: `<PREFIX>-r<k>[.<lens>] ID ID~ …`; the prefix (ASCII letters, digits and `-`,
@@ -89,18 +89,20 @@ base    = critical 10, important 4, performance 3, test 3, minor bug 1, nit 0.5
 quality = 100 × Σ_i w_i·c_i / Σ_i w_i        per run, c_i in {1, 0.5, 0}
 ```
 
-- Per reviewer: mean and standard deviation (sd) of run quality, mean criticals found per run
+- Per prefix: mean and standard deviation (sd) of run quality, mean criticals found per run
   (full credit only), mean rejected claims per run, and mean cost per run.
 - Cost comes from the `cost=$X` field of each run's `<run>/stats.txt` beside the marks file; a run
-  without one leaves its reviewer's cost blank.
+  without one leaves its prefix's cost blank.
 - Tiers: 2000 bootstrap resamples of ledger rows on mean quality.
-- Walking down the quality order, a reviewer stays in the current tier when it matches or beats
+- Walking down the quality order, a prefix stays in the current tier when it matches or beats
   the tier head in at least 10% of resamples; otherwise it starts a new tier.
 - Order inside a tier is noise; tiers capture ledger-sampling noise, sd run-to-run noise.
 
 Run `python3 score.py <ledger.json> <marks.txt>`; it prints a ledger summary line (version,
-findings, weight, criticals), then one row per reviewer: tier, runs, mean quality, sd, mean
-criticals, mean rejected claims, mean $/run.
+findings, weight, criticals), then one row per prefix: tier, prefix, reviewer (the prompt's
+first word without a leading `/` and plugin prefix, such as `qa-review`), model (`shown=`, else
+`model=` without a leading `claude-`, then `-<effort>`, from the prefix's first run's
+`stats.txt`), runs, mean quality, sd, mean criticals, mean rejected claims, mean $/run.
 
 ## Clean-PR case
 

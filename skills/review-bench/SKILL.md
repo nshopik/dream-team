@@ -34,10 +34,11 @@ description: >-
 
 ## 2. Warm up the ledger
 
-- Name a qa-review reviewer file `<out>/qa-<effort>.txt` and its prefix `QA-<effort>`, so its run
-  directories read `QA-high-r1`, `QA-max-r1`.
-- Write `<out>/qa-high.txt` as `QA-high:lenses /dream-team:qa-review {base}`.
-- Write `<out>/qa-max.txt` as `QA-max:lenses /dream-team:qa-review {base}`.
+- Name a qa-review reviewer file `<out>/qa-<effort>.txt` and its prefix `qa-<effort>`, so its run
+  directories read `qa-high-r1`, `qa-max-r1`.
+- `<model-id>` below is a full model ID, such as `claude-opus-4-8`, never an alias such as `opus`.
+- Write `<out>/qa-high.txt` as `qa-high:lenses model=<model-id> /dream-team:qa-review {base}`.
+- Write `<out>/qa-max.txt` as `qa-max:lenses model=<model-id> /dream-team:qa-review {base}`.
 - Run `N=3 EFFORT=high <skill-dir>/run.sh <clone> <base-sha> <head-sha> <out>/qa-high.txt <out>`.
 - Then run `N=2 EFFORT=max <skill-dir>/run.sh <clone> <base-sha> <head-sha> <out>/qa-max.txt <out>`.
 - These five runs are the warm-up; no stop rule ends it earlier or later.
@@ -48,7 +49,7 @@ description: >-
 ## 3. Freeze the ledger
 
 - Set `"frozen": true` in `<out>/ledger.json`; leave `version` at 1.
-- Delete `<out>/QA-high-r{1..3}/marks.txt` and `<out>/QA-max-r{1,2}/marks.txt`.
+- Delete `<out>/qa-high-r{1..3}/marks.txt` and `<out>/qa-max-r{1,2}/marks.txt`.
 - Rerun the step 2 `qa-high.txt` command to regrade all five; the warm-up runs stay scored runs.
 
 ## 4. Run each reviewer the user named
@@ -56,15 +57,15 @@ description: >-
 - No reviewer named → skip to step 6; the table holds qa-review alone.
 - qa-review at another effort → `<out>/qa-<effort>.txt` per step 2, run with `EFFORT=<effort>`.
 - A reviewer named later → reuse the same `<out>` and run steps 4 to 6.
-- Write each reviewer as a `<PREFIX>[:lenses] [model=<m>] [effort=<e>] <prompt>` line in a file
-  under `<out>`; prefix is ASCII letters, digits and `-`, unique per reviewer.
-- Write a prefix in lowercase except an acronym, such as `QA` for qa-review or `CR` for
-  `/code-review`.
+- Write each reviewer as a `<PREFIX>[:lenses] model=<model-id> [effort=<e>] [shown=<name>] <prompt>`
+  line in a file under `<out>`; prefix is ASCII letters, digits and `-`, unique per reviewer.
 - Write a version in a prefix as `4-6`, never `4.6`.
 - `:lenses` only for a reviewer whose subagents each return a report.
 - Write the prompt so the reviewer reviews `<base-sha>..<head-sha>`; `{base}` alone is a base
   ref only to qa-review; another reviewer may read a bare SHA as one commit.
-- A reviewer differing only in model or effort needs its own prefix, such as `QA-opus-4-6`, and
+- An external reviewer whose review runs on another model, such as `/vllm-review` on pi → add
+  `shown=<that model>`, such as `shown=qwen3-coder`; `model=` still sets the Claude session's model.
+- A reviewer differing only in model or effort needs its own prefix, such as `qa-opus-4-6`, and
   its own `model=` or `effort=` field; one `run.sh` call can hold all such reviewers.
 - A reviewer whose prompt and plugin have not run on this pull request → run `N=1`, check its
   `report.md` covers the pull request's files, then rerun with `N=3`; the rerun skips the first run.

@@ -60,12 +60,12 @@ git("switch", "-q", "-c", "feat")
 git("add", "a.go")
 git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "feat")
 (TMP / "reviewers.txt").write_text(
-    "# qa-review\nQA-opus-4-6:lenses model=claude-opus-4-6 /dream-team:qa-review {base}\n"
-    "QA-max:lenses effort=max model=claude-opus-5 /dream-team:qa-review {base}\n")
+    "# qa-review\nqa-opus-4-6:lenses model=claude-opus-4-6 /dream-team:qa-review {base}\n"
+    "vllm effort=max model=claude-opus-5 shown=qwen3-coder /vllm-review {base}..{head}\n")
 env = {**os.environ, "PATH": f"{BIN}:{os.environ['PATH']}", "STUB_LOG": str(TMP / "log"),
        "STUB_OUT": str(OUT), "CLAUDE_CONFIG_DIR": str(TMP / "config"), "N": "2", "P": "2",
        "EFFORT": "low"}
-RUNS = ["QA-max-r1", "QA-max-r2", "QA-opus-4-6-r1", "QA-opus-4-6-r2"]
+RUNS = ["qa-opus-4-6-r1", "qa-opus-4-6-r2", "vllm-r1", "vllm-r2"]
 overlap = lambda g: max(m["t"][0] for m in g) < min(m["t"][1] for m in g)
 
 out = subprocess.run(["bash", HERE / "run.sh", REPO, "main", "feat", TMP / "reviewers.txt", OUT],
@@ -77,19 +77,19 @@ graders = [m for m in log if "grader" in m]
 wts = [str(OUT / r / "repo") for r in RUNS]
 
 for case, ok in [
-    ("each run passes its line's model and effort, else MODEL and EFFORT", [
-        " ".join(m["argv"]).split(" --output-format")[0].split("-p ")[1] for m in runs] == [
-        "/dream-team:qa-review main --model claude-opus-5 --effort max"] * 2
-        + ["/dream-team:qa-review main --model claude-opus-4-6 --effort low"] * 2),
-    ("each run's stats show its model and effort", [
+    ("each run passes its line's prompt with {base} and {head} expanded, model and effort, else "
+     "EFFORT", [" ".join(m["argv"]).split(" --output-format")[0].split("-p ")[1] for m in runs] == [
+        "/dream-team:qa-review main --model claude-opus-4-6 --effort low"] * 2
+        + ["/vllm-review main..feat --model claude-opus-5 --effort max"] * 2),
+    ("each run's stats show its command name, model, effort and shown=", [
         (OUT / r / "stats.txt").read_text().split(" exit=")[0] for r in RUNS] == [
-        "model=claude-opus-5 effort=max"] * 2 + ["model=claude-opus-4-6 effort=low"] * 2),
+        "reviewer=qa-review model=claude-opus-4-6 effort=low"] * 2
+        + ["reviewer=vllm-review model=claude-opus-5 effort=max shown=qwen3-coder"] * 2),
     ("each run sets the background-wait ceiling to 0", all(m["ceiling"] == "0" for m in runs)),
     ("each run allows /tmp writes and denies edits, commits and pushes in the target", all(
         "Write(//tmp/**)" in m["argv"] and {"Edit", f"Write(/{w}/**)", "Bash(git commit:*)",
                                              "Bash(git push:*)"} <= set(m["argv"])
         for m, w in zip(runs, wts))),
-    ("{base} expands in the prompt", all("/dream-team:qa-review main" in m["argv"] for m in runs)),
     ("each run works in its own clean worktree at head", [m["cwd"] for m in runs] == wts
      and all(m["a.go"] == "package a\n" for m in runs)),
     ("a leaked CLAUDE.local.md moves into the run directory", all(
@@ -98,18 +98,21 @@ for case, ok in [
         (OUT / r / "report.md").exists() and "wall=" in (OUT / r / "stats.txt").read_text()
         for r in RUNS)),
     ("an error result is an early exit, scored 0 without a grader",
-     "early-exit" in (OUT / "QA-opus-4-6-r2/stats.txt").read_text() and len(graders) == 2
-     and (OUT / "QA-opus-4-6-r2/marks.txt").read_text() == "QA-opus-4-6-r2\n"),
+     "early-exit" in (OUT / "qa-opus-4-6-r2/stats.txt").read_text() and len(graders) == 2
+     and (OUT / "qa-opus-4-6-r2/marks.txt").read_text() == "qa-opus-4-6-r2\n"),
     ("a warm-up ledger grades one run at a time under P=2", not overlap(graders)),
     ("the grader runs on opus at effort high, warm-up may edit the ledger", "--model opus --effort high"
      in " ".join(graders[0]["grader"]) and f"Edit(/{OUT}/ledger.json)" in graders[0]["grader"]
      and "not frozen" in graders[0]["prompt"]),
-    ("marks keep the marks lines only", (OUT / "QA-opus-4-6-r1/marks.txt").read_text()
-     == "QA-opus-4-6-r1 C1\nRejected (QA-opus-4-6-r1): b.go races (one goroutine).\n"),
-    ("score.py prints each reviewer's row, named by its code, under a header as wide",
-     "tier  reviewer     runs  quality     sd  criticals  rejected   $/run\n"
-     "   1  QA-max          2     50.0   70.7  0.5/1           0.5   $0.75\n"
-     "   1  QA-opus-4-6     2     50.0   70.7  0.5/1           0.5   $0.75\n" in out.stdout),
+    ("marks keep the marks lines only", (OUT / "qa-opus-4-6-r1/marks.txt").read_text()
+     == "qa-opus-4-6-r1 C1\nRejected (qa-opus-4-6-r1): b.go races (one goroutine).\n"),
+    ("score.py prints each reviewer's prefix, command and model in columns as wide as the widest",
+     "tier  prefix       reviewer     model            runs  quality     sd  criticals  rejected"
+     "   $/run\n"
+     "   1  qa-opus-4-6  qa-review    opus-4-6-low        2     50.0   70.7  0.5/1           0.5"
+     "   $0.75\n"
+     "   1  vllm         vllm-review  qwen3-coder-max     2     50.0   70.7  0.5/1           0.5"
+     "   $0.75\n" in out.stdout),
     ("the worktrees are removed", len(git("worktree", "list").stdout.splitlines()) == 1),
 ]:
     assert ok, (case, out.stdout, out.stderr)
@@ -119,8 +122,8 @@ for case, ok in [
 # edits.
 ledger = json.loads((OUT / "ledger.json").read_text())
 (OUT / "ledger.json").write_text(json.dumps({**ledger, "frozen": True}))
-(OUT / "QA-opus-4-6-r1/marks.txt").unlink()
-(OUT / "QA-max-r1/marks.txt").unlink()
+(OUT / "qa-opus-4-6-r1/marks.txt").unlink()
+(OUT / "vllm-r1/marks.txt").unlink()
 out = subprocess.run(["bash", HERE / "run.sh", REPO, "main", "feat", TMP / "reviewers.txt", OUT],
                      env=env, capture_output=True, text=True)
 log = [json.loads(line) for line in (TMP / "log").read_text().splitlines()]
@@ -131,3 +134,19 @@ assert len(regrades) == 2 and all(not any(a.startswith("Edit(") for a in m["grad
 print("PASS a rerun skips finished runs; a frozen ledger grades with no ledger edits")
 assert overlap(regrades), regrades
 print("PASS a frozen ledger grades runs in parallel under P=2")
+
+# A bad reviewers file fails before any run starts and leaves the output directory alone.
+(TMP / "kept").mkdir()
+(TMP / "kept/ledger.json").write_text("{}")
+for case, lines, err in [
+    ("a line without model= fails, even after a valid line",
+     "qa-high:lenses model=claude-opus-4-8 /dream-team:qa-review {base}\n"
+     "qa-max:lenses effort=max /dream-team:qa-review {base}\n", "qa-max: no model= field"),
+    ("a file with no reviewer lines fails", "# none\n\n", "no reviewer lines"),
+]:
+    (TMP / "bad.txt").write_text(lines)
+    out = subprocess.run(["bash", HERE / "run.sh", REPO, "main", "feat", TMP / "bad.txt",
+                          TMP / "kept"], env=env, capture_output=True, text=True)
+    assert out.returncode == 2 and err in out.stderr, (case, out)
+    assert [p.name for p in (TMP / "kept").iterdir()] == ["ledger.json"], (case, out)
+    print("PASS", case)

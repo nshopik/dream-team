@@ -1,1 +1,1 @@
-model=opus effort=high exit=0 wall=129s cost=$0.59 report=6071 lenses=1
+reviewer=qa-review model=claude-opus-4-8 effort=high exit=0 wall=129s cost=$0.59 report=6071 lenses=1

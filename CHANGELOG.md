@@ -7,12 +7,18 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Added
 
-- A `review-bench` reviewer line takes optional `model=` and `effort=` fields after its code, and `run.sh` grades up to `P` runs at once on a frozen ledger.
+- A `review-bench` reviewer line takes optional `effort=` and `shown=` fields after its prefix, `shown=` naming the model an external reviewer runs on, and `run.sh` grades up to `P` runs at once on a frozen ledger.
+- The `review-bench` score table shows each prefix's reviewer, the prompt's first word without a leading `/` and plugin prefix (such as `qa-review`), and its model, `shown=` or else `model=` without a leading `claude-`, then `-<effort>`, in their own columns, read from the prefix's first run's `stats.txt`, where `run.sh` writes a `reviewer=` field.
 
 ### Changed
 
 - `review-bench` skips its one-run check for a reviewer whose prompt and plugin already ran on the pull request, and runs its three runs in one `run.sh` call.
-- **Upgrade note:** `review-bench` reviewer codes may hold lowercase letters, digits and `-`, such as `QA-opus-4-6`, and a run is named `<code>-r<k>`, such as `QA-opus-4-6-r1`; rename the run directories and marks lines of an existing output directory to this form by hand before rescoring it.
+- **Breaking:** a `review-bench` reviewer line requires a `model=` field.
+- **Upgrade note:** `review-bench` reviewer prefixes may hold lowercase letters, digits and `-`, such as `qa-opus-4-6`, and a run is named `<prefix>-r<k>`, such as `qa-opus-4-6-r1`; add `model=<model-id>` to every existing reviewer line, since `run.sh` exits 2 without it, and rename the run directories and marks lines of an existing output directory to this form before rescoring it; adding `reviewer=<command>` to each old run's `stats.txt` and replacing a `model=` alias there with its full model ID fills the new reviewer and model columns but is not required.
+
+### Removed
+
+- `review-bench`'s `run.sh` no longer reads a `MODEL` default from the environment.
 
 ### Fixed
 
