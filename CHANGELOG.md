@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Added
+
+- A `review-bench` reviewer line takes optional `model=` and `effort=` fields after its code, and `run.sh` grades up to `P` runs at once on a frozen ledger.
+
 ### Changed
 
 - **Upgrade note:** `review-bench` reviewer codes may hold digits and `-`, such as `QA-OPUS-4-6`, and a run is named `<code>-r<k>`, such as `QA-OPUS-4-6-r1`; rename the run directories and marks lines of an existing output directory to this form by hand before rescoring it.
