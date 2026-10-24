@@ -29,11 +29,11 @@ for line in open(sys.argv[2]):
         for run in {t.strip().split(".")[0] for t in m[1].split(",")}:
             rejected[run] = rejected.get(run, 0) + 1
     toks = line.split()
-    if not toks or not re.match(r"[A-Z]+\d", toks[0]):
+    if not toks or not re.match(r"[A-Z0-9-]+-r\d", toks[0]):
         continue
-    m = re.fullmatch(r"([A-Z]+\d+)(\.\S+)?", toks[0])
+    m = re.fullmatch(r"([A-Z0-9-]+-r\d+)(\.\S+)?", toks[0])
     if not m:
-        sys.exit(f"{toks[0]}: not a <PREFIX><run>[.<lens>] token")
+        sys.exit(f"{toks[0]}: not a <PREFIX>-r<k>[.<lens>] token")
     credit = runs.setdefault(m[1], {})
     for tok in toks[1:]:
         i = tok.rstrip("~")
@@ -42,7 +42,7 @@ for line in open(sys.argv[2]):
         credit[i] = max(credit.get(i, 0), 0.5 if tok.endswith("~") else 1)
 reviewers = {}
 for run in runs:
-    reviewers.setdefault(re.match(r"[A-Z]+", run)[0], []).append(run)
+    reviewers.setdefault(run.rsplit("-r", 1)[0], []).append(run)
 
 
 def run_quality(run, rows):
@@ -71,7 +71,8 @@ for g in order:
 
 print(f"ledger v{ledger['version']}: {len(weight)} findings, weight {sum(weight.values()):g}, "
       f"{len(crit)} criticals")
-print(f"{'tier':>4}  {'reviewer':<8}  {'runs':>4}  {'quality':>7}  {'sd':>5}  "
+w = max(len("reviewer"), *map(len, order))
+print(f"{'tier':>4}  {'reviewer':<{w}}  {'runs':>4}  {'quality':>7}  {'sd':>5}  "
       f"criticals  rejected  {'$/run':>6}")
 for g in order:
     qs = [run_quality(r, list(weight)) for r in reviewers[g]]
@@ -80,5 +81,5 @@ for g in order:
     rej = statistics.mean(rejected.get(r, 0) for r in reviewers[g])
     cs = [cost(r) for r in reviewers[g]]
     usd = f"${statistics.mean(cs):.2f}" if None not in cs else ""
-    print(f"{tiers[g]:>4}  {g:<8}  {len(qs):>4}  {q[g]:>7.1f}  {sd:>5}  "
+    print(f"{tiers[g]:>4}  {g:<{w}}  {len(qs):>4}  {q[g]:>7.1f}  {sd:>5}  "
           f"{f'{c:.1f}/{len(crit)}':<9}  {rej:>8.1f}  {usd:>6}".rstrip())

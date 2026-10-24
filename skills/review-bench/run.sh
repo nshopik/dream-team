@@ -49,7 +49,7 @@ while read -r prefix prompt || [ -n "$prefix" ]; do
     *) lenses= ;;
   esac
   prompt=${prompt//\{base\}/$BASE} && prompt=${prompt//\{head\}/$HEAD_REF}
-  for k in $(seq "${N:-1}"); do printf '%s\0%s\0%s\0' "$prefix$k" "$prompt" "$lenses"; done
+  for k in $(seq "${N:-1}"); do printf '%s\0%s\0%s\0' "$prefix-r$k" "$prompt" "$lenses"; done
 done < "$4" | xargs -0 -n3 -P"${P:-1}" bash -c 'run "$@"' _
 
 grade() {
@@ -82,7 +82,7 @@ $mode
 Output only the run's marks lines, then its Rejected, Excluded and Candidate lines; no fence, no
 commentary.
 EOF
-  grep -E '^([A-Z]+[0-9]|Rejected|Excluded|Candidate)' "$d/grade.txt" > "$d/marks.txt" ||
+  grep -E '^([A-Z0-9-]+-r[0-9]|Rejected|Excluded|Candidate)' "$d/grade.txt" > "$d/marks.txt" ||
     echo "$name: grader wrote no marks lines, see $d/grade.txt" >&2
   cat "$d/marks.txt"
 }

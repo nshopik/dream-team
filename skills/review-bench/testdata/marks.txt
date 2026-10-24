@@ -1,14 +1,14 @@
 # Fixture marks: one line per run or lens; "~" = partial credit.
-QR1.arch C1 I1 P1
-QR1.sre C1 C2~ T1 N1
-QR2.arch C1 C2 I1~
-QR2.sre I1 P1 N2
-CR1 C1~ I1 N1 N2
-CR2 I1 P1 T1
-SR1 C2 N1
-GR1 I1 N1
-Rejected (CR2): pool_resize races with task pickup (the pool lock is held across both).
-Rejected (QR1.arch, QR1.sre, CR1): xfr_free leaks the zone ref (xfr_done drops it).
+QR-r1.arch C1 I1 P1
+QR-r1.sre C1 C2~ T1 N1
+QR-r2.arch C1 C2 I1~
+QR-r2.sre I1 P1 N2
+CR-r1 C1~ I1 N1 N2
+CR-r2 I1 P1 T1
+SR-5-r1 C2 N1
+GR-r1 I1 N1
+Rejected (CR-r2): pool_resize races with task pickup (the pool lock is held across both).
+Rejected (QR-r1.arch, QR-r1.sre, CR-r1): xfr_free leaks the zone ref (xfr_done drops it).
 Rejected: the retry loop never exits (no run named).
-Excluded (QR2.sre): sleep-based retry in test/xfr_test.c (same as the existing tests).
-Candidate (QR1.arch, CR1): a zone reload during a transfer drops the transfer (unverified).
+Excluded (QR-r2.sre): sleep-based retry in test/xfr_test.c (same as the existing tests).
+Candidate (QR-r1.arch, CR-r1): a zone reload during a transfer drops the transfer (unverified).

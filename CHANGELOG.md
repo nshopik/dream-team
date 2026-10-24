@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Changed
+
+- **Upgrade note:** `review-bench` reviewer codes may hold digits and `-`, such as `QA-OPUS-4-6`, and a run is named `<code>-r<k>`, such as `QA-OPUS-4-6-r1`; rename the run directories and marks lines of an existing output directory to this form by hand before rescoring it.
+
 ### Fixed
 
 - `qa-review` treats a SHA or ref in its arguments as the base of the diff to review, not as one commit to review on its own.
