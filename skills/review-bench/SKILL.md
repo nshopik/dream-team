@@ -51,7 +51,7 @@ description: >-
 - Set `"frozen": true` in `<out>/ledger.json`; leave `version` at 1.
 - Delete `<out>/qa-high-r{1..3}/marks.txt` and `<out>/qa-max-r{1,2}/marks.txt`.
 - Rerun the step 2 `qa-high.txt` command to regrade all five; the warm-up runs stay scored runs.
-- The frozen ledger holds no `critical` or `important` row → drop this pull request and go back
+- The frozen ledger lacks a `critical` or an `important` row → drop this pull request and go back
   to step 1 with another and a new `<out>`.
 
 ## 4. Run each reviewer the user named

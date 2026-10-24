@@ -9,7 +9,8 @@ ledger and, on a clean change, by false alarms.
 - The grader verifies every row against the code before it enters the ledger.
 - Freeze the ledger as version 1 after the fifth run: set `frozen` to true.
 - After freezing, delete each warm-up run's `marks.txt` and rerun `run.sh` to regrade it.
-- A frozen ledger with no `critical` or `important` row disqualifies the pull request; pick another.
+- A frozen ledger needs at least one `critical` and one `important` row; without both, pick
+  another pull request.
 
 ## Frozen ledger
 
