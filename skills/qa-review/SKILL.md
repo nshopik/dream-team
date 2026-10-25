@@ -35,10 +35,13 @@ On pi, read every Agent launch below this way:
 - Paths in `$ARGUMENTS` narrow either mode to those paths.
 - Audit with no paths in `$ARGUMENTS` → build the audit map below before writing `scope`.
 
-Write `scope` as 2–4 sentences: repo path, what the project is (one line from its `CLAUDE.md` or
-README), the mode, and for review the base ref, `git diff --stat` output and the line "Read the
-diff with `git diff <base>`.", with ` -- <paths>` appended when paths narrow the review. Name the
-repo docs a reviewer must read first if `CLAUDE.md` names them.
+The project instructions are defined in `<base directory>/../../references/project-instructions.md`.
+
+Write `scope` as 2–4 sentences: repo path, what the project is (one line from its project
+instructions or README), the mode, and for review the base ref, `git diff --stat` output and the
+line "Read the diff with `git diff <base>`.", with ` -- <paths>` appended when paths narrow the
+review. Name the repo docs a reviewer must read first: the repo-root `AGENTS.md` when it exists,
+and any the project instructions name.
 
 ### Audit map
 
@@ -66,7 +69,7 @@ Lenses: `dream-team:architect-reviewer`, `dream-team:sre-engineer`,
 - Every file in scope is docs or config (Markdown, plain text, YAML, TOML, JSON, INI), and none
   is CI, build, test-runner or feature-flag config or an agent or skill prompt (`SKILL.md`,
   `agents/*.md`) → skip `dream-team:test-coverage-reviewer`.
-- The project's `CLAUDE.md` names no reference source or invariant, or nothing in scope makes a
+- The project instructions name no reference source or invariant, or nothing in scope makes a
   claim checkable against one → skip `domain`.
 
 Before launching, list the lenses that run as a bullet list, one bold name per bullet; list each
@@ -91,7 +94,7 @@ A lens that errors or returns nothing goes in `missing`.
 
 Lens prompt: `<scope>`, a blank line, `Your lens: <focus>`, a blank line, then the rules block.
 Focus: the lens name after its last `:`; for `domain`, `<claim>` checked against
-`<source files>` and `<invariant>`, as the project's `CLAUDE.md` names them; cite file and line
+`<source files>` and `<invariant>`, as the project instructions name them; cite file and line
 on both sides.
 
 Rules block, verbatim:

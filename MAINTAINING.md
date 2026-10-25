@@ -2,7 +2,8 @@
 
 ## Pieces and where they live
 
-Rules, in each project `CLAUDE.md`: listed in `setup-dream-team`, which checks for them.
+Rules, in each project's instructions (`references/project-instructions.md`): listed in
+`setup-dream-team`, which checks for them.
 
 Skills:
 
@@ -16,7 +17,7 @@ Skills:
 - `cut-milestones`: milestones from a spec, one exit gate each, with the
   dependency order and ROADMAP rows; or one version milestone for a minor release.
 - `milestone-close`: exit check with gap issues, triage, docs check, facts
-  sweep, `CLAUDE.md` cuts and `CLAUDE.local.md` promotions, minor release offer.
+  sweep, project instructions cuts and `CLAUDE.local.md` promotions, minor release offer.
 - `ship-it`: a release of main, milestone or not: version bump, CHANGELOG move, tag offer.
 - `scope-commit`, `scope-mr`: commit and MR text.
 - `scope-spec`: the project spec and its template.
@@ -41,9 +42,10 @@ Agents:
 
 Hooks:
 
-- `jit-context.py`: injects git workflow, prose, lab, forge and `CLAUDE.md` rules at first use,
-  `<upstream_repo>` on the first write or commit in a repo with a remote outside
-  `DREAM_TEAM_OWN_REMOTES`, and `<project_notes>` at session start.
+- `jit-context.py`: injects git workflow, prose, lab, forge and the editing rules for `CLAUDE.md`,
+  `CLAUDE.local.md` and `AGENTS.md` at first use, `<upstream_repo>` on the first write or commit
+  in a repo with a remote outside `DREAM_TEAM_OWN_REMOTES`, and `<project_notes>` at session
+  start.
 - `body-cap.py`: length caps on MRs.
   It quotes a `## <id>` section of the `scope-mr` `SKILL.md` back verbatim after its deny header;
   keep those heading ids stable and sub-headings at `###`, since any `##` closes a section.

@@ -11,7 +11,9 @@ disable-model-invocation: true
 
 Bringing a project into line is a program, not a change. This skill audits, makes the
 **Direct fixes** below after one confirm, and files one issue for the rest. It changes no code and
-no docs besides `CLAUDE.md`; the filed issue goes through `dream-fixer`.
+no docs besides the project instructions, defined in
+`<base directory>/../../references/project-instructions.md`; the filed issue goes through
+`dream-fixer`.
 
 ## Checks
 
@@ -36,12 +38,12 @@ no docs besides `CLAUDE.md`; the filed issue goes through `dream-fixer`.
 - The architecture diagram matches the code.
 - The tracker has the `type::research` and `type::meta` labels.
 - Every label in **Label colours** that the tracker has carries its colour from there.
-- The project `CLAUDE.md` carries the meaning of every rule in **Project rules** below.
+- The project instructions carry the meaning of every rule in **Project rules** below.
 - A CHANGELOG's header links the Keep a Changelog version it follows.
 
 ## Project rules
 
-The project `CLAUDE.md` carries these, in its own words:
+The project instructions carry these, in their own words:
 
 - The architecture diagram changes in the same MR as a component or pipeline change.
 - Detail the code doesn't show goes in the commit, spec or a topic doc, never in module docs.
@@ -72,8 +74,8 @@ Values from GitLab's label-picker palette; one colour per `type::` value, one fo
 
 ## Direct fixes
 
-- `CLAUDE.md` lacks a project rule → write it in the file's own words, merged into its existing
-  structure.
+- The project instructions lack a project rule → write it in the file that reference names for
+  writes, in the file's own words, merged into its existing structure.
 - The project has neither `CLAUDE.md` nor `AGENTS.md` → create `CLAUDE.md` with the project
   rules.
 - The tracker lacks `type::research` or `type::meta` → create the label with its colour and
@@ -89,23 +91,24 @@ Values from GitLab's label-picker palette; one colour per `type::` value, one fo
 
 ## Steps
 
-1. Read the project `CLAUDE.md`, the contributor doc, the ROADMAP and `docs/specs/`.
+1. Read the project instructions, the contributor doc, the ROADMAP and `docs/specs/`.
 2. Read the tracker's milestones, labels and open issues through the host's tooling skill.
 3. Run every check. Record pass or fail, with the evidence: issue numbers, file and line.
 4. Report one line per check to the user before changing or filing anything.
 5. All checks pass → say the project is aligned and stop.
 6. No direct fix applies → go to step 12.
-7. Show one combined draft of every direct fix: the `CLAUDE.md` diff, the labels to create or recolour, the
-   waiting labels to add or remove per issue, and each milestone description and issue body
-   before and after.
+7. Show one combined draft of every direct fix: the project instructions diff, the labels to
+   create or recolour, the waiting labels to add or remove per issue, and each milestone
+   description and issue body before and after.
 8. Ask for one OK on the draft; a direct fix the user declines becomes an item in the
    maintenance issue.
-9. Write the `CLAUDE.md` edit and leave it uncommitted.
+9. Write the project instructions edit and leave it uncommitted.
 10. Make the tracker changes through the host's tooling skill.
-11. No other check fails → report the fixes and the uncommitted `CLAUDE.md`, and stop.
+11. No other check fails → report the fixes and the uncommitted project instructions edit, and
+    stop.
 12. Ask which milestone takes the maintenance issue, suggesting one.
 13. File one `type::maintenance` issue per `scope-issue`, in that milestone, with one item per
     remaining failing check.
 14. A check that fails on many items → one item listing them.
-15. Report the fixes, the uncommitted `CLAUDE.md` and the filed issue. It is worked through
-    `dream-fixer`.
+15. Report the fixes, the uncommitted project instructions edit and the filed issue. It is worked
+    through `dream-fixer`.

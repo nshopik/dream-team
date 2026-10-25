@@ -50,6 +50,10 @@ assert "<vcs_workflow>" in context({"command": "gh pr view 1"}, session=s)
 assert "<forge_tooling>" in context({"command": "gh pr view 1"}, session=s)
 assert "<claude_md>" in context({"file_path": os.path.join(mine, "CLAUDE.local.md")})
 assert "<claude_md>" in context({"command": "echo x >> CLAUDE.local.md"})
+assert "<claude_md>" in context({"command": "echo x >> AGENTS.md"})
+claude_md = context({"file_path": os.path.join(mine, "AGENTS.md")})
+assert "<claude_md>" in claude_md and os.path.isfile(jit.PROJECT_INSTRUCTIONS)
+assert jit.PROJECT_INSTRUCTIONS in claude_md
 p = subprocess.run([sys.executable, HOOK], text=True, capture_output=True,
                    input=json.dumps({"hook_event_name": "SessionStart", "session_id": "x"}))
 start = json.loads(p.stdout)["hookSpecificOutput"]["additionalContext"]

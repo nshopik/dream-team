@@ -23,8 +23,9 @@ Style guide:
   `${CLAUDE_PLUGIN_ROOT}/references/google-style/word-list.md`; never Read it whole.
 - A CHANGELOG among the pages or the target → read
   `${CLAUDE_PLUGIN_ROOT}/references/changelog-style.md`.
-- Any `CLAUDE.md` in context (user or repo) or the repo's house style wins where it disagrees
-  with the guide.
+- The user's `CLAUDE.md`, the repo's project instructions (defined in
+  `${CLAUDE_PLUGIN_ROOT}/references/project-instructions.md`) or the repo's house style wins
+  where it disagrees with the guide.
 
 Drift mode:
 - Read each listed page and count its lines before editing.

@@ -10,6 +10,8 @@ description: >-
 
 # ship-it
 
+The project instructions are defined in `<base directory>/../../references/project-instructions.md`.
+
 ## 1. Propose
 
 - Last release: the newest `v*` tag on main; no tag → the last commit that changed the version
@@ -17,8 +19,7 @@ description: >-
 - Read the commits on main since the last release and the CHANGELOG `[Unreleased]` entries.
 - Propose the next minor version; the user approves it, names another version or declines.
 - No version file or no CHANGELOG `[Unreleased]` entries → say so in the proposal; create neither.
-- The project's `CLAUDE.md` forbids tagging → the **Tag:** line reads `none, CLAUDE.md forbids
-  tagging`.
+- The project instructions forbid tagging → the **Tag:** line reads `none, the project instructions forbid tagging`.
 - Lay out the proposal as:
 
 ```
@@ -35,5 +36,5 @@ description: >-
 
 ## 3. Tag
 
-- Once that MR merges → offer a `v<version>` tag on its merge commit, unless `CLAUDE.md` forbids
-  tagging.
+- Once that MR merges → offer a `v<version>` tag on its merge commit, unless the project
+  instructions forbid tagging.

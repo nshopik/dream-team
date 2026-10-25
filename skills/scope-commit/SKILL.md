@@ -9,6 +9,8 @@ description: >
 
 Subject `<scope>: <description>`. Body = the why. Most commits don't need one.
 
+The project instructions are defined in `<base directory>/../../references/project-instructions.md`.
+
 ## subject
 
 ### Shape
@@ -24,7 +26,7 @@ Subject `<scope>: <description>`. Body = the why. Most commits don't need one.
 - Never the kind of change: no `feat:`, `feature:`, `chore:`, `perf:`, `style:`.
 - Several areas → one broader scope. Else comma-separate.
 - Tree-wide → `treewide:`.
-- A project `CLAUDE.md` scope vocabulary or stricter pattern wins.
+- A scope vocabulary or stricter pattern in the project instructions wins.
 
 ## commit-style
 

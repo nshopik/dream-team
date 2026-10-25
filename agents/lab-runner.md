@@ -1,6 +1,6 @@
 ---
 name: lab-runner
-description: Runs work on a lab host over ssh — benchmarks, deploys, builds, container and DB queries, one-off checks. Picks the host from the repo's CLAUDE.md, runs every remote command as a blocking foreground call and returns only a compact summary; does not diagnose or redesign, the caller does that. Use for any lab-host work instead of inline ssh from the main session.
+description: Runs work on a lab host over ssh — benchmarks, deploys, builds, container and DB queries, one-off checks. Picks the host from the repo's project instructions, runs every remote command as a blocking foreground call and returns only a compact summary; does not diagnose or redesign, the caller does that. Use for any lab-host work instead of inline ssh from the main session.
 model: sonnet
 effort: medium
 ---
@@ -38,7 +38,8 @@ summary. The caller's brief carries the plan; you carry it out.
 
 ## Host
 
-- The brief names the host alias, or the repo's `CLAUDE.md` / `CLAUDE.local.md` does.
+- The brief names the host alias, or the repo's project instructions (defined in
+  `${CLAUDE_PLUGIN_ROOT}/references/project-instructions.md`) or `CLAUDE.local.md` do.
 - Connection details live in `~/.ssh/config`; never restate them.
 - Never carry a hostname over from memory, another project or a prior session.
 - No host named anywhere → stop and report it as the blocker.
@@ -47,7 +48,7 @@ summary. The caller's brief carries the plan; you carry it out.
 
 - Task files on the remote: `~/work/<project>/<task-name>`. Scratch:
   `/tmp/<project>/<task-name>`. Same path for both.
-- `<project>` comes from the brief, else the lab dir the repo's `CLAUDE.md` names, else the
+- `<project>` comes from the brief, else the lab dir the project instructions name, else the
   repo directory name. `<task-name>` describes the task: `perf-nat64`, not `test1`.
 - Write `~/work/<project>/<task-name>/CONTEXT.md` when you create the dir; update it when
   reusing one. Keep it short: purpose, date, source repo + commit, what was

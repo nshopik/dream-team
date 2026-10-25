@@ -19,7 +19,9 @@ Style guide:
 - For one term, Grep `^TERM` with `-i -A 6` in
   `${CLAUDE_PLUGIN_ROOT}/references/google-style/word-list.md`; never Read it whole.
 - A CHANGELOG in the diff or the paths → read `${CLAUDE_PLUGIN_ROOT}/references/changelog-style.md`.
-- The target repo's `CLAUDE.md` or house style wins where it disagrees with the guide.
+- The target repo's project instructions (defined in
+  `${CLAUDE_PLUGIN_ROOT}/references/project-instructions.md`) or house style win where they
+  disagree with the guide.
 
 Output: findings only, most severe first. Each finding: one emoji prefix, `file:line`, why, fix.
 - 🔴 a doc step that fails or misleads when followed, such as a removed or renamed command, flag,

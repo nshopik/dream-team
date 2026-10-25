@@ -15,6 +15,8 @@ import subprocess
 import sys
 
 STATE = '/tmp/claude-jit-context'
+PROJECT_INSTRUCTIONS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                    'references', 'project-instructions.md')
 
 
 VCS = """<vcs_workflow>
@@ -36,8 +38,8 @@ before going further: it carries that host's API workarounds and label conventio
 
 LAB = """<lab_host>
 About to ssh. If this is a lab / test-lab host, dispatch `dream-team:lab-runner`
-instead of running ssh here; it picks the host from the repo's CLAUDE.md. Never
-carry a hostname over from another project or a prior session.
+instead of running ssh here; it picks the host from the repo's project instructions.
+Never carry a hostname over from another project or a prior session.
 </lab_host>"""
 
 PROSE = """<prose_style>
@@ -81,10 +83,11 @@ adds a component, or needs a lab check.
 - Smaller → make the change inline.
 </issue_sized>"""
 
-CLAUDE_MD = """<claude_md>
-Editing a CLAUDE.md or CLAUDE.local.md.
+CLAUDE_MD = f"""<claude_md>
+Editing a CLAUDE.md, CLAUDE.local.md or AGENTS.md.
 - A correction or gotcha goes in the untracked `CLAUDE.local.md`, one imperative
-  line. The user promotes lines to the tracked `CLAUDE.md`; never add one there unasked.
+  line. The user promotes lines to the tracked project instructions, defined in
+  `{PROJECT_INSTRUCTIONS}`; never add one there unasked.
 - Keep a line specific to this repo; general advice belongs in the user's global
   CLAUDE.md.
 - A fix that is a workflow, not a rule → a skill in `.claude/skills/`, linked from
@@ -94,7 +97,7 @@ Editing a CLAUDE.md or CLAUDE.local.md.
 - Hostnames, IPs, internal URLs and lab access go in `CLAUDE.local.md` only, never in
   a tracked file.
 - One fact per bullet.
-- Keep each file under 8 KB; move an outgrown section to a subdirectory `CLAUDE.md`
+- Keep each file under 8 KB; move an outgrown section to a subdirectory file of the same name
   or a skill.
 </claude_md>"""
 
@@ -104,7 +107,7 @@ an upstream project, not mine.
 - Its CONTRIBUTING, commit style, changelog and tracker conventions override mine
   (scope-commit, scope-mr, vcs workflow).
 - Agent notes go in untracked `CLAUDE.local.md` only; never add or edit a
-  checked-in `CLAUDE.md`.
+  checked-in `CLAUDE.md` or `AGENTS.md`.
 - Add no docs, issues, milestones or labels unasked.
 - Ask before opening an MR/PR, issue or comment on its forge.
 </upstream_repo>"""
@@ -143,14 +146,14 @@ RULES = [
     ('upstream',  'command',   PUBLISH_CMD,                       UPSTREAM, is_upstream),
     # Paired file_path/command rows share a name: the sentinel dedupes, so a heredoc/sed
     # write (no file_path field) still gets the block exactly once.
-    ('claude_md', 'file_path', r'(^|/)CLAUDE(\.local)?\.md$',       CLAUDE_MD),
-    ('claude_md', 'command',   r'CLAUDE(\.local)?\.md',             CLAUDE_MD),
+    ('claude_md', 'file_path', r'(^|/)(CLAUDE(\.local)?|AGENTS)\.md$', CLAUDE_MD),
+    ('claude_md', 'command',   r'(CLAUDE(\.local)?|AGENTS)\.md',       CLAUDE_MD),
     # First: on `glab`/`gh` this fires once, then falls through to `forge` on the
     # next call — main() skips a rule that already fired this session.
     ('vcs',       'command',   PUBLISH_CMD,                       VCS),
     ('forge',     'command',   FORGE_CMD,                         FORGE),
     ('lab',       'command',   r'(?<![\w.-])ssh\b',               LAB),
-    # Last: main() returns on first match, so CLAUDE.md keeps its own block.
+    # Last: main() returns on first match, so CLAUDE.md and AGENTS.md keep their own block.
     ('prose',     'file_path', r'.',                              PROSE),
 ]
 

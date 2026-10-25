@@ -12,6 +12,8 @@ argument-hint: <milestone id or title>
 Read-only until step 5, except step 2's approved gap issues. The user decides every close, move
 and filed issue.
 
+The project instructions are defined in `<base directory>/../../references/project-instructions.md`.
+
 ## 1. Read the milestone
 
 Milestone description, and its roadmap row when the project has one. No measurable exit
@@ -57,13 +59,14 @@ Report drift and propose the release, fix nothing yet:
   the criterion result. Feature MRs leave roadmap status to this step.
 - Root-cause and behaviour sections of the milestone's merged MRs → each fact a future change must
   respect that the contributor doc lacks, proposed as one line. The user approves or rejects each.
-- Each project `CLAUDE.md` and `CLAUDE.local.md` line, proposed as a cut when the path or tool it
-  names is gone, its only content is one closed issue's artifacts rather than a gotcha, a hook or
-  CI enforces it now, a global rule already says it, or a change outside the repo could fix the
-  gotcha it works around (a lab host's config, a missing tool, a plugin bug), recommending that
-  change. The user approves or rejects each.
-- Each other `CLAUDE.local.md` line: proposed as a promotion to `CLAUDE.md` when it holds no
-  hostname, IP, internal URL or lab access, otherwise left alone. The user approves or rejects each.
+- Each line of the project instructions and of `CLAUDE.local.md`, proposed as a cut when the path
+  or tool it names is gone, its only content is one closed issue's artifacts rather than a gotcha,
+  a hook or CI enforces it now, a global rule already says it, or a change outside the repo could
+  fix the gotcha it works around (a lab host's config, a missing tool, a plugin bug), recommending
+  that change. The user approves or rejects each.
+- Each other `CLAUDE.local.md` line: proposed as a promotion to the project instructions, in the
+  file that reference names for writes, when it holds no hostname, IP, internal URL or lab access,
+  otherwise left alone. The user approves or rejects each.
 - Every close, `M<n>` and `v<x.y>` alike → load `ship-it`; propose a release per its Propose step.
 - A `v<x.y>` milestone whose major is above the version file's → warn in the release proposal
   that its name says a major release, naming both versions.
@@ -71,11 +74,11 @@ Report drift and propose the release, fix nothing yet:
 ## 5. Apply
 
 The approved closes and moves, through the host's tooling skill; the `Evidence:` issue closes with
-the milestone. Docs fixes and the approved facts, `CLAUDE.md` cuts and promotions as one MR;
-approved promotions and cuts leave `CLAUDE.local.md` directly, since it is untracked. Then close the
-milestone and set its roadmap status, if it has a row. Every milestone whose `Depends on:` is
-now all closed is ready: drop the host's waiting label (`workflow::future` on GitLab) from its
-open issues.
+the milestone. Docs fixes and the approved facts, project instructions cuts and promotions as one
+MR; approved promotions and cuts leave `CLAUDE.local.md` directly, since it is untracked. Then
+close the milestone and set its roadmap status, if it has a row. Every milestone whose
+`Depends on:` is now all closed is ready: drop the host's waiting label (`workflow::future` on
+GitLab) from its open issues.
 
 - Approved `docs-reviewer` fixes → dispatch `dream-team:docs-editor` in drift mode with
   `git diff <base>..<head>` from step 4 and only the pages they name; its edits go in the docs MR.
@@ -92,5 +95,5 @@ Proposals from step 2 or 4:
 
 - Number them; ask the user to approve them by number.
 - Under each, name what approving it does: an issue filed, a line added, removed or moved to
-  `CLAUDE.md`, a page edit in the docs MR, a version bump and CHANGELOG move in the docs MR, or a
-  fix the user makes outside the repo.
+  the project instructions, a page edit in the docs MR, a version bump and CHANGELOG move in the
+  docs MR, or a fix the user makes outside the repo.

@@ -20,9 +20,10 @@ The style contract for `docs-editor` output and `docs-reviewer` style findings.
 This governs **documents** - files written for a reader. It does not govern chat replies,
 commit messages, or MR descriptions; other conventions own those.
 
-A project's `CLAUDE.md`, an existing house style, or a direct instruction from the user
-outranks everything here. Where a repo bans something Google permits (em dashes are the
-common one), the repo wins. Match the surrounding document before you match this guide.
+A project's instructions (`../project-instructions.md`), an existing house style, or a direct
+instruction from the user outranks everything here. Where a repo bans something Google permits
+(em dashes are the common one), the repo wins. Match the surrounding document before you match
+this guide.
 
 ## The voice
 

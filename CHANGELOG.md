@@ -13,6 +13,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Changed
 
+- Skills, agents and the `jit-context` hook read a project's rules from its `AGENTS.md` as well as its `CLAUDE.md`, ask the user which file wins when the two disagree, and write a new project rule to `AGENTS.md` when the project has only that file.
 - `review-bench` drops a pull request whose frozen ledger lacks a critical or an important row and picks another.
 - `review-bench` skips its one-run check for a reviewer whose prompt and plugin already ran on the pull request, and runs its three runs in one `run.sh` call.
 - **Breaking:** a `review-bench` reviewer line requires a `model=` field.

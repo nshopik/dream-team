@@ -84,8 +84,9 @@ as listed items. Smaller changes it makes inline.
   blocker and proposes one.
 - You: "work on #126."
 - Agent: `dream-team:dream-fixer`:
-  1. Reads the issue and the project `CLAUDE.md`. Given a `Meta:` issue, it picks an open
-     child with no open blocker and works that.
+  1. Reads the issue and the project instructions
+     ([`references/project-instructions.md`](references/project-instructions.md)). Given a
+     `Meta:` issue, it picks an open child with no open blocker and works that.
   2. Triage: an open decision gets a dialog with 2–3 options and their costs. The answer is
      written into the issue description. A `Blocked by` line naming an open issue stops here.
   3. Tier:
@@ -101,7 +102,7 @@ as listed items. Smaller changes it makes inline.
        lens that checks any claim in the diff against a reference source the project names,
        bounded fix rounds.
   4. Lab work (perf gate, tests that need root) through `dream-team:lab-runner` on the host the
-     repo's `CLAUDE.md` names.
+     project instructions name.
   5. MR: one folded commit per change, description by `scope-mr`, with ratchet floors, the
      diagram and any component table updated in the same MR. ROADMAP status waits for
      `milestone-close`.
@@ -115,7 +116,7 @@ as listed items. Smaller changes it makes inline.
 - A fact about how the system works: say "note X" and the agent adds it to the contributor doc
   (`docs/development.md`). What you don't flag, `milestone-close` proposes later.
 - An agent mistake: correct it; the agent adds one line to the untracked `CLAUDE.local.md`. You
-  promote lines to the tracked `CLAUDE.md`.
+  promote lines to the tracked project instructions.
 - You: merge, or comment and hand it back.
 
 Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right milestone.
@@ -133,10 +134,10 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
   3. Docs check: the diagram and any component table against the code, specs that need a
      `Superseded by` line, README and `docs/` pages checked by `docs-reviewer` against the
      milestone's merged diff, ROADMAP status for the milestone's merged work, facts from its merged
-     MRs that `docs/development.md` lacks, `CLAUDE.md` and `CLAUDE.local.md` lines to cut (with
-     the lab host or tool change that would fix the gotcha, where one could), and
-     `CLAUDE.local.md` lines to promote to `CLAUDE.md`, and the next minor release (step 6). Each
-     fact, cut and promotion is one proposed line for you to approve or reject.
+     MRs that `docs/development.md` lacks, project instructions and `CLAUDE.local.md` lines to
+     cut (with the lab host or tool change that would fix the gotcha, where one could), and
+     `CLAUDE.local.md` lines to promote to the project instructions, and the next minor release
+     (step 6). Each fact, cut and promotion is one proposed line for you to approve or reject.
   4. Applies what you approved: moves, one docs MR with `docs-editor`'s fixes for the approved
      drift, milestone closed, ROADMAP updated, and the release you approve (step 6).
 - You: the gap issues, the triage table, the proposed facts, the cuts and the release are your
@@ -146,8 +147,8 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
 
 - Agent: at every milestone close, proposes the next minor version. The docs MR bumps each version
   file and renames the CHANGELOG `[Unreleased]` section to the new version, where they exist;
-  once it merges, the agent offers a tag on its merge commit, unless the project's `CLAUDE.md`
-  forbids tagging. CI builds the release from the tag.
+  once it merges, the agent offers a tag on its merge commit, unless the project instructions
+  forbid tagging. CI builds the release from the tag.
 - You: approve, name another version, or decline. Patch releases between closes, and releases
   of a project without milestones, are yours to ask for: "cut a release" runs `ship-it`, and you
   name the patch version when it proposes the next minor.
