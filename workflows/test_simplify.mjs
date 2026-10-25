@@ -128,6 +128,7 @@ const promptRows = [
   { name: 'domain lens skips without a source', label: 'review:domain', rule: 'Either one missing → raise no finding on it and say why in your summary' },
   { name: 'domain lens cites its source', label: 'review:domain', rule: 'cite what you read — file and line' },
   { name: 'retry after a null result checks earlier commits', label: 'impl:#1', rule: 'may already have committed part of it', opts: { nullOnce: ['impl:#1'] } },
+  { name: 'lens may rate a question', label: 'review:dream-team:architect-reviewer', rule: 'as question: it goes to the user and never blocks the MR' },
   { name: 'lens reads the diff through git', label: 'review:dream-team:sre-engineer', rule: '`git diff abc1234..HEAD`' },
   { name: 'domain lens reads the diff through git', label: 'review:domain', rule: '`git diff abc1234..HEAD`' },
   { name: 'dead re-review is retried against the fix it missed', label: 're-review:external:r2', rule: `Disputed: ${dispute.finding}`, opts: deadDispute() },
@@ -141,6 +142,8 @@ for (const row of promptRows) {
   console.log(`PASS ${row.name}`)
 }
 
+const question = { severity: 'question', description: 'should a timeout count as a retry?', file: 'retry.js' }
+const asks = () => ({ summary: '', findings: [question] })
 const externalRows = [
   { name: 'external review unset', opts: {},
     reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [] },
@@ -157,6 +160,8 @@ const externalRows = [
     reviewer: true, agents: 4, degraded: [], fixRounds: 2, resolved: [{ ...extFinding, gate: 'external', round: 2 }], prompts: ['review:external', 'review:external:retry1'] },
   { name: 'dead re-review of a dispute is re-reviewed, not handed back or re-fixed', opts: deadDispute(),
     reviewer: true, agents: 4, degraded: [], fixRounds: 2, resolved: [], prompts: ['review:external'] },
+  { name: 'reviewer question returned, not fixed', opts: { domainRuns: [asks()] },
+    reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [], questions: [{ ...question, gate: 'domain' }] },
 ]
 
 for (const row of externalRows) {
@@ -168,6 +173,7 @@ for (const row of externalRows) {
   assert.deepEqual(result.degraded, row.degraded, row.name)
   assert.equal(result.fixRounds, row.fixRounds, row.name)
   assert.deepEqual(result.resolved, row.resolved, row.name)
+  assert.deepEqual(result.questions, row.questions || [], `${row.name}: questions`)
   console.log(`PASS ${row.name}`)
 }
 
@@ -178,7 +184,8 @@ const handBackRows = [
   { name: 'dead re-review keeps its findings and is re-reviewed', opts: { externalRuns: [{ ran: true, summary: '', findings: [extFinding] }] },
     untracked: [], dead: ['external'] },
   { name: 'held dispute hands back', opts: { externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, stuck],
-    fixes: [{ committed: false, addressed: [], disputed: [dispute], summary: '' }] }, untracked: [], dead: [] },
+    domainRuns: [asks()], fixes: [{ committed: false, addressed: [], disputed: [dispute], summary: '' }] }, untracked: [], dead: [],
+    questions: [{ ...question, gate: 'domain' }] },
 ]
 
 for (const row of handBackRows) {
@@ -187,6 +194,7 @@ for (const row of handBackRows) {
   assert.deepEqual(result.blocking, [{ ...extFinding, gate: 'external' }], `${row.name}: blocking`)
   assert.deepEqual(result.deadReviewers, row.dead, `${row.name}: deadReviewers`)
   assert.deepEqual(result.untrackedPaths, row.untracked, `${row.name}: untrackedPaths`)
+  assert.deepEqual(result.questions, row.questions || [], `${row.name}: questions`)
   assert.ok(!labels.some((l) => l.startsWith('review:external:retry')), `${row.name}: no full-review retry`)
   console.log(`PASS ${row.name}`)
 }

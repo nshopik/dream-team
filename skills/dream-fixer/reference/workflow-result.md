@@ -28,6 +28,9 @@
   be right; it may also be rationalizing. Apply the fix or accept the dispute.
 - **`resolved`** — blocking findings a fix round fixed, each with its reviewer (`gate`) and round.
 - **`nitFindings`** — never auto-fixed. Apply the ones worth applying, drop the rest.
+- **`questions`** — genuine questions reviewers raised, each with its reviewer (`gate`) and
+  `file`; they never block and never reach the fixer. Returned on an `ok` result, a `handBack`,
+  a `fix` stage failure, or a `gate` stage failure after a fix round.
 - **`assumptions`** — anything the implementer had to invent.
 - **`redEvidence`** — the new test's failing output from before the fix; the test reviewer checked
   it. Empty on a bug-fix issue means nobody saw the test fail.

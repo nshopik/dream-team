@@ -107,7 +107,7 @@ as listed items. Smaller changes it makes inline.
      `milestone-close`.
   6. Adjacent defects found on the way are filed as issues, never left in the MR text.
 - You: check the branch and external-reviewer lines, any assumptions at the top of the report,
-  and the MR.
+  any reviewer questions under Notes, and the MR.
 
 ### 4. You read the MR
 
