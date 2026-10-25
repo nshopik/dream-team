@@ -24,7 +24,7 @@ Subject `<scope>: <description>`. Body = the why. Most commits don't need one.
 - Never the kind of change: no `feat:`, `feature:`, `chore:`, `perf:`, `style:`.
 - Several areas → one broader scope. Else comma-separate.
 - Tree-wide → `treewide:`.
-- A project `CLAUDE.md` scope vocabulary or stricter pattern wins.
+- A project `CLAUDE.md` or `AGENTS.md` scope vocabulary or stricter pattern wins.
 
 ## commit-style
 

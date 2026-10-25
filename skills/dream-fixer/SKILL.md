@@ -21,11 +21,12 @@ agents. Your only edits are step 5's settled disputes and nits, which step 6 rer
 `gateCommands` on, a light-tier issue's edit, and a research issue's reusable note (step 2a).
 
 **Lab work is yours, not the workflow's.** Workflow agents never ssh to a lab host. Anything the
-issue or the repo's `CLAUDE.md` needs run on a lab host — a measurement the issue asks for, a test
-that needs root, a perf gate — you dispatch after the workflow returns (step 5), through
-`dream-team:lab-runner`. A light-tier issue has lab work only when it asks for a measurement
-or its bug reproduces there (step 2a). No lab host named → there is no lab work. Say so in the
-workflow's `notes` so the implementer does not try, and does not report it as an assumption.
+issue or the repo's `CLAUDE.md` or `AGENTS.md` needs run on a lab host — a measurement the issue
+asks for, a test that needs root, a perf gate — you dispatch after the workflow returns (step 5),
+through `dream-team:lab-runner`. A light-tier issue has lab work only when it asks for a
+measurement or its bug reproduces there (step 2a). No lab host named → there is no lab work. Say
+so in the workflow's `notes` so the implementer does not try, and does not report it as an
+assumption.
 
 ## 1. Read the issue
 
@@ -66,7 +67,7 @@ Never open a dialog whose options you had to invent to fill the slots.
 
 ## 2a. Tier
 
-A tier the project's `CLAUDE.md` sets for the issue overrides the criteria below.
+A tier the project's `CLAUDE.md` or `AGENTS.md` sets for the issue overrides the criteria below.
 
 Research tier when the title starts `Research:` (below). Otherwise light tier when all hold;
 otherwise full (step 3 on):
@@ -76,8 +77,8 @@ otherwise full (step 3 on):
 - The proposal names the exact edit, or the diff changes only docs, comments or help or usage
   text to match the code; no design choice left.
 - A bug fix's edit copies a pattern the repo already uses, in under ~50 lines in one module.
-- Touches no path the project's `CLAUDE.md` puts under a parity or perf gate, unless the change
-  there is comments only.
+- Touches no path the project's `CLAUDE.md` or `AGENTS.md` puts under a parity or perf gate,
+  unless the change there is comments only.
 
 Light path, no workflow:
 
@@ -98,7 +99,8 @@ Light-path reviewer type:
 
 - Docs, comments, help or usage text only → `dream-team:docs-reviewer`.
 - Anything else → `general-purpose`, told to check the diff against the reference sources and
-  invariants the project's `CLAUDE.md` names, with the failing evidence for a bug fix.
+  invariants the project's `CLAUDE.md` or `AGENTS.md` names, with the failing evidence for a bug
+  fix.
 
 Research tier: no workflow, no code. Answer the proposal's questions yourself, then:
 
@@ -128,7 +130,8 @@ Stop and report when either holds:
   Ask whether to continue that work or start over.
 
 Then `git fetch` and branch from the fetched tip of the MR target, the remote's default branch
-unless the project's `CLAUDE.md` names another: `git switch -c issue-<n>-<slug> origin/<target>`.
+unless the project's `CLAUDE.md` or `AGENTS.md` names another:
+`git switch -c issue-<n>-<slug> origin/<target>`.
 Never work on `master`/`main`.
 Record `git rev-parse HEAD` — it is the workflow's `base`.
 
@@ -157,8 +160,9 @@ object (never a stringified one):
   with that file's absolute path, and tell the implementer to add its record to `docs/decisions/`
   in that format, in the same commit as the change.
 - `gateCommands`: the build, test and lint commands the repo's CI config runs that also run in this
-  checkout — CI config first, `CLAUDE.md` and README second. The mechanical gate runs exactly
-  these after the implementation and after every fix commit. Leave out lab work. Required.
+  checkout — CI config first, `CLAUDE.md`, `AGENTS.md` and README second. The mechanical gate
+  runs exactly these after the implementation and after every fix commit. Leave out lab work.
+  Required.
 - `externalReview`: a shell command that reads a diff on stdin and prints findings. Default unset.
 - A `CLAUDE.md` the session loads — global, the project's, or its `CLAUDE.local.md` — opts in to an
   external reviewer → set `externalReview` to the command it names.
@@ -264,7 +268,7 @@ tree.
 
 - `untrackedPaths` non-empty → list them to the user before you push.
 
-Then push and open the MR/PR against the branch the project's `CLAUDE.md` names.
+Then push and open the MR/PR against the branch the project's `CLAUDE.md` or `AGENTS.md` names.
 
 Link the issue so it auto-closes (`Closes #<n>`). Write the description review-facing; a `scope-mr`
 skill, if present, is the source of truth for it.

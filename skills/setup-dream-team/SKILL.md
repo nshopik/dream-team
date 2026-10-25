@@ -89,7 +89,7 @@ Values from GitLab's label-picker palette; one colour per `type::` value, one fo
 
 ## Steps
 
-1. Read the project `CLAUDE.md`, the contributor doc, the ROADMAP and `docs/specs/`.
+1. Read the project `CLAUDE.md` or `AGENTS.md`, the contributor doc, the ROADMAP and `docs/specs/`.
 2. Read the tracker's milestones, labels and open issues through the host's tooling skill.
 3. Run every check. Record pass or fail, with the evidence: issue numbers, file and line.
 4. Report one line per check to the user before changing or filing anything.
