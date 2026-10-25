@@ -1,3 +1,4 @@
 runs/
 __pycache__/
 skills/scope-*/evals/
+evals/results/
