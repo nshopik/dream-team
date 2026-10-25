@@ -15,8 +15,8 @@
   https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices.md and follow it.
 - Fix one failure with one rule; never add a rule for adjacent cases the issue did not hit.
 - Keep rules out of `README.md`; it points at the skills instead of restating them.
-- Run evals with `--plugin-dir .`; without it they measure the installed plugin cache, not the
-  working tree.
+- Run a `skills/*/evals/` runner with `--plugin-dir .`; without the flag it measures the installed
+  plugin cache, not the working tree.
 - In `hooks/test_body_cap.py`, match an over-cap deny on `-word ceiling`, not `ceiling`; the
   skill text the hook quotes back contains the bare word.
 - Judge a `scope-mr` change on in-repo runs too (`REPO=<checkout>` in `run_baseline.sh`);
@@ -32,6 +32,9 @@
   lines between items; paragraph spacing wastes fixed-height lines.
 - Commit `skills/*/evals/` (cases, fixtures, runner) except `skills/scope-*/evals/`; those and
   `runs/` are ignored.
+- Commit top-level `evals/` except `evals/results/`.
+- Run the top-level `evals/` cases with
+  `claude plugin eval . --trust-plugin --model opus --threshold 0.6`.
 - Give a small or pass-through skill or workflow phase stub-agent tests only; add a paid
   headless-claude eval runner only for a large skill or a failure seen in a real run.
 - Before changing who does a step in a skill, read the skill's top-level role rules (e.g.
