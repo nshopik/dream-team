@@ -17,8 +17,8 @@ description: >-
 - Read the commits on main since the last release and the CHANGELOG `[Unreleased]` entries.
 - Propose the next minor version; the user approves it, names another version or declines.
 - No version file or no CHANGELOG `[Unreleased]` entries → say so in the proposal; create neither.
-- The project's `CLAUDE.md` forbids tagging → the **Tag:** line reads `none, CLAUDE.md forbids
-  tagging`.
+- The project's `CLAUDE.md` or `AGENTS.md` forbids tagging → the **Tag:** line reads
+  `none, <that file> forbids tagging`.
 - Lay out the proposal as:
 
 ```
@@ -35,5 +35,5 @@ description: >-
 
 ## 3. Tag
 
-- Once that MR merges → offer a `v<version>` tag on its merge commit, unless `CLAUDE.md` forbids
-  tagging.
+- Once that MR merges → offer a `v<version>` tag on its merge commit, unless `CLAUDE.md` or
+  `AGENTS.md` forbids tagging.
