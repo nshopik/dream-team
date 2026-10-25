@@ -308,6 +308,8 @@ The report carries only what the user must know or act on.
 - No MR/PR and `untrackedPaths` non-empty → list them under one bold label.
 - Name each dispute you settled, which way, and why.
 - Name each `resolved` entry, one line each.
+- List each `questions` entry as a sub-bullet of one `**Questions:**` bullet, with its reviewer and
+  location.
 - Name each issue filed for an adjacent defect by its link, one line each, never the defect itself.
 - Name each adjacent defect that could not be filed, and why, one line each.
 - Say so when `redEvidence` is empty on a bug fix.
@@ -317,7 +319,7 @@ The report carries only what the user must know or act on.
 - Leave out nits, applied or dropped, and reviewer verdicts with no finding.
 - Leave out `gateCommands` entries that passed and a summary of the change: the MR carries it.
 - Leave out a present `redEvidence` and lab work that did not run.
-- A review with no blocking finding, no dispute and no fix round gets no line.
+- A review with no blocking finding, no question, no dispute and no fix round gets no line.
 - Handed back → no line saying a reviewer found nothing or that nothing was disputed.
 - The hand-back `<why>` clause names only what blocks; it never adds that other reviewers, rounds
   or disputes came back clean.
@@ -331,6 +333,8 @@ Layout, with sections that have nothing to report left out:
 **Notes:**
 - **Dispute accepted:** <finding> — <why>
 - **Lab:** <verdict>
+- **Questions:**
+  - <question> — <reviewer>[, <file>]
 
 **Lab, master vs branch:**
 

@@ -107,7 +107,7 @@ const VERDICT_SCHEMA = {
         required: ['severity', 'description'],
         additionalProperties: false,
         properties: {
-          severity: { type: 'string', enum: ['critical', 'important', 'nit'] },
+          severity: { type: 'string', enum: ['critical', 'important', 'nit', 'question'] },
           description: { type: 'string' },
           file: { type: 'string' },
         },
@@ -264,7 +264,8 @@ const READ_DIFF = `Read the branch diff with \`git diff ${BASE}..HEAD\`.`
 const REVIEW_RULES = [
   READ_ONLY,
   'Judge only lines this diff changed. A pre-existing problem outside the diff is not a finding here.',
-  'Rate each finding critical, important or nit. Critical and important block the MR. A nit is never auto-fixed, so do not inflate severity to force action.',
+  'Rate each finding critical, important, nit or question. Critical and important block the MR. A nit is never auto-fixed, so do not inflate severity to force action.',
+  'Rate a genuine question, not a suggestion, as question: it goes to the user and never blocks the MR.',
 ].join('\n')
 
 function implPrompt() {
@@ -533,9 +534,11 @@ phase('Review')
 const state = new Map()
 const initial = await parallel(gates.map((g) => () =>
   agentR(g.prompt(), { label: `review:${g.key}`, phase: 'Review', schema: g.schema || VERDICT_SCHEMA, ...reviewerRoster(g.type) })))
-// Nits are kept from full reviews only: a re-review verdict replaces the
-// gate's state and lists outstanding findings, so it would drop them.
+// Nits and questions are kept from full reviews only: a re-review verdict
+// replaces the gate's state and lists outstanding findings, so it would drop them.
 const nits = []
+const questions = []
+const ofSeverity = (v, g, s) => v.findings.filter((f) => f.severity === s).map((f) => ({ ...f, gate: g.key }))
 const record = (g, v) => {
   if (v?.ran === false) {
     MISSING_TYPES.add(g.key)
@@ -543,7 +546,9 @@ const record = (g, v) => {
     v = { ...v, findings: [] }
   }
   state.set(g.key, v || deadReviewer(g.key))
-  if (v) nits.push(...v.findings.filter((f) => f.severity === 'nit').map((f) => ({ ...f, gate: g.key })))
+  if (!v) return
+  nits.push(...ofSeverity(v, g, 'nit'))
+  questions.push(...ofSeverity(v, g, 'question'))
 }
 gates.forEach((g, i) => record(g, initial[i]))
 
@@ -564,6 +569,7 @@ const handBack = (reason) => ({
   simplify,
   disputes,
   resolved,
+  questions,
   verdicts: Object.fromEntries(state),
 })
 
@@ -591,13 +597,13 @@ while (true) {
       schema: FIX_SCHEMA,
       ...IMPLEMENTER,
     })
-    if (!fix) return { ok: false, stage: 'fix', reason: 'fixer returned no result', blocking, disputes, resolved }
+    if (!fix) return { ok: false, stage: 'fix', reason: 'fixer returned no result', blocking, disputes, resolved, questions }
     if (!fix.committed && !fix.addressed.length && !fix.disputed.length) {
-      return { ok: false, stage: 'fix', reason: `fixer changed nothing and disputed nothing: ${fix.summary}`, blocking, disputes, resolved }
+      return { ok: false, stage: 'fix', reason: `fixer changed nothing and disputed nothing: ${fix.summary}`, blocking, disputes, resolved, questions }
     }
     disputes.push(...fix.disputed.map((d) => ({ ...d, round })))
     const g = await gate(`review-fix round ${round}`, `fix${round}`, false)
-    if (!g.ok) return { ...gateFail(g), blocking, disputes, resolved }
+    if (!g.ok) return { ...gateFail(g), blocking, disputes, resolved, questions }
     changedFiles = g.verify.changedFiles
   }
 
@@ -642,6 +648,7 @@ return {
   changedFiles,
   untrackedPaths: [...UNTRACKED],
   nitFindings: nits,
+  questions,
   simplify,
   disputes,
   resolved,
