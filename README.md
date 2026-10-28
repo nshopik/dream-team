@@ -32,7 +32,7 @@ walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
 - **[cut-milestones](skills/cut-milestones/SKILL.md)**: drafts milestones from a spec, one exit gate
   each.
 - **[milestone-close](skills/milestone-close/SKILL.md)**: checks a milestone's exit criterion,
-  triages its open issues, checks docs against code, and offers a minor release.
+  triages its open issues, checks docs against code, and offers a release.
 - **[ship-it](skills/ship-it/SKILL.md)**: releases main, with or without a milestone: version
   bump, CHANGELOG move and tag offer.
 - **[scope-commit](skills/scope-commit/SKILL.md)**: commit messages in
