@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [26.10.0] - 2026-10-28
+
 ### Added
 
 - A `review-bench` reviewer line takes optional `effort=` and `shown=` fields after its prefix, `shown=` naming the model an external reviewer runs on, and `run.sh` grades up to `P` runs at once on a frozen ledger.
