@@ -2,7 +2,7 @@
 name: milestone-close
 description: >-
   Closes a tracker milestone: checks its exit criterion, triages its open issues, checks docs
-  against code and offers a minor release. Use when the user asks to close, wrap up or review a
+  against code and offers a release. Use when the user asks to close, wrap up or review a
   milestone — "close milestone 4", "is M4 done", "wrap up the dogfood milestone".
 argument-hint: <milestone id or title>
 ---
@@ -31,7 +31,9 @@ A failed kill-gate (the criterion names a redesign) gets no gap issues: report i
 redesign goes back to the spec.
 
 An open headline issue in a version milestone is its own gap; file nothing for it. Past the
-ship-by date, the user picks between moving the headline to the next version and a new date.
+ship-by date, or a `YY.MM` milestone's due date, the user picks between moving the headline to
+the next version and a new date. A new date for a `YY.MM` milestone renames it to the new month
+and moves its due date to that month's last day.
 
 ## 3. Triage open issues
 
@@ -64,9 +66,12 @@ Report drift and propose the release, fix nothing yet:
   change. The user approves or rejects each.
 - Each other `CLAUDE.local.md` line: proposed as a promotion to `CLAUDE.md` when it holds no
   hostname, IP, internal URL or lab access, otherwise left alone. The user approves or rejects each.
-- Every close, `M<n>` and `v<x.y>` alike → load `ship-it`; propose a release per its Propose step.
-- A `v<x.y>` milestone whose major is above the version file's → warn in the release proposal
-  that its name says a major release, naming both versions.
+- Every close, `M<n>` and version milestone alike → load `ship-it`; propose a release per its
+  Propose step.
+- A milestone with `MVP` in its title, in a repo whose last release is `0.x` or none → propose
+  this month's `<YY.MM>.0`, the first CalVer release, in place of the next `0.x` minor.
+- In a SemVer repo, a `v<x.y>` milestone whose major is above the version file's → warn in the
+  release proposal that its name says a major release, naming both versions.
 
 ## 5. Apply
 

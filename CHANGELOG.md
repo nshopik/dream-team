@@ -13,6 +13,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Changed
 
+- `ship-it` proposes the next version from the last release's tag or version file: `0.1.0` with neither, the next minor after a `0.x` version or a SemVer version at 1.0 or above, and the next CalVer `YY.MM.MICRO` after a CalVer version.
+- `milestone-close` proposes the first CalVer release, in place of the next `0.x` minor, at the close of a milestone with `MVP` in its title.
+- `cut-milestones` puts `MVP` in the title of the milestone that completes the MVP and names a version milestone by its target month, such as `26.11`, with the last day of that month as its due date.
+- **Upgrade note:** `setup-dream-team` now expects a version milestone named `YY.MM`, or `v<major>.<minor>` only in a SemVer repo past 1.0; in a project's `CLAUDE.md`, replace the `v<major>.<minor>` milestone line with that wording, and in a repo below 1.0 rename open `v<x.y>` milestones.
 - `review-bench` drops a pull request whose frozen ledger lacks a critical or an important row and picks another.
 - `review-bench` skips its one-run check for a reviewer whose prompt and plugin already ran on the pull request, and runs its three runs in one `run.sh` call.
 - **Breaking:** a `review-bench` reviewer line requires a `model=` field.

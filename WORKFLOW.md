@@ -50,7 +50,7 @@ that fits one issue gets no spec; a decision made during it goes into the issue 
 - Result: tracker milestones with the exit criterion in each description, a ROADMAP table, and a
   note naming which milestones run in parallel and what waits on what.
 
-A stable project's minor release skips the spec: "plan 1.3 around #140". `cut-milestones` drafts
+A release after the MVP skips the spec: "plan 26.11 around #140". `cut-milestones` drafts
 one version milestone, exit "release criteria met and #140 closed", and a `## Release criteria`
 section in ROADMAP the first time. Backlog issues join it as they are filed.
 
@@ -135,7 +135,7 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
      milestone's merged diff, ROADMAP status for the milestone's merged work, facts from its merged
      MRs that `docs/development.md` lacks, `CLAUDE.md` and `CLAUDE.local.md` lines to cut (with
      the lab host or tool change that would fix the gotcha, where one could), and
-     `CLAUDE.local.md` lines to promote to `CLAUDE.md`, and the next minor release (step 6). Each
+     `CLAUDE.local.md` lines to promote to `CLAUDE.md`, and the next release (step 6). Each
      fact, cut and promotion is one proposed line for you to approve or reject.
   4. Applies what you approved: moves, one docs MR with `docs-editor`'s fixes for the approved
      drift, milestone closed, ROADMAP updated, and the release you approve (step 6).
@@ -144,13 +144,13 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
 
 ### 6. Release
 
-- Agent: at every milestone close, proposes the next minor version. The docs MR bumps each version
-  file and renames the CHANGELOG `[Unreleased]` section to the new version, where they exist;
-  once it merges, the agent offers a tag on its merge commit, unless the project's `CLAUDE.md`
-  forbids tagging. CI builds the release from the tag.
-- You: approve, name another version, or decline. Patch releases between closes, and releases
-  of a project without milestones, are yours to ask for: "cut a release" runs `ship-it`, and you
-  name the patch version when it proposes the next minor.
+- Agent: at every milestone close, proposes the next version: `0.x` before the MVP, CalVer
+  `YY.MM.MICRO` from the MVP on (`26.11.0`, then `26.11.1`), the next minor in a SemVer repo past
+  1.0. The docs MR bumps each version file and renames the CHANGELOG `[Unreleased]` section to
+  the new version, where they exist; once it merges, the agent offers a tag on its merge commit,
+  unless the project's `CLAUDE.md` forbids tagging. CI builds the release from the tag.
+- You: approve, name another version, or decline. Releases between closes, and releases of a
+  project without milestones, are yours to ask for: "cut a release" runs `ship-it`.
 
 ## Where your time goes
 

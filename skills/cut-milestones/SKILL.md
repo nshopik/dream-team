@@ -2,11 +2,11 @@
 name: cut-milestones
 description: >-
   Cuts an approved spec into tracker milestones, each behind one measurable exit gate, with
-  dependency order and a ROADMAP table; or drafts one version milestone for a stable project's
-  minor release. Use when the user asks to plan, cut, draft or split milestones — "cut
-  milestones from the spec", "what are the milestones for v1", "split M4 in two", "plan 1.3".
-  Not for filing a milestone's issues (use scope-issue) or closing one (use
-  milestone-close).
+  dependency order and a ROADMAP table; or drafts one version milestone, named by its target
+  month, for a release after the MVP. Use when the user asks to plan, cut, draft or split
+  milestones — "cut milestones from the spec", "what are the milestones for the MVP", "split M4
+  in two", "plan 26.11", "plan 1.3". Not for filing a milestone's issues (use scope-issue) or
+  closing one (use milestone-close).
 argument-hint: <spec path | version>
 ---
 
@@ -27,7 +27,9 @@ the numbers.
 - Milestones with no dependency between them are listed as parallel.
 - The dependency order is written out.
 - A milestone is `M<n>`: a capital M and a plain integer, no dash.
-- A version milestone is `v<major>.<minor>`.
+- A version milestone is its target month `YY.MM` with no leading zero, such as `26.11` or `27.5`;
+  in a SemVer repo past 1.0, `v<major>.<minor>`.
+- The milestone that completes the MVP carries `MVP` in its title.
 - A split takes the next free `M<n>`, never a letter.
 - Work spanning several milestones is a `Meta:` issue per `scope-issue`, not a milestone.
 - An issue in a milestone with an open dependency carries the host's waiting label
@@ -67,16 +69,18 @@ A field-evidence milestone gets its `Evidence:` issue when its issues are filed,
 
 ## Version milestone
 
-A minor release of a stable project: one headline feature plus backlog.
+A release after the MVP: one headline feature plus backlog.
 
 - It needs no spec.
 - Its exit criterion: the headline issue closed.
 - Its `Gate:` bullet holds the release criteria.
 - A headline with a spec takes its gate from the spec in place of the issue close.
-- The criterion may add a ship-by date, left as a `<ship-by date>` placeholder.
+- A `YY.MM` milestone gets the last day of its month as its tracker due date: `26.11` → 2026-11-30.
+- A `v<major>.<minor>` milestone's criterion may add a ship-by date, left as a `<ship-by date>`
+  placeholder.
 - Backlog issues join the milestone as they are filed and carry no criterion of their own.
 - No earlier version milestone to copy the release criteria from → draft them for the user to
-  edit: CI green on the release commit, no breaking change in a minor version, upgrade from the
-  previous version works.
+  edit: CI green on the release commit, upgrade from the previous version works, and in a
+  SemVer repo no breaking change in a minor version.
 - Steps 1–3 shrink to: read the tracker milestones, ask the user for the headline issue, draft
   the one milestone.

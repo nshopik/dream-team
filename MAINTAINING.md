@@ -14,9 +14,9 @@ Skills:
 - `setup-dream-team`: checks a project against the flow, fixes the mechanical
   failures directly after one confirm, files one maintenance issue for the other failing checks.
 - `cut-milestones`: milestones from a spec, one exit gate each, with the
-  dependency order and ROADMAP rows; or one version milestone for a minor release.
+  dependency order and ROADMAP rows; or one `YY.MM` version milestone for a release.
 - `milestone-close`: exit check with gap issues, triage, docs check, facts
-  sweep, `CLAUDE.md` cuts and `CLAUDE.local.md` promotions, minor release offer.
+  sweep, `CLAUDE.md` cuts and `CLAUDE.local.md` promotions, release offer.
 - `ship-it`: a release of main, milestone or not: version bump, CHANGELOG move, tag offer.
 - `scope-commit`, `scope-mr`: commit and MR text.
 - `scope-spec`: the project spec and its template.
@@ -78,15 +78,20 @@ Planning stays explicit, at issue size, because you review every plan.
 - Work spanning milestones (full RFC 8914 coverage) is a `Meta:` issue, not a milestone (one
   exit gate cannot cover it) and not a per-item table in the repo (every MR would churn it). A
   closed child shows "(closed)" beside its mention; the box is ticked at `milestone-close`.
-- A version milestone's minor release is scope-based: one headline feature plus backlog, behind
-  standing release criteria in the version milestone's `Gate:` bullet. One maintainer defines a
-  release by its feature, not a date.
+- A version milestone's release is scope-based: one headline feature plus backlog, behind
+  standing release criteria in the version milestone's `Gate:` bullet. Its `YY.MM` name is the
+  month it targets, not a promise about the API.
+- Versions are `0.x` before the MVP and CalVer `YY.MM.MICRO` from it on: a project that ships
+  often and makes no API promise gets nothing from major and minor numbers, and a date says when
+  the release shipped. The form stays SemVer-parseable and sorts above any `0.x`. The last
+  release's version, its tag or else the version file, picks the scheme, so a SemVer repo past
+  1.0 stays SemVer until the user names a CalVer version.
 - A ROADMAP is required only when two or more milestones are open or one depends on another. With
   one rolling version milestone each row copied its `Exit:` and its status mirrored its open or
   closed state. Keying on `M<n>` names was rejected: a versioned project can plan several
   headline releases ahead.
-- Release stays user-approved, not time-based: `milestone-close` offers the next minor version
-  at every close, `M<n>` and `v<x.y>` alike, and patch releases happen between closes through
+- Release stays user-approved, not time-based: `milestone-close` offers the next version at
+  every close, `M<n>` and version milestone alike, and releases between closes happen through
   `ship-it`. A milestone close is the release point for most projects; a pre-1.0 opt-in line
   left the rest closing milestones with no release.
 - Milestones are `M<n>`, not a bare integer: "milestone 5" reads badly in prose and collides

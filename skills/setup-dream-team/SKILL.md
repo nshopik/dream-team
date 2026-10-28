@@ -15,7 +15,8 @@ no docs besides `CLAUDE.md`; the filed issue goes through `dream-fixer`.
 
 ## Checks
 
-- Milestones are numbered `M<n>`, or `v<major>.<minor>` for a version milestone.
+- Milestones are numbered `M<n>`, or `YY.MM` for a version milestone (`v<major>.<minor>` in a
+  SemVer repo past 1.0).
 - Each milestone has a measurable exit criterion in its tracker description.
 - A ROADMAP exists, two or more milestones are open, or a `Depends on:` names an open milestone
   → each open milestone has a matching ROADMAP row.
@@ -51,7 +52,8 @@ The project `CLAUDE.md` carries these, in its own words:
 - A project with a CHANGELOG: each entry is one plain sentence on a notable change, with no
   rationale.
 - A CHANGELOG entry has no bold except a `**Breaking:**` or `**Upgrade note:**` prefix.
-- A milestone is `M<n>`, or `v<major>.<minor>` for a version milestone.
+- A milestone is `M<n>`, or `YY.MM` for a version milestone (`v<major>.<minor>` in a SemVer
+  repo past 1.0).
 - A milestone split takes the next free `M<n>`, never a letter.
 - The contributor doc path is named.
 
