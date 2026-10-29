@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Added
+
+- `setup-dream-team` sets a `type::performance` label, when the tracker has one, to colour `#AD4363`.
+
 ## [26.10.0] - 2026-10-28
 
 ### Added
