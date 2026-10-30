@@ -78,9 +78,14 @@ Planning stays explicit, at issue size, because you review every plan.
 - Work spanning milestones (full RFC 8914 coverage) is a `Meta:` issue, not a milestone (one
   exit gate cannot cover it) and not a per-item table in the repo (every MR would churn it). A
   closed child shows "(closed)" beside its mention; the box is ticked at `milestone-close`.
-- A version milestone's release is scope-based: one headline feature plus backlog, behind
-  standing release criteria in the version milestone's `Gate:` bullet. Its `YY.MM` name is the
-  month it targets, not a promise about the API.
+- A version milestone's release is scope-based by default: one headline feature plus backlog, behind
+  standing release criteria in the version milestone's `Gate:` bullet. Its `YY.MM` name is the month
+  it targets, not a promise about the API. A project whose `CLAUDE.md` says `Version milestones
+  release in flow mode.` releases each version milestone at its due date with whatever has merged,
+  behind the same `Gate:` release criteria, its headline a target. The style is a project choice,
+  independent of the version scheme: Kubernetes and the Linux kernel release on a timeline,
+  Kubernetes under SemVer, and CalVer projects can gate on features. Continuous delivery, every
+  merge a release with no version milestones, is out of scope.
 - Versions are `0.x` before the MVP and CalVer `YY.MM.MICRO` from it on: a project that ships
   often and makes no API promise gets nothing from major and minor numbers, and a date says when
   the release shipped. The form stays SemVer-parseable and sorts above any `0.x`. The last
@@ -90,7 +95,7 @@ Planning stays explicit, at issue size, because you review every plan.
   one rolling version milestone each row copied its `Exit:` and its status mirrored its open or
   closed state. Keying on `M<n>` names was rejected: a versioned project can plan several
   headline releases ahead.
-- Release stays user-approved, not time-based: `milestone-close` offers the next version at
+- Release stays user-approved in both styles: `milestone-close` offers the next version at
   every close, `M<n>` and version milestone alike, and releases between closes happen through
   `ship-it`. A milestone close is the release point for most projects; a pre-1.0 opt-in line
   left the rest closing milestones with no release.

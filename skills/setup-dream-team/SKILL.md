@@ -18,6 +18,8 @@ no docs besides `CLAUDE.md`; the filed issue goes through `dream-fixer`.
 - Milestones are numbered `M<n>`, or `YY.MM` for a version milestone (`v<major>.<minor>` in a
   SemVer repo past 1.0).
 - Each milestone has a measurable exit criterion in its tracker description.
+- The project `CLAUDE.md` says `Version milestones release in flow mode.` → a version
+  milestone's `Exit:` naming its due date and a target headline is its exit criterion.
 - A ROADMAP exists, two or more milestones are open, or a `Depends on:` names an open milestone
   → each open milestone has a matching ROADMAP row.
 - A milestone gated on field evidence has one open `Evidence:` issue.
@@ -55,6 +57,8 @@ The project `CLAUDE.md` carries these, in its own words:
 - A milestone is `M<n>`, or `YY.MM` for a version milestone (`v<major>.<minor>` in a SemVer
   repo past 1.0).
 - A milestone split takes the next free `M<n>`, never a letter.
+- A project whose version milestones release at their due date: the line
+  `Version milestones release in flow mode.`, verbatim.
 - The contributor doc path is named.
 
 ## Label colours

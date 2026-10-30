@@ -30,16 +30,20 @@ user approves or rejects each; file the approved ones and stop. The milestone st
 A failed kill-gate (the criterion names a redesign) gets no gap issues: report it and stop. The
 redesign goes back to the spec.
 
-An open headline issue in a version milestone is its own gap; file nothing for it. Past the
-ship-by date, or a `YY.MM` milestone's due date, the user picks between moving the headline to
-the next version and a new date. A new date for a `YY.MM` milestone renames it to the new month
-and moves its due date to that month's last day.
+Outside flow mode, an open headline issue in a version milestone is its own gap; file nothing for
+it. Past the ship-by date, or a `YY.MM` milestone's due date, the user picks between moving the
+headline to the next version and a new date. A new date for a `YY.MM` milestone renames it to the
+new month and moves its due date to that month's last day.
+
+The project `CLAUDE.md` says `Version milestones release in flow mode.` → a version milestone's
+criterion is met at its due date, and an open headline is no gap.
 
 ## 3. Triage open issues
 
 One table: issue, title, proposed action — close (done or obsolete; cite the commit or reason),
 move (target milestone from the roadmap), or blocks-close. The user answers in one reply.
-In a version milestone, an open backlog issue defaults to move, to the next version.
+In a version milestone, an open backlog issue defaults to move, to the next version; in flow
+mode, so does an open headline.
 
 `Meta:` issues carry no milestone and stay out of the table. List each meta issue with a child in
 this milestone; tick the boxes of closed children in its description.
