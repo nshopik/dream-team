@@ -73,11 +73,14 @@ A release after the MVP: one headline feature plus backlog.
 
 - It needs no spec.
 - Its exit criterion: the headline issue closed.
+- The project `CLAUDE.md` says `Version milestones release in flow mode.` → its `Exit:` is its
+  due date plus the headline as a target, not a requirement.
 - Its `Gate:` bullet holds the release criteria.
-- A headline with a spec takes its gate from the spec in place of the issue close.
+- Outside flow mode, a headline with a spec takes its gate from the spec in place of the issue
+  close.
 - A `YY.MM` milestone gets the last day of its month as its tracker due date: `26.11` → 2026-11-30.
 - A `v<major>.<minor>` milestone's criterion may add a ship-by date, left as a `<ship-by date>`
-  placeholder.
+  placeholder; in flow mode the ship-by date is required and becomes its tracker due date.
 - Backlog issues join the milestone as they are filed and carry no criterion of their own.
 - No earlier version milestone to copy the release criteria from → draft them for the user to
   edit: CI green on the release commit, upgrade from the previous version works, and in a
