@@ -114,6 +114,7 @@ const lensLabels = ['architect-reviewer', 'sre-engineer', 'test-coverage-reviewe
 const cmd = 'vllm-review --stdin'
 const extFinding = { severity: 'important', description: 'off-by-one in the retry count', file: 'retry.js' }
 const fixup = 'as `fixup! <subject of the commit it repairs>`'
+const preexisting = 'An edit that repairs a defect already present on the base commit, one no branch commit caused, is one plain commit in the repo\'s commit convention'
 const red = '--- FAIL: TestRotateKeepsN (0.00s)\n    rotate_test.go:41: kept 4 files, want 5'
 // The fixer disputes, its re-review dies once, then answers; a second fixer call changes nothing and fails the run.
 const deadDispute = () => ({ externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, undefined, undefined, { summary: '', findings: [], resolved: [] }],
@@ -121,6 +122,7 @@ const deadDispute = () => ({ externalReview: cmd, externalRuns: [{ ran: true, su
 const promptRows = [
   { name: 'implementer splits only independent changes', label: 'impl:#1', rule: 'commit each change separately under its own subject' },
   { name: 'build-fix commits fixups', label: 'build-fix:#1:r1', rule: fixup, opts: { gateFails: 1 } },
+  { name: 'build-fix commits a pre-existing defect plainly', label: 'build-fix:#1:r1', rule: preexisting, opts: { gateFails: 1 } },
   { name: 'simplify-fix commits fixups', label: 'simplify-fix:#1', rule: fixup, review: loaded([cut('stdlib')], 4),
     cuts: { committed: true, addressed: ['stdlib cut'], disputed: [], summary: '' } },
   { name: 'fix round commits fixups', label: 'fix:#1:r1', rule: fixup, opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] } },
