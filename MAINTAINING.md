@@ -13,9 +13,10 @@ Skills:
   issue, works one open unblocked child.
 - `setup-dream-team`: checks a project against the flow, fixes the mechanical
   failures directly after one confirm, files one maintenance issue for the other failing checks.
-- `cut-milestones`: milestones from a spec, one exit gate each, with the
-  dependency order and ROADMAP rows; or one `YY.MM` version milestone for a release.
-- `milestone-close`: exit check with gap issues, triage, docs check, facts
+- `cut-milestones`: milestones from a spec, one exit gate each, as ROADMAP rows with a
+  dependency graph, created in the tracker once ready; or one `YY.MM` version milestone for a
+  release.
+- `milestone-close`: exit check with gap issues, triage, docs check, next ready milestones, facts
   sweep, `CLAUDE.md` cuts and `CLAUDE.local.md` promotions, release offer.
 - `ship-it`: a release of main, milestone or not: version bump, CHANGELOG move, tag offer.
 - `scope-commit`, `scope-mr`: commit and MR text.
@@ -102,8 +103,10 @@ Planning stays explicit, at issue size, because you review every plan.
 - Milestones are `M<n>`, not a bare integer: "milestone 5" reads badly in prose and collides
   with counts ("all 5 sites"). One generic prefix beats a per-project codename; the repo name
   disambiguates the rare cross-project mention.
-- Parallel milestones show readiness through the waiting label, not ROADMAP: the Board's
-  default column is what can start now. `workflow::future`, not `workflow::blocked`: blocked means
+- Pre-MVP milestones wait as `planned` ROADMAP rows and get their `M<n>` when their dependencies
+  close: creating them all at cut time numbered them in cut order, not work order.
+- The waiting label marks issues that cannot start yet: parked issues, and issues in a milestone
+  with an open dependency. The Board's default column is what can start now. `workflow::future`, not `workflow::blocked`: blocked means
   an external gate someone must chase; future clears itself when the dependency closes.
 - A parked issue has no milestone and the waiting or blocked label, not a `Future` milestone: a
   milestone with no exit gate fails the naming, exit and ROADMAP checks and never closes. No

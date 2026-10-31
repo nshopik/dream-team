@@ -10,6 +10,12 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `cut-milestones`, `setup-dream-team` and `milestone-close` support version milestones that close at their due date, with open issues moved to the next version, in a project whose `CLAUDE.md` says `Version milestones release in flow mode.`
 - `setup-dream-team` sets a `type::performance` label, when the tracker has one, to colour `#AD4363`.
 
+### Changed
+
+- `cut-milestones` writes every pre-MVP milestone as a ROADMAP row with a dependency graph and creates in the tracker only those whose dependencies are closed, leaving the rest as `planned` rows.
+- `milestone-close` proposes each `planned` ROADMAP row whose dependencies are closed as a new milestone with the next free `M<n>`.
+- `setup-dream-team` accepts `planned` ROADMAP rows and checks the dependency graph against the rows.
+
 ### Fixed
 
 - `setup-dream-team` proposes the ratchet-floor rule only for a project with ratchet floors and the milestone-split rule only for one with open `M<n>` milestones, and its milestone-naming rule names only the forms the open milestones use.
