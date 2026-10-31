@@ -12,6 +12,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Fixed
 
+- `setup-dream-team` proposes the ratchet-floor rule only for a project with ratchet floors and the milestone-split rule only for one with open `M<n>` milestones, and its milestone-naming rule names only the forms the open milestones use.
 - `dream-fixer` commits a fix for a defect already present on the base commit as its own commit, instead of folding it into an unrelated commit on the branch.
 
 ## [26.10.0] - 2026-10-28
