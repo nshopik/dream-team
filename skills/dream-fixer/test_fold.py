@@ -43,8 +43,9 @@ def scratch(commits):
     return base
 
 
-base = scratch([('a: add', 'a.py', 'a = 1\n'), ('b: add', 'b.py', 'b = 1\n'),
-                ('fixup! a: add', 'a.py', 'a += 1\n'), ('fixup! a: add', 'a.py', 'a += 2\n'),
+# b: add stands for a fix stage's plain commit for a defect already on the base commit.
+base = scratch([('a: add', 'a.py', 'a = 1\n'), ('fixup! a: add', 'a.py', 'a += 1\n'),
+                ('b: add', 'b.py', 'b = 1\n'), ('fixup! a: add', 'a.py', 'a += 2\n'),
                 ('fixup! b: add', 'b.py', 'b += 1\n')])
 assert sh(COUNT.replace('<base>', base)) == '2'
 sh(FOLD.replace('<base>', base))

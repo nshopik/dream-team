@@ -10,6 +10,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `cut-milestones`, `setup-dream-team` and `milestone-close` support version milestones that close at their due date, with open issues moved to the next version, in a project whose `CLAUDE.md` says `Version milestones release in flow mode.`
 - `setup-dream-team` sets a `type::performance` label, when the tracker has one, to colour `#AD4363`.
 
+### Fixed
+
+- `dream-fixer` commits a fix for a defect already present on the base commit as its own commit, instead of folding it into an unrelated commit on the branch.
+
 ## [26.10.0] - 2026-10-28
 
 ### Added

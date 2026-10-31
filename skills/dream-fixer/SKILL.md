@@ -226,7 +226,7 @@ head yourself and carry on only when all exit 0. A red run → fix it, or hand t
 
 Fold the branch to one commit per change. The implementer commits once per independent change;
 the simplify cuts, build-fix and fix rounds add `fixup! <subject>` and `amend! <subject>`
-commits. Count the changes:
+commits, and a plain commit for a defect already on the base commit. Count the changes:
 
 ```sh
 git log --format=%s <base>..HEAD | grep -Evc '^(fixup|amend)! '
