@@ -22,6 +22,10 @@ no docs besides `CLAUDE.md`; the filed issue goes through `dream-fixer`.
   milestone's `Exit:` naming its due date and a target headline is its exit criterion.
 - A ROADMAP exists, two or more milestones are open, or a `Depends on:` names an open milestone
   → each open milestone has a matching ROADMAP row.
+- Each ROADMAP row is a tracker milestone, or has status `planned`, no `#` and no tracker
+  milestone.
+- A ROADMAP with a dependency graph or a `planned` row → the graph has one node per `M<n>` or
+  `planned` row and one edge per row's `Depends on:` entry.
 - A milestone gated on field evidence has one open `Evidence:` issue.
 - Every open issue has a `type::` label and an `area::` label.
 - Every open issue has a milestone, or no milestone and the waiting or blocked label (parked).

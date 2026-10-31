@@ -41,7 +41,8 @@ criterion is met at its due date, and an open headline is no gap.
 ## 3. Triage open issues
 
 One table: issue, title, proposed action — close (done or obsolete; cite the commit or reason),
-move (target milestone from the roadmap), or blocks-close. The user answers in one reply.
+move (target milestone from the roadmap; a `planned` row target → no milestone and the waiting
+label), or blocks-close. The user answers in one reply.
 In a version milestone, an open backlog issue defaults to move, to the next version; in flow
 mode, so does an open headline.
 
@@ -61,6 +62,9 @@ Report drift and propose the release, fix nothing yet:
   approves or rejects each.
 - Roadmap, when the project has one: status of the milestone's merged work, and the row against
   the criterion result. Feature MRs leave roadmap status to this step.
+- Each `planned` roadmap row with no tracker milestone of its title, whose every `Depends on:`
+  entry is a closed milestone or this one → propose it as a tracker milestone, numbered with the
+  next free `M<n>`, with the parked issues that belong to it. The user approves or rejects each.
 - Root-cause and behaviour sections of the milestone's merged MRs → each fact a future change must
   respect that the contributor doc lacks, proposed as one line. The user approves or rejects each.
 - Each project `CLAUDE.md` and `CLAUDE.local.md` line, proposed as a cut when the path or tool it
@@ -82,9 +86,10 @@ Report drift and propose the release, fix nothing yet:
 The approved closes and moves, through the host's tooling skill; the `Evidence:` issue closes with
 the milestone. Docs fixes and the approved facts, `CLAUDE.md` cuts and promotions as one MR;
 approved promotions and cuts leave `CLAUDE.local.md` directly, since it is untracked. Then close the
-milestone and set its roadmap status, if it has a row. Every milestone whose `Depends on:` is
-now all closed is ready: drop the host's waiting label (`workflow::future` on GitLab) from its
-open issues.
+milestone and set its roadmap status, if it has a row. Create each approved `planned` row's
+milestone per `cut-milestones` step 5, move its parked issues into it without the waiting label,
+then set the row's `#` and its status `not started` in the docs MR. Every milestone whose `Depends on:` is now all closed is ready: drop the host's waiting
+label (`workflow::future` on GitLab) from its open issues.
 
 - Approved `docs-reviewer` fixes → dispatch `dream-team:docs-editor` in drift mode with
   `git diff <base>..<head>` from step 4 and only the pages they name; its edits go in the docs MR.
@@ -93,13 +98,13 @@ open issues.
 
 ## Report back
 
-Criterion result, issues closed, moved and filed, the docs MR link, each approved docs fix
-`docs-editor` reported as `skipped:` or under `gaps:`, the release version and its tag, or the
-tag pending the docs MR's merge, or the declined release.
+Criterion result, issues closed, moved and filed, milestones created, the docs MR link, each
+approved docs fix `docs-editor` reported as `skipped:` or under `gaps:`, the release version and
+its tag, or the tag pending the docs MR's merge, or the declined release.
 
 Proposals from step 2 or 4:
 
 - Number them; ask the user to approve them by number.
-- Under each, name what approving it does: an issue filed, a line added, removed or moved to
-  `CLAUDE.md`, a page edit in the docs MR, a version bump and CHANGELOG move in the docs MR, or a
-  fix the user makes outside the repo.
+- Under each, name what approving it does: an issue filed, a milestone created, a line added,
+  removed or moved to `CLAUDE.md`, a page edit in the docs MR, a version bump and CHANGELOG move
+  in the docs MR, or a fix the user makes outside the repo.

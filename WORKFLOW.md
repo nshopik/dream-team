@@ -43,12 +43,14 @@ that fits one issue gets no spec; a decision made during it goes into the issue 
 
 - You: "Cut milestones from the spec."
 - Agent: `cut-milestones` drafts milestones with one exit gate each (design review, build test, or
-  field evidence), plus the dependency order. The first milestone is the cheapest proof the approach
+  field evidence), plus the dependency graph. The first milestone is the cheapest proof the approach
   works: M1 kill-gates, "within 5% of the reference resolver's QPS or redesign".
 - You: set the numbers (14 days, SERVFAIL ≤1%, val corpus >99%). The agent leaves them as
   placeholders; they are product decisions.
-- Result: tracker milestones with the exit criterion in each description, a ROADMAP table, and a
-  note naming which milestones run in parallel and what waits on what.
+- Result: a ROADMAP table with every milestone and a dependency graph naming which run in
+  parallel and what waits on what; tracker milestones, with the exit criterion in each
+  description, only for those ready to start. The rest stay `planned` rows until their
+  dependencies close.
 
 A release after the MVP skips the spec: "plan 26.11 around #140". `cut-milestones` drafts
 one version milestone, exit "release criteria met and #140 closed", and a `## Release criteria`
@@ -132,15 +134,17 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
      `Meta:` issues stay out of the table; the agent ticks their closed children.
   3. Docs check: the diagram and any component table against the code, specs that need a
      `Superseded by` line, README and `docs/` pages checked by `docs-reviewer` against the
-     milestone's merged diff, ROADMAP status for the milestone's merged work, facts from its merged
-     MRs that `docs/development.md` lacks, `CLAUDE.md` and `CLAUDE.local.md` lines to cut (with
-     the lab host or tool change that would fix the gotcha, where one could), and
-     `CLAUDE.local.md` lines to promote to `CLAUDE.md`, and the next release (step 6). Each
-     fact, cut and promotion is one proposed line for you to approve or reject.
+     milestone's merged diff, ROADMAP status for the milestone's merged work, `planned` rows now
+     ready to become tracker milestones, facts from its merged MRs that `docs/development.md`
+     lacks, `CLAUDE.md` and `CLAUDE.local.md` lines to cut (with the lab host or tool change that
+     would fix the gotcha, where one could), and `CLAUDE.local.md` lines to promote to
+     `CLAUDE.md`, and the next release (step 6). Each new milestone, fact, cut and promotion is
+     one proposal for you to approve or reject.
   4. Applies what you approved: moves, one docs MR with `docs-editor`'s fixes for the approved
-     drift, milestone closed, ROADMAP updated, and the release you approve (step 6).
-- You: the gap issues, the triage table, the proposed facts, the cuts and the release are your
-  decisions.
+     drift, milestone closed, ROADMAP updated, the next milestones created, and the release you
+     approve (step 6).
+- You: the gap issues, the triage table, the new milestones, the proposed facts, the cuts and the
+  release are your decisions.
 
 ### 6. Release
 

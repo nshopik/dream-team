@@ -216,7 +216,8 @@ Adjacent defects — anything found outside the diff:
 Every issue you open gets the milestone it belongs to, set at creation, and the host's waiting
 label when that milestone has an open dependency. Pick the milestone from the repo's
 roadmap milestone table (`ROADMAP.md` or `docs/ROADMAP.md`); no roadmap → the tracker's open
-milestones. None clearly fits → ask.
+milestones. A `planned` row fits best → no milestone and the waiting label. None clearly fits →
+ask.
 
 ## 6. Open the MR/PR
 
