@@ -15,8 +15,8 @@ no docs besides `CLAUDE.md`; the filed issue goes through `dream-fixer`.
 
 ## Checks
 
-- Milestones are numbered `M<n>`, or `YY.MM` for a version milestone (`v<major>.<minor>` in a
-  SemVer repo past 1.0).
+- Each open milestone is numbered `M<n>`, or `YY.MM` for a version milestone (`v<major>.<minor>`
+  in a SemVer repo past 1.0).
 - Each milestone has a measurable exit criterion in its tracker description.
 - The project `CLAUDE.md` says `Version milestones release in flow mode.` → a version
   milestone's `Exit:` naming its due date and a target headline is its exit criterion.
@@ -50,13 +50,13 @@ The project `CLAUDE.md` carries these, in its own words:
 - Detail the code doesn't show goes in the commit, spec or a topic doc, never in module docs.
 - A fact the code and paths don't show has one reference doc, updated in the MR that changes it.
 - A project with a ROADMAP: its status changes only at milestone close.
-- Ratchet floors rise in the feature MR that earns them.
+- A project with ratchet floors: they rise in the feature MR that earns them.
 - A project with a CHANGELOG: each entry is one plain sentence on a notable change, with no
   rationale.
 - A CHANGELOG entry has no bold except a `**Breaking:**` or `**Upgrade note:**` prefix.
-- A milestone is `M<n>`, or `YY.MM` for a version milestone (`v<major>.<minor>` in a SemVer
-  repo past 1.0).
-- A milestone split takes the next free `M<n>`, never a letter.
+- A project with open milestones: a new milestone takes only the forms the open milestones
+  use: `M<n>`, `YY.MM` for a version milestone, or `v<major>.<minor>` in a SemVer repo past 1.0.
+- A project with open `M<n>` milestones: a split takes the next free `M<n>`, never a letter.
 - A project whose version milestones release at their due date: the line
   `Version milestones release in flow mode.`, verbatim.
 - The contributor doc path is named.
