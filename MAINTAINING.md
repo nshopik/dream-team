@@ -57,6 +57,8 @@ A new hook is added only after its rule has failed once.
 Origin: one 1332-line spec that was hard to execute in parts. The issue-sized flow replaced it.
 Planning stays explicit, at issue size, because you review every plan.
 
+- Planning skills adapt an established practice and name it: stage-gate milestones, rolling-wave
+  planning, sprints, the weekly review. dream-team does not invent its own.
 - Facts for the contributor doc are swept once per milestone by `milestone-close`. A prompt on
   every MR was rejected: it asks a question on MRs with nothing to keep.
 - A rule comes first; a hook is added only after the rule has failed once.
