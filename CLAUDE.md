@@ -15,6 +15,14 @@
   https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices.md and follow it.
 - Fix one failure with one rule; never add a rule for adjacent cases the issue did not hit.
 - Keep rules out of `README.md`; it points at the skills instead of restating them.
+- Keep standing contributor facts the code and paths don't show in `MAINTAINING.md`, one home
+  each.
+- Update a `MAINTAINING.md` fact in the MR that changes it.
+- Update the `WORKFLOW.md` diagram in the same MR as a change to the flow it draws.
+- Put a change's detail the code doesn't show in the commit, a spec or a topic doc, never in a
+  `SKILL.md` or agent prompt.
+- Name a milestone `YY.MM`, its target month.
+- Version milestones release in flow mode.
 - Run a `skills/*/evals/` runner with `--plugin-dir .`; without the flag it measures the installed
   plugin cache, not the working tree.
 - In `hooks/test_body_cap.py`, match an over-cap deny on `-word ceiling`, not `ceiling`; the
