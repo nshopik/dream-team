@@ -18,6 +18,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `setup-dream-team` and `cut-milestones` require ROADMAP rows only for `M<n>` milestones and `planned` rows, never for version milestones.
 - `dream-fixer` commits a small fix for a defect found outside the diff on the branch as its own commit, and files an issue only for a defect that needs a decision, a lab check or a design choice.
 - `dream-fixer` tells the user the rough time to completion before it dispatches lab work.
+- `milestone-close` puts drift fixes, contributor facts, ROADMAP status, backed spec notes and a release a project rule sets straight into the docs MR, and asks approval only for issues, milestones, `CLAUDE.md` and `CLAUDE.local.md` changes and an unsettled release.
 
 ### Fixed
 
