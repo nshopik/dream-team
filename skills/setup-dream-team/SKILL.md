@@ -20,8 +20,8 @@ no docs besides `CLAUDE.md`; the filed issue goes through `dream-fixer`.
 - Each milestone has a measurable exit criterion in its tracker description.
 - The project `CLAUDE.md` says `Version milestones release in flow mode.` → a version
   milestone's `Exit:` naming its due date and a target headline is its exit criterion.
-- A ROADMAP exists, two or more milestones are open, or a `Depends on:` names an open milestone
-  → each open milestone has a matching ROADMAP row.
+- A ROADMAP exists, two or more `M<n>` milestones are open, or a `Depends on:` names an open
+  `M<n>` milestone → each open `M<n>` milestone has a matching ROADMAP row.
 - Each ROADMAP row is a tracker milestone, or has status `planned`, no `#` and no tracker
   milestone.
 - A ROADMAP with a dependency graph or a `planned` row → the graph has one node per `M<n>` or

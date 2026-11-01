@@ -94,10 +94,11 @@ Planning stays explicit, at issue size, because you review every plan.
   the release shipped. The form stays SemVer-parseable and sorts above any `0.x`. The last
   release's version, its tag or else the version file, picks the scheme, so a SemVer repo past
   1.0 stays SemVer until the user names a CalVer version.
-- A ROADMAP is required only when two or more milestones are open or one depends on another. With
-  one rolling version milestone each row copied its `Exit:` and its status mirrored its open or
-  closed state. Keying on `M<n>` names was rejected: a versioned project can plan several
-  headline releases ahead.
+- A ROADMAP tracks only `M<n>` milestones and `planned` rows: pre-MVP milestones whose exit gates
+  depend on each other. After the MVP a CalVer project runs version milestones as a release
+  train, and each one's `Exit:`, `Gate:` and `Depends on:` fit in its tracker description, so a
+  row only copied them. The old rule, rows whenever two milestones were open, lost: a project
+  planning several releases ahead keeps each one's plan in its milestone description.
 - Release stays user-approved in both styles: `milestone-close` offers the next version at
   every close, `M<n>` and version milestone alike, and releases between closes happen through
   `ship-it`. A milestone close is the release point for most projects; a pre-1.0 opt-in line

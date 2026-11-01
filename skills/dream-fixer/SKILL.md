@@ -214,10 +214,9 @@ Adjacent defects — anything found outside the diff:
 - Filing fails or yields no issue link → name the defect in the report as unfiled, with the reason.
 
 Every issue you open gets the milestone it belongs to, set at creation, and the host's waiting
-label when that milestone has an open dependency. Pick the milestone from the repo's
-roadmap milestone table (`ROADMAP.md` or `docs/ROADMAP.md`); no roadmap → the tracker's open
-milestones. A `planned` row fits best → no milestone and the waiting label. None clearly fits →
-ask.
+label when that milestone has an open dependency. Pick the milestone from the tracker's open
+milestones and the `planned` rows of the repo's roadmap (`ROADMAP.md` or `docs/ROADMAP.md`). A
+`planned` row fits best → no milestone and the waiting label. None clearly fits → ask.
 
 ## 6. Open the MR/PR
 
