@@ -16,6 +16,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `milestone-close` proposes each `planned` ROADMAP row whose dependencies are closed as a new milestone with the next free `M<n>`.
 - `setup-dream-team` accepts `planned` ROADMAP rows and checks the dependency graph against the rows.
 - `setup-dream-team` and `cut-milestones` require ROADMAP rows only for `M<n>` milestones and `planned` rows, never for version milestones.
+- `dream-fixer` commits a small fix for a defect found outside the diff on the branch as its own commit, and files an issue only for a defect that needs a decision, a lab check or a design choice.
 
 ### Fixed
 
