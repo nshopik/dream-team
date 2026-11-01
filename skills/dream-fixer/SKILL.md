@@ -206,8 +206,10 @@ Docs drift, once the result is `ok`:
 
 Adjacent defects — anything found outside the diff:
 
-- A research finding, a review-panel survivor outside the diff, a bug hit running evals or
-  `gateCommands`, or a spec consequence nobody owns → file it as an issue before the session
+- A small fix with no open decision, no lab check and no design choice (docs drift, a config
+  string, under ~20 lines) → commit it on the branch as its own change, never a `fixup!`.
+- Any other research finding, review-panel survivor outside the diff, bug hit running evals or
+  `gateCommands`, or spec consequence nobody owns → file it as an issue before the session
   ends, per the repo's own rules.
 - The finding is a nit → file nothing.
 - Filed → never leave the finding in the MR description or the chat summary.
@@ -220,8 +222,8 @@ milestones and the `planned` rows of the repo's roadmap (`ROADMAP.md` or `docs/R
 
 ## 6. Open the MR/PR
 
-Commit anything you changed in step 5 as `fixup! <subject of the commit it repairs>`, one fixup
-per commit an edit repairs. If you changed anything, run every `gateCommands` entry on the new
+Commit anything else you changed in step 5 as `fixup! <subject of the commit it repairs>`, one
+fixup per commit an edit repairs. If you changed anything, run every `gateCommands` entry on the new
 head yourself and carry on only when all exit 0. A red run → fix it, or hand the branch back.
 
 Fold the branch to one commit per change. The implementer commits once per independent change;
@@ -314,6 +316,7 @@ The report carries only what the user must know or act on.
 - Name each `resolved` entry, one line each.
 - List each `questions` entry as a sub-bullet of one `**Questions:**` bullet, with its reviewer and
   location.
+- Name each adjacent fix committed on the branch by its subject, one line each.
 - Name each issue filed for an adjacent defect by its link, one line each, never the defect itself.
 - Name each adjacent defect that could not be filed, and why, one line each.
 - Say so when `redEvidence` is empty on a bug fix.

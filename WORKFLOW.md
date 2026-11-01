@@ -107,7 +107,8 @@ as listed items. Smaller changes it makes inline.
   5. MR: one folded commit per change, description by `scope-mr`, with any ratchet floors,
      the diagram and any component table updated in the same MR. ROADMAP status waits for
      `milestone-close`.
-  6. Adjacent defects found on the way are filed as issues, never left in the MR text.
+  6. Small adjacent fixes found on the way ride in the MR as their own commits; other adjacent
+     defects are filed as issues, never left in the MR text.
 - You: check the branch and external-reviewer lines, any assumptions at the top of the report,
   any reviewer questions under Notes, and the MR.
 
