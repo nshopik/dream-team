@@ -209,7 +209,7 @@ Docs drift, once the result is `ok`:
 Adjacent defects — anything found outside the diff:
 
 - A small fix with no open decision, no lab check and no design choice (docs drift, a config
-  string, under ~20 lines) → commit it on the branch as its own change, never a `fixup!`.
+  string, under ~50 lines) → commit it on the branch as its own change, never a `fixup!`.
 - Any other research finding, review-panel survivor outside the diff, bug hit running evals or
   `gateCommands`, or spec consequence nobody owns → file it as an issue before the session
   ends, per the repo's own rules.
