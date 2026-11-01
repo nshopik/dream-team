@@ -139,13 +139,14 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
      ready to become tracker milestones, facts from its merged MRs that `docs/development.md`
      lacks, `CLAUDE.md` and `CLAUDE.local.md` lines to cut (with the lab host or tool change that
      would fix the gotcha, where one could), and `CLAUDE.local.md` lines to promote to
-     `CLAUDE.md`, and the next release (step 6). Each new milestone, fact, cut and promotion is
-     one proposal for you to approve or reject.
-  4. Applies what you approved: moves, one docs MR with `docs-editor`'s fixes for the approved
-     drift, milestone closed, ROADMAP updated, the next milestones created, and the release you
-     approve (step 6).
-- You: the gap issues, the triage table, the new milestones, the proposed facts, the cuts and the
-  release are your decisions.
+     `CLAUDE.md`, and the next release (step 6). Each new milestone, cut and promotion is one
+     proposal for you to approve or reject; drift fixes, facts and ROADMAP status go straight to
+     the docs MR.
+  4. Applies what you approved: moves, one docs MR with `docs-editor`'s drift fixes, the facts
+     and the ROADMAP update, milestone closed, the next milestones created, and the release
+     (step 6).
+- You: the gap issues, the triage table, the new milestones, the cuts, the promotions and the
+  release are your decisions; the docs MR review covers the rest.
 
 ### 6. Release
 
@@ -154,8 +155,9 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
   1.0. The docs MR bumps each version file and renames the CHANGELOG `[Unreleased]` section to
   the new version, where they exist; once it merges, the agent offers a tag on its merge commit,
   unless the project's `CLAUDE.md` forbids tagging. CI builds the release from the tag.
-- You: approve, name another version, or decline. Releases between closes, and releases of a
-  project without milestones, are yours to ask for: "cut a release" runs `ship-it`.
+- You: approve, name another version, or decline; a project rule that sets each close's version
+  skips the proposal, and you approve at the docs MR and the tag. Releases between closes, and
+  releases of a project without milestones, are yours to ask for: "cut a release" runs `ship-it`.
 
 ## Where your time goes
 

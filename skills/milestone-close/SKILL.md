@@ -12,6 +12,10 @@ argument-hint: <milestone id or title>
 Read-only until step 5, except step 2's approved gap issues. The user decides every close, move
 and filed issue.
 
+- An edit that lands in the docs MR needs no approval: the user reviews it there.
+- Ask only for what leaves the docs MR or changes agent rules: issues, closes, moves, milestones,
+  `CLAUDE.md` and `CLAUDE.local.md` lines, and a release the project rules do not settle.
+
 ## 1. Read the milestone
 
 Milestone description, and its roadmap row if it has one. No measurable exit
@@ -51,31 +55,39 @@ this milestone; tick the boxes of closed children in its description.
 
 ## 4. Docs check
 
-Report drift and propose the release, fix nothing yet:
+Collect the docs-MR edits and the proposals; fix nothing yet.
+
+Docs-MR edits, applied in step 5 without asking:
 
 - Architecture doc and diagram against the workspace's component list.
-- Specs whose decision the code no longer follows → propose a `Superseded by` status line.
+- Specs whose decision the code no longer follows, recorded on a closed issue or merged MR → a
+  `Superseded by` status line. No such record → propose it.
 - README, `docs/` pages, help text and comments: dispatch `dream-team:docs-reviewer`, told to
   read the milestone's merged diff with `git diff <base>..<head>`, `<base>` the first-merged MR's
   merge base and `<head>` the last-merged MR's merge commit.
-- Each 🔴/🟡 `docs-reviewer` finding, proposed as a fix; leave its 🔵 findings out. The user
-  approves or rejects each.
+- Each 🔴/🟡 `docs-reviewer` finding, as a fix; leave its 🔵 findings out. A finding you judge
+  wrong → drop it and name it in the report.
 - Roadmap, when the milestone has a row: status of the milestone's merged work, and the row against
   the criterion result. Feature MRs leave roadmap status to this step.
+- Root-cause and behaviour sections of the milestone's merged MRs → each fact a future change must
+  respect that the contributor doc lacks, as one line.
+- The release, when the project's `CLAUDE.md` or `AGENTS.md` sets the version each close takes:
+  `ship-it`'s Bump step. The tag is still offered after the merge.
+
+Proposals, each approved or rejected by the user:
+
 - Each `planned` roadmap row with no tracker milestone of its title, whose every `Depends on:`
   entry is a closed milestone or this one → propose it as a tracker milestone, numbered with the
-  next free `M<n>`, with the parked issues that belong to it. The user approves or rejects each.
-- Root-cause and behaviour sections of the milestone's merged MRs → each fact a future change must
-  respect that the contributor doc lacks, proposed as one line. The user approves or rejects each.
+  next free `M<n>`, with the parked issues that belong to it.
 - Each project `CLAUDE.md` and `CLAUDE.local.md` line, proposed as a cut when the path or tool it
   names is gone, its only content is one closed issue's artifacts rather than a gotcha, a hook or
   CI enforces it now, a global rule already says it, or a change outside the repo could fix the
   gotcha it works around (a lab host's config, a missing tool, a plugin bug), recommending that
-  change. The user approves or rejects each.
+  change.
 - Each other `CLAUDE.local.md` line: proposed as a promotion to `CLAUDE.md` when it holds no
-  hostname, IP, internal URL or lab access, otherwise left alone. The user approves or rejects each.
-- Every close, `M<n>` and version milestone alike → load `ship-it`; propose a release per its
-  Propose step.
+  hostname, IP, internal URL or lab access, otherwise left alone.
+- Every close, `M<n>` and version milestone alike, whose version no project rule sets → load
+  `ship-it`; propose a release per its Propose step.
 - A milestone with `MVP` in its title, in a repo whose last release is `0.x` or none → propose
   this month's `<YY.MM>.0`, the first CalVer release, in place of the next `0.x` minor.
 - In a SemVer repo, a `v<x.y>` milestone whose major is above the version file's → warn in the
@@ -84,27 +96,33 @@ Report drift and propose the release, fix nothing yet:
 ## 5. Apply
 
 The approved closes and moves, through the host's tooling skill; the `Evidence:` issue closes with
-the milestone. Docs fixes and the approved facts, `CLAUDE.md` cuts and promotions as one MR;
+the milestone. Step 4's docs-MR edits, the approved `CLAUDE.md` cuts and promotions as one MR;
 approved promotions and cuts leave `CLAUDE.local.md` directly, since it is untracked. Then close the
 milestone and set its roadmap status, if it has a row. Create each approved `planned` row's
 milestone per `cut-milestones` step 5, move its parked issues into it without the waiting label,
-then set the row's `#` and its status `not started` in the docs MR. Every milestone whose `Depends on:` is now all closed is ready: drop the host's waiting
-label (`workflow::future` on GitLab) from its open issues.
+then set the row's `#` and its status `not started` in the docs MR. Every milestone whose
+`Depends on:` is now all closed is ready: drop the host's waiting label (`workflow::future` on
+GitLab) from its open issues.
 
-- Approved `docs-reviewer` fixes → dispatch `dream-team:docs-editor` in drift mode with
+- `docs-reviewer` fixes → dispatch `dream-team:docs-editor` in drift mode with
   `git diff <base>..<head>` from step 4 and only the pages they name; its edits go in the docs MR.
-- Approved release → `ship-it` Bump and Tag steps, its bump in the docs MR and its tag message
-  naming the milestone; with nothing else approved, the release alone opens the MR.
+- Release set by a project rule, or approved → `ship-it` Bump and Tag steps, its bump in the docs
+  MR and its tag message naming the milestone; with nothing else in it, the release alone opens
+  the MR.
 
 ## Report back
 
 Criterion result, issues closed, moved and filed, milestones created, the docs MR link, each
-approved docs fix `docs-editor` reported as `skipped:` or under `gaps:`, the release version and
+docs fix `docs-editor` reported as `skipped:` or under `gaps:`, the release version and
 its tag, or the tag pending the docs MR's merge, or the declined release.
+
+Step 4's docs-MR edits: one bullet in the report, each edit named in the docs MR description;
+never numbered as proposals.
 
 Proposals from step 2 or 4:
 
 - Number them; ask the user to approve them by number.
+- A cut that waits on a fix outside the repo → one unnumbered **Outside the repo:** line naming
+  the fix; propose the cut once the user reports the fix made.
 - Under each, name what approving it does: an issue filed, a milestone created, a line added,
-  removed or moved to `CLAUDE.md`, a page edit in the docs MR, a version bump and CHANGELOG move
-  in the docs MR, or a fix the user makes outside the repo.
+  removed or moved to `CLAUDE.md`, or a version bump and CHANGELOG move in the docs MR.
