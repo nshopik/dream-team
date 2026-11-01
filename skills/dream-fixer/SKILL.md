@@ -261,7 +261,7 @@ OLD=$(git rev-parse HEAD) && echo "$OLD" &&
 ```
 
 - Load `scope-commit` before the fold commit or an amend.
-- Amend the message when the fix rounds changed what the commit does.
+- Amend the message when it breaks `scope-commit` or the fix rounds changed what the commit does.
 
 After either fold, `git diff --quiet "$OLD" HEAD` non-zero → stop and report: the fold changed the
 tree.
