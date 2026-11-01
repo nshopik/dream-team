@@ -53,8 +53,8 @@ that fits one issue gets no spec; a decision made during it goes into the issue 
   dependencies close.
 
 A release after the MVP skips the spec: "plan 26.11 around #140". `cut-milestones` drafts
-one version milestone, exit "release criteria met and #140 closed", and a `## Release criteria`
-section in ROADMAP the first time. Backlog issues join it as they are filed.
+one version milestone, exit "release criteria met and #140 closed", with no ROADMAP row. Backlog
+issues join it as they are filed.
 
 ### 2. Milestone to issues
 

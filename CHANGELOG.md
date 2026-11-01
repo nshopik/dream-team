@@ -15,6 +15,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `cut-milestones` writes every pre-MVP milestone as a ROADMAP row with a dependency graph and creates in the tracker only those whose dependencies are closed, leaving the rest as `planned` rows.
 - `milestone-close` proposes each `planned` ROADMAP row whose dependencies are closed as a new milestone with the next free `M<n>`.
 - `setup-dream-team` accepts `planned` ROADMAP rows and checks the dependency graph against the rows.
+- `setup-dream-team` and `cut-milestones` require ROADMAP rows only for `M<n>` milestones and `planned` rows, never for version milestones.
 
 ### Fixed
 

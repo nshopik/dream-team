@@ -14,7 +14,7 @@ and filed issue.
 
 ## 1. Read the milestone
 
-Milestone description, and its roadmap row when the project has one. No measurable exit
+Milestone description, and its roadmap row if it has one. No measurable exit
 criterion → stop and ask for one; a milestone without one cannot close.
 
 A version milestone's `Gate:` bullet holds its release criteria; check each item there too.
@@ -41,8 +41,8 @@ criterion is met at its due date, and an open headline is no gap.
 ## 3. Triage open issues
 
 One table: issue, title, proposed action — close (done or obsolete; cite the commit or reason),
-move (target milestone from the roadmap; a `planned` row target → no milestone and the waiting
-label), or blocks-close. The user answers in one reply.
+move (target from the tracker's open milestones and the roadmap's `planned` rows; a `planned`
+row target → no milestone and the waiting label), or blocks-close. The user answers in one reply.
 In a version milestone, an open backlog issue defaults to move, to the next version; in flow
 mode, so does an open headline.
 
@@ -60,7 +60,7 @@ Report drift and propose the release, fix nothing yet:
   merge base and `<head>` the last-merged MR's merge commit.
 - Each 🔴/🟡 `docs-reviewer` finding, proposed as a fix; leave its 🔵 findings out. The user
   approves or rejects each.
-- Roadmap, when the project has one: status of the milestone's merged work, and the row against
+- Roadmap, when the milestone has a row: status of the milestone's merged work, and the row against
   the criterion result. Feature MRs leave roadmap status to this step.
 - Each `planned` roadmap row with no tracker milestone of its title, whose every `Depends on:`
   entry is a closed milestone or this one → propose it as a tracker milestone, numbered with the

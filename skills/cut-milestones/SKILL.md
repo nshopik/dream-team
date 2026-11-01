@@ -56,10 +56,10 @@ the numbers.
    start, or `none`).
 6. Add the waiting label to every open issue already in a milestone whose `Depends on:` has an
    open milestone.
-7. Add one ROADMAP row per milestone, created or `planned`, in the same table as existing ones,
-   when a ROADMAP exists, a row is `planned`, two or more milestones are open, or a `Depends on:`
-   names an open milestone. A new ROADMAP gets a row for every open milestone and
-   `planned` row.
+7. Add one ROADMAP row per `M<n>` milestone, created or `planned`, in the same table as existing
+   ones, when a ROADMAP exists, a row is `planned`, two or more `M<n>` milestones are open, or a
+   `Depends on:` names an open `M<n>` milestone. A new ROADMAP gets a row for every open `M<n>`
+   milestone and `planned` row.
 8. Below a ROADMAP table with `M<n>` or `planned` rows, keep the dependency graph as a mermaid
    flowchart: one node per such row, labelled with its title, one edge per `Depends on:` entry.
 9. Report the milestones created, the `planned` rows and the dependency graph.
