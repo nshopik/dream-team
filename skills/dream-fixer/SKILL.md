@@ -192,6 +192,8 @@ what to do with it.
 - **Lab steps** — once the result is `ok`, run the lab work on the branch head. Treat a lab failure
   like a red `gateCommands` run: fix it before the MR, or hand the branch back. Put measured
   numbers in the MR description.
+- Before dispatching `dream-team:lab-runner`, tell the user its rough time to completion, from
+  the run count and each run's expected length.
 
 Docs drift, once the result is `ok`:
 
