@@ -85,6 +85,7 @@ MR_CMD = re.compile(r'\bglab\b(?:[^\n|;&]*\bmerge_requests(?:/\d+)?(?![/\w])'
                     r'|\s+mr\s+(?:create|update|edit)\b)'
                     r'|\bgh\b\s+pr\s+(?:create|edit)\b'
                     r'|' + GH_API.format('pulls'))
+GLAB_SENDS = re.compile(r'\s(?:-[fF]|--(?:raw-)?field)\s+[\'"]?description=|\s--input\s')
 
 # Rung-4 leaders, bounced once in an MR: "deliberately left out" is the one line
 # that reliably smuggles unrelated findings into an MR. The explicit phrases are
@@ -396,6 +397,9 @@ def main():
     # Heredocs blanked: a body shlex cannot split (an apostrophe) hides every flag.
     field = 'body=' if cmd.startswith('gh', at) else 'description='
     shell = without_heredocs(cmd, spans)
+    # A `glab api` read piped into `python3 - <<EOF` would have its script measured.
+    if re.match(r'glab\s+api\b', cmd[at:]) and not GLAB_SENDS.search(shell, at):
+        return
     text = heredoc_body(spans, at) or flag_text(shell, field)
     if not text:
         return                                  # editor-based, etc.
