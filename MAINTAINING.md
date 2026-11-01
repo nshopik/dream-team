@@ -40,6 +40,12 @@ Agents:
 - `sre-engineer`: read-only failure-behaviour review of a diff or paths.
 - `test-coverage-reviewer`: read-only test-gap review of a diff or paths.
 
+Workflows:
+
+- `dream-fixer-loop`: one issue from implementation to a reviewed branch for `dream-fixer`:
+  implement, mechanical gate after every write, simplify pass, the `qa-review` lenses, bounded
+  fix loop.
+
 Hooks:
 
 - `jit-context.py`: injects git workflow, prose, lab, forge and `CLAUDE.md` rules at first use,
