@@ -27,7 +27,10 @@
 - **`disputes`** — the fixer refused a finding and gave evidence. Check it yourself. The fixer may
   be right; it may also be rationalizing. Apply the fix or accept the dispute.
 - **`resolved`** — blocking findings a fix round fixed, each with its reviewer (`gate`) and round.
-- **`nitFindings`** — never auto-fixed. Apply the ones worth applying, drop the rest.
+- **`nitFindings`** — every nit the reviewers raised. **`nitFix`** — what the fixer did with
+  them, in the first fix round or one pass after review, with no re-review: `addressed` it fixed,
+  `disputed` it skipped with a reason.
+  Apply the skipped ones worth applying, drop the rest. `null` → no nits.
 - **`questions`** — genuine questions reviewers raised, each with its reviewer (`gate`) and
   `file`; they never block and never reach the fixer. Returned on an `ok` result, a `handBack`,
   a `fix` stage failure, or a `gate` stage failure after a fix round.

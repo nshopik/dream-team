@@ -186,6 +186,8 @@ const FIX_SCHEMA = {
     summary: { type: 'string' },
   },
 }
+FIX_SCHEMA.properties.nits = { type: 'object', required: ['addressed', 'disputed'], additionalProperties: false,
+  properties: { addressed: FIX_SCHEMA.properties.addressed, disputed: FIX_SCHEMA.properties.disputed } }
 
 // ---------------------------------------------------------------------------
 // Roster
@@ -264,7 +266,7 @@ const READ_DIFF = `Read the branch diff with \`git diff ${BASE}..HEAD\`.`
 const REVIEW_RULES = [
   READ_ONLY,
   'Judge only lines this diff changed. A pre-existing problem outside the diff is not a finding here.',
-  'Rate each finding critical, important, nit or question. Critical and important block the MR. A nit is never auto-fixed, so do not inflate severity to force action.',
+  'Rate each finding critical, important, nit or question. Critical and important block the MR. A nit is fixed only if cheap and is never re-reviewed, so do not inflate severity to force action.',
   'Rate a genuine question, not a suggestion, as question: it goes to the user and never blocks the MR.',
 ].join('\n')
 
@@ -415,19 +417,38 @@ const APPLY_RULES = [
   GATE,
 ]
 
-function fixPrompt(blocking, disputes, round) {
+const findingLines = (fs) => fs.map((f) => `- [${f.severity}] (${f.gate}) ${f.description}${f.file ? ` — ${f.file}` : ''}`).join('\n')
+
+const NIT_RULE = 'No reviewer re-reviews them. Fix each one that is cheap: a few lines, no design change.'
+
+function fixPrompt(blocking, disputes, round, nits) {
   return [
     CONTEXT,
     '',
     `Fix round ${round}. Reviewers raised these blocking findings:`,
-    blocking.map((f) => `- [${f.severity}] (${f.gate}) ${f.description}${f.file ? ` — ${f.file}` : ''}`).join('\n'),
+    findingLines(blocking),
     ...(disputes.length ? [
       '',
       'Disputes from earlier rounds. The reviewer read each one; a finding still listed above is one the reviewer held:',
       disputes.map((d) => `- (round ${d.round}) ${d.finding} — ${d.reason}`).join('\n'),
     ] : []),
+    ...(nits.length ? [
+      '',
+      `Reviewers also raised these nits. ${NIT_RULE} Report them only under nits: addressed the ones you fix, disputed the ones you skip with the reason.`,
+      findingLines(nits),
+    ] : []),
     '',
-    'Do not fix nits.',
+    ...APPLY_RULES,
+  ].join('\n')
+}
+
+function nitFixPrompt(nits) {
+  return [
+    CONTEXT,
+    '',
+    `Reviewers raised these nits. ${NIT_RULE} Return each one you skip under disputed with the reason.`,
+    findingLines(nits),
+    '',
     ...APPLY_RULES,
   ].join('\n')
 }
@@ -574,6 +595,8 @@ const handBack = (reason) => ({
 })
 
 let round = 0
+let nitsGiven = 0
+const nitFix = { addressed: [], disputed: [] }
 while (true) {
   const blocking = outstanding()
   const dead = deadGates()
@@ -591,7 +614,8 @@ while (true) {
   const reReviewed = [...failed, ...stale]
   let fix = null
   if (given.length) {
-    fix = await agentR(fixPrompt(given, disputes, round), {
+    const nitsNow = nits.slice(nitsGiven)
+    fix = await agentR(fixPrompt(given, disputes, round, nitsNow), {
       label: `fix:#${ISSUE}:r${round}`,
       phase: 'Fix',
       schema: FIX_SCHEMA,
@@ -602,6 +626,8 @@ while (true) {
       return { ok: false, stage: 'fix', reason: `fixer changed nothing and disputed nothing: ${fix.summary}`, blocking, disputes, resolved, questions }
     }
     disputes.push(...fix.disputed.map((d) => ({ ...d, round })))
+    nitsGiven += nitsNow.length
+    if (fix.nits) { nitFix.addressed.push(...fix.nits.addressed); nitFix.disputed.push(...fix.nits.disputed) }
     const g = await gate(`review-fix round ${round}`, `fix${round}`, false)
     if (!g.ok) return { ...gateFail(g), blocking, disputes, resolved, questions }
     changedFiles = g.verify.changedFiles
@@ -636,6 +662,20 @@ while (true) {
   }
 }
 
+const nitsLeft = nits.slice(nitsGiven)
+if (nitsLeft.length) {
+  phase('Fix')
+  const fix = await agentR(nitFixPrompt(nitsLeft), { label: `fix:#${ISSUE}:nits`, phase: 'Fix', schema: FIX_SCHEMA, ...IMPLEMENTER })
+  if (!fix) return { ok: false, stage: 'fix', reason: 'fixer returned no result on the nits', disputes, resolved, questions }
+  if (fix.committed) {
+    const g = await gate('the nit fixes', 'nits', false)
+    if (!g.ok) return { ...gateFail(g), disputes, resolved, questions }
+    changedFiles = g.verify.changedFiles
+  }
+  nitFix.addressed.push(...fix.addressed)
+  nitFix.disputed.push(...fix.disputed)
+}
+
 return {
   ok: true,
   issue: ISSUE,
@@ -648,6 +688,7 @@ return {
   changedFiles,
   untrackedPaths: [...UNTRACKED],
   nitFindings: nits,
+  nitFix: nits.length ? nitFix : null,
   questions,
   simplify,
   disputes,
