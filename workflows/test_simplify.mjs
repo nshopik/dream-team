@@ -134,6 +134,10 @@ const promptRows = [
   { name: 'lens reads the diff through git', label: 'review:dream-team:sre-engineer', rule: '`git diff abc1234..HEAD`' },
   { name: 'domain lens reads the diff through git', label: 'review:domain', rule: '`git diff abc1234..HEAD`' },
   { name: 'dead re-review is retried against the fix it missed', label: 're-review:external:r2', rule: `Disputed: ${dispute.finding}`, opts: deadDispute() },
+  { name: 'nit fixer fixes only cheap nits', label: 'fix:#1:nits', rule: 'Fix each one that is cheap', opts: { domainRuns: [{ summary: '', findings: [{ severity: 'nit', description: 'rename n', file: 'a.js' }] }] } },
+  { name: 'fix round carries the nits', label: 'fix:#1:r1', rule: 'Reviewers also raised these nits', opts: { externalReview: cmd,
+    externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }],
+    domainRuns: [{ summary: '', findings: [{ severity: 'nit', description: 'rename n', file: 'a.js' }] }] } },
   { name: 're-review reads the diff through git', label: 're-review:external:r1', rule: '`git diff abc1234..HEAD`', opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] } },
 ]
 
@@ -146,6 +150,8 @@ for (const row of promptRows) {
 
 const question = { severity: 'question', description: 'should a timeout count as a retry?', file: 'retry.js' }
 const asks = () => ({ summary: '', findings: [question] })
+const nit = { severity: 'nit', description: 'rename n to retries', file: 'retry.js' }
+const nitFixed = { committed: true, addressed: [nit.description], disputed: [], summary: '' }
 const externalRows = [
   { name: 'external review unset', opts: {},
     reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [] },
@@ -164,6 +170,14 @@ const externalRows = [
     reviewer: true, agents: 4, degraded: [], fixRounds: 2, resolved: [], prompts: ['review:external'] },
   { name: 'reviewer question returned, not fixed', opts: { domainRuns: [asks()] },
     reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [], questions: [{ ...question, gate: 'domain' }] },
+  { name: 'nit fixed once after review, not re-reviewed', opts: { domainRuns: [{ summary: '', findings: [nit] }], fixes: [nitFixed] },
+    reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [], nitFix: { addressed: [nit.description], disputed: [] },
+    labels: ['fix:#1:nits', 'gate:#1:nits'] },
+  { name: 'nit rides along with the first fix round, no separate pass',
+    opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }],
+      domainRuns: [{ summary: '', findings: [nit] }], fixes: [{ ...nitFixed, addressed: ['external'], nits: { addressed: [nit.description], disputed: [] } }] },
+    reviewer: true, agents: 2, degraded: [], fixRounds: 1, resolved: [{ ...extFinding, gate: 'external', round: 1 }], prompts: ['review:external'],
+    nitFix: { addressed: [nit.description], disputed: [] } },
 ]
 
 for (const row of externalRows) {
@@ -176,6 +190,9 @@ for (const row of externalRows) {
   assert.equal(result.fixRounds, row.fixRounds, row.name)
   assert.deepEqual(result.resolved, row.resolved, row.name)
   assert.deepEqual(result.questions, row.questions || [], `${row.name}: questions`)
+  assert.deepEqual(result.nitFix, row.nitFix || null, `${row.name}: nitFix`)
+  assert.deepEqual(labels.filter((l) => l.endsWith(':nits')), row.labels || [], `${row.name}: nit pass`)
+  assert.ok(!labels.some((l) => l.startsWith('re-review:')) || row.fixRounds, `${row.name}: no re-review`)
   console.log(`PASS ${row.name}`)
 }
 
