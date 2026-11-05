@@ -2,11 +2,11 @@
 name: cut-milestones
 description: >-
   Cuts an approved spec into ROADMAP milestones, each behind one measurable exit gate, with a
-  dependency graph, and creates in the tracker only those ready to start; or drafts one version
-  milestone, named by its target month, for a release after the MVP. Use when the user asks to
-  plan, cut, draft or split milestones — "cut milestones from the spec", "what are the
-  milestones for the MVP", "split M4 in two", "plan 26.11", "plan 1.3". Not for filing a
-  milestone's issues (use scope-issue) or closing one (use milestone-close).
+  dependency graph, and creates in the tracker only those ready to start, at most 3 open at once;
+  or drafts one version milestone, named by its target month, for a release after the MVP. Use
+  when the user asks to plan, cut, draft or split milestones — "cut milestones from the spec",
+  "what are the milestones for the MVP", "split M4 in two", "plan 26.11", "plan 1.3". Not for
+  filing a milestone's issues (use scope-issue) or closing one (use milestone-close).
 argument-hint: <spec path | version>
 ---
 
@@ -27,8 +27,9 @@ the numbers.
 - Milestones with no dependency between them are listed as parallel.
 - The dependency graph is drawn as a mermaid flowchart below the ROADMAP table.
 - A milestone is `M<n>`: a capital M and a plain integer, no dash.
-- A milestone is created in the tracker only once every milestone in its `Depends on:` is closed;
-  until then it is a `planned` ROADMAP row, named by its title.
+- A milestone is created in the tracker only once every milestone in its `Depends on:` is closed
+  and fewer than 3 `M<n>` milestones are open; until then it is a `planned` ROADMAP row, named by
+  its title.
 - A version milestone is its target month `YY.MM` with no leading zero, such as `26.11` or `27.5`;
   in a SemVer repo past 1.0, `v<major>.<minor>`.
 - The milestone that completes the MVP carries `MVP` in its title.
@@ -45,13 +46,16 @@ the numbers.
 ## Steps
 
 1. Read the spec and the existing ROADMAP and tracker milestones.
-2. Draft each milestone: title, exit criterion, gate type, what it depends on. A
+2. Draft each milestone: title, exit criterion, gate type, what it depends on, and for each to be
+   created now a `<due date>` placeholder, 2–4 weeks out (the appetite). A
    dependency that gates only the exit measurement goes in the exit criterion, as "on a commit
    with Mn closed".
 3. Draw the dependency graph: which milestones run in parallel, what waits on what.
 4. Show the draft to the user. Stop until the user sets every placeholder.
-5. Create each milestone whose dependencies are all closed through the host's tooling skill,
-   numbered with the next free `M<n>`. Its description is three bullets:
+5. Create each milestone whose dependencies are all closed, in draft order until 3 `M<n>`
+   milestones are open, through the host's tooling skill, numbered with the next free `M<n>`, and
+   for an `M<n>` milestone with the due date the user set as its tracker due date. Its
+   description is three bullets:
    `- **Exit:**`, `- **Gate:**`, `- **Depends on:**` (milestones that must close before work can
    start, or `none`).
 6. Add the waiting label to every open issue already in a milestone whose `Depends on:` has an

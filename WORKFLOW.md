@@ -49,8 +49,8 @@ that fits one issue gets no spec; a decision made during it goes into the issue 
   placeholders; they are product decisions.
 - Result: a ROADMAP table with every milestone and a dependency graph naming which run in
   parallel and what waits on what; tracker milestones, with the exit criterion in each
-  description, only for those ready to start. The rest stay `planned` rows until their
-  dependencies close.
+  description and the due date you set, only for those ready to start, at most 3 open at once.
+  The rest stay `planned` rows until their dependencies close and an open slot frees.
 
 A release after the MVP skips the spec: "plan 26.11 around #140". `cut-milestones` drafts
 one version milestone, exit "release criteria met and #140 closed", with no ROADMAP row. Backlog
