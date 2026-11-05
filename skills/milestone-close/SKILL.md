@@ -78,7 +78,9 @@ Proposals, each approved or rejected by the user:
 
 - Each `planned` roadmap row with no tracker milestone of its title, whose every `Depends on:`
   entry is a closed milestone or this one → propose it as a tracker milestone, numbered with the
-  next free `M<n>`, with the parked issues that belong to it.
+  next free `M<n>`, with a `<due date>` and the parked issues that belong to it, in ROADMAP order
+  until 3 `M<n>` milestones would be open, this one not counted; it is approved only once the user
+  sets its `<due date>`.
 - Each project `CLAUDE.md` and `CLAUDE.local.md` line, proposed as a cut when the path or tool it
   names is gone, its only content is one closed issue's artifacts rather than a gotcha, a hook or
   CI enforces it now, a global rule already says it, or a change outside the repo could fix the

@@ -64,7 +64,8 @@ Origin: one 1332-line spec that was hard to execute in parts. The issue-sized fl
 Planning stays explicit, at issue size, because you review every plan.
 
 - Planning skills adapt an established practice and name it: stage-gate milestones, rolling-wave
-  planning, sprints, the weekly review. dream-team does not invent its own.
+  planning, sprints, the weekly review, a WIP limit, an appetite. dream-team does not invent its
+  own.
 - Facts for the contributor doc are swept once per milestone by `milestone-close`. A prompt on
   every MR was rejected: it asks a question on MRs with nothing to keep.
 - A rule comes first; a hook is added only after the rule has failed once.
@@ -117,7 +118,9 @@ Planning stays explicit, at issue size, because you review every plan.
   with counts ("all 5 sites"). One generic prefix beats a per-project codename; the repo name
   disambiguates the rare cross-project mention.
 - Pre-MVP milestones wait as `planned` ROADMAP rows and get their `M<n>` when their dependencies
-  close: creating them all at cut time numbered them in cut order, not work order.
+  close and fewer than 3 `M<n>` milestones are open: creating them all at cut time numbered them
+  in cut order, not work order. The cap is a WIP limit that keeps the open milestone list showing
+  what is being worked on (the weekly-milestone trial in #349).
 - The waiting label marks issues that cannot start yet: parked issues, and issues in a milestone
   with an open dependency. The Board's default column is what can start now. `workflow::future`, not `workflow::blocked`: blocked means
   an external gate someone must chase; future clears itself when the dependency closes.
