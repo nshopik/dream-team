@@ -9,7 +9,8 @@
     `blocking` settled and `deadReviewers` empty, carry on to step 5's lab steps and step 6;
     otherwise hand the branch back.
   - `deadReviewers` non-empty → those reviewers returned nothing on their last try; one that died
-    on a re-review keeps its earlier findings in `blocking`. Do not open the MR; hand the branch
+    on a re-review keeps its earlier findings in `blocking`; a dead fix-diff review keeps its pass
+    and is not listed. Do not open the MR; hand the branch
     back.
 - **`ok: false` otherwise** — the implement, gate, simplify or fix stage failed. Report the
   reason; the branch is where the agent left it.
@@ -28,7 +29,7 @@
   be right; it may also be rationalizing. Apply the fix or accept the dispute.
 - **`resolved`** — blocking findings a fix round fixed, each with its reviewer (`gate`) and round.
 - **`nitFindings`** — every nit the reviewers raised. **`nitFix`** — what the fixer did with
-  them, in the first fix round or one pass after review, with no re-review: `addressed` it fixed,
+  them, in a fix round or one pass after review, with no re-review: `addressed` it fixed,
   `disputed` it skipped with a reason.
   Apply the skipped ones worth applying, drop the rest. `null` → no nits.
 - **`questions`** — genuine questions reviewers raised, each with its reviewer (`gate`) and
