@@ -27,6 +27,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `setup-dream-team` proposes the ratchet-floor rule only for a project with ratchet floors and the milestone-split rule only for one with open `M<n>` milestones, and its milestone-naming rule names only the forms the open milestones use.
 - `dream-fixer` commits a fix for a defect already present on the base commit as its own commit, instead of folding it into an unrelated commit on the branch.
 - `dream-fixer` amends the folded commit's message whenever it breaks `scope-commit`.
+- In a repo with an upstream remote, the context hook tells the agent to still load `scope-commit` and `scope-mr`, and those skills let the upstream subject format and PR template win over their own.
 - The body-cap hook measures a `glab api` call on an MR only when it sends a `description=` field or `--input`, so a read piped into a heredoc script is no longer denied.
 
 ## [26.10.0] - 2026-10-28

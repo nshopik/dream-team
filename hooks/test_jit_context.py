@@ -39,7 +39,8 @@ def repo(remote):
 
 upstream = repo("https://github.com/NLnetLabs/unbound.git")
 assert "<upstream_repo>" in context({"file_path": os.path.join(upstream, "new/x.c")})
-assert "<upstream_repo>" in context({"command": "git commit -m x"}, upstream)
+for cmd in ["git commit -m x", "gh pr create -t x"]:
+    assert "load scope-commit and scope-mr" in context({"command": cmd}, upstream), cmd
 assert "<upstream_repo>" not in context({"command": "git commit -m x"}, upstream, own="")
 
 mine = repo("git@github.com:me/x.git")
