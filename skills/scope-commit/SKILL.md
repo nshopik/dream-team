@@ -25,6 +25,8 @@ Subject `<scope>: <description>`. Body = the why. Most commits don't need one.
 - Several areas → one broader scope. Else comma-separate.
 - Tree-wide → `treewide:`.
 - A project `CLAUDE.md` or `AGENTS.md` scope vocabulary or stricter pattern wins.
+- An upstream repo's subject format, from its CONTRIBUTING or `git log`, wins over the
+  kind-of-change ban (`fix(ntpq)!: …`); the body rules still apply.
 
 ## commit-style
 

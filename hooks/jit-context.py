@@ -101,8 +101,9 @@ Editing a CLAUDE.md or CLAUDE.local.md.
 UPSTREAM = """<upstream_repo>
 This repo has a git remote outside the namespaces in `DREAM_TEAM_OWN_REMOTES`: it is
 an upstream project, not mine.
-- Its CONTRIBUTING, commit style, changelog and tracker conventions override mine
-  (scope-commit, scope-mr, vcs workflow).
+- Its CONTRIBUTING, commit style, changelog and tracker conventions win where they
+  conflict with mine (scope-commit, scope-mr, vcs workflow).
+- Still load scope-commit and scope-mr; apply each rule upstream does not set.
 - Agent notes go in untracked `CLAUDE.local.md` only; never add or edit a
   checked-in `CLAUDE.md`.
 - Add no docs, issues, milestones or labels unasked.

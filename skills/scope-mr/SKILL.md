@@ -24,6 +24,8 @@ Reviewer has the diff open and ten minutes. They read code, not your session.
 - One fix repeated at several sites → a short why paragraph, then a short how paragraph.
 - Four parts is the ceiling, never the target.
 - Bugfix and feature share this shape; a feature has no root cause.
+- An upstream repo's PR template, or the shape of its recent PRs, wins over this shape; the
+  Never list and Length rules still apply.
 
 ### Why
 
