@@ -10,14 +10,15 @@ const args = { issue: '1', branch: 'issue-1', base: 'abc1234', gateCommands: ['t
 // Every other reviewer passes, so the run ends after Review or its fix rounds.
 // gateFails: gate runs that fail before one passes.
 // externalRuns: the external reviewer's replies, the first to its review, the rest to its re-reviews and full-review retries, in call order.
-// domainRuns: the same for the domain reviewer, which passes once they run out. fixes: fix-round replies, then defaults.
-// status: the gate's `git status --porcelain` lines. nullOnce: labels whose first call returns null.
+// domainRuns: the same for the domain reviewer, fix-diff reviews included, which passes once they run out. fixes: fix-round replies, then defaults.
+// status: the gate's `git status --porcelain` lines; the nth gate run reports head gate<n>. nullOnce: labels whose first call returns null.
 // throwFor: agent types whose dispatch throws.
 async function run(review, cuts, { aspects = ['code'], gateFails = 0, externalReview, externalRuns = [], domainRuns = [], fixes = [], redEvidence = '', status = [], nullOnce = [], throwFor = [] } = {}) {
   const labels = []
   const prompts = {}
   const types = {}
   const nulls = new Set(nullOnce)
+  let gateRuns = 0
   async function agent(prompt, opts) {
     if (throwFor.includes(opts.agentType)) throw new Error('agent dispatch failed')
     if (nulls.delete(opts.label)) return null
@@ -30,13 +31,13 @@ async function run(review, cuts, { aspects = ['code'], gateFails = 0, externalRe
     types[opts.label] = opts.agentType
     if (opts.phase === 'Implement') return { committed: true, summary: '', redEvidence }
     if (opts.label.startsWith('build-fix:')) return { committed: true, summary: '' }
-    if (opts.phase === 'Gate') return { passed: gateFails-- <= 0, summary: '', changedFiles: [], status, aspects }
+    if (opts.phase === 'Gate') return { passed: gateFails-- <= 0, summary: '', changedFiles: [], status, aspects, head: `gate${++gateRuns}` }
     if (opts.label.startsWith('simplify:')) return review
     if (opts.label.startsWith('simplify-fix:')) return cuts
     if (/^(re-)?review:external/.test(opts.label)) return externalRuns.shift()
-    if (/^(re-)?review:domain/.test(opts.label) && domainRuns.length) return domainRuns.shift()
+    if (/^((re-)?review|fixdiff):domain/.test(opts.label) && domainRuns.length) return domainRuns.shift()
     if (opts.label.startsWith('fix:')) return fixes.shift() || { committed: true, addressed: ['external'], disputed: [], summary: '' }
-    if (opts.phase === 'Review') return { summary: '', findings: [] }
+    if (opts.phase === 'Review' || opts.label.startsWith('fixdiff:')) return { summary: '', findings: [] }
     throw new Error(`unexpected agent ${opts.label}`)
   }
   const result = await new AsyncFunction('args', 'agent', 'phase', 'log', 'parallel', body)(
@@ -116,9 +117,14 @@ const extFinding = { severity: 'important', description: 'off-by-one in the retr
 const fixup = 'as `fixup! <subject of the commit it repairs>`'
 const preexisting = 'An edit that repairs a defect already present on the base commit, one no branch commit caused, is one plain commit in the repo\'s commit convention'
 const red = '--- FAIL: TestRotateKeepsN (0.00s)\n    rotate_test.go:41: kept 4 files, want 5'
+const extOnce = () => ({ externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] })
 // The fixer disputes, its re-review dies once, then answers; a second fixer call changes nothing and fails the run.
 const deadDispute = () => ({ externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, undefined, undefined, { summary: '', findings: [], resolved: [] }],
   fixes: [{ committed: false, addressed: [], disputed: [dispute], summary: '' }, { committed: false, addressed: [], disputed: [], summary: '' }] })
+// Domain passes, then its fix-diff review raises a blocking finding and a nit; its round-2 re-review resolves the finding.
+const fixDiffBlocks = () => ({ externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }],
+  domainRuns: [{ summary: '', findings: [] }, { summary: '', findings: [{ ...extFinding, file: 'main.js' }, { severity: 'nit', description: 'rename n', file: 'main.js' }] },
+    { summary: '', findings: [], resolved: [{ ...extFinding, file: 'main.js' }] }] })
 const promptRows = [
   { name: 'implementer splits only independent changes', label: 'impl:#1', rule: 'commit each change separately under its own subject' },
   { name: 'build-fix commits fixups', label: 'build-fix:#1:r1', rule: fixup, opts: { gateFails: 1 } },
@@ -138,7 +144,16 @@ const promptRows = [
   { name: 'fix round carries the nits', label: 'fix:#1:r1', rule: 'Reviewers also raised these nits', opts: { externalReview: cmd,
     externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }],
     domainRuns: [{ summary: '', findings: [{ severity: 'nit', description: 'rename n', file: 'a.js' }] }] } },
-  { name: 're-review reads the diff through git', label: 're-review:external:r1', rule: '`git diff abc1234..HEAD`', opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] } },
+  { name: 're-review reads the fix diff', label: 're-review:external:r1', rule: '`git diff gate1..HEAD`', opts: extOnce() },
+  { name: 'passed reviewer reviews the fix diff', label: 'fixdiff:dream-team:sre-engineer:r1', rule: '`git diff gate1..HEAD`', opts: extOnce() },
+  { name: 'fix-diff nit joins the next fix round', label: 'fix:#1:r2', rule: 'rename n', opts: fixDiffBlocks() },
+  { name: 're-review reads the diff through git', label: 're-review:external:r1', rule: '`git diff abc1234..HEAD`', opts: extOnce() },
+  { name: 'round-2 fix diff starts at the round-1 fix', label: 'fixdiff:external:r2', rule: '`git diff gate2..HEAD`', opts: fixDiffBlocks() },
+  { name: 'round-2 re-review reads the round-2 fix diff', label: 're-review:domain:r2', rule: '`git diff gate2..HEAD`', opts: fixDiffBlocks() },
+  { name: 'dead re-review reads the fix it missed', label: 're-review:external:r2', rule: '`git diff gate1..HEAD`', opts: deadDispute() },
+  { name: 're-review\'s fix-diff nit joins the nit pass', label: 'fix:#1:nits', rule: 'rename n', opts: {
+    domainRuns: [{ summary: '', findings: [{ ...extFinding, file: 'main.js' }] },
+      { summary: '', findings: [], resolved: [{ ...extFinding, file: 'main.js' }], added: [{ severity: 'nit', description: 'rename n', file: 'main.js' }] }] } },
 ]
 
 for (const row of promptRows) {
@@ -178,6 +193,13 @@ const externalRows = [
       domainRuns: [{ summary: '', findings: [nit] }], fixes: [{ ...nitFixed, addressed: ['external'], nits: { addressed: [nit.description], disputed: [] } }] },
     reviewer: true, agents: 2, degraded: [], fixRounds: 1, resolved: [{ ...extFinding, gate: 'external', round: 1 }], prompts: ['review:external'],
     nitFix: { addressed: [nit.description], disputed: [] } },
+  { name: 'passed reviewer\'s fix-diff finding blocks the next round',
+    opts: fixDiffBlocks(),
+    reviewer: true, agents: 3, degraded: [], fixRounds: 2, prompts: ['review:external'],
+    resolved: [{ ...extFinding, gate: 'external', round: 1 }, { ...extFinding, file: 'main.js', gate: 'domain', round: 2 }],
+    nitFix: { addressed: [], disputed: [] }, fixdiff: ['fixdiff:domain:r1', 'fixdiff:external:r2'] },
+  { name: 'dead fix-diff review keeps the gate\'s pass', opts: { ...extOnce(), nullOnce: ['fixdiff:domain:r1'] },
+    reviewer: true, agents: 2, degraded: [], fixRounds: 1, resolved: [{ ...extFinding, gate: 'external', round: 1 }], prompts: ['review:external'] },
 ]
 
 for (const row of externalRows) {
@@ -193,6 +215,7 @@ for (const row of externalRows) {
   assert.deepEqual(result.nitFix, row.nitFix || null, `${row.name}: nitFix`)
   assert.deepEqual(labels.filter((l) => l.endsWith(':nits')), row.labels || [], `${row.name}: nit pass`)
   assert.ok(!labels.some((l) => l.startsWith('re-review:')) || row.fixRounds, `${row.name}: no re-review`)
+  if (row.fixdiff) assert.deepEqual(labels.filter((l) => /^fixdiff:(domain|external)/.test(l)), row.fixdiff, `${row.name}: fix-diff reviews`)
   console.log(`PASS ${row.name}`)
 }
 

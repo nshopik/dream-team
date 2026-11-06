@@ -72,6 +72,7 @@ cases = [  # (role, tool, input, patterns)
     ("impl", "Bash", {"command": "gh api repos/o/r/issues -f title=x"}, ["forbidden"]),
     ("impl", "Bash", {"command": "gh api search/issues -X GET -F q=1"}, []),
     ("review:code", "Edit", {"file_path": "/r/a.py"}, ["forbidden"]),
+    ("fixdiff:domain:r1", "Edit", {"file_path": "/r/a.py"}, ["forbidden"]),
     ("impl", "Edit", {"file_path": "/r/a.py"}, []),
 ]
 for role, tool, inp, want in cases:

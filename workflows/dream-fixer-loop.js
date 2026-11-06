@@ -6,7 +6,7 @@ export const meta = {
     { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
     { title: 'Simplify', detail: 'ponytail-review cuts, applied or disputed by the implementer; skipped when the diff has no code, ponytail-review is unavailable, or its review returns nothing after the retry (opus)' },
     { title: 'Review', detail: 'the three qa-review lenses plus a generic domain lens on every review (opus); opt-in external review command, its findings checked by one agent' },
-    { title: 'Fix', detail: 'blocking findings only; re-review only the reviewers that failed' },
+    { title: 'Fix', detail: 'blocking findings only; the reviewers that failed re-review their findings, and every live reviewer reviews the fix diff the fixer committed' },
   ],
 }
 
@@ -53,13 +53,14 @@ const IMPL_SCHEMA = {
 // self-assessment, and a second agent for a `git diff --name-only` is waste.
 const VERIFY_SCHEMA = {
   type: 'object',
-  required: ['passed', 'summary', 'changedFiles', 'status'],
+  required: ['passed', 'summary', 'changedFiles', 'status', 'head'],
   additionalProperties: false,
   properties: {
     friction: FRICTION,
     passed: { type: 'boolean', description: 'true only if every command exited 0' },
     summary: { type: 'string' },
     changedFiles: { type: 'array', items: { type: 'string' } },
+    head: { type: 'string', description: 'the sha `git rev-parse HEAD` printed' },
     status: { type: 'array', items: { type: 'string' }, description: 'the lines `git status --porcelain` printed before the gate ran, verbatim' },
     aspects: {
       type: 'array',
@@ -158,6 +159,7 @@ const RE_REVIEW_SCHEMA = {
   properties: {
     ...VERDICT_SCHEMA.properties,
     resolved: { ...VERDICT_SCHEMA.properties.findings, description: 'your prior findings the current branch now fixes' },
+    added: { ...VERDICT_SCHEMA.properties.findings, description: 'new findings on the fix diff' },
   },
 }
 
@@ -294,7 +296,7 @@ function verifyPrompt(after, withAspects) {
     GATE,
     'Report pass only if every command exited 0.',
     'Do not review style or design — that is a later stage. Report what the tooling says.',
-    `Report changedFiles from \`git diff --name-only ${BASE}..HEAD\`.`,
+    `Report changedFiles from \`git diff --name-only ${BASE}..HEAD\`, and head from \`git rev-parse HEAD\`.`,
     ...(withAspects ? [
       'Return the aspects field: ["code"] when this command produces output, [] when it does not (adapt the extensions to this repo\'s language, keep it mechanical):',
       `  \`git diff --name-only ${BASE}..HEAD | grep -Ei '\\.(c|cc|cpp|cs|css|ex|exs|go|h|hpp|html|java|js|jsx|kt|lua|mjs|cjs|php|py|rb|rs|scala|sh|svelte|swift|ts|tsx|vue|zig)$'\``,
@@ -386,7 +388,9 @@ function externalPrompt() {
   ].join('\n')
 }
 
-function reReviewPrompt(prev, fix, round) {
+const fixDiffRule = (sha) => `Review the fix diff, \`git diff ${sha}..HEAD\`: raise a new finding only on a line it adds or changes, and none elsewhere — a fresh sweep each round makes this loop never converge.`
+
+function reReviewPrompt(prev, fix, sha, round) {
   return [
     CONTEXT,
     '',
@@ -400,11 +404,24 @@ function reReviewPrompt(prev, fix, round) {
     '',
     READ_ONLY,
     READ_DIFF,
-    'Re-review ONLY your own outstanding findings against the current branch state.',
-    'Do not raise new findings unrelated to them — a fresh sweep each round makes this loop never converge.',
+    'Re-review your own outstanding findings against the current branch state.',
+    fixDiffRule(sha),
     'List under resolved each of your prior findings the current branch now fixes, severity unchanged.',
     'A disputed finding you now agree was wrong is not a fix: drop it, leave it out of resolved, and say so in the summary.',
-    'Return only the findings that still stand, severity unchanged.',
+    'Return under findings only your prior findings that still stand, severity unchanged, and under added any new fix-diff finding.',
+  ].join('\n')
+}
+
+function fixDiffPrompt(g, fix, sha, round) {
+  return [
+    CONTEXT,
+    '',
+    `Fix round ${round}. You reviewed this branch and passed it; a fixer has since changed it for the other reviewers' findings. The fixer reports:`,
+    fix.summary,
+    '',
+    `Your lens: ${g.key.split(':').pop()}`,
+    REVIEW_RULES,
+    fixDiffRule(sha),
   ].join('\n')
 }
 
@@ -510,7 +527,7 @@ if (!impl.committed) return { ok: false, stage: 'implement', reason: impl.summar
 phase('Gate')
 const first = await gate('', '', true)
 if (!first.ok) return gateFail(first)
-let changedFiles = first.verify.changedFiles
+let verified = first.verify
 
 // Must precede Review: a cut made after it ships unreviewed.
 let simplify = null
@@ -535,14 +552,15 @@ if ((first.verify.aspects || []).includes('code')) {
     }
     const g = await gate('the simplify cuts', 'simplify', false)
     if (!g.ok) return gateFail(g)
-    changedFiles = g.verify.changedFiles
+    verified = g.verify
     const unhandled = Math.max(0, review.findings.length - cuts.addressed.length - cuts.disputed.length)
     simplify = { net: review.net, applied: cuts.addressed, disputed: cuts.disputed, unhandled }
   }
 }
 
-// Gates are keyed so a fix round re-reviews only the ones that failed: fresh
-// reviewers oscillate, inventing a new nit each round and never converging.
+// Gates are keyed so a fix round re-reviews the ones that failed and the rest
+// review only the fix diff: a full review each round oscillates, inventing a new
+// finding each round and never converging.
 const gates = [
   ...LENSES.map((t) => ({ key: t, type: t, prompt: () => lensPrompt(t, impl.redEvidence) })),
   { key: 'domain', type: 'generic', prompt: domainPrompt },
@@ -555,8 +573,8 @@ phase('Review')
 const state = new Map()
 const initial = await parallel(gates.map((g) => () =>
   agentR(g.prompt(), { label: `review:${g.key}`, phase: 'Review', schema: g.schema || VERDICT_SCHEMA, ...reviewerRoster(g.type) })))
-// Nits and questions are kept from full reviews only: a re-review verdict
-// replaces the gate's state and lists outstanding findings, so it would drop them.
+// Nits and questions are kept as raised: a re-review verdict replaces the
+// gate's state and lists outstanding findings, so it would drop them.
 const nits = []
 const questions = []
 const ofSeverity = (v, g, s) => v.findings.filter((f) => f.severity === s).map((f) => ({ ...f, gate: g.key }))
@@ -612,6 +630,7 @@ while (true) {
   const retry = dead.filter((g) => !stale.includes(g))
   const given = blocking.filter((f) => !state.get(f.gate).dead)
   const reReviewed = [...failed, ...stale]
+  const fixDiff = verified.head
   let fix = null
   if (given.length) {
     const nitsNow = nits.slice(nitsGiven)
@@ -630,29 +649,50 @@ while (true) {
     if (fix.nits) { nitFix.addressed.push(...fix.nits.addressed); nitFix.disputed.push(...fix.nits.disputed) }
     const g = await gate(`review-fix round ${round}`, `fix${round}`, false)
     if (!g.ok) return { ...gateFail(g), blocking, disputes, resolved, questions }
-    changedFiles = g.verify.changedFiles
+    verified = g.verify
   }
 
+  const passed = fix?.committed ? gates.filter((g) => !state.get(g.key).dead && !failed.includes(g) && state.get(g.key).ran !== false) : []
   const again = await parallel([
-    ...reReviewed.map((g) => () => agentR(reReviewPrompt(state.get(g.key), state.get(g.key).dead ? state.get(g.key).fix : fix, round), {
-      label: `re-review:${g.key}:r${round}`,
-      phase: 'Fix',
-      schema: RE_REVIEW_SCHEMA,
-      ...reviewerRoster(g.type),
-    })),
+    ...reReviewed.map((g) => () => {
+      const s = state.get(g.key)
+      return agentR(reReviewPrompt(s, s.dead ? s.fix : fix, s.dead ? s.fixDiff : fixDiff, round), {
+        label: `re-review:${g.key}:r${round}`,
+        phase: 'Fix',
+        schema: RE_REVIEW_SCHEMA,
+        ...reviewerRoster(g.type),
+      })
+    }),
     ...retry.map((g) => () => agentR(g.prompt(), {
       label: `review:${g.key}:retry${round}`,
       phase: 'Fix',
       schema: g.schema || VERDICT_SCHEMA,
       ...reviewerRoster(g.type),
     })),
+    ...passed.map((g) => () => agentR(fixDiffPrompt(g, fix, fixDiff, round), {
+      label: `fixdiff:${g.key}:r${round}`,
+      phase: 'Fix',
+      schema: VERDICT_SCHEMA,
+      ...reviewerRoster(g.type),
+    })),
   ])
   reReviewed.forEach((g, i) => {
     const prev = state.get(g.key)
-    state.set(g.key, again[i] || (prev.dead ? prev : { ...prev, dead: true, fix }))
-    if (again[i]) resolved.push(...blockingOf({ findings: again[i].resolved }).map((f) => ({ ...f, gate: g.key, round })))
+    const v = again[i]
+    if (!v) return state.set(g.key, prev.dead ? prev : { ...prev, dead: true, fix, fixDiff })
+    const added = { findings: v.added || [] }
+    state.set(g.key, { ...v, findings: [...v.findings, ...added.findings] })
+    resolved.push(...blockingOf({ findings: v.resolved }).map((f) => ({ ...f, gate: g.key, round })))
+    nits.push(...ofSeverity(added, g, 'nit'))
+    questions.push(...ofSeverity(added, g, 'question'))
   })
   retry.forEach((g, i) => record(g, again[reReviewed.length + i]))
+  // A dead fix-diff review keeps the gate's pass: a full retry is the fresh sweep this loop avoids.
+  passed.forEach((g, i) => {
+    const v = again[reReviewed.length + retry.length + i]
+    if (v) record(g, v)
+    else log(`Review: ${g.key} fix-diff review produced no verdict — kept its pass`)
+  })
 
   // The same fixer would get the same findings and dispute them again. The
   // orchestrator settles a standing dispute against the source.
@@ -670,7 +710,7 @@ if (nitsLeft.length) {
   if (fix.committed) {
     const g = await gate('the nit fixes', 'nits', false)
     if (!g.ok) return { ...gateFail(g), disputes, resolved, questions }
-    changedFiles = g.verify.changedFiles
+    verified = g.verify
   }
   nitFix.addressed.push(...fix.addressed)
   nitFix.disputed.push(...fix.disputed)
@@ -685,7 +725,7 @@ return {
   fixRounds: round,
   assumptions: impl.assumptions || [],
   redEvidence: impl.redEvidence,
-  changedFiles,
+  changedFiles: verified.changedFiles,
   untrackedPaths: [...UNTRACKED],
   nitFindings: nits,
   nitFix: nits.length ? nitFix : null,

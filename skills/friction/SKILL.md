@@ -35,8 +35,8 @@ For each printed pattern:
   `impl` → `implPrompt`, `gate` → `verifyPrompt`, `build-fix` → `buildFixPrompt`, `simplify` →
   `simplifyPrompt`, `simplify-fix` → `simplifyFixPrompt`, `review:domain` →
   `domainPrompt`, `review:external` → `externalPrompt`,
-  other `review:` → `lensPrompt`, `re-review:` → `reReviewPrompt`, `fix` →
-  `fixPrompt`.
+  other `review:` → `lensPrompt`, `re-review:` → `reReviewPrompt`, `fixdiff:` →
+  `fixDiffPrompt`, `fix` → `fixPrompt`.
 - Name the prompt or skill line the evidence points to: the instruction the agent could not
   follow, or the tool it lacked.
 - Read the evidence before blaming a prompt; a hook bounce working as designed or a long run on a

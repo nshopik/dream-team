@@ -13,7 +13,7 @@ HOME = Path.home()
 CACHE = HOME / ".claude" / "dream-team" / "friction.jsonl"
 RUNS = "projects/*/*/subagents/workflows/wf_*"
 CLAUDE_DIR = (str(HOME / ".claude"), "~/.claude", "$HOME/.claude")
-READ_ONLY = re.compile(r"^(review:|re-review:|gate$|simplify$)")
+READ_ONLY = re.compile(r"^(review:|re-review:|fixdiff:|gate$|simplify$)")
 WRITES = ("Edit", "Write", "NotebookEdit", "MultiEdit")
 FORBIDDEN = re.compile(
     r"(^|[;&|(\n])\s*ssh\s|\bgit\s+push\b"
