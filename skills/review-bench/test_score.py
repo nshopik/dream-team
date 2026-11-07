@@ -50,3 +50,14 @@ out = score(bare)
 row = "   1  qa-review  opus-4-8-high     2     18.9   26.7  0.5/2           0.0\n"
 assert row in out.stdout, out
 print("PASS a bare last line with no newline is a scored run; an uncosted run blanks $/run")
+
+same = Path(TMP.name) / "same"
+same.mkdir()
+(same / "marks.txt").write_text("LP-a-r1 C1\nLP-b-r1\nLP-c-r1\n")
+for run, model in [("LP-a-r1", "opus-5-5"), ("LP-b-r1", "opus-5-5"), ("LP-c-r1", "opus-4-8")]:
+    (same / run).mkdir()
+    (same / run / "stats.txt").write_text(f"reviewer=Dispatch model=claude-{model} effort=high\n")
+out = score(same / "marks.txt")
+for row in ("  LP-a      opus-5-5-high", "  LP-b      opus-5-5-high", "  Dispatch  opus-4-8-high"):
+    assert row in out.stdout, out
+print("PASS rows that would print the same reviewer and model show their prefixes")
