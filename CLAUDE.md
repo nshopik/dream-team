@@ -47,6 +47,8 @@
   headless-claude eval runner only for a large skill or a failure seen in a real run.
 - Before changing who does a step in a skill, read the skill's top-level role rules (e.g.
   dream-fixer's "You do not write the change" edit list) and update them in the same change.
+- A change to a `SKILL.md`, its `reference/` files or an `agents/*.md` prompt → check every
+  other line of those files for a contradiction with the change.
 - Check skill triggering with `skills/scope-commit/evals/run_trigger.sh` (unnamed prompts); the
   other evals name the skill in the prompt and cannot see a description change. Keep its fixture
   repo consistent with each prompt, or the agent stops before loading any skill.
