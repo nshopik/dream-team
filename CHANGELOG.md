@@ -32,6 +32,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - In a repo with an upstream remote, the context hook tells the agent to still load `scope-commit` and `scope-mr`, and those skills let the upstream subject format and PR template win over their own.
 - The body-cap hook measures a `glab api` call on an MR only when it sends a `description=` field or `--input`, so a read piped into a heredoc script is no longer denied.
 - The `review-bench` score table shows a row's prefix as its reviewer when another row has the same reviewer and model, such as two reviewers whose prompts start with the same word.
+- The `dream-fixer-loop` gate agent runs only the gate commands and the git commands it reports from, and no longer edits files or debugs a failure itself.
 
 ## [26.10.0] - 2026-10-28
 

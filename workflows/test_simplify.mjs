@@ -127,6 +127,7 @@ const fixDiffBlocks = () => ({ externalReview: cmd, externalRuns: [{ ran: true, 
     { summary: '', findings: [], resolved: [{ ...extFinding, file: 'main.js' }] }] })
 const promptRows = [
   { name: 'implementer splits only independent changes', label: 'impl:#1', rule: 'commit each change separately under its own subject' },
+  { name: 'gate is read-only and lists its allowed commands', label: 'gate:#1', rule: 'The gate is read-only. Run only the commands written below — `git status`, the gate commands, `git diff`, `git rev-parse` and any aspects pipeline — each once, in order.' },
   { name: 'build-fix commits fixups', label: 'build-fix:#1:r1', rule: fixup, opts: { gateFails: 1 } },
   { name: 'build-fix commits a pre-existing defect plainly', label: 'build-fix:#1:r1', rule: preexisting, opts: { gateFails: 1 } },
   { name: 'simplify-fix commits fixups', label: 'simplify-fix:#1', rule: fixup, review: loaded([cut('stdlib')], 4),
