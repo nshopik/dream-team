@@ -63,9 +63,6 @@
   request 1525"), never `#1525`; GitHub links `#N` to this repo.
 - Before filing a follow-up issue, list the milestone's open issues; a matching one gets a comment
   with the new evidence, not a new issue (#231 duplicated #226).
-- Skip an eval issue's research note when its follow-up issues carry the answers or its gate
-  finds nothing to change; post the findings as a comment on the issue and close it, committing
-  nothing (#238, #256).
 - Start an interactive session in this repo without `--plugin-dir .`; with it, every Write and
   Edit here prompts even in accept-edits mode. Keep the flag for headless evals.
 - Give a headless `pi -p` run without piped input `< /dev/null`; under a Claude Bash call it

@@ -23,6 +23,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `dream-fixer-loop` has each live reviewer review the diff of each fix round that commits, raising new findings only on lines that diff adds or changes.
 - `dream-fixer` works on each issue in its own git worktree under `.claude/worktrees/`, leaving the main checkout on its branch, and removes the worktree once the MR merges or closes.
 - `milestone-close` puts drift fixes, contributor facts, ROADMAP status, backed spec notes and a release a project rule sets straight into the docs MR, and asks approval only for issues, milestones, `CLAUDE.md` and `CLAUDE.local.md` changes and an unsettled release.
+- `dream-fixer` posts on the issue the triage answer, its settled disputes and, when it hands a branch back, the branch, open findings, assumptions, questions and lab numbers.
+- `dream-fixer` and `scope-issue` put research findings in an issue comment, writing a `docs/research/` note only when the user asks for a file.
 
 ### Fixed
 

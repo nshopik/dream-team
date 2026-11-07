@@ -18,7 +18,7 @@ Spell `<scratchpad>` as your scratchpad directory's literal path.
 You are the orchestrator. You read, triage, branch and ship. **You do not write the change** — the
 workflow's implementer does. Everything between the branch and the MR happens in dispatched
 agents. Your only edits are step 5's settled disputes and nits, which step 6 reruns
-`gateCommands` on, a light-tier issue's edit, and a research issue's reusable note (step 2a).
+`gateCommands` on, a light-tier issue's edit, and a research note the user asks for (step 2a).
 
 **Lab work is yours, not the workflow's.** Workflow agents never ssh to a lab host. Anything the
 issue or the repo's `CLAUDE.md` or `AGENTS.md` needs run on a lab host — a measurement the issue
@@ -58,8 +58,9 @@ Then:
 
 - **The options are enumerable** — two or three concrete paths, and the user's pick is the only
   thing missing: put them in an **AskUserQuestion** dialog, one option per path, cost in the
-  description. Take the answer and carry straight on to step 3. Deferring the issue is an option
-  when its tracker state says it is not due yet.
+  description. Post the answer as a comment on the issue; an answer that changes the work
+  remaining also goes into the description (`scope-issue` Updates). Carry straight on to step 3.
+  Deferring the issue is an option when its tracker state says it is not due yet.
 - **The options are not enumerable** — a missing acceptance criterion, a credential you don't
   have, an intent only the user knows: report what is blocking in prose and stop.
 
@@ -105,10 +106,9 @@ Light-path reviewer type:
 Research tier: no workflow, no code. Answer the proposal's questions yourself, then:
 
 - File one issue per gap per `scope-issue` with its milestone (step 5).
-- Output a later task reuses (a baseline table, a rubric, a case list) → write that output as a
-  note in the format below, commit it on the step-3 branch, and open the MR per step 6 with
-  `Closes #<n>`.
-- Post the other findings as one comment on the research issue, in the format below, the
+- The user asks for a file → write the findings as a note in the format below, commit it on the
+  step-3 branch, and open the MR per step 6 with `Closes #<n>`.
+- Post every finding not in a note as one comment on the research issue, in the format below, the
   follow-up issues and any MR linked.
 - No note → close the issue; skip step 3 and steps 6-7.
 
@@ -198,9 +198,10 @@ what to do with it.
 
 - **Lab steps** — once the result is `ok`, run the lab work on the branch head. Treat a lab failure
   like a red `gateCommands` run: fix it before the MR, or hand the branch back. Put measured
-  numbers in the MR description.
+  numbers in the MR description, or in the hand-back comment when no MR opens.
 - Before dispatching `dream-team:lab-runner`, tell the user its rough time to completion, from
   the run count and each run's expected length.
+- Post the disputes you settle, each with which way and why, in one comment on the issue.
 
 Docs drift, once the result is `ok`:
 
@@ -327,8 +328,11 @@ The report carries only what the user must know or act on.
 - Assumptions above the bullets → put a `**Notes:**` line between them.
 - End with one plain line, after a blank line: `Work on #<n> is done: <MR/PR link>`.
 - Research issue closed by its findings comment → end with `Work on #<n> is done: <comment link>`.
-- Otherwise no MR/PR → end with
-  `Work on #<n> is handed back: <branch> in .claude/worktrees/issue-<n>-<slug> — <why>`.
+- No MR/PR, and not a closed research issue → first post one comment on the issue: the branch,
+  the open blocking findings, every `assumptions` and `questions` entry, the lab numbers when lab
+  work ran, and the `<why>`.
+- Then end with `Work on #<n> is handed back: <branch> in
+  .claude/worktrees/issue-<n>-<slug> — <why> (<hand-back comment link>)`.
 - Name each `degraded` roster type, and each dead reviewer the hand-back `<why>` does not name.
 - No MR/PR and `untrackedPaths` non-empty → list them under one bold label.
 - Name each dispute you settled, which way, and why.

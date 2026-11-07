@@ -10,7 +10,8 @@ Issue is actionable items, not prose. Read days or weeks later with zero convers
 
 ## issue-style
 
-Reader starts the task from the description alone — no comment threads, no chat history.
+Reader starts the task from the description alone — no chat history. Comments carry the issue's
+history; a run that resumes the work reads them too.
 
 ### Goal
 
@@ -46,7 +47,7 @@ Reader starts the task from the description alone — no comment threads, no cha
 - Title starts `Research:`.
 - Proposal lists the questions to answer.
 - Deliverable: a findings comment on the issue plus one follow-up issue per gap found. No code.
-- Output a later task reuses → a note in the repo's research docs; the comment carries the rest.
+- User asks for a file → a note in the repo's research docs; the comment carries the rest.
 - Done when every question has an answer or its own issue.
 
 ### Evidence
@@ -117,7 +118,8 @@ Reader starts the task from the description alone — no comment threads, no cha
 
 ### Updates
 
-- Findings, decisions, progress → comments.
+- An open issue's comments hold every result a later run needs: findings, decisions, progress.
+- Repo docs hold only facts that outlive the issue.
 - Small amendment that leaves the work remaining unchanged → a new comment; leave the
   description as written.
 - A finding changes the work remaining → rewrite the description, then comment why it changed.

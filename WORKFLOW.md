@@ -37,7 +37,8 @@ user-approved release.
 - Result: `docs/specs/NNNN-<project>-design.md`, about 160 lines.
 
 A spec is only for decisions wider than one issue: the v1 design, a cross-cutting change. Work
-that fits one issue gets no spec; a decision made during it goes into the issue description.
+that fits one issue gets no spec; a decision made during it is posted on the issue, and written
+into the issue description when it changes the work remaining.
 
 ### 1. Spec to milestones
 
@@ -89,10 +90,11 @@ as listed items. Smaller changes it makes inline.
   1. Reads the issue and the project `CLAUDE.md`. Given a `Meta:` issue, it picks an open
      child with no open blocker and works that.
   2. Triage: an open decision gets a dialog with 2–3 options and their costs. The answer is
-     written into the issue description. A `Blocked by` line naming an open issue stops here.
+     posted on the issue as a comment, and written into the description when it changes the work
+     remaining. A `Blocked by` line naming an open issue stops here.
   3. Tier:
      - Research: answers, follow-up issues, and a findings comment on the
-       research issue, which closes with no MR. Output a later task reuses goes in a note in
+       research issue, which closes with no MR. Asked for a file, it writes a note in
        `docs/research/`, by an MR that closes the issue.
      - Light (docs, comments, help text, config, rename, or a small bug fix the agent reproduced
        first): the agent makes the edit inline, runs `gateCommands`, and dispatches one reviewer
