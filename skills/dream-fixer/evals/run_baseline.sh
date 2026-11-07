@@ -47,12 +47,14 @@ No lab host is named unless stated below. The dream-fixer-loop workflow returned
 {result} — read it.
 
 """
+what = ('the hand-back comment you post on the issue' if e.get('kind') == 'comment'
+        else 'the final message you send the user')
 print(f"""Use the dream-team:dream-fixer skill. You are its orchestrator on issue #{e['issue']}
 of github.com/acme/flowlog, "{e['title']}", labels {', '.join(e['labels'])}.
 
 {steps}{e['after']}
 
-Use only the Read, Grep, Glob and Skill tools. Output only the final message you send the user
+Use only the Read, Grep, Glob and Skill tools. Output only {what}
 under the skill's "Report back" section — no preamble, no code fence.""")
 PY
 }
@@ -116,6 +118,9 @@ for s in c.get('contains', []):
     res.append((f'contains {s!r}', s in text))
 for s in c.get('absent', []):
     res.append((f'absent {s!r}', s not in text))
+if e.get('kind') == 'comment':
+    json.dump([{'check': k, 'pass': v} for k, v in res], open(sys.argv[2].replace('.md', '.checks.json'), 'w'), indent=1)
+    sys.exit()
 if 'order' in c:
     idx = [text.find(s) for s in c['order']]
     res.append((f'order {c["order"]}', -1 not in idx and idx == sorted(idx)))
@@ -152,8 +157,8 @@ PY
 grade() {
   local slug=$1
   check "$slug"
-  python3 -c "import json, sys; sys.exit(any(e['slug'] == sys.argv[1] and e.get('kind') == 'tier'
-    for e in json.load(open('evals.json'))['evals']))" "$slug" || return 0
+  python3 -c "import json, sys; sys.exit(any(e['slug'] == sys.argv[1] and e.get('kind') in
+    ('tier', 'comment') for e in json.load(open('evals.json'))['evals']))" "$slug" || return 0
   ask <<EOF > "$OUT/$slug.grade.json"
 You are grading one dream-fixer final report against a fixed expectation list. Be adversarial:
 a pass on a report that breaks a rule is worse than useless. Judge only what the expectations
@@ -225,7 +230,7 @@ for slug in sys.argv[2:]:
     kp = sum(c['pass'] for c in ck)
     fails = [c['check'] for c in ck if not c['pass']]
     try:
-        g = {'expectations': [], 'correct': 0, 'applicable': 0} if kinds[slug] == 'tier' else json.load(open(out / f'{slug}.grade.json'))
+        g = {'expectations': [], 'correct': 0, 'applicable': 0} if kinds[slug] in ('tier', 'comment') else json.load(open(out / f'{slug}.grade.json'))
         fails += [x['text'][:50] for x in g['expectations'] if x['verdict'] == 'FAIL']
     except Exception as e:
         g = {'correct': 0, 'applicable': 0}
