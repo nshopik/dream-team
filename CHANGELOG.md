@@ -9,6 +9,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - `cut-milestones`, `setup-dream-team` and `milestone-close` support version milestones that close at their due date, with open issues moved to the next version, in a project whose `CLAUDE.md` says `Version milestones release in flow mode.`
 - `setup-dream-team` sets a `type::performance` label, when the tracker has one, to colour `#AD4363`.
+- The `friction` skill records each agent's and each run's wall clock in minutes, and `--time` prints a table of them per role and per run.
 
 ### Changed
 

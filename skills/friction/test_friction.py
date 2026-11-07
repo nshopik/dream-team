@@ -19,13 +19,13 @@ home = Path(tempfile.mkdtemp())
 aged = [time.time() - 86400]
 
 
-def transcript(path, calls):
-    """Writes an agent transcript making calls: (tool name, input, failed)."""
+def transcript(path, calls, start=0):
+    """Writes an agent transcript making calls: (tool name, input, failed), one entry a minute from 13:start."""
     lines = []
     for i, (name, inp, failed) in enumerate(calls):
-        lines.append({"type": "assistant", "message": {"id": f"m{i}", "role": "assistant", "usage": {"input_tokens": 10, "output_tokens": 5},
+        lines.append({"type": "assistant", "timestamp": f"2026-10-25T13:{start + 2 * i:02}:00.000Z", "message": {"id": f"m{i}", "role": "assistant", "usage": {"input_tokens": 10, "output_tokens": 5},
                       "content": [{"type": "tool_use", "id": f"t{i}", "name": name, "input": inp}]}})
-        lines.append({"type": "user", "message": {"role": "user", "content": [
+        lines.append({"type": "user", "timestamp": f"2026-10-25T13:{start + 2 * i + 1:02}:00.000Z", "message": {"role": "user", "content": [
             {"type": "tool_result", "tool_use_id": f"t{i}", "is_error": failed,
              "content": "Exit code 1\nboom" if failed else "ok"}]}})
     path.write_text("\n".join(json.dumps(e) for e in lines) + "\n")
@@ -58,8 +58,8 @@ def run_dir(run, label, calls, friction=(), fresh=False):
     return d
 
 
-def scan():
-    p = subprocess.run([sys.executable, str(SCRIPT)], capture_output=True, text=True, env={**os.environ, "HOME": str(home)})
+def scan(*args):
+    p = subprocess.run([sys.executable, str(SCRIPT), *args], capture_output=True, text=True, env={**os.environ, "HOME": str(home)})
     assert p.returncode == 0, p.stderr
     return p.stdout
 
@@ -162,6 +162,27 @@ assert scan().startswith("scanned 1 new runs"), "the new run is scanned"
 assert scan().startswith("scanned 0 new runs"), "and not again"
 assert any(r["type"] == "stats" and r["run"] == "wf_i-009" for r in friction.read_jsonl(cache_path)), "its first record is kept"
 print("PASS a torn cache tail does not eat the next run")
+
+# A run cached before stats carried minutes is left out of the table.
+with open(cache_path, "a") as f:
+    f.write(json.dumps({"type": "stats", "run": "wf_old", "role": "gate", "agentType": "", "tokens": 1, "tools": 1}) + "\n")
+    f.write(json.dumps({"type": "run", "run": "wf_old", "date": "2026-10-01"}) + "\n")
+# Two agents, the second starting ten minutes in: the run spans first start to last end.
+late = run_dir("wf_l-012", "impl:#13", [("make", False)])
+with open(late / "journal.jsonl", "a") as f:
+    f.write(json.dumps({"type": "started", "agentId": "a-late", "label": "re-review:code:r1"}) + "\n")
+transcript(late / "agent-a-late.jsonl", [("Bash", {"command": "make"}, False)], start=10)
+age(late)
+assert scan("--time").splitlines()[1:] == [
+    "",
+    "| role | runs | agents | min | P10 | Q1 | median | Q3 | P90 | max |",
+    "|---|---|---|---|---|---|---|---|---|---|",
+    "| gate | 4 | 4 | 1.0 | 1.0 | 1.0 | 3.0 | 5.0 | 5.0 | 5.0 |",
+    "| impl | 5 | 5 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 |",  # wf_b-002 lost its stats to the bad line
+    "| whole run | 10 | 10 | 1.0 | 1.0 | 1.0 | 1.0 | 5.0 | 5.6 | 11.0 |",  # wf_l-012 spans 13:00 to 13:11
+    "| re-review:code | 1 | 1 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 |",
+], scan("--time")
+print("PASS --time tables minutes per role and per run")
 
 # A crash on one run keeps the runs scanned before it.
 home = Path(tempfile.mkdtemp())
