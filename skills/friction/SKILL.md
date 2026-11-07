@@ -25,7 +25,9 @@ Pattern names the script prints:
 - `claude-dir`: Read/Glob/Grep, or a Bash `find`/`ls`/`cat`, under `~/.claude`.
 - `tool-error`: a tool call denied or erroring, other than a plain non-zero exit.
 - `repeat-failure`: the same failing Bash command run twice or more by one agent.
-- `forbidden`: `ssh`, `git push`, a `gh`/`glab` write, or an edit or commit by a read-only role.
+- `forbidden`: `ssh`, `git push`, a `gh`/`glab` write, or an edit, a Bash tree edit
+  (`sed`/`perl -i`, `git checkout`/`restore`/`stash`, `tee` or a redirect to a path outside `/tmp/`
+  and `/dev/`) or a commit by a read-only role.
 - `self-report`: an entry from the agent's `friction` output field.
 - `tokens-outlier`, `tools-outlier`: over 2x the role's median over earlier runs.
 

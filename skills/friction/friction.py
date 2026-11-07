@@ -15,6 +15,13 @@ RUNS = "projects/*/*/subagents/workflows/wf_*"
 CLAUDE_DIR = (str(HOME / ".claude"), "~/.claude", "$HOME/.claude")
 READ_ONLY = re.compile(r"^(review:|re-review:|fixdiff:|gate$|simplify$)")
 WRITES = ("Edit", "Write", "NotebookEdit", "MultiEdit")
+# ponytail: matched with quoted strings and heredoc bodies blanked, so `> "$f"` is missed; parse with bashlex if that matters.
+TREE_EDIT = re.compile(
+    r"\bgit(\s+-[Cc]\s+\S+)*\s+(commit|checkout|restore|stash(?!\s+(list|show)\b))\b|\b(sed|perl)\b[^|;&\n]*\s-(\w*i\b|-in-place)"
+    r"|(\btee\s+(-\w+\s+)*|>>?\s*)(?!&|/dev/|/tmp/)[\w~$./-]"
+)
+QUOTED = re.compile(r"'[^']*'|\"(\\.|[^\"\\])*\"")
+HEREDOC = re.compile(r"""<<-?\s*['"]?(\w+)['"]?(.*?\n).*?^\s*\1$""", re.S | re.M)
 FORBIDDEN = re.compile(
     r"(^|[;&|(\n])\s*ssh\s|\bgit\s+push\b"
     r"|\b(gh|glab)\s+(pr|mr|issue|release)\s+(create|edit|comment|close|merge|reopen|note|update|delete)\b"
@@ -62,7 +69,7 @@ def scan_agent(path, role):
                     hits.append(("claude-dir", cmd))
                 if FORBIDDEN.search(cmd):
                     hits.append(("forbidden", cmd))
-                if READ_ONLY.match(role) and (name in WRITES or re.search(r"\bgit\s+commit\b", cmd)):
+                if READ_ONLY.match(role) and (name in WRITES or TREE_EDIT.search(QUOTED.sub("''", HEREDOC.sub(r"\2", cmd)))):
                     hits.append(("forbidden", f"{name} {inp.get('file_path') or cmd}"))
             elif b.get("type") == "tool_result" and b.get("is_error"):
                 use = uses.get(b.get("tool_use_id"), {})
