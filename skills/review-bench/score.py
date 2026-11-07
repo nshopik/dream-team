@@ -83,6 +83,8 @@ print(f"ledger v{ledger['version']}: {len(weight)} findings, weight {sum(weight.
       f"{len(crit)} criticals")
 cols = ("reviewer", "model")
 labels = {g: label(g) for g in order}
+shared = [lb for lb in labels.values() if list(labels.values()).count(lb) > 1]
+labels = {g: (g, lb[1]) if lb in shared else lb for g, lb in labels.items()}
 w = [max(map(len, c)) for c in zip(cols, *labels.values())]
 name = lambda lb: "  ".join(f"{c:<{n}}" for c, n in zip(lb, w))
 print(f"{'tier':>4}  {name(cols)}  {'runs':>4}  {'quality':>7}  {'sd':>5}  "
