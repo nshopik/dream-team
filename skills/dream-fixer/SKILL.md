@@ -123,17 +123,24 @@ Findings format:
 
 ## 3. Preflight and branch
 
-Stop and report when either holds:
+Run this step from the main checkout, the first `worktree` path `git worktree list --porcelain`
+prints; `cd` there first.
 
-- `git status --porcelain` prints anything. The workflow's agents commit in this checkout.
-- A branch `issue-<n>-*` exists locally or on the remote, or an open MR/PR references the issue.
-  Ask whether to continue that work or start over.
+Stop and ask whether to continue that work or start over when any holds:
 
-Then `git fetch` and branch from the fetched tip of the MR target, the remote's default branch
-unless the project's `CLAUDE.md` or `AGENTS.md` names another:
-`git switch -c issue-<n>-<slug> origin/<target>`.
-Never work on `master`/`main`.
-Record `git rev-parse HEAD` — it is the workflow's `base`.
+- A branch `issue-<n>-*` exists locally or on the remote.
+- A path `.claude/worktrees/issue-<n>-*` exists.
+- An open MR/PR references the issue.
+
+Then `git fetch` and add a worktree on a new branch from the fetched tip of the MR target, the
+remote's default branch unless the project's `CLAUDE.md` or `AGENTS.md` names another:
+`git worktree add -b issue-<n>-<slug> .claude/worktrees/issue-<n>-<slug> origin/<target>`.
+
+- `$(git rev-parse --git-common-dir)/info/exclude` has no `.claude/worktrees/` line → append
+  `/.claude/worktrees/` before the `worktree add`.
+- `cd` into the worktree; make it the last Bash `cd` before step 4.
+- Never work on `master`/`main`.
+- Record `git rev-parse HEAD` in the worktree — it is the workflow's `base`.
 
 ## 4. Run the workflow
 
@@ -293,9 +300,18 @@ done
 Give the report (below) without waiting for the poll, and leave the poll out of it. When it
 exits:
 
-- **Merged** → `git switch <target> && git pull --ff-only && git branch -d issue-<n>-<slug>`,
-  then check the issue closed. Report one line: new `<target>` head, branch deleted, issue state.
-- **Closed unmerged** → report it; leave the branch.
+- **Merged** → `cd` to the main checkout (step 3), run the block below, then check the issue
+  closed. Report one line: new `<target>` head, worktree and branch deleted, issue state.
+- The main checkout is not on `<target>`, or its `git status --porcelain` prints anything → run
+  `git fetch` in place of `git pull --ff-only`, and say so in the report.
+- The block fails → report the git error; leave the worktree and the branch.
+- **Closed unmerged** → `cd` to the main checkout, `git worktree remove
+  .claude/worktrees/issue-<n>-<slug>`, report it; leave the branch.
+
+```sh
+git worktree remove .claude/worktrees/issue-<n>-<slug> &&
+  git pull --ff-only && git branch -d issue-<n>-<slug>
+```
 
 ## Report back
 
@@ -311,7 +327,8 @@ The report carries only what the user must know or act on.
 - Assumptions above the bullets → put a `**Notes:**` line between them.
 - End with one plain line, after a blank line: `Work on #<n> is done: <MR/PR link>`.
 - Research issue closed by its findings comment → end with `Work on #<n> is done: <comment link>`.
-- Otherwise no MR/PR → end with `Work on #<n> is handed back: <branch> — <why>`.
+- Otherwise no MR/PR → end with
+  `Work on #<n> is handed back: <branch> in .claude/worktrees/issue-<n>-<slug> — <why>`.
 - Name each `degraded` roster type, and each dead reviewer the hand-back `<why>` does not name.
 - No MR/PR and `untrackedPaths` non-empty → list them under one bold label.
 - Name each dispute you settled, which way, and why.

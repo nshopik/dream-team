@@ -13,7 +13,7 @@
     and is not listed. Do not open the MR; hand the branch
     back.
 - **`ok: false` otherwise** — the implement, gate, simplify or fix stage failed. Report the
-  reason; the branch is where the agent left it.
+  reason; the branch and its worktree are where the agent left them.
 - **`degraded`** — roster types whose agent call threw, after which every call of that type ran
   as a generic agent; `ponytail:ponytail-review` when that skill was missing or its review
   returned nothing and the Simplify phase was skipped, and `external` when the `externalReview` command was missing or
