@@ -26,6 +26,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `milestone-close` puts drift fixes, contributor facts, ROADMAP status, backed spec notes and a release a project rule sets straight into the docs MR, and asks approval only for issues, milestones, `CLAUDE.md` and `CLAUDE.local.md` changes and an unsettled release.
 - `dream-fixer` posts on the issue the triage answer, its settled disputes and, when it hands a branch back, the branch, open findings, assumptions, questions and lab numbers.
 - `dream-fixer` and `scope-issue` put research findings in an issue comment, writing a `docs/research/` note only when the user asks for a file.
+- The `friction` skill names the permission rule, hook or gate command that would stop a repeated pattern and offers an issue for that check, keeping the prompt-line offer for a pattern that needs judgement.
 
 ### Fixed
 
