@@ -4,8 +4,9 @@ description: >-
   Scans past dream-fixer-loop workflow runs for agent friction (skill or tool hunting under
   ~/.claude, denied or erroring tool calls, repeated failing commands, forbidden actions,
   self-reported friction, token and tool-call outliers) and reports the patterns seen in two or
-  more runs with the prompt line each points to. Use when the user runs /dream-team:friction or
-  asks what keeps going wrong across dream-fixer runs.
+  more runs, each with the deterministic check that would stop it or the prompt line it points to.
+  Use when the user runs /dream-team:friction or asks what keeps going wrong across dream-fixer
+  runs.
 disable-model-invocation: true
 ---
 
@@ -41,13 +42,20 @@ For each printed pattern:
   `fixDiffPrompt`, `fix` → `fixPrompt`.
 - Name the prompt or skill line the evidence points to: the instruction the agent could not
   follow, or the tool it lacked.
-- Read the evidence before blaming a prompt; a hook bounce working as designed or a long run on a
-  hard issue has no prompt line behind it.
-- No prompt line behind it → list it as ordinary and offer nothing for it.
+- Read the evidence before blaming a prompt or naming a check; a hook bounce working as designed
+  or a long run on a hard issue has neither behind it.
+- A permission rule, hook or gate command could stop the pattern → name that check and what it
+  stops.
+- The pattern needs judgement → name no check.
+- The only check is a new hook and no written rule forbids what the agent did → name no check.
+- No check and no prompt line behind it → list it as ordinary and offer nothing for it.
 
 ## 3. Report
 
-- One bullet per pattern: `- **<pattern> | <role>:** <n> runs; <evidence>; <file>:<line>`.
-- Offer to file one dream-team issue per pattern that has a prompt line, written with
-  `scope-issue`.
+- One bullet per pattern: `- **<pattern> | <role>:** <n> runs; <evidence>; <target>`.
+- A named check → `<target>` is `check: <check>`.
+- No check, a prompt line → `<target>` is `<file>:<line>`.
+- Ordinary → `<target>` is `ordinary`.
+- Offer to file one dream-team issue per pattern with a check or a prompt line, for its `<target>`,
+  written with `scope-issue`.
 - File nothing without the user's yes.

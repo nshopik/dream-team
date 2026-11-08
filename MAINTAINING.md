@@ -27,7 +27,7 @@ Skills:
   pull request; `run.sh` runs and grades, `score.py` scores against the ledger.
 - `chaos-planning`: gaps in a launch's failure-experiment plan, reported in chat.
 - `friction`: friction patterns seen in two or more past `dream-fixer-loop` runs, each with the
-  prompt line it points to.
+  deterministic check that would stop it or the prompt line it points to.
 
 Agents:
 
