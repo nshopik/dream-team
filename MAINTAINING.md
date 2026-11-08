@@ -111,6 +111,21 @@ Planning stays explicit, at issue size, because you review every plan.
   `ship-it`. A milestone close is the release point for most projects; a pre-1.0 opt-in line
   left the rest closing milestones with no release. A project rule that sets each close's
   version moves the approval to the docs MR review and the tag offer.
+- This repo pilots a bugfix-only window for 26.11 and 26.12, the last 14 days before a version
+  milestone's due date. The 26.11 window opens on 2026-11-16 and the 26.12 window on 2026-12-17.
+  - `type::bug` means a skill or agent did the wrong thing in a real run; a wished-for capability
+    goes to the next milestone.
+  - At window start, release `YY.MM.0` in place of the flow-mode due-date release, move open
+    feature issues to the next milestone, and leave unmerged feature PRs waiting.
+  - Release `.1`, `.2` on demand during the window. At close, release any unreleased fix; with no
+    fixes `.0` is final.
+  - The window always ends at the due date; open bugs move to the next milestone.
+  - Testing is free-form real use. At close, add one milestone comment naming what was run and
+    which bugs were found.
+  - A bug found after close waits for the next `.0`, because a release of main then also ships the
+    features merged since.
+  - At 26.12 close, read both milestone comments and decide whether to keep the window, change it
+    or offer it as a plugin option.
 - `milestone-close` asks only for what leaves the docs MR or changes agent rules; drift fixes,
   ROADMAP status, facts and backed spec notes ride in the docs MR, whose review approves them. A
   numbered approval per page edit asked twice for one decision.
