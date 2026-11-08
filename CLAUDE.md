@@ -23,8 +23,8 @@
   `SKILL.md` or agent prompt.
 - Name a milestone `YY.MM`, its target month.
 - Version milestones release in flow mode.
-- In the last 14 days before a version milestone's due date, merge only `type::bug` issues and
-  changes that do not alter skill or agent behaviour (docs, evals, CI).
+- From the 15th of a version milestone's target month to its due date, merge only `type::bug`
+  issues and changes that do not alter skill or agent behaviour (docs, evals, CI).
 - Run a `skills/*/evals/` runner with `--plugin-dir .`; without the flag it measures the installed
   plugin cache, not the working tree.
 - In `hooks/test_body_cap.py`, match an over-cap deny on `-word ceiling`, not `ceiling`; the
