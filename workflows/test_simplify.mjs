@@ -17,6 +17,7 @@ async function run(review, cuts, { aspects = ['code'], gateFails = 0, externalRe
   const labels = []
   const prompts = {}
   const types = {}
+  const schemas = {}
   const nulls = new Set(nullOnce)
   let gateRuns = 0
   async function agent(prompt, opts) {
@@ -29,6 +30,7 @@ async function run(review, cuts, { aspects = ['code'], gateFails = 0, externalRe
     labels.push(opts.label)
     prompts[opts.label] = prompt
     types[opts.label] = opts.agentType
+    schemas[opts.label] = opts.schema
     if (opts.phase === 'Implement') return { committed: true, summary: '', redEvidence }
     if (opts.label.startsWith('build-fix:')) return { committed: true, summary: '' }
     if (opts.phase === 'Gate') return { passed: gateFails-- <= 0, summary: '', changedFiles: [], status, aspects, head: `gate${++gateRuns}` }
@@ -43,7 +45,7 @@ async function run(review, cuts, { aspects = ['code'], gateFails = 0, externalRe
   const result = await new AsyncFunction('args', 'agent', 'phase', 'log', 'parallel', body)(
     { ...args, externalReview }, agent, () => {}, () => {}, (fns) => Promise.all(fns.map((f) => f())))
   assert.ok(!JSON.stringify(result).includes('stub friction'), 'friction stays out of the result')
-  return { result, labels, prompts, types }
+  return { result, labels, prompts, types, schemas }
 }
 
 const cut = (tag) => ({ tag, location: 'latency.py:L3', cut: `${tag} cut`, replacement: 'statistics.median' })
@@ -130,7 +132,7 @@ const promptRows = [
   { name: 'gate is read-only and lists its allowed commands', label: 'gate:#1', rule: 'The gate is read-only. Run only the commands written below — `git status`, the gate commands, `git diff`, `git rev-parse` and any aspects pipeline — each once, in order.' },
   { name: 'build-fix commits fixups', label: 'build-fix:#1:r1', rule: fixup, opts: { gateFails: 1 } },
   { name: 'build-fix commits a pre-existing defect plainly', label: 'build-fix:#1:r1', rule: preexisting, opts: { gateFails: 1 } },
-  { name: 'simplify-fix commits fixups', label: 'simplify-fix:#1', rule: fixup, review: loaded([cut('stdlib')], 4),
+  { name: 'simplify-fix commits fixups', label: 'simplify-fix:#1', rule: fixup, schemaNits: false, review: loaded([cut('stdlib')], 4),
     cuts: { committed: true, addressed: ['stdlib cut'], disputed: [], summary: '' } },
   { name: 'fix round commits fixups', label: 'fix:#1:r1', rule: fixup, opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] } },
   { name: 'test lens checks red evidence', label: 'review:dream-team:test-coverage-reviewer', rule: red, opts: { redEvidence: red } },
@@ -141,8 +143,8 @@ const promptRows = [
   { name: 'lens reads the diff through git', label: 'review:dream-team:sre-engineer', rule: '`git diff abc1234..HEAD`' },
   { name: 'domain lens reads the diff through git', label: 'review:domain', rule: '`git diff abc1234..HEAD`' },
   { name: 'dead re-review is retried against the fix it missed', label: 're-review:external:r2', rule: `Disputed: ${dispute.finding}`, opts: deadDispute() },
-  { name: 'nit fixer fixes only cheap nits', label: 'fix:#1:nits', rule: 'Fix each one that is cheap', opts: { domainRuns: [{ summary: '', findings: [{ severity: 'nit', description: 'rename n', file: 'a.js' }] }] } },
-  { name: 'fix round carries the nits', label: 'fix:#1:r1', rule: 'Reviewers also raised these nits', opts: { externalReview: cmd,
+  { name: 'nit fixer fixes only cheap nits', label: 'fix:#1:nits', rule: 'Fix each one that is cheap', schemaNits: false, opts: { domainRuns: [{ summary: '', findings: [{ severity: 'nit', description: 'rename n', file: 'a.js' }] }] } },
+  { name: 'fix round carries the nits', label: 'fix:#1:r1', rule: 'Reviewers also raised these nits', schemaNits: true, opts: { externalReview: cmd,
     externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }],
     domainRuns: [{ summary: '', findings: [{ severity: 'nit', description: 'rename n', file: 'a.js' }] }] } },
   { name: 're-review reads the fix diff', label: 're-review:external:r1', rule: '`git diff gate1..HEAD`', opts: extOnce() },
@@ -158,9 +160,10 @@ const promptRows = [
 ]
 
 for (const row of promptRows) {
-  const { result, prompts } = await run(row.review || lean, row.cuts, row.opts)
+  const { result, prompts, schemas } = await run(row.review || lean, row.cuts, row.opts)
   assert.equal(result.ok, true, row.name)
   assert.ok(prompts[row.label].includes(row.rule), row.name)
+  if ('schemaNits' in row) assert.equal('nits' in schemas[row.label].properties, row.schemaNits, `${row.name}: nits in schema`)
   console.log(`PASS ${row.name}`)
 }
 
