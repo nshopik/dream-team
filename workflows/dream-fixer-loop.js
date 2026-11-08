@@ -188,8 +188,14 @@ const FIX_SCHEMA = {
     summary: { type: 'string' },
   },
 }
-FIX_SCHEMA.properties.nits = { type: 'object', required: ['addressed', 'disputed'], additionalProperties: false,
-  properties: { addressed: FIX_SCHEMA.properties.addressed, disputed: FIX_SCHEMA.properties.disputed } }
+const FIX_ROUND_SCHEMA = {
+  ...FIX_SCHEMA,
+  properties: {
+    ...FIX_SCHEMA.properties,
+    nits: { type: 'object', required: ['addressed', 'disputed'], additionalProperties: false,
+      properties: { addressed: FIX_SCHEMA.properties.addressed, disputed: FIX_SCHEMA.properties.disputed } },
+  },
+}
 
 // ---------------------------------------------------------------------------
 // Roster
@@ -640,7 +646,7 @@ while (true) {
     fix = await agentR(fixPrompt(given, disputes, round, nitsNow), {
       label: `fix:#${ISSUE}:r${round}`,
       phase: 'Fix',
-      schema: FIX_SCHEMA,
+      schema: FIX_ROUND_SCHEMA,
       ...IMPLEMENTER,
     })
     if (!fix) return { ok: false, stage: 'fix', reason: 'fixer returned no result', blocking, disputes, resolved, questions }

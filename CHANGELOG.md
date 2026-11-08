@@ -37,6 +37,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - The `review-bench` score table shows a row's prefix as its reviewer when another row has the same reviewer and model, such as two reviewers whose prompts start with the same word.
 - The `dream-fixer-loop` gate agent runs only the gate commands and the git commands it reports from, and no longer edits files or debugs a failure itself.
 - The `friction` skill flags a read-only role that edits the tree through Bash, such as `sed -i`, `git checkout <file>` or a redirect outside `/tmp`.
+- `dream-fixer-loop` gives its simplify pass and nit-only pass no `nits` result field, so an implementer can no longer report its cuts where the loop does not read them and stop the run at simplify.
 
 ## [26.10.0] - 2026-10-28
 
