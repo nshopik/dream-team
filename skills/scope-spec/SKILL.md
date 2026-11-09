@@ -25,3 +25,6 @@ disable-model-invocation: true
 - Status: `Draft`, then `Accepted`, which is terminal; or `Superseded by <spec-file>`.
 - File lists, test cases, rejected options and milestones → issues, topic docs,
   `docs/decisions/` or the ROADMAP; never the spec.
+- Length: aim for about 1,500 words, counted with `wc -w`.
+- Draft over 2,000 words → ask with AskUserQuestion which Design subsections to move to a topic
+  doc, one option per subsection.

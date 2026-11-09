@@ -17,6 +17,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `milestone-close` proposes each `planned` ROADMAP row whose dependencies are closed as a new milestone with the next free `M<n>`.
 - `cut-milestones` and `milestone-close` give each new `M<n>` milestone a due date the user sets, and keep at most 3 `M<n>` milestones open, leaving the rest as `planned` rows.
 - `setup-dream-team` accepts `planned` ROADMAP rows and checks the dependency graph against the rows.
+- `scope-spec` aims for about 1,500 words and, for a draft over 2,000 words, asks the user which Design subsections to move to a topic doc.
 - `setup-dream-team` and `cut-milestones` require ROADMAP rows only for `M<n>` milestones and `planned` rows, never for version milestones.
 - `dream-fixer` commits a small fix, up to about 50 lines, for a defect found outside the diff on the branch as its own commit, and files an issue only for a defect that needs a decision, a lab check or a design choice.
 - `dream-fixer` tells the user the rough time to completion before it dispatches lab work.
