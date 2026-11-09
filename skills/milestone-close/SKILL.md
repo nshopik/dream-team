@@ -98,7 +98,8 @@ Proposals, each approved or rejected by the user:
 ## 5. Apply
 
 The approved closes and moves, through the host's tooling skill; the `Evidence:` issue closes with
-the milestone. Step 4's docs-MR edits, the approved `CLAUDE.md` cuts and promotions as one MR;
+the milestone. Step 4's docs-MR edits, the approved `Superseded by` lines, the approved `CLAUDE.md`
+cuts and promotions as one MR;
 approved promotions and cuts leave `CLAUDE.local.md` directly, since it is untracked. Then close the
 milestone and set its roadmap status, if it has a row. Create each approved `planned` row's
 milestone per `cut-milestones` step 5, move its parked issues into it without the waiting label,
@@ -127,4 +128,5 @@ Proposals from step 2 or 4:
 - A cut that waits on a fix outside the repo → one unnumbered **Outside the repo:** line naming
   the fix; propose the cut once the user reports the fix made.
 - Under each, name what approving it does: an issue filed, a milestone created, a line added,
-  removed or moved to `CLAUDE.md`, or a version bump and CHANGELOG move in the docs MR.
+  removed or moved to `CLAUDE.md`, a `Superseded by` line in the docs MR, or a version bump and
+  CHANGELOG move in the docs MR.

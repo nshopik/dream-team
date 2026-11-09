@@ -6,7 +6,7 @@ export const meta = {
     { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
     { title: 'Simplify', detail: 'ponytail-review cuts, applied or disputed by the implementer; skipped when the diff has no code, ponytail-review is unavailable, or its review returns nothing after the retry (opus)' },
     { title: 'Review', detail: 'the three qa-review lenses plus a generic domain lens on every review (opus); opt-in external review command, its findings checked by one agent' },
-    { title: 'Fix', detail: 'blocking findings only; the reviewers that failed re-review their findings, and every live reviewer reviews the fix diff the fixer committed' },
+    { title: 'Fix', detail: 'blocking findings plus cheap nits; the reviewers that failed re-review their findings, and every live reviewer reviews the fix diff the fixer committed' },
   ],
 }
 
