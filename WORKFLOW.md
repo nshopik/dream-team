@@ -34,7 +34,7 @@ user-approved release.
 - You: `/dream-team:scope-spec`. The agent asks what the chat left open, then writes a lean v1
   spec on a topic branch; `branch-guard` keeps design docs off `master`.
 - You: read the spec, push back until it matches your model, merge it.
-- Result: `docs/specs/NNNN-<project>-design.md`, about 160 lines.
+- Result: `docs/specs/NNNN-<project>-design.md`, about 1,500 words.
 
 A spec is only for decisions wider than one issue: the v1 design, a cross-cutting change. Work
 that fits one issue gets no spec; a decision made during it is posted on the issue, and written
