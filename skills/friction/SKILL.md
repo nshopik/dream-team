@@ -15,6 +15,7 @@ disable-model-invocation: true
 ## 1. Scan
 
 - Run `python3 <this skill's base directory>/friction.py`.
+- User asks for run times → add `--time`; print its table and stop.
 - The script scans every workflow run not yet in the cache and appends its hits there.
 - It prints each pattern + role seen in 2 or more runs; one-off hits stay in the cache only.
 - Output is only the `scanned … new runs` line → report no repeated friction and stop.
@@ -39,7 +40,7 @@ For each printed pattern:
   `simplifyPrompt`, `simplify-fix` → `simplifyFixPrompt`, `review:domain` →
   `domainPrompt`, `review:external` → `externalPrompt`,
   other `review:` → `lensPrompt`, `re-review:` → `reReviewPrompt`, `fixdiff:` →
-  `fixDiffPrompt`, `fix` → `fixPrompt`.
+  `fixDiffPrompt`, `fix` → `fixPrompt` or `nitFixPrompt`.
 - Name the prompt or skill line the evidence points to: the instruction the agent could not
   follow, or the tool it lacked.
 - Read the evidence before blaming a prompt or naming a check; a hook bounce working as designed

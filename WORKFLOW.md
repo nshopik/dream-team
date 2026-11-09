@@ -118,7 +118,7 @@ as listed items. Smaller changes it makes inline.
 
 - The MR's why and root cause are written for you; this is where you learn the system.
 - A fact about how the system works: say "note X" and the agent adds it to the contributor doc
-  (`docs/development.md`). What you don't flag, `milestone-close` proposes later.
+  (`docs/development.md`). What you don't flag, `milestone-close` adds in its docs MR.
 - An agent mistake: correct it; the agent adds one line to the untracked `CLAUDE.local.md`. You
   promote lines to the tracked `CLAUDE.md`.
 - You: merge, or comment and hand it back.
@@ -170,4 +170,4 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
 | 2 | Is anything missing from the issue list |
 | 3 | Which issue is next; triage dialogs, only when a decision is open |
 | 4 | Read the MR, note what you learned, merge |
-| 5 | Gap issues to file; close or move per leftover issue; each fact and cut; the release |
+| 5 | Gap issues to file; close or move per leftover issue; new milestones; each cut and promotion; the release |
