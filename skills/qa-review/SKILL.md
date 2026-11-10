@@ -99,6 +99,7 @@ Rules block, verbatim:
 ```
 Do not edit, create or delete files in the repository. Do not commit, push, or touch any forge or lab host.
 Read only: no builds, test runs, benchmarks, profiles or experiments.
+Your job is coverage: report every defect you find, including uncertain or low-severity ones; a later stage filters them.
 Output: findings only, ranked most severe first. Each finding: one emoji prefix (🔴 bug/security/data loss/crash, 🟡 risk/fragile/regression, 🔵 nit, ❓ genuine question), `file:line`, why, fix. Mark each [verified] (traced in code) or [suspected].
 With a base ref in scope: also mark a finding [pre-existing] when its defect already exists at the base ref and the change neither introduces, newly reaches, nor worsens it.
 No praise, no codebase summary. If a step could not run (tool missing, blocked), say so in one line.
