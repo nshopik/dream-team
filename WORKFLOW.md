@@ -37,8 +37,9 @@ user-approved release.
 - Result: `docs/specs/NNNN-<project>-design.md`, about 1,500 words.
 
 A spec is only for decisions wider than one issue: the v1 design, a cross-cutting change. Work
-that fits one issue gets no spec; a decision made during it is posted on the issue, and written
-into the issue description when it changes the work remaining.
+that fits one issue gets no spec; a decision made during it is posted on the issue and rewrites
+the issue's proposal, or supersedes the issue with a new one when its title or problem no longer
+holds.
 
 ### 1. Spec to milestones
 
@@ -79,7 +80,8 @@ contradicts the spec, adds a component, or needs a lab check. The agent gives it
 offers to file the issue instead of editing. Before filing, it asks you the open questions,
 milestone included, and writes the answers into the issue. An issue it finds during other work,
 such as a dream-fixer run or a review, it files without asking: open questions go in the issue
-as listed items. Smaller changes it makes inline.
+as listed items. It posts a lab or research result for an open issue there as a comment, without
+asking. Smaller changes it makes inline.
 
 ### 3. Issue to MR (the daily loop)
 
