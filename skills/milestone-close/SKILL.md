@@ -102,7 +102,8 @@ Before any other step 5 action:
 
 - At least one numbered proposal changes `CLAUDE.md` (a cut from it or a promotion) → send the
   held report per Report back, and wait for the user's one reply.
-- No such proposal → open the docs MR at once.
+- No such proposal → do not wait for answers; carry on with the rest of step 5 and open the docs
+  MR once its edits are committed.
 - A proposal the user rejects changes nothing; the docs-MR edits still land in the MR.
 
 The approved closes and moves, through the host's tooling skill; the `Evidence:` issue closes with
