@@ -12,7 +12,8 @@ argument-hint: <milestone id or title>
 Read-only until step 5, except step 2's approved gap issues. The user decides every close, move
 and filed issue.
 
-- An edit that lands in the docs MR needs no approval: the user reviews it there.
+- An edit that lands in the docs MR needs no approval: the user reviews it there, once step 5
+  opens the MR.
 - Ask only for what leaves the docs MR or changes agent rules: issues, closes, moves, milestones,
   `CLAUDE.md` and `CLAUDE.local.md` lines, and a release the project rules do not settle.
 
@@ -97,6 +98,13 @@ Proposals, each approved or rejected by the user:
 
 ## 5. Apply
 
+Before any other step 5 action:
+
+- At least one numbered proposal changes `CLAUDE.md` (a cut from it or a promotion) → send the
+  held report per Report back, and wait for the user's one reply.
+- No such proposal → open the docs MR at once.
+- A proposal the user rejects changes nothing; the docs-MR edits still land in the MR.
+
 The approved closes and moves, through the host's tooling skill; the `Evidence:` issue closes with
 the milestone. Step 4's docs-MR edits, the approved `Superseded by` lines, the approved `CLAUDE.md`
 cuts and promotions as one MR;
@@ -119,8 +127,12 @@ Criterion result, issues closed, moved and filed, milestones created, the docs M
 docs fix `docs-editor` reported as `skipped:` or under `gaps:`, the release version and
 its tag, or the tag pending the docs MR's merge, or the declined release.
 
-Step 4's docs-MR edits: one bullet in the report, each edit named in the docs MR description;
-never numbered as proposals.
+A numbered proposal that changes `CLAUDE.md` is unanswered → send only the held report: criterion
+result, step 4's docs-MR edits and the proposals below, with no docs MR link. After step 5 applies
+the user's reply, send the full report above, with the link.
+
+Step 4's docs-MR edits: one bullet in the report, each edit named in the docs MR description, or
+in the bullet in a held report; never numbered as proposals.
 
 Proposals from step 2 or 4:
 

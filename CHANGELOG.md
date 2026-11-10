@@ -41,6 +41,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - The `dream-fixer-loop` gate agent runs only the gate commands and the git commands it reports from, and no longer edits files or debugs a failure itself.
 - The `friction` skill flags a read-only role that edits the tree through Bash, such as `sed -i`, `git checkout <file>` or a redirect outside `/tmp`.
 - The `friction` skill no longer records `ssh`, `git push` or a forge write that only appears inside a heredoc or quoted string in newly scanned runs.
+- `milestone-close` holds the docs MR until the user answers the proposals that change `CLAUDE.md`, so one MR carries the docs edits and the approved lines.
 
 ## [26.10.0] - 2026-10-28
 
