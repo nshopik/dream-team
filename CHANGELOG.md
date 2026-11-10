@@ -10,6 +10,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `scope-issue` cites a doc an issue relies on by its URL or path, at the claim it backs.
 - `setup-dream-team` applies fixes that change no code after one OK, commits its `CLAUDE.md` and repo-doc edits, and files a maintenance issue only for the rest.
 
+### Fixed
+
+- `review-bench`'s `run.sh` no longer loses a run when parallel runs add their worktrees at once, and prints each run that leaves no `stats.txt` as failed.
+
 ## [26.11.0] - 2026-11-10
 
 ### Added
