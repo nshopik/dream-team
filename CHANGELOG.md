@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [26.11.0] - 2026-11-10
+
 ### Added
 
 - `cut-milestones`, `setup-dream-team` and `milestone-close` support version milestones that close at their due date, with open issues moved to the next version, in a project whose `CLAUDE.md` says `Version milestones release in flow mode.`
