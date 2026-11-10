@@ -92,7 +92,7 @@ history; a run that resumes the work reads them too.
 ### Skimming
 
 - Problem holds only what's needed to act. The reader already works on the project.
-- Cite the brief or docs for depth; don't repeat them.
+- Cite the brief or docs for depth by URL or path, at the claim they back; don't repeat them.
 - Problem carries the substance. Longest part.
 - Proposal is the outro.
 
