@@ -146,7 +146,8 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
      the docs MR.
   4. Applies what you approved: moves, one docs MR with `docs-editor`'s drift fixes, the facts
      and the ROADMAP update, milestone closed, the next milestones created, and the release
-     (step 6).
+     (step 6). A proposal that changes `CLAUDE.md` holds the docs MR until you answer the
+     proposals.
 - You: the gap issues, the triage table, the new milestones, the cuts, the promotions and the
   release are your decisions; the docs MR review covers the rest.
 
