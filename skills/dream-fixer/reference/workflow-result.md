@@ -35,6 +35,12 @@
 - **`questions`** — genuine questions reviewers raised, each with its reviewer (`gate`) and
   `file`; they never block and never reach the fixer. Returned on an `ok` result, a `handBack`,
   a `fix` stage failure, or a `gate` stage failure after a fix round.
+- **`preExisting`** — findings on a defect already at the base ref that the change neither
+  introduces, newly reaches nor worsens, each with its reviewer (`gate`) and any `file`; they never
+  block and never reach the fixer. Merge entries for the same defect and skip any defect also in
+  `blocking`, `resolved`, `nitFindings` or `questions`; step 5's adjacent-defect rules apply to
+  the rest, except that an entry with severity `question` goes in the report like a `questions`
+  entry. Returned wherever `questions` is.
 - **`assumptions`** — anything the implementer had to invent.
 - **`redEvidence`** — the new test's failing output from before the fix; the test reviewer checked
   it. Empty on a bug-fix issue means nobody saw the test fail.

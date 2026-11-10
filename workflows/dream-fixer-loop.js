@@ -34,6 +34,7 @@ if (!ISSUE || !BRANCH || !BASE || !GATE_COMMANDS.length) {
 // Schemas
 // ---------------------------------------------------------------------------
 const FRICTION = { type: 'array', items: { type: 'string' }, description: 'instructions you could not follow, tools you lacked, and workarounds you used; omit when none' }
+const PRE_EXISTING = 'true only when the defect already exists at the base ref and the change neither introduces, newly reaches nor worsens it'
 
 const IMPL_SCHEMA = {
   type: 'object',
@@ -111,6 +112,7 @@ const VERDICT_SCHEMA = {
           severity: { type: 'string', enum: ['critical', 'important', 'nit', 'question'] },
           description: { type: 'string' },
           file: { type: 'string' },
+          preExisting: { type: 'boolean', description: PRE_EXISTING },
         },
       },
     },
@@ -273,7 +275,7 @@ const READ_DIFF = `Read the branch diff with \`git diff ${BASE}..HEAD\`.`
 
 const REVIEW_RULES = [
   READ_ONLY,
-  'Judge only lines this diff changed. A pre-existing problem outside the diff is not a finding here.',
+  `Set preExisting ${PRE_EXISTING}: such a finding keeps its severity and never blocks the MR. A defect the change introduces, newly reaches or worsens is a normal finding, rated and blocking like any other.`,
   'Rate each finding critical, important, nit or question. Critical and important block the MR. A nit is fixed only if cheap and is never re-reviewed, so do not inflate severity to force action.',
   'Rate a genuine question, not a suggestion, as question: it goes to the user and never blocks the MR.',
 ].join('\n')
@@ -397,14 +399,14 @@ function externalPrompt() {
   ].join('\n')
 }
 
-const fixDiffRule = (sha) => `Review the fix diff, \`git diff ${sha}..HEAD\`: raise a new finding only on a line it adds or changes, and none elsewhere — a fresh sweep each round makes this loop never converge.`
+const fixDiffRule = (sha) => `Review the fix diff, \`git diff ${sha}..HEAD\`: raise a new finding only on a line it adds or changes or on a defect it newly reaches or worsens, and none elsewhere — a fresh sweep each round makes this loop never converge.`
 
 function reReviewPrompt(prev, fix, sha, round) {
   return [
     CONTEXT,
     '',
     `Fix round ${round}. You reviewed this branch and did not pass it. Your findings were:`,
-    prev.findings.map((f) => `- [${f.severity}] ${f.description}`).join('\n'),
+    prev.findings.filter((f) => !f.preExisting).map((f) => `- [${f.severity}] ${f.description}`).join('\n'),
     '',
     'The fixer reports:',
     fix.summary,
@@ -483,7 +485,7 @@ function nitFixPrompt(nits) {
 // Run
 // ---------------------------------------------------------------------------
 const BLOCKING = new Set(['critical', 'important'])
-const blockingOf = (v) => v.findings.filter((f) => BLOCKING.has(f.severity))
+const blockingOf = (v) => v.findings.filter((f) => BLOCKING.has(f.severity) && !f.preExisting)
 // A reviewer that died has judged nothing: it is re-dispatched with its full
 // prompt, and never handed to the fixer as a finding.
 const deadReviewer = (kind) => ({ dead: true, summary: `${kind} reviewer produced no verdict`, findings: [] })
@@ -582,11 +584,12 @@ phase('Review')
 const state = new Map()
 const initial = await parallel(gates.map((g) => () =>
   agentR(g.prompt(), { label: `review:${g.key}`, phase: 'Review', schema: g.schema || VERDICT_SCHEMA, ...reviewerRoster(g.type) })))
-// Nits and questions are kept as raised: a re-review verdict replaces the
-// gate's state and lists outstanding findings, so it would drop them.
+// Nits, questions and pre-existing findings are kept as raised: a re-review
+// verdict replaces the gate's state and lists outstanding findings, so it would drop them.
 const nits = []
 const questions = []
-const ofSeverity = (v, g, s) => v.findings.filter((f) => f.severity === s).map((f) => ({ ...f, gate: g.key }))
+const preExisting = []
+const ofKind = (v, g, k) => v.findings.filter((f) => (f.preExisting ? 'preExisting' : f.severity) === k).map((f) => ({ ...f, gate: g.key }))
 const record = (g, v) => {
   if (v?.ran === false) {
     MISSING_TYPES.add(g.key)
@@ -595,13 +598,15 @@ const record = (g, v) => {
   }
   state.set(g.key, v || deadReviewer(g.key))
   if (!v) return
-  nits.push(...ofSeverity(v, g, 'nit'))
-  questions.push(...ofSeverity(v, g, 'question'))
+  nits.push(...ofKind(v, g, 'nit'))
+  questions.push(...ofKind(v, g, 'question'))
+  preExisting.push(...ofKind(v, g, 'preExisting'))
 }
 gates.forEach((g, i) => record(g, initial[i]))
 
 const disputes = []
 const resolved = []
+const carried = { disputes, resolved, questions, preExisting }
 const outstanding = () => gates.flatMap((g) => blockingOf(state.get(g.key)).map((f) => ({ ...f, gate: g.key })))
 const deadGates = () => gates.filter((g) => state.get(g.key).dead)
 const handBack = (reason) => ({
@@ -615,9 +620,7 @@ const handBack = (reason) => ({
   untrackedPaths: [...UNTRACKED],
   redEvidence: impl.redEvidence,
   simplify,
-  disputes,
-  resolved,
-  questions,
+  ...carried,
   verdicts: Object.fromEntries(state),
 })
 
@@ -649,15 +652,15 @@ while (true) {
       schema: FIX_ROUND_SCHEMA,
       ...IMPLEMENTER,
     })
-    if (!fix) return { ok: false, stage: 'fix', reason: 'fixer returned no result', blocking, disputes, resolved, questions }
+    if (!fix) return { ok: false, stage: 'fix', reason: 'fixer returned no result', blocking, ...carried }
     if (!fix.committed && !fix.addressed.length && !fix.disputed.length) {
-      return { ok: false, stage: 'fix', reason: `fixer changed nothing and disputed nothing: ${fix.summary}`, blocking, disputes, resolved, questions }
+      return { ok: false, stage: 'fix', reason: `fixer changed nothing and disputed nothing: ${fix.summary}`, blocking, ...carried }
     }
     disputes.push(...fix.disputed.map((d) => ({ ...d, round })))
     nitsGiven += nitsNow.length
     if (fix.nits) { nitFix.addressed.push(...fix.nits.addressed); nitFix.disputed.push(...fix.nits.disputed) }
     const g = await gate(`review-fix round ${round}`, `fix${round}`, false)
-    if (!g.ok) return { ...gateFail(g), blocking, disputes, resolved, questions }
+    if (!g.ok) return { ...gateFail(g), blocking, ...carried }
     verified = g.verify
   }
 
@@ -692,8 +695,9 @@ while (true) {
     const added = { findings: v.added || [] }
     state.set(g.key, { ...v, findings: [...v.findings, ...added.findings] })
     resolved.push(...blockingOf({ findings: v.resolved }).map((f) => ({ ...f, gate: g.key, round })))
-    nits.push(...ofSeverity(added, g, 'nit'))
-    questions.push(...ofSeverity(added, g, 'question'))
+    nits.push(...ofKind(added, g, 'nit'))
+    questions.push(...ofKind(added, g, 'question'))
+    preExisting.push(...ofKind(v, g, 'preExisting'), ...ofKind(added, g, 'preExisting'))
   })
   retry.forEach((g, i) => record(g, again[reReviewed.length + i]))
   // A dead fix-diff review keeps the gate's pass: a full retry is the fresh sweep this loop avoids.
@@ -715,10 +719,10 @@ const nitsLeft = nits.slice(nitsGiven)
 if (nitsLeft.length) {
   phase('Fix')
   const fix = await agentR(nitFixPrompt(nitsLeft), { label: `fix:#${ISSUE}:nits`, phase: 'Fix', schema: FIX_SCHEMA, ...IMPLEMENTER })
-  if (!fix) return { ok: false, stage: 'fix', reason: 'fixer returned no result on the nits', disputes, resolved, questions }
+  if (!fix) return { ok: false, stage: 'fix', reason: 'fixer returned no result on the nits', ...carried }
   if (fix.committed) {
     const g = await gate('the nit fixes', 'nits', false)
-    if (!g.ok) return { ...gateFail(g), disputes, resolved, questions }
+    if (!g.ok) return { ...gateFail(g), ...carried }
     verified = g.verify
   }
   nitFix.addressed.push(...fix.addressed)
@@ -738,9 +742,7 @@ return {
   untrackedPaths: [...UNTRACKED],
   nitFindings: nits,
   nitFix: nits.length ? nitFix : null,
-  questions,
   simplify,
-  disputes,
-  resolved,
+  ...carried,
   summaries: Object.fromEntries(gates.map((g) => [g.key, state.get(g.key).summary])),
 }
