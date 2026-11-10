@@ -60,7 +60,8 @@ Then:
 - **The options are enumerable** — two or three concrete paths, and the user's pick is the only
   thing missing: put them in an **AskUserQuestion** dialog, one option per path, cost in the
   description. Post the answer as a comment on the issue; an answer that changes the work
-  remaining also goes into the description (`scope-issue` Updates). Carry straight on to step 3.
+  remaining goes into the proposal, or into a new issue that supersedes this one when the title
+  or problem no longer holds (`scope-issue` Updates). Carry straight on to step 3.
   Deferring the issue is an option when its tracker state says it is not due yet.
 - **The options are not enumerable** — a missing acceptance criterion, a credential you don't
   have, an intent only the user knows: report what is blocking in prose and stop.

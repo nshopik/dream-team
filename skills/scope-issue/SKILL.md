@@ -123,7 +123,11 @@ history; a run that resumes the work reads them too.
 - Repo docs hold only facts that outlive the issue.
 - Small amendment that leaves the work remaining unchanged → a new comment; leave the
   description as written.
-- A finding changes the work remaining → rewrite the description, then comment why it changed.
+- Finding with no decision on direction yet → a new comment; leave the description as written.
+- Direction decided, title and problem paragraph still hold → rewrite the proposal and its `Done
+  when` paragraph, then comment why it changed with the replaced proposal quoted.
+- Direction decided, title or problem paragraph no longer holds → file a new issue that links the
+  findings comment, then close this one with a `Superseded by #<n>` comment.
 - Description is the current spec. Comments are the log.
 
 ### Length

@@ -78,6 +78,7 @@ adds a component, or needs a lab check.
   AskUserQuestion before filing; write the answers into the issue.
 - Issue found during other work (dream-fixer, a review, a lab check) → do not prompt; list the
   open questions as open items in the proposal, or file a `Research:` issue.
+- Lab or research result for an open issue → post it as a comment on that issue; do not prompt.
 - Smaller → make the change inline.
 </issue_sized>"""
 
