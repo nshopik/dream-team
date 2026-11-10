@@ -7,11 +7,12 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Changed
 
-- `scope-issue` cites a doc an issue relies on by its URL or path, at the claim it backs.
+- `scope-issue` cites a doc the forge's readers can open by its URL or path, at the claim it backs.
 - `setup-dream-team` applies fixes that change no code after one OK, commits its `CLAUDE.md` and repo-doc edits, and files a maintenance issue only for the rest.
 
 ### Fixed
 
+- `scope-issue` leaves out chat threads, shared docs, local paths and internal hosts the forge's readers cannot open, and the names of customers and people outside the project.
 - `review-bench`'s `run.sh` no longer loses a run when parallel runs add their worktrees at once, and prints each run that leaves no `stats.txt` as failed.
 
 ## [26.11.0] - 2026-11-10
