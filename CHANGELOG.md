@@ -7,6 +7,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Changed
 
+- `scope-issue` cites a doc an issue relies on by its URL or path, at the claim it backs.
 - `setup-dream-team` applies fixes that change no code after one OK, commits its `CLAUDE.md` and repo-doc edits, and files a maintenance issue only for the rest.
 
 ## [26.11.0] - 2026-11-10
