@@ -215,13 +215,13 @@ Docs drift, once the result is `ok`:
 - 🔵 findings → treat as nits.
 - The editor's edits are step-5 changes: step 6 commits and gates them.
 
-Adjacent defects — anything found outside the diff:
+Adjacent defects — anything found outside the diff or returned in `preExisting`:
 
 - A small fix with no open decision, no lab check and no design choice (docs drift, a config
   string, under ~50 lines) → commit it on the branch as its own change, never a `fixup!`.
-- Any other research finding, review-panel survivor outside the diff, bug hit running evals or
-  `gateCommands`, or spec consequence nobody owns → file it as an issue before the session
-  ends, per the repo's own rules.
+- Any other research finding, review-panel survivor outside the diff or in `preExisting`, bug hit
+  running evals or `gateCommands`, or spec consequence nobody owns → file it as an issue before the
+  session ends, per the repo's own rules.
 - The finding is a nit → file nothing.
 - Filed → never leave the finding in the MR description or the chat summary.
 - Filing fails or yields no issue link → name the defect in the report as unfiled, with the reason.

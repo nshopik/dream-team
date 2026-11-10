@@ -53,6 +53,8 @@ const loaded = (findings, net) => ({ skillLoaded: true, findings, net })
 const dispute = { finding: 'delete cut', reason: 'main() calls it' }
 
 const leanSimplify = { net: 0, applied: [], disputed: [], unhandled: 0 }
+const pre = { severity: 'important', description: 'shutdown leaks the lock', file: 'lock.js', preExisting: true }
+const worsened = { severity: 'important', description: 'the new retry loop now reaches the unguarded close', file: 'lock.js', preExisting: false }
 const rows = [
   { name: 'skill missing', review: { skillLoaded: false, findings: [], net: 0 },
     ok: true, simplify: null, degraded: ['ponytail:ponytail-review'], fixRan: false },
@@ -80,6 +82,9 @@ const rows = [
     ok: true, simplify: null, degraded: ['ponytail:ponytail-review'], fixRan: false },
   { name: 'agent type fails to dispatch', review: loaded([], 0), opts: { throwFor: ['dream-team:sre-engineer'] },
     ok: true, simplify: leanSimplify, degraded: ['dream-team:sre-engineer'], fixRan: false },
+  { name: 'fix stage failure carries pre-existing findings', review: loaded([], 0),
+    opts: { domainRuns: [{ summary: '', findings: [worsened, pre] }], fixes: [{ committed: false, addressed: [], disputed: [], summary: 'no-op' }] },
+    ok: false, stage: 'fix', fixRan: false, preExisting: [{ ...pre, gate: 'domain' }] },
 ]
 
 for (const row of rows) {
@@ -93,6 +98,7 @@ for (const row of rows) {
   } else {
     assert.equal(result.stage, row.stage, row.name)
     if (row.untracked) assert.deepEqual(result.untrackedPaths, row.untracked, `${row.name}: untrackedPaths`)
+    if (row.preExisting) assert.deepEqual(result.preExisting, row.preExisting, `${row.name}: preExisting`)
   }
   console.log(`PASS ${row.name}`)
 }
@@ -140,6 +146,11 @@ const promptRows = [
   { name: 'domain lens cites its source', label: 'review:domain', rule: 'cite what you read — file and line' },
   { name: 'retry after a null result checks earlier commits', label: 'impl:#1', rule: 'may already have committed part of it', opts: { nullOnce: ['impl:#1'] } },
   { name: 'lens may rate a question', label: 'review:dream-team:architect-reviewer', rule: 'as question: it goes to the user and never blocks the MR' },
+  { name: 'lens marks only a defect the change leaves alone as pre-existing', label: 'review:dream-team:architect-reviewer', rule: 'the change neither introduces, newly reaches nor worsens it', preExistingIn: 'findings' },
+  { name: 'lens rates a defect the change worsens like any other', label: 'review:dream-team:architect-reviewer', rule: 'is a normal finding, rated and blocking like any other' },
+  { name: 'external reviewer may mark a finding pre-existing', label: 'review:external', rule: 'the change neither introduces, newly reaches nor worsens it', opts: extOnce(), preExistingIn: 'findings' },
+  { name: 'fix-diff review raises a defect the fix newly reaches', label: 'fixdiff:dream-team:sre-engineer:r1', rule: 'or on a defect it newly reaches or worsens', opts: extOnce(), preExistingIn: 'findings' },
+  { name: 're-review raises a defect the fix newly reaches', label: 're-review:external:r1', rule: 'or on a defect it newly reaches or worsens', opts: extOnce(), preExistingIn: 'added' },
   { name: 'lens reads the diff through git', label: 'review:dream-team:sre-engineer', rule: '`git diff abc1234..HEAD`' },
   { name: 'domain lens reads the diff through git', label: 'review:domain', rule: '`git diff abc1234..HEAD`' },
   { name: 'dead re-review is retried against the fix it missed', label: 're-review:external:r2', rule: `Disputed: ${dispute.finding}`, opts: deadDispute() },
@@ -164,13 +175,14 @@ for (const row of promptRows) {
   assert.equal(result.ok, true, row.name)
   assert.ok(prompts[row.label].includes(row.rule), row.name)
   if ('schemaNits' in row) assert.equal('nits' in schemas[row.label].properties, row.schemaNits, `${row.name}: nits in schema`)
+  if (row.preExistingIn) assert.ok('preExisting' in schemas[row.label].properties[row.preExistingIn].items.properties, `${row.name}: preExisting in schema`)
   console.log(`PASS ${row.name}`)
 }
 
 const question = { severity: 'question', description: 'should a timeout count as a retry?', file: 'retry.js' }
-const asks = () => ({ summary: '', findings: [question] })
 const nit = { severity: 'nit', description: 'rename n to retries', file: 'retry.js' }
 const nitFixed = { committed: true, addressed: [nit.description], disputed: [], summary: '' }
+const verdict = (...findings) => ({ summary: '', findings })
 const externalRows = [
   { name: 'external review unset', opts: {},
     reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [] },
@@ -187,7 +199,7 @@ const externalRows = [
     reviewer: true, agents: 4, degraded: [], fixRounds: 2, resolved: [{ ...extFinding, gate: 'external', round: 2 }], prompts: ['review:external', 'review:external:retry1'] },
   { name: 'dead re-review of a dispute is re-reviewed, not handed back or re-fixed', opts: deadDispute(),
     reviewer: true, agents: 4, degraded: [], fixRounds: 2, resolved: [], prompts: ['review:external'] },
-  { name: 'reviewer question returned, not fixed', opts: { domainRuns: [asks()] },
+  { name: 'reviewer question returned, not fixed', opts: { domainRuns: [verdict(question)] },
     reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [], questions: [{ ...question, gate: 'domain' }] },
   { name: 'nit fixed once after review, not re-reviewed', opts: { domainRuns: [{ summary: '', findings: [nit] }], fixes: [nitFixed] },
     reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [], nitFix: { addressed: [nit.description], disputed: [] },
@@ -204,6 +216,23 @@ const externalRows = [
     nitFix: { addressed: [], disputed: [] }, fixdiff: ['fixdiff:domain:r1', 'fixdiff:external:r2'] },
   { name: 'dead fix-diff review keeps the gate\'s pass', opts: { ...extOnce(), nullOnce: ['fixdiff:domain:r1'] },
     reviewer: true, agents: 2, degraded: [], fixRounds: 1, resolved: [{ ...extFinding, gate: 'external', round: 1 }], prompts: ['review:external'] },
+  { name: 'pre-existing finding returned without a fix round', opts: { domainRuns: [verdict(pre)] },
+    reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [], preExisting: [{ ...pre, gate: 'domain' }] },
+  { name: 'pre-existing nit and question reach neither the nit fixer nor questions',
+    opts: { domainRuns: [verdict({ ...nit, preExisting: true }, { ...question, preExisting: true })] },
+    reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [],
+    preExisting: [{ ...nit, preExisting: true, gate: 'domain' }, { ...question, preExisting: true, gate: 'domain' }] },
+  { name: 'pre-existing finding survives the re-review that replaces its gate',
+    opts: { domainRuns: [verdict(worsened, pre), { summary: '', findings: [], resolved: [worsened] }] },
+    reviewer: false, agents: 0, degraded: [], fixRounds: 1, resolved: [{ ...worsened, gate: 'domain', round: 1 }], prompts: [], preExisting: [{ ...pre, gate: 'domain' }] },
+  { name: 'pre-existing finding added on a re-review is returned, not fixed',
+    opts: { domainRuns: [verdict(worsened), { summary: '', findings: [], resolved: [worsened], added: [pre] }] },
+    reviewer: false, agents: 0, degraded: [], fixRounds: 1, resolved: [{ ...worsened, gate: 'domain', round: 1 }], prompts: [], preExisting: [{ ...pre, gate: 'domain' }] },
+  { name: 'prior finding a re-review re-marks pre-existing is returned, not lost',
+    opts: { domainRuns: [verdict(worsened), { summary: '', findings: [pre], resolved: [] }] },
+    reviewer: false, agents: 0, degraded: [], fixRounds: 1, resolved: [], prompts: [], preExisting: [{ ...pre, gate: 'domain' }] },
+  { name: 'pre-existing finding from a fix-diff review is returned, not fixed', opts: { ...extOnce(), domainRuns: [verdict(), verdict(pre)] },
+    reviewer: true, agents: 2, degraded: [], fixRounds: 1, resolved: [{ ...extFinding, gate: 'external', round: 1 }], prompts: ['review:external'], preExisting: [{ ...pre, gate: 'domain' }] },
 ]
 
 for (const row of externalRows) {
@@ -216,6 +245,8 @@ for (const row of externalRows) {
   assert.equal(result.fixRounds, row.fixRounds, row.name)
   assert.deepEqual(result.resolved, row.resolved, row.name)
   assert.deepEqual(result.questions, row.questions || [], `${row.name}: questions`)
+  assert.deepEqual(result.preExisting, row.preExisting || [], `${row.name}: preExisting`)
+  for (const f of row.preExisting || []) assert.ok(!Object.keys(prompts).some((l) => /^(fix|re-review):/.test(l) && prompts[l].includes(f.description)), `${row.name}: pre-existing finding kept out of the fix loop`)
   assert.deepEqual(result.nitFix, row.nitFix || null, `${row.name}: nitFix`)
   assert.deepEqual(labels.filter((l) => l.endsWith(':nits')), row.labels || [], `${row.name}: nit pass`)
   assert.ok(!labels.some((l) => l.startsWith('re-review:')) || row.fixRounds, `${row.name}: no re-review`)
@@ -230,8 +261,8 @@ const handBackRows = [
   { name: 'dead re-review keeps its findings and is re-reviewed', opts: { externalRuns: [{ ran: true, summary: '', findings: [extFinding] }] },
     untracked: [], dead: ['external'] },
   { name: 'held dispute hands back', opts: { externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, stuck],
-    domainRuns: [asks()], fixes: [{ committed: false, addressed: [], disputed: [dispute], summary: '' }] }, untracked: [], dead: [],
-    questions: [{ ...question, gate: 'domain' }] },
+    domainRuns: [verdict(question, pre)], fixes: [{ committed: false, addressed: [], disputed: [dispute], summary: '' }] }, untracked: [], dead: [],
+    questions: [{ ...question, gate: 'domain' }], preExisting: [{ ...pre, gate: 'domain' }] },
 ]
 
 for (const row of handBackRows) {
@@ -241,6 +272,7 @@ for (const row of handBackRows) {
   assert.deepEqual(result.deadReviewers, row.dead, `${row.name}: deadReviewers`)
   assert.deepEqual(result.untrackedPaths, row.untracked, `${row.name}: untrackedPaths`)
   assert.deepEqual(result.questions, row.questions || [], `${row.name}: questions`)
+  assert.deepEqual(result.preExisting, row.preExisting || [], `${row.name}: preExisting`)
   assert.ok(!labels.some((l) => l.startsWith('review:external:retry')), `${row.name}: no full-review retry`)
   console.log(`PASS ${row.name}`)
 }

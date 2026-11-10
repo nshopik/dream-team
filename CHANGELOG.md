@@ -22,7 +22,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `dream-fixer` commits a small fix, up to about 50 lines, for a defect found outside the diff on the branch as its own commit, and files an issue only for a defect that needs a decision, a lab check or a design choice.
 - `dream-fixer` tells the user the rough time to completion before it dispatches lab work.
 - `dream-fixer-loop` passes reviewer nits to the fixer, in a fix round or one pass after review, and the fixer fixes the cheap ones without a re-review.
-- `dream-fixer-loop` has each live reviewer review the diff of each fix round that commits, raising new findings only on lines that diff adds or changes.
+- `dream-fixer-loop` has each live reviewer review the diff of each fix round that commits, raising new findings only on lines that diff adds or changes or on defects it newly reaches or worsens.
 - `dream-fixer` works on each issue in its own git worktree under `.claude/worktrees/`, leaving the main checkout on its branch, and removes the worktree once the MR merges or closes.
 - `milestone-close` puts drift fixes, contributor facts, ROADMAP status, backed spec notes and a release a project rule sets straight into the docs MR, and asks approval only for issues, milestones, `CLAUDE.md` and `CLAUDE.local.md` changes and an unsettled release.
 - `dream-fixer` posts on the issue the triage answer, its settled disputes and, when it hands a branch back, the branch, open findings, assumptions, questions and lab numbers.
@@ -37,6 +37,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - In a repo with an upstream remote, the context hook tells the agent to still load `scope-commit` and `scope-mr`, and those skills let the upstream subject format and PR template win over their own.
 - The body-cap hook measures a `glab api` call on an MR only when it sends a `description=` field or `--input`, so a read piped into a heredoc script is no longer denied.
 - The `review-bench` score table shows a row's prefix as its reviewer when another row has the same reviewer and model, such as two reviewers whose prompts start with the same word.
+- `dream-fixer-loop` reviewers report a defect the change newly reaches or worsens as a normal finding, and return a pre-existing defect as a non-blocking `preExisting` finding instead of dropping it.
 - The `dream-fixer-loop` gate agent runs only the gate commands and the git commands it reports from, and no longer edits files or debugs a failure itself.
 - The `friction` skill flags a read-only role that edits the tree through Bash, such as `sed -i`, `git checkout <file>` or a redirect outside `/tmp`.
 - The `friction` skill no longer records `ssh`, `git push` or a forge write that only appears inside a heredoc or quoted string in newly scanned runs.
