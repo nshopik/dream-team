@@ -7,6 +7,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Changed
 
+- `qa-review` tells each lens to report every defect it finds, including uncertain or low-severity ones.
 - `scope-issue` cites a doc the forge's readers can open by its URL or path, at the claim it backs.
 - `scope-issue` comments a finding while its direction is open, rewrites only the proposal once it is decided, and supersedes the issue with a new one when the title or problem no longer holds.
 - A lab or research result for an open issue is posted on it as a comment without asking.
