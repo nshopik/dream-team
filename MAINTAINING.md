@@ -11,8 +11,9 @@ Skills:
 - `dream-fixer`: one issue to one MR, or to a findings comment on a research
   issue; research, light and full tiers; stops on an open blocker; on a `Meta:`
   issue, works one open unblocked child.
-- `setup-dream-team`: checks a project against the flow, fixes the mechanical
-  failures directly after one confirm, files one maintenance issue for the other failing checks.
+- `setup-dream-team`: checks a project against the flow, applies fixes that change no code
+  after one confirm and commits its doc edits, files one maintenance issue for the other failing
+  checks.
 - `cut-milestones`: milestones from a spec, one exit gate each, as ROADMAP rows with a
   dependency graph, created in the tracker once ready; or one `YY.MM` version milestone for a
   release.
@@ -141,9 +142,11 @@ Planning stays explicit, at issue size, because you review every plan.
 - A parked issue has no milestone and the waiting or blocked label, not a `Future` milestone: a
   milestone with no exit gate fails the naming and exit checks and never closes. No
   milestone and no `workflow::` label stays the untriaged state the setup check flags.
-- `setup-dream-team` files its remaining failing checks as one maintenance issue, not one issue
-  per check: they are small tracker and doc edits, and one issue each added a branch, an MR and a
-  `dream-fixer` run per edit.
+- `setup-dream-team` applies the fix for a failing check after one confirm when that fix changes no
+  code and the draft can state it, since a filed issue for one label cost a milestone choice and a
+  `dream-fixer` run. It files the
+  remaining checks as one maintenance issue, not one issue per check: one issue each added a
+  branch, an MR and a `dream-fixer` run per edit.
 - Issues are the log, docs the reference: a fact the code and paths don't show has one reference
   doc, updated in the MR that changes it. One large spec went stale and hard to skim; a closed
   issue is not a place anyone looks things up.

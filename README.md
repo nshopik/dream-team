@@ -26,7 +26,8 @@ walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
 - **[dream-fixer](skills/dream-fixer/SKILL.md)**: takes one tracker issue to an open MR/PR via the
   `dream-fixer-loop` workflow.
 - **[setup-dream-team](skills/setup-dream-team/SKILL.md)**: checks an existing project against the
-  flow, fixes the mechanical failures directly and files one issue for the rest.
+  flow, applies fixes that change no code after one OK, commits its doc edits and files one issue
+  for the rest.
 - **[scope-spec](skills/scope-spec/SKILL.md)**: the project spec in `docs/specs/`, written from its
   template.
 - **[cut-milestones](skills/cut-milestones/SKILL.md)**: drafts milestones from a spec, one exit gate

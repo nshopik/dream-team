@@ -1,17 +1,18 @@
 ---
 name: setup-dream-team
 description: >-
-  Checks a project against the dream-team flow, fixes mechanical failures directly and files one
-  maintenance issue for the other failing checks. Not for working an issue (use dream-fixer) or
-  closing a milestone (use milestone-close).
+  Checks a project against the dream-team flow, applies fixes that change no code after one
+  OK, commits its doc edits and files one maintenance issue for the other failing checks. Use when
+  the user asks to set up, audit or align a project with the dream-team flow. Not for working an
+  issue (use dream-fixer) or closing a milestone (use milestone-close).
 disable-model-invocation: true
 ---
 
 # setup-dream-team
 
 Bringing a project into line is a program, not a change. This skill audits, makes the
-**Direct fixes** below after one confirm, and files one issue for the rest. It changes no code and
-no docs besides `CLAUDE.md`; the filed issue goes through `dream-fixer`.
+**Direct fixes** below after one confirm, commits its doc edits and files one issue for the rest.
+It changes no code; the filed issue goes through `dream-fixer`.
 
 ## Checks
 
@@ -96,7 +97,12 @@ Values from GitLab's label-picker palette; one colour per `type::` value, one fo
   blocker.
 - An open issue in a milestone carries the waiting label without an open milestone dependency,
   or lacks it with one → add or remove the label.
-- Any other failing check → an item in the maintenance issue (step 13).
+- The check that every open issue runs problem, proposal fails → an item in the maintenance issue
+  (step 13), never a rewrite.
+- Any other failing check whose fix changes no code and the draft can state, tracker edits and
+  repo docs included → a direct fix, shown in the step 7 draft.
+- A failing check that needs a code change, or a decision the draft cannot state such as a missing
+  exit criterion → an item in the maintenance issue (step 13).
 
 ## Steps
 
@@ -106,17 +112,20 @@ Values from GitLab's label-picker palette; one colour per `type::` value, one fo
 4. Report one line per check to the user before changing or filing anything.
 5. All checks pass → say the project is aligned and stop.
 6. No direct fix applies → go to step 12.
-7. Show one combined draft of every direct fix: the `CLAUDE.md` diff, the labels to create or recolour, the
-   waiting labels to add or remove per issue, and each milestone description and issue body
-   before and after.
+7. Show one combined draft of every direct fix: the `CLAUDE.md` and repo-doc diffs, the labels to
+   create or recolour, the labels and milestone to change per issue, each milestone title,
+   milestone description and issue body before and after, and any issue or milestone to create.
 8. Ask for one OK on the draft; a direct fix the user declines becomes an item in the
    maintenance issue.
-9. Write the `CLAUDE.md` edit and leave it uncommitted.
+9. Any approved `CLAUDE.md` or repo-doc edit → write them and commit only those files, in one
+   commit per `scope-commit`, on the current branch, not pushed.
+   - On `main` or `master` with a spec or design doc among those edits → run
+     `git checkout -b <topic>` first and name the branch in the report.
 10. Make the tracker changes through the host's tooling skill.
-11. No other check fails → report the fixes and the uncommitted `CLAUDE.md`, and stop.
+11. No failing check is left for the maintenance issue → report the fixes and any commit, and
+    stop.
 12. Ask which milestone takes the maintenance issue, suggesting one.
 13. File one `type::maintenance` issue per `scope-issue`, in that milestone, with one item per
     remaining failing check.
 14. A check that fails on many items → one item listing them.
-15. Report the fixes, the uncommitted `CLAUDE.md` and the filed issue. It is worked through
-    `dream-fixer`.
+15. Report the fixes, any commit and the filed issue. It is worked through `dream-fixer`.
