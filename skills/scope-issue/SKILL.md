@@ -92,7 +92,8 @@ history; a run that resumes the work reads them too.
 ### Skimming
 
 - Problem holds only what's needed to act. The reader already works on the project.
-- Cite the brief or docs for depth by URL or path, at the claim they back; don't repeat them.
+- Cite a brief or doc the target forge's readers can open by URL or path, at the claim it backs;
+  don't repeat it.
 - Problem carries the substance. Longest part.
 - Proposal is the outro.
 
@@ -111,10 +112,10 @@ history; a run that resumes the work reads them too.
 - User-facing name (flag, config key, metric, exit code, error string) → no limit.
 - Code name (function, type, field — own code or library) → at most three backticked
   occurrences in the whole text.
-- Detail that locates a site or person (city, address, coordinates) → leave it out unless the
-  work depends on it.
-- Issue, MR or repo the target forge's readers cannot open → describe it in plain words, or
-  drop it.
+- Detail that locates a site or names a customer or person outside the project (city, address,
+  coordinates, company, contact) → leave it out unless the work depends on it.
+- Issue, MR, repo, link or path the target forge's readers cannot open (chat thread, shared doc,
+  local file, internal host) → describe it in plain words, or drop it.
 
 ### Updates
 
