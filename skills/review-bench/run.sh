@@ -43,7 +43,7 @@ git -C "$REPO" worktree add -q --detach "$WT" "$HEAD_REF" || exit
 # Each run gets its own worktree: Bash can still change files or leave a CLAUDE.local.md that other
 # runs would read.
 run() {
-  local d=$OUT/$1 w=$OUT/$1/repo s rc x
+  local d=$OUT/$1 w=$OUT/$1/$1 s rc x
   [ -e "$d/stats.txt" ] && return
   rm -rf "$d" && mkdir -p "$d" || return
   git -C "$REPO" worktree add -qf --detach "$w" "$HEAD_REF" || return
@@ -65,6 +65,9 @@ run() {
 }
 export -f run
 printf '%s\0' "${jobs[@]}" | xargs -0 -n6 -P"${P:-1}" bash -c 'run "$@"' _
+for d in "$OUT"/*/; do
+  [ -e "$d/stats.txt" ] || echo "$(basename "$d"): failed, no stats.txt" >&2
+done
 
 grade() {
   local name=$1 d=$OUT/$1 allow='' mode

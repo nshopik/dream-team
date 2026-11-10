@@ -5,6 +5,7 @@ Usage: python3 test_run.py
 """
 import json
 import os
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path
@@ -42,7 +43,7 @@ sid = str(uuid.uuid4())
 t = Path(os.environ["CLAUDE_CONFIG_DIR"]) / "projects/p" / f"{sid}.jsonl"
 t.parent.mkdir(parents=True, exist_ok=True)
 t.write_text(json.dumps({"type": "assistant", "message": {"content": [{"type": "text", "text": "x"}]}}) + "\n")
-if os.getcwd().endswith("-r2/repo"):
+if os.getcwd().endswith("-r2"):
     print(json.dumps({"session_id": sid, "subtype": "error_max_turns", "is_error": True}))
     sys.exit(1)
 print(json.dumps({"session_id": sid, "result": "x", "total_cost_usd": 1.5}))
@@ -74,7 +75,7 @@ assert out.returncode == 0, out.stderr
 log = [json.loads(line) for line in (TMP / "log").read_text().splitlines()]
 runs = sorted((m for m in log if "argv" in m), key=lambda m: m["cwd"])
 graders = [m for m in log if "grader" in m]
-wts = [str(OUT / r / "repo") for r in RUNS]
+wts = [str(OUT / r / r) for r in RUNS]
 
 for case, ok in [
     ("each run passes its line's prompt with {base} and {head} expanded, model and effort, else "
@@ -90,7 +91,8 @@ for case, ok in [
         "Write(//tmp/**)" in m["argv"] and {"Edit", f"Write(/{w}/**)", "Bash(git commit:*)",
                                              "Bash(git push:*)"} <= set(m["argv"])
         for m, w in zip(runs, wts))),
-    ("each run works in its own clean worktree at head", [m["cwd"] for m in runs] == wts
+    ("each run works in its own clean worktree at head, named after the run",
+     [m["cwd"] for m in runs] == wts
      and all(m["a.go"] == "package a\n" for m in runs)),
     ("a leaked CLAUDE.local.md moves into the run directory", all(
         (OUT / r / "leaked.CLAUDE.local.md").exists() for r in RUNS)),
@@ -134,6 +136,18 @@ assert len(regrades) == 2 and all(not any(a.startswith("Edit(") for a in m["grad
 print("PASS a rerun skips finished runs; a frozen ledger grades with no ledger edits")
 assert overlap(regrades), regrades
 print("PASS a frozen ledger grades runs in parallel under P=2")
+
+# A run whose worktree add fails is printed as failed.
+GITBIN = TMP / "gitbin"
+GITBIN.mkdir()
+(GITBIN / "git").write_text(
+    f'#!/bin/sh\ncase "$*" in *"worktree add"*vllm-r2*) exit 1 ;; esac\nexec {shutil.which("git")} "$@"\n')
+(GITBIN / "git").chmod(0o755)
+shutil.rmtree(OUT / "vllm-r2")
+out = subprocess.run(["bash", HERE / "run.sh", REPO, "main", "feat", TMP / "reviewers.txt", OUT],
+                     env={**env, "PATH": f"{GITBIN}:{env['PATH']}"}, capture_output=True, text=True)
+assert "vllm-r2: failed, no stats.txt" in out.stderr, out
+print("PASS a run that leaves no stats.txt is printed as failed")
 
 # A bad reviewers file fails before any run starts and leaves the output directory alone.
 (TMP / "kept").mkdir()
