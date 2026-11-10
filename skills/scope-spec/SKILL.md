@@ -15,6 +15,7 @@ disable-model-invocation: true
   settles.
 - A question the source leaves open → ask it with AskUserQuestion before writing; never guess.
 - Write the answers into the spec.
+- A Decision or Design point settled in an issue, MR or comment → end it with a link to it.
 - A question the user cannot answer yet (needs research, a lab run, someone else) → an
   `## Open items` entry.
 - Work that fits one issue → no spec; write the decision into the issue with `scope-issue`.

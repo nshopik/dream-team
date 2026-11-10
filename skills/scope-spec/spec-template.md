@@ -7,6 +7,9 @@ A spec is a high-level overview of the project, written as bullets of facts. Per
 lives in issues, topic docs and decision records. An empty section is deleted, never filled
 with "N/A" or "None".
 
+A Decision or Design point settled in an issue, MR or comment ends with a link to it, such as
+"(decided in #12)"; one settled only in the spec chat has no link and gets no issue.
+
 ## Context
 
 What the project is, what it replaces or starts from, and what is wrong with that today. The
