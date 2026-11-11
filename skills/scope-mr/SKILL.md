@@ -87,7 +87,7 @@ Reviewer has the diff open and ten minutes. They read code, not your session.
 - Restatements of a commit body, except its why, how, or root cause.
 - A single-commit MR may use that commit's body as the description.
 - A sentence the title already says: "this adds / documents / fixes X".
-- Verification logs, test counts, before/after measurements.
+- Verification logs, test counts.
 - Background already on the issue → link it, don't repeat it.
 - Addressing the reader.
 - Narrating your order of work.
