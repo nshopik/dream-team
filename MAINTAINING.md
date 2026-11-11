@@ -19,7 +19,8 @@ Skills:
   release.
 - `milestone-close`: exit check with gap issues, triage, docs check, next ready milestones, facts
   sweep, `CLAUDE.md` cuts and `CLAUDE.local.md` promotions, release offer.
-- `ship-it`: a release of main, milestone or not: version bump, CHANGELOG move, tag offer.
+- `ship-it`: a release of main, milestone or not: version bump, CHANGELOG move, tag (pushed when the
+  version is the argument, else offered).
 - `scope-commit`, `scope-mr`: commit and MR text.
 - `scope-spec`: the project spec and its template.
 - `qa-review`: parallel read-only design, reliability, test-coverage and domain lenses,

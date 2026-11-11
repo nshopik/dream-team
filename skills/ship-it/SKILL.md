@@ -4,8 +4,10 @@ description: >-
   Releases main, with or without a milestone: reads the commits and CHANGELOG `[Unreleased]`
   entries since the last release, proposes the next version in the last release's scheme (`0.x`,
   CalVer `YY.MM.MICRO` or SemVer), bumps each version file and moves the entries under the new
-  version in one MR, then offers a tag on its merge commit. Use when the user asks to "cut a
-  release", "release main", "ship 26.11", "ship it" or "bump the version".
+  version in one MR, then tags its merge commit, asking first unless the version came as its
+  argument.
+  Use when the user asks to "cut a release", "release main", "ship 26.11", "ship it" or "bump the
+  version".
 ---
 
 # ship-it
@@ -23,6 +25,7 @@ description: >-
     the same month, else 0: `v26.11.0` → `26.11.1` in November 2026, `26.12.0` in December.
   - A CalVer month has no leading zero: `27.5.0`, never `27.05.0`.
   - A SemVer version at `1.0` or above → the next minor, unless the user names a CalVer version.
+- A version passed as the skill argument → that version is the release; don't wait for a reply.
 - No version file or no CHANGELOG `[Unreleased]` entries → say so in the proposal; create neither.
 - The project's `CLAUDE.md` or `AGENTS.md` forbids tagging → the **Tag:** line reads
   `none, <that file> forbids tagging`.
@@ -32,8 +35,11 @@ description: >-
 - **Version:** <current> → <next>
 - **Commits:** <n> since <last tag or version commit>
 - **CHANGELOG:** <n> `[Unreleased]` entries move under `[<next>] - <date>`
-- **Tag:** `v<next>` on the MR's merge commit, offered once it merges
+- **Tag:** `v<next>` on the MR's merge commit, <pushed | offered> once it merges
 ```
+
+- Tagging not forbidden → the **Tag:** line reads `pushed` when the version came as the skill
+  argument, else `offered`.
 
 ## 2. Bump
 
@@ -42,5 +48,8 @@ description: >-
 
 ## 3. Tag
 
-- Once that MR merges → offer a `v<version>` tag on its merge commit, unless `CLAUDE.md` or
-  `AGENTS.md` forbids tagging.
+- `CLAUDE.md` or `AGENTS.md` forbids tagging → no tag; this wins over the two lines below.
+- Once that MR merges and the version came as the skill argument → create and push a
+  `v<version>` tag on its merge commit without asking.
+- Once that MR merges and the version came any other way → offer a `v<version>` tag on its merge
+  commit.
