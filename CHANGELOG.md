@@ -13,6 +13,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `scope-issue` comments a finding while its direction is open, rewrites only the proposal once it is decided, and supersedes the issue with a new one when the title or problem no longer holds.
 - A lab or research result for an open issue is posted on it as a comment without asking.
 - `scope-spec` ends each Decision and Design point settled in an issue, MR or comment with a link to it.
+- `ship-it` tags the release's merge commit without asking when the user passes the version as its argument.
 - `setup-dream-team` applies fixes that change no code after one OK, commits its `CLAUDE.md` and repo-doc edits, and files a maintenance issue only for the rest.
 
 ### Removed
