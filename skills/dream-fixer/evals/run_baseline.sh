@@ -125,14 +125,18 @@ if 'order' in c:
     idx = [text.find(s) for s in c['order']]
     res.append((f'order {c["order"]}', -1 not in idx and idx == sorted(idx)))
 # Layout: the assumptions block, **Notes:** when both exist, tight `- **Label:**` bullets, then
-# the `Work on #<n>` line.
+# the `Work on #<n>` line. A table goes under a bold, non-bullet label line.
 bad, in_assumptions, had_assumptions, notes = [], False, False, False
-for l in body[:-1]:
+for i, l in enumerate(body[:-1]):
     if l == '**Assumptions:**':
         in_assumptions = had_assumptions = True; continue
     if in_assumptions and l.startswith('- ') and not l.startswith('- **'):
         continue
     in_assumptions = False
+    if re.match(r'^\*\*[^*]+:\*\*$', l) and body[i + 1].startswith('|'):
+        continue
+    if i and l.startswith('|') and body[i - 1].startswith(('**', '|')):
+        continue
     if l == '**Notes:**' and had_assumptions and not notes:
         notes = True; continue
     if not re.match(r'^- \*\*[^*]+:\*\* .+$', l):
@@ -140,8 +144,10 @@ for l in body[:-1]:
 items = [l for l in body if l.startswith('- **')]
 if had_assumptions and items and not notes:
     bad.append('no **Notes:** line')
-if re.search(r'^- .*\nWork on #', text, re.M):
+if re.search(r'^[-|].*\nWork on #', text, re.M):
     bad.append('no blank line before the Work on line')
+if re.search(r'^- .*\n\*\*[^*]+:\*\*$', text, re.M):
+    bad.append('no blank line before a table label')
 if re.search(r'^- \*\*.*\n\s*\n- \*\*', text, re.M):
     bad.append('blank line between bullets')
 res.append((f'layout {bad[:2]}' if bad else 'layout', not bad))
