@@ -106,6 +106,20 @@ history; a run that resumes the work reads them too.
 - Two or more commands or snippets → one fenced block, a `#` comment per case; never inline code in bullets.
 - One line per paragraph or list item; never hard-wrap.
 
+### Diagram
+
+- Defect or new design is a relationship between 3 or more named modules or paths → one fenced
+  `mermaid` diagram showing it.
+- The diagram replaces the prose it depicts.
+- At most 8 nodes.
+- No styling.
+- Each node names a real file, symbol or output.
+- Never on a `Research:`, `Evidence:` or `Meta:` issue.
+- Syntax: `graph TD`, `id["label"]`, `-->`, `-.->` and `subgraph` only; never `flowchart`,
+  `%%{` or `@{`.
+- Node id is a short alphanumeric word, never `end`.
+- Unsure whether to draw, user asked for the issue in chat → ask the user.
+
 ### Names
 
 - Describe behaviour in plain words; a backticked code name is the exception.
@@ -133,5 +147,5 @@ history; a run that resumes the work reads them too.
 ### Length
 
 - ~250 words the shape. 500 hard cap.
-- Fenced blocks are evidence, not prose; they don't count toward the cap.
+- Fenced blocks are evidence or a diagram, not prose; they don't count toward the cap.
 - Background overgrows first. Cut it first.
