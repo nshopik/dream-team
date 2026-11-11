@@ -1,65 +1,5 @@
 # Maintaining dream-team
 
-## Pieces and where they live
-
-Rules, in each project `CLAUDE.md`: listed in `setup-dream-team`, which checks for them.
-
-Skills:
-
-- `scope-issue`: issue shape, including `Research:`, `Evidence:` and
-  `Meta:` issues and `Blocked by` lines.
-- `dream-fixer`: one issue to one MR, or to a findings comment on a research
-  issue; research, light and full tiers; stops on an open blocker; on a `Meta:`
-  issue, works one open unblocked child.
-- `setup-dream-team`: checks a project against the flow, applies fixes that change no code
-  after one confirm and commits its doc edits, files one maintenance issue for the other failing
-  checks.
-- `cut-milestones`: milestones from a spec, one exit gate each, as ROADMAP rows with a
-  dependency graph, created in the tracker once ready; or one `YY.MM` version milestone for a
-  release.
-- `milestone-close`: exit check with gap issues, triage, docs check, next ready milestones, facts
-  sweep, `CLAUDE.md` cuts and `CLAUDE.local.md` promotions, release offer.
-- `ship-it`: a release of main, milestone or not: version bump, CHANGELOG move, tag (pushed when the
-  version is the argument, else offered).
-- `scope-commit`, `scope-mr`: commit and MR text.
-- `scope-spec`: the project spec and its template.
-- `qa-review`: parallel read-only design, reliability, test-coverage and domain lenses,
-  merged, with an opt-in verify pass.
-- `review-bench`: benchmarks `qa-review`, and any reviewer the user names against it, on one
-  pull request; `run.sh` runs and grades, `score.py` scores against the ledger.
-- `chaos-planning`: gaps in a launch's failure-experiment plan, reported in chat.
-- `friction`: friction patterns seen in two or more past `dream-fixer-loop` runs, each with the
-  deterministic check that would stop it or the prompt line it points to.
-
-Agents:
-
-- `architect-reviewer`: read-only design review of a diff or paths.
-- `docs-editor`: minimal drift fixes to listed pages, or one doc written or revised from a brief.
-- `docs-reviewer`: read-only docs drift and style review of a diff or paths.
-- `lab-runner`: lab-host work over ssh, every remote command in the
-  foreground.
-- `performance-engineer`: read-only performance review of a diff or paths.
-- `sre-engineer`: read-only failure-behaviour review of a diff or paths.
-- `test-coverage-reviewer`: read-only test-gap review of a diff or paths.
-
-Workflows:
-
-- `dream-fixer-loop`: one issue from implementation to a reviewed branch for `dream-fixer`:
-  implement, mechanical gate after every write, simplify pass, the `qa-review` lenses, bounded
-  fix loop.
-
-Hooks:
-
-- `jit-context.py`: injects git workflow, prose, lab, forge and `CLAUDE.md` rules at first use,
-  `<upstream_repo>` on the first write or commit in a repo with a remote outside
-  `DREAM_TEAM_OWN_REMOTES`, and `<project_notes>` at session start.
-- `body-cap.py`: length caps on MRs.
-  It quotes a `## <id>` section of the `scope-mr` `SKILL.md` back verbatim after its deny header;
-  keep those heading ids stable and sub-headings at `###`, since any `##` closes a section.
-- `branch-guard.py`: no design doc on `main`/`master`.
-
-A new hook is added only after its rule has failed once.
-
 ## Decisions and rejected options
 
 Origin: one 1332-line spec that was hard to execute in parts. The issue-sized flow replaced it.
@@ -71,6 +11,8 @@ Planning stays explicit, at issue size, because you review every plan.
 - Facts for the contributor doc are swept once per milestone by `milestone-close`. A prompt on
   every MR was rejected: it asks a question on MRs with nothing to keep.
 - A rule comes first; a hook is added only after the rule has failed once.
+- `body-cap.py` quotes a `## <id>` section of the `scope-mr` `SKILL.md` back verbatim; keep
+  those heading ids stable and sub-headings at `###`, since any `##` closes a section.
 - In the `qa-review` skill, a lens with no installed agent type fails dispatch and is listed as
   missing; it never falls back to a generic agent. `dream-fixer-loop` instead retries that lens
   as a generic agent and lists its type in `degraded`.
