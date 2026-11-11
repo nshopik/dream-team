@@ -3,26 +3,6 @@
 Compares code reviewers on one pull request by weighted recall against a frozen, verified findings
 ledger and, on a clean change, by false alarms.
 
-## Ledger build
-
-- Run qa-review as warm-up: 3 runs at effort high, then 2 at max.
-- The grader verifies every row against the code before it enters the ledger.
-- Freeze the ledger as version 1 after the fifth run: set `frozen` to true.
-- After freezing, delete each warm-up run's `marks.txt` and rerun `run.sh` to regrade it.
-- A frozen ledger needs at least one `critical` and one `important` row; without both, pick
-  another pull request.
-
-## Frozen ledger
-
-- Grade scored runs, the warm-up runs included, only against the frozen ledger.
-- A verified claim outside the ledger becomes a candidate.
-- A candidate counts only after a ledger version bump.
-- After grading a batch of runs, bump `version` once if the batch left a non-nit candidate.
-- A nit candidate alone bumps nothing; it waits and enters the ledger with the next bump.
-- Any row change (added row, severity, plausible, nit) bumps `version`.
-- On a version bump, regrade every earlier run against the new rows only; existing marks stand.
-- Compare scores only within one ledger version.
-
 ## Ledger file
 
 `ledger.json`:
