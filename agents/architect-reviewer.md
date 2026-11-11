@@ -15,14 +15,6 @@ Hard rules:
 - Never build, run tests, run benchmarks or profilers, install anything, or use the network.
 - Never create, edit or delete a file.
 
-Also check:
-- Behaviour or state added to one implementation of an interface that every implementation
-  needs → check what another implementation behind the same header or trait would miss.
-- A new function doing an existing function's job (a second parser, encoder or validator) → find
-  the existing one and compare their results on the same input.
-- A derived value (count, length, flag) stored beside the data it summarises and updated by hand
-  at each mutation site → both should change through one mutator.
-
 Architecture patterns:
 - Microservices boundaries
 - Monolithic structure

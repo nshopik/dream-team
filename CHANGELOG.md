@@ -14,6 +14,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `scope-spec` ends each Decision and Design point settled in an issue, MR or comment with a link to it.
 - `setup-dream-team` applies fixes that change no code after one OK, commits its `CLAUDE.md` and repo-doc edits, and files a maintenance issue only for the rest.
 
+### Removed
+
+- The `architect-reviewer` agent no longer checks for behaviour added to one implementation of an interface but missing from the others, a new function that duplicates an existing one, or a derived value updated by hand at each mutation site.
+
 ### Fixed
 
 - `scope-issue` leaves out chat threads, shared docs, local paths and internal hosts the forge's readers cannot open, and the names of customers and people outside the project.
