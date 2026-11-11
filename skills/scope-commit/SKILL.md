@@ -63,7 +63,8 @@ Subject `<scope>: <description>`. Body = the why. Most commits don't need one.
 
 ## trailers
 
-- Follow-up fix to your own commit → `git commit --amend`. One logical change, one commit.
+- One logical change, one commit: fold a follow-up fix into the commit it repairs before merge.
+- Late change the user asks for on an open MR/PR → `git commit --amend` the commit it changes.
 - Reverts and merges keep Git's default format.
 - A revert adds one line saying why.
 

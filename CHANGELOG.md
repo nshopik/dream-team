@@ -23,6 +23,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 ### Fixed
 
 - `dream-fixer-loop` returns `degraded` and `untrackedPaths` on every result, including an implement, gate, simplify or fix stage failure.
+- `scope-commit` and the git-context hook say to amend a commit only for a late change the user asks for on an open MR/PR.
 - `scope-issue` leaves out chat threads, shared docs, local paths and internal hosts the forge's readers cannot open, and the names of customers and people outside the project.
 - `review-bench`'s `run.sh` no longer loses a run when parallel runs add their worktrees at once, and prints each run that leaves no `stats.txt` as failed.
 
