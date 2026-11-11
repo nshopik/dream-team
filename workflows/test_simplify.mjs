@@ -11,18 +11,18 @@ const args = { issue: '1', branch: 'issue-1', base: 'abc1234', gateCommands: ['t
 // gateFails: gate runs that fail before one passes.
 // externalRuns: the external reviewer's replies, the first to its review, the rest to its re-reviews and full-review retries, in call order.
 // domainRuns: the same for the domain reviewer, fix-diff reviews included, which passes once they run out. fixes: fix-round replies, then defaults.
-// status: the gate's `git status --porcelain` lines; the nth gate run reports head gate<n>. nullOnce: labels whose first call returns null.
+// status: the gate's `git status --porcelain` lines; the nth gate run reports head gate<n>. nullOnce: labels whose next call returns null, once per listing.
 // throwFor: agent types whose dispatch throws.
 async function run(review, cuts, { aspects = ['code'], gateFails = 0, externalReview, externalRuns = [], domainRuns = [], fixes = [], redEvidence = '', status = [], nullOnce = [], throwFor = [] } = {}) {
   const labels = []
   const prompts = {}
   const types = {}
   const schemas = {}
-  const nulls = new Set(nullOnce)
+  const nulls = [...nullOnce]
   let gateRuns = 0
   async function agent(prompt, opts) {
     if (throwFor.includes(opts.agentType)) throw new Error('agent dispatch failed')
-    if (nulls.delete(opts.label)) return null
+    if (nulls.includes(opts.label)) { nulls.splice(nulls.indexOf(opts.label), 1); return null }
     const reply = await stub(prompt, opts)
     return reply && { ...reply, friction: ['stub friction'] }
   }
@@ -52,6 +52,7 @@ const cut = (tag) => ({ tag, location: 'latency.py:L3', cut: `${tag} cut`, repla
 const loaded = (findings, net) => ({ skillLoaded: true, findings, net })
 const dispute = { finding: 'delete cut', reason: 'main() calls it' }
 
+const verdict = (...findings) => ({ summary: '', findings })
 const leanSimplify = { net: 0, applied: [], disputed: [], unhandled: 0 }
 const pre = { severity: 'important', description: 'shutdown leaks the lock', file: 'lock.js', preExisting: true }
 const worsened = { severity: 'important', description: 'the new retry loop now reaches the unguarded close', file: 'lock.js', preExisting: false }
@@ -85,19 +86,21 @@ const rows = [
   { name: 'fix stage failure carries pre-existing findings', review: loaded([], 0),
     opts: { domainRuns: [{ summary: '', findings: [worsened, pre] }], fixes: [{ committed: false, addressed: [], disputed: [], summary: 'no-op' }] },
     ok: false, stage: 'fix', fixRan: false, preExisting: [{ ...pre, gate: 'domain' }] },
+  { name: 'gate failure after a degraded reviewer', review: loaded([], 0),
+    opts: { throwFor: ['dream-team:sre-engineer'], domainRuns: [verdict(worsened)], nullOnce: ['gate:#1:fix1', 'gate:#1:fix1'] },
+    ok: false, stage: 'gate', fixRan: false, degraded: ['dream-team:sre-engineer'] },
 ]
 
 for (const row of rows) {
   const { result, labels } = await run(row.review, row.cuts, row.opts)
   assert.equal(result.ok, row.ok, row.name)
   assert.equal(labels.some((l) => l.startsWith('simplify-fix:')), row.fixRan, `${row.name}: simplify-fix dispatched`)
+  assert.deepEqual(result.degraded, row.degraded || [], `${row.name}: degraded`)
+  assert.deepEqual(result.untrackedPaths, row.untracked || [], `${row.name}: untrackedPaths`)
   if (row.ok) {
     assert.deepEqual(result.simplify, row.simplify, row.name)
-    assert.deepEqual(result.degraded, row.degraded, row.name)
-    assert.deepEqual(result.untrackedPaths, row.untracked || [], `${row.name}: untrackedPaths`)
   } else {
     assert.equal(result.stage, row.stage, row.name)
-    if (row.untracked) assert.deepEqual(result.untrackedPaths, row.untracked, `${row.name}: untrackedPaths`)
     if (row.preExisting) assert.deepEqual(result.preExisting, row.preExisting, `${row.name}: preExisting`)
   }
   console.log(`PASS ${row.name}`)
@@ -182,7 +185,6 @@ for (const row of promptRows) {
 const question = { severity: 'question', description: 'should a timeout count as a retry?', file: 'retry.js' }
 const nit = { severity: 'nit', description: 'rename n to retries', file: 'retry.js' }
 const nitFixed = { committed: true, addressed: [nit.description], disputed: [], summary: '' }
-const verdict = (...findings) => ({ summary: '', findings })
 const externalRows = [
   { name: 'external review unset', opts: {},
     reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [] },

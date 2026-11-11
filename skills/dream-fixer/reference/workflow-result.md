@@ -19,7 +19,7 @@
   returned nothing and the Simplify phase was skipped, and `external` when the `externalReview` command was missing or
   exited non-zero and was skipped.
 - **`untrackedPaths`** — untracked paths `git status --porcelain` listed before the latest gate run;
-  they do not fail the gate. Returned on an `ok` result, a `handBack`, or a `gate` stage failure.
+  they do not fail the gate.
 - **`simplify`** — the over-engineering cuts made before review: `applied`, `disputed` with the
   implementer's reason, and `net`, the review's estimate of lines that could go. Put applied cuts in
   the MR description, and `net` only when nothing was disputed; treat a disputed cut like a nit.

@@ -492,7 +492,9 @@ const deadReviewer = (kind) => ({ dead: true, summary: `${kind} reviewer produce
 
 // `??` paths from the latest gate run; an artifact and a forgotten source file look alike, so the user sees them.
 const UNTRACKED = new Set()
-const gateFail = (g) => ({ ok: false, stage: 'gate', reason: g.reason, verify: g.verify, untrackedPaths: [...UNTRACKED] })
+const gateFail = (g) => ({ ok: false, stage: 'gate', reason: g.reason, verify: g.verify })
+// Every result the loop returns goes through this, so both fields are always there.
+const result = (r) => ({ ...r, degraded: [...MISSING_TYPES], untrackedPaths: [...UNTRACKED] })
 
 // The run continues past a writing agent only through this gate, so the head that ships is a gated one.
 async function gate(after, tag, withAspects) {
@@ -532,12 +534,12 @@ const impl = await agentR(implPrompt(), {
   schema: IMPL_SCHEMA,
   ...IMPLEMENTER,
 })
-if (!impl) return { ok: false, stage: 'implement', reason: 'implementer returned no result' }
-if (!impl.committed) return { ok: false, stage: 'implement', reason: impl.summary || 'implementer committed nothing' }
+if (!impl) return result({ ok: false, stage: 'implement', reason: 'implementer returned no result' })
+if (!impl.committed) return result({ ok: false, stage: 'implement', reason: impl.summary || 'implementer committed nothing' })
 
 phase('Gate')
 const first = await gate('', '', true)
-if (!first.ok) return gateFail(first)
+if (!first.ok) return result(gateFail(first))
 let verified = first.verify
 
 // Must precede Review: a cut made after it ships unreviewed.
@@ -557,12 +559,12 @@ if ((first.verify.aspects || []).includes('code')) {
       schema: FIX_SCHEMA,
       ...IMPLEMENTER,
     })
-    if (!cuts) return { ok: false, stage: 'simplify', reason: 'implementer returned no result on the simplify cuts' }
+    if (!cuts) return result({ ok: false, stage: 'simplify', reason: 'implementer returned no result on the simplify cuts' })
     if (cuts.addressed.length ? !cuts.committed : !cuts.disputed.length) {
-      return { ok: false, stage: 'simplify', reason: `simplify implementer applied nothing it committed and disputed nothing: ${cuts.summary}` }
+      return result({ ok: false, stage: 'simplify', reason: `simplify implementer applied nothing it committed and disputed nothing: ${cuts.summary}` })
     }
     const g = await gate('the simplify cuts', 'simplify', false)
-    if (!g.ok) return gateFail(g)
+    if (!g.ok) return result(gateFail(g))
     verified = g.verify
     const unhandled = Math.max(0, review.findings.length - cuts.addressed.length - cuts.disputed.length)
     simplify = { net: review.net, applied: cuts.addressed, disputed: cuts.disputed, unhandled }
@@ -609,15 +611,13 @@ const resolved = []
 const carried = { disputes, resolved, questions, preExisting }
 const outstanding = () => gates.flatMap((g) => blockingOf(state.get(g.key)).map((f) => ({ ...f, gate: g.key })))
 const deadGates = () => gates.filter((g) => state.get(g.key).dead)
-const handBack = (reason) => ({
+const handBack = (reason) => result({
   ok: false,
   stage: 'review',
   reason,
   handBack: true,
   blocking: outstanding(),
   deadReviewers: deadGates().map((g) => g.key),
-  degraded: [...MISSING_TYPES],
-  untrackedPaths: [...UNTRACKED],
   redEvidence: impl.redEvidence,
   simplify,
   ...carried,
@@ -652,15 +652,15 @@ while (true) {
       schema: FIX_ROUND_SCHEMA,
       ...IMPLEMENTER,
     })
-    if (!fix) return { ok: false, stage: 'fix', reason: 'fixer returned no result', blocking, ...carried }
+    if (!fix) return result({ ok: false, stage: 'fix', reason: 'fixer returned no result', blocking, ...carried })
     if (!fix.committed && !fix.addressed.length && !fix.disputed.length) {
-      return { ok: false, stage: 'fix', reason: `fixer changed nothing and disputed nothing: ${fix.summary}`, blocking, ...carried }
+      return result({ ok: false, stage: 'fix', reason: `fixer changed nothing and disputed nothing: ${fix.summary}`, blocking, ...carried })
     }
     disputes.push(...fix.disputed.map((d) => ({ ...d, round })))
     nitsGiven += nitsNow.length
     if (fix.nits) { nitFix.addressed.push(...fix.nits.addressed); nitFix.disputed.push(...fix.nits.disputed) }
     const g = await gate(`review-fix round ${round}`, `fix${round}`, false)
-    if (!g.ok) return { ...gateFail(g), blocking, ...carried }
+    if (!g.ok) return result({ ...gateFail(g), blocking, ...carried })
     verified = g.verify
   }
 
@@ -719,30 +719,28 @@ const nitsLeft = nits.slice(nitsGiven)
 if (nitsLeft.length) {
   phase('Fix')
   const fix = await agentR(nitFixPrompt(nitsLeft), { label: `fix:#${ISSUE}:nits`, phase: 'Fix', schema: FIX_SCHEMA, ...IMPLEMENTER })
-  if (!fix) return { ok: false, stage: 'fix', reason: 'fixer returned no result on the nits', ...carried }
+  if (!fix) return result({ ok: false, stage: 'fix', reason: 'fixer returned no result on the nits', ...carried })
   if (fix.committed) {
     const g = await gate('the nit fixes', 'nits', false)
-    if (!g.ok) return { ...gateFail(g), ...carried }
+    if (!g.ok) return result({ ...gateFail(g), ...carried })
     verified = g.verify
   }
   nitFix.addressed.push(...fix.addressed)
   nitFix.disputed.push(...fix.disputed)
 }
 
-return {
+return result({
   ok: true,
   issue: ISSUE,
   branch: BRANCH,
   reviewers: gates.map((g) => g.key),
-  degraded: [...MISSING_TYPES],
   fixRounds: round,
   assumptions: impl.assumptions || [],
   redEvidence: impl.redEvidence,
   changedFiles: verified.changedFiles,
-  untrackedPaths: [...UNTRACKED],
   nitFindings: nits,
   nitFix: nits.length ? nitFix : null,
   simplify,
   ...carried,
   summaries: Object.fromEntries(gates.map((g) => [g.key, state.get(g.key).summary])),
-}
+})
