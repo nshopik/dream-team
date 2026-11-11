@@ -29,10 +29,6 @@
       "summary": "No findings.",
       "findings": []
     },
-    "dream-team:performance-engineer": {
-      "summary": "No findings.",
-      "findings": []
-    },
     "dream-team:sre-engineer": {
       "summary": "No findings.",
       "findings": []
@@ -49,7 +45,17 @@
           "description": "Rotated file is renamed before its buffered writes are flushed, so the tail of each segment is lost on rotation",
           "file": "internal/sink/file.go"
         }
-      ]
+      ],
+      "resolved": []
     }
-  }
+  },
+  "simplify": {
+    "net": 0,
+    "applied": [],
+    "disputed": [],
+    "unhandled": 0
+  },
+  "questions": [],
+  "preExisting": [],
+  "untrackedPaths": []
 }

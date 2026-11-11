@@ -16,10 +16,6 @@
       "summary": "No findings.",
       "findings": []
     },
-    "dream-team:performance-engineer": {
-      "summary": "No findings.",
-      "findings": []
-    },
     "dream-team:sre-engineer": {
       "dead": true,
       "summary": "dream-team:sre-engineer reviewer produced no verdict",
@@ -33,5 +29,14 @@
       "summary": "Batch flush honours the configured deadline. No findings.",
       "findings": []
     }
-  }
+  },
+  "simplify": {
+    "net": 0,
+    "applied": [],
+    "disputed": [],
+    "unhandled": 0
+  },
+  "questions": [],
+  "preExisting": [],
+  "untrackedPaths": []
 }

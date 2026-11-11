@@ -4,7 +4,6 @@
   "branch": "issue-81-scrub-foreign-rrsig",
   "reviewers": [
     "dream-team:architect-reviewer",
-    "dream-team:performance-engineer",
     "dream-team:sre-engineer",
     "dream-team:test-coverage-reviewer",
     "domain"
@@ -25,9 +24,19 @@
   "disputes": [],
   "summaries": {
     "dream-team:architect-reviewer": "No findings.",
-    "dream-team:performance-engineer": "No findings.",
     "dream-team:sre-engineer": "No findings.",
     "dream-team:test-coverage-reviewer": "Red evidence matches the bug; new table rows cover owner and type mismatch. No findings.",
     "domain": "Matches upstream iter_scrub.c behaviour. Read upstream from the ~/upstream working tree, not the pinned commit a7fc80d8c: this reviewer type has no shell to check it out. No findings."
-  }
+  },
+  "simplify": {
+    "net": 0,
+    "applied": [],
+    "disputed": [],
+    "unhandled": 0
+  },
+  "questions": [],
+  "preExisting": [],
+  "untrackedPaths": [],
+  "resolved": [],
+  "nitFix": null
 }

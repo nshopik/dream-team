@@ -4,7 +4,6 @@
   "branch": "issue-66-dns-timeout-leak",
   "reviewers": [
     "dream-team:architect-reviewer",
-    "dream-team:performance-engineer",
     "dream-team:sre-engineer",
     "dream-team:test-coverage-reviewer",
     "domain"
@@ -23,9 +22,19 @@
   "disputes": [],
   "summaries": {
     "dream-team:architect-reviewer": "No findings.",
-    "dream-team:performance-engineer": "No findings.",
     "dream-team:sre-engineer": "Timeout error is wrapped and returned. No findings.",
     "dream-team:test-coverage-reviewer": "No findings.",
     "domain": "Context now cancels the pending lookup on timeout. No findings."
-  }
+  },
+  "simplify": {
+    "net": 0,
+    "applied": [],
+    "disputed": [],
+    "unhandled": 0
+  },
+  "questions": [],
+  "preExisting": [],
+  "untrackedPaths": [],
+  "resolved": [],
+  "nitFix": null
 }
