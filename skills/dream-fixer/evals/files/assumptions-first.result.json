@@ -4,7 +4,6 @@
   "branch": "issue-57-export-since-flag",
   "reviewers": [
     "dream-team:architect-reviewer",
-    "dream-team:performance-engineer",
     "dream-team:sre-engineer",
     "dream-team:test-coverage-reviewer",
     "domain"
@@ -38,9 +37,31 @@
   "disputes": [],
   "summaries": {
     "dream-team:architect-reviewer": "Clean change, one wording nit.",
-    "dream-team:performance-engineer": "No findings.",
     "dream-team:sre-engineer": "Parse errors are returned to the CLI. No findings.",
     "dream-team:test-coverage-reviewer": "Boundary, empty and invalid inputs covered. One naming nit.",
     "domain": "Filter runs before the batch encoder, matching the existing --until path. No findings."
+  },
+  "simplify": {
+    "net": 0,
+    "applied": [],
+    "disputed": [],
+    "unhandled": 0
+  },
+  "questions": [],
+  "preExisting": [],
+  "untrackedPaths": [],
+  "resolved": [],
+  "nitFix": {
+    "addressed": [],
+    "disputed": [
+      {
+        "finding": "parseSince error message could quote the accepted format",
+        "reason": "Cosmetic; no reader or test depends on it."
+      },
+      {
+        "finding": "table test case names use mixed casing",
+        "reason": "Cosmetic; no reader or test depends on it."
+      }
+    ]
   }
 }

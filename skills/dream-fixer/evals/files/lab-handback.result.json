@@ -4,7 +4,6 @@
   "branch": "issue-76-encoder-pool",
   "reviewers": [
     "dream-team:architect-reviewer",
-    "dream-team:performance-engineer",
     "dream-team:sre-engineer",
     "dream-team:test-coverage-reviewer",
     "domain"
@@ -31,9 +30,27 @@
   "disputes": [],
   "summaries": {
     "dream-team:architect-reviewer": "No findings.",
-    "dream-team:performance-engineer": "No findings.",
     "dream-team:sre-engineer": "No findings.",
     "dream-team:test-coverage-reviewer": "One nit.",
     "domain": "Encoders are reset before reuse. No findings."
+  },
+  "simplify": {
+    "net": 0,
+    "applied": [],
+    "disputed": [],
+    "unhandled": 0
+  },
+  "questions": [],
+  "preExisting": [],
+  "untrackedPaths": [],
+  "resolved": [],
+  "nitFix": {
+    "addressed": [],
+    "disputed": [
+      {
+        "finding": "pool_test.go could use t.Parallel",
+        "reason": "Cosmetic; no reader or test depends on it."
+      }
+    ]
   }
 }

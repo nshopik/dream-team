@@ -47,10 +47,6 @@
         }
       ]
     },
-    "dream-team:performance-engineer": {
-      "summary": "No findings.",
-      "findings": []
-    },
     "dream-team:sre-engineer": {
       "summary": "Round 2 re-review: finding stands.",
       "findings": [
@@ -70,5 +66,14 @@
       "summary": "Merge order matches docs/config.md precedence. No findings.",
       "findings": []
     }
-  }
+  },
+  "simplify": {
+    "net": 0,
+    "applied": [],
+    "disputed": [],
+    "unhandled": 0
+  },
+  "questions": [],
+  "preExisting": [],
+  "untrackedPaths": []
 }

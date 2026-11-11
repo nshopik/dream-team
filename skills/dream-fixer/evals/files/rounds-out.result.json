@@ -31,11 +31,8 @@
           "description": "Backoff has no upper bound; a sink down for an hour blocks shutdown for the whole backoff",
           "file": "internal/sink/http.go"
         }
-      ]
-    },
-    "dream-team:performance-engineer": {
-      "summary": "No findings.",
-      "findings": []
+      ],
+      "resolved": []
     },
     "dream-team:sre-engineer": {
       "summary": "No findings.",
@@ -53,7 +50,17 @@
           "description": "Retry loop re-sends a partially written batch, duplicating records at the sink on any mid-batch failure",
           "file": "internal/sink/http.go"
         }
-      ]
+      ],
+      "resolved": []
     }
-  }
+  },
+  "simplify": {
+    "net": 0,
+    "applied": [],
+    "disputed": [],
+    "unhandled": 0
+  },
+  "questions": [],
+  "preExisting": [],
+  "untrackedPaths": []
 }
