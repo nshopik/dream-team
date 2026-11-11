@@ -23,10 +23,12 @@ open an MR/PR against the default branch (`glab mr create` / `gh pr create`). Do
 merge to the default branch locally; don't leave finished branches unpublished.
 Small fixes (typo, one-liner, docs touch-up) may commit directly.
 
-A follow-up fix to an earlier commit amends it (`git commit --amend`) rather than
-stacking "fix the fix" — one logical change, one commit; force-push
-(`--force-with-lease`) a topic branch under review. Never rewrite history on
-`main`/`master` or any other shared branch.
+One logical change, one commit: a follow-up fix folds into the commit it repairs
+before merge, never a "fix the fix" commit.
+A late change the user asks for on an open MR/PR — an answer to a question, a
+missed design tweak — amends the commit it changes (`git commit --amend`);
+force-push (`--force-with-lease`). Never rewrite history on `main`/`master` or
+any other shared branch.
 </vcs_workflow>"""
 
 FORGE = """<forge_tooling>
