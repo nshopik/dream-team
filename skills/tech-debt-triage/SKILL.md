@@ -4,8 +4,9 @@ description: >-
   Triages tech debt in a repository: ranks hot-spot paths by git log, has dream-team's
   architect-reviewer list refactor and restructuring candidates under the deletion test, has a
   fresh judge subagent on Fable verify each claim in the code and rate it Act now, Later or Skip
-  against quality, performance and change cost, files a scope-issue for each Act now item and
-  writes a one-row-per-candidate HTML report. Use when the user runs
+  against quality, performance and change cost, files a scope-issue for each Act now item, writes
+  an HTML report with one card per Act now item, with before/after Mermaid diagrams where it
+  changes structure, and opens it in the browser. Use when the user runs
   /dream-team:tech-debt-triage or asks for a tech-debt triage, an architecture survey, refactor
   candidates or what to restructure in a codebase.
 disable-model-invocation: true
@@ -93,30 +94,78 @@ Output: one line per candidate and nothing else: `<id> | <Act now, Later or Skip
 
 - List the repository's open issues as `#N title` lines; forge unreachable → file nothing, say so
   in chat.
-- An Act now item an open issue covers → file nothing, note `#N` for its report row.
+- An Act now item an open issue covers → file nothing, note `#N` for its report card.
 - Each other Act now item → load `scope-issue` and file one issue from its claim and the judge's
   evidence.
 - Never file a Later or Skip item.
 
 ## 5. Report
 
-Write one self-contained HTML file, no external assets, to
-`<scratchpad>/tech-debt-triage-<repo name>.html`, or `/tmp/` when you have no scratchpad. Rows
-in Act now, Later, Skip order; one row per candidate; no text outside the table but the title.
-HTML-escape `&`, `<` and `>` in every cell:
+Write one HTML file to `<scratchpad>/tech-debt-triage-<repo name>.html`, or `/tmp/` when you
+have no scratchpad; `<report dir>` below is that directory. Copy the layout and inline CSS of
+[report-template.html](report-template.html), never Tailwind or another stylesheet:
+
+- Header: repository name and short SHA, date, scope, candidate count, verdict counts as
+  `.legend` anchor badges, Q/P/C legend.
+- Overview diagram: a Mermaid `flowchart TD`, one node per hot-spot source file with a verdict,
+  the test files merged into one node, an edge where one file calls into another, dashed from
+  the tests node.
+- Scope spans more than one directory → one subgraph per directory.
+- Colour each overview node by the most urgent verdict citing it, with these lines:
+
+```
+classDef act fill:#d1fae5,stroke:#047857,stroke-width:2px
+classDef later fill:#fef3c7,stroke:#b45309
+```
+
+- Act now: one card per item, in this order: id, short title, issue badge, Q/P/C badge, cited
+  file:line list, before/after diagrams, then Problem, Fix, the judge's Evidence and up to
+  three Wins bullets of six words at most.
+- Issue badge: `b-act` and `#N · filed` for an issue this run filed; `b-cov` and
+  `#N · covered by open issue` for one already open.
+- Write the short title, Problem, Fix and Wins from the finder claim and the judge evidence.
+- Act now item that changes structure (call flow, ownership, file placement) → before and after
+  Mermaid `flowchart TD` diagrams in the card's `.ba` panes.
+- Any other Act now item → no diagram.
+- Diagram node label: at most two short lines, no rhombus decision nodes.
+- Mark the defect in a before diagram with
+  `classDef gap stroke:#dc2626,stroke-width:2px`.
+- Later: one `ul.list` entry per item: id, Q/P/C, claim, evidence, file:line list.
+- Skip: the same entries inside the `<details>` element.
+- HTML-escape `&`, `<` and `>` in every text value and `<pre class="mermaid">` source.
+- Give each diagram a unique id: `overview`, `c<n>-before`, `c<n>-after`.
+- Start every diagram source with this line:
+
+```
+%%{init: {"htmlLabels": false, "themeVariables": {"fontSize": "12px"}, "flowchart": {"htmlLabels": false, "curve": "basis", "nodeSpacing": 30, "rankSpacing": 40, "diagramPadding": 8, "padding": 12}}}%%
+```
+
+- `mmdc` on `PATH` → `mkdir -p <report dir>/diagrams`, empty it with `rm -f` on its literal
+  path plus `/*`, save each diagram as `<report dir>/diagrams/<id>.mmd`, render them with the
+  loop below, and inline each SVG in its `.fig` slot; the file then loads no script.
+- No `mmdc`, or a diagram with no `.svg` after the loop → put that diagram's source in a
+  `<pre class="mermaid">` at its slot and end the file with the CDN script below.
+
+```sh
+for f in <report dir>/diagrams/*.mmd; do
+  s=${f%.mmd}.svg
+  mmdc -q -i "$f" -o "$s" -I "$(basename "$f" .mmd)" || continue
+  set -- $(grep -om1 'viewBox="[^"]*"' "$s" | tr -c '0-9.\n' ' ')
+  perl -0pi -e "s/width=\"100%\"/width=\"${3%.*}\" height=\"${4%.*}\"/;" \
+    -e 's/ xmlns[:a-z]*="[^"]*"//g' "$s"
+done
+```
 
 ```html
-<!doctype html><meta charset="utf-8"><title>tech-debt-triage <repo name></title>
-<style>body{font:13px system-ui;margin:12px}table{border-collapse:collapse;width:100%}
-td,th{border-bottom:1px solid #ccc;padding:3px 6px;text-align:left;vertical-align:top}
-.act{background:#d9f2d9}.later{background:#fff3cd}.skip{color:#777}</style>
-<h1><repo name> @ <short sha></h1>
-<table><tr><th>id</th><th>verdict</th><th>Q</th><th>P</th><th>C</th><th>file:line</th>
-<th>claim</th><th>evidence</th><th>issue</th></tr>
-<tr class="act"><td>C1</td><td>Act now</td><td>+</td><td>=</td><td>+</td>
-<td>path:12</td><td>one-sentence claim</td><td>one-line evidence</td><td>#N</td></tr>
-</table>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs';
+mermaid.initialize({ startOnLoad: true });
+</script>
 ```
+
+Open the file: `explorer.exe "$(wslpath -w <file>)"` on WSL, `open <file>` on macOS,
+`xdg-open <file>` on other Linux; run it in the background and ignore its exit code; none
+available → the chat reply's path is enough.
 
 Then reply in chat:
 
