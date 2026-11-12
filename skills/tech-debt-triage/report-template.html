@@ -26,18 +26,16 @@ h1{font-size:30px}h2{font-size:24px;margin:48px 0 16px}h3{font-size:20px}
 .pane.after{border-color:#6ee7b7}
 .cap{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin-bottom:8px}
 .after .cap{color:#047857}
+.dup{font:13px/1.5 ui-monospace,monospace;white-space:pre-wrap}.diff{color:#dc2626}
 .fig{text-align:center}.fig svg{max-width:100%;height:auto}
-.overview{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-top:12px}
-dl{display:grid;grid-template-columns:6rem 1fr;gap:4px 16px;font-size:14px;margin:12px 0 0}
-dt{font-weight:600}dd{margin:0}dd ul{margin:0;padding-left:20px}
+dl{display:grid;grid-template-columns:6rem 1fr;gap:4px 16px;margin:12px 0 0}
+dt{font-weight:600}dd{margin:0}
+.wins{margin:12px 0 0;padding-left:20px}
 @media(max-width:640px){dl{grid-template-columns:1fr}}
 ul.list{list-style:none;padding:0;margin:0}
 ul.list li{padding:12px 0;border-bottom:1px solid #e2e8f0}
 ul.list .muted{font-size:14px;margin-top:4px}
 .t-later{color:#b45309}
-details summary{cursor:pointer;font-family:Georgia,serif;font-size:24px;margin:48px 0 16px}
-details summary span{font:13px system-ui;color:#64748b}
-#skip li,#skip .muted{color:#64748b}
 </style>
 </head>
 <body>
@@ -48,11 +46,9 @@ details summary span{font:13px system-ui;color:#64748b}
   <div class="legend">
     <a href="#act" class="badge l-act"><n> Act now</a>
     <a href="#later" class="badge l-later"><n> Later</a>
-    <a href="#skip" class="badge l-skip"><n> Skip</a>
+    <span class="badge l-skip"><n> Skip</span>
   </div>
   <p class="sub">Q quality · P performance (veto only) · C change cost — + better, = same, − worse.</p>
-  <div class="overview"><div class="cap">Where the debt sits — green: Act now, amber: Later only</div>
-    <div class="fig"><!-- overview diagram --></div></div>
 </header>
 
 <section id="act"><h2>Act now</h2>
@@ -64,7 +60,14 @@ details summary span{font:13px system-ui;color:#64748b}
     <span class="badge mono">Q+ P= C+</span>
   </div>
   <p class="files">path/a.go:12, path/b.go:40</p>
-  <!-- only for an item that changes structure -->
+  <!-- restatement: replaces the files line and the before/after panes
+  <div class="ba">
+    <div class="pane"><div class="files">path/a.go:12</div><div class="dup">same line
+<span class="diff">if n &lt; 0 {</span></div></div>
+    <div class="pane"><div class="files">path/b.go:40</div><div class="dup">same line
+<span class="diff">if n &lt;= 0 {</span></div></div>
+  </div> -->
+  <!-- structural item -->
   <div class="ba">
     <div class="pane"><div class="cap">Before</div><div class="fig"><!-- c1-before diagram --></div></div>
     <div class="pane after"><div class="cap">After</div><div class="fig"><!-- c1-after diagram --></div></div>
@@ -72,9 +75,8 @@ details summary span{font:13px system-ui;color:#64748b}
   <dl>
     <dt>Problem</dt><dd><what is wrong today></dd>
     <dt>Fix</dt><dd><the change></dd>
-    <dt>Evidence</dt><dd class="muted"><judge evidence></dd>
-    <dt>Wins</dt><dd><ul><li><win></li></ul></dd>
   </dl>
+  <ul class="wins"><li><win></li></ul>
 </article>
 </section>
 
@@ -85,14 +87,6 @@ details summary span{font:13px system-ui;color:#64748b}
 <div class="muted"><evidence></div><div class="files">path/c.go:7</div></li>
 </ul>
 </section>
-
-<section id="skip"><details>
-<summary>Skip <span>(<n>, click to expand)</span></summary>
-<ul class="list">
-<li><div><span class="id">C9</span> <span class="badge mono">Q= P= C-</span> <claim></div>
-<div class="muted"><evidence></div><div class="files">path/d.go:3</div></li>
-</ul>
-</details></section>
 </main>
 </body>
 </html>
