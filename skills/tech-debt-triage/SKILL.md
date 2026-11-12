@@ -4,7 +4,7 @@ description: >-
   Triages tech debt in a repository: ranks hot-spot paths by git log, has dream-team's
   architect-reviewer list refactor and restructuring candidates under the deletion test, has a
   fresh judge subagent on Fable verify each claim in the code and rate it Act now, Later or Skip
-  against quality, performance and readability, files a scope-issue for each Act now item and
+  against quality, performance and change cost, files a scope-issue for each Act now item and
   writes a one-row-per-candidate HTML report. Use when the user runs
   /dream-team:tech-debt-triage or asks for a tech-debt triage, an architecture survey, refactor
   candidates or what to restructure in a codebase.
@@ -77,13 +77,13 @@ For each candidate:
 - Read every cited file:line and the callers, tests and docs the claim depends on.
 - Rate the change's effect on each pillar: + better, = no change, - worse.
   - quality: does the code deliver what was promised? A change that removes a defect a user or agent hits is +.
-  - performance: fast enough is good. A speedup is + only where the code is too slow today.
-  - readability: for agents and humans. Count the lines and concepts the change adds against those it removes.
+  - performance: a veto only. Rate - when the change slows a path that runs often, otherwise =; never +.
+  - change cost: the interest a tangled flow charges agents and humans on every read and edit. Count the files and hops one must read to follow or change the flow, before against after.
 - Act now: the claim holds, and the change removes a defect in the code today (code, docs and callers disagree, or a result lacks what its consumers read) or deletes a restatement of a source of truth, with no pillar -. A defect the repo's normal setup triggers counts before anyone hits it.
 - Later: the claim holds, but the defect is hypothetical (nothing in the code disagrees today), only a rare environment triggers it and it loses no data, opens no security hole and causes no crash without recovery, or the payoff waits on other work.
-- Skip: the claim does not hold (the code differs on purpose, a test already pins it, it is already done), or the change adds a concept (a module, type, router, table, file) or raises line count without removing a known defect.
+- Skip: the claim does not hold (the code differs on purpose, a test already pins it, it is already done), or the change adds a concept (a module, type, router, table, file) or adds files or hops to follow a flow without removing a known defect.
 
-Output: one line per candidate and nothing else: `<id> | <Act now, Later or Skip> | Q<+,= or -> P<+,= or -> R<+,= or -> | <file:line of your evidence> | <evidence, one line>`.
+Output: one line per candidate and nothing else: `<id> | <Act now, Later or Skip> | Q<+,= or -> P<= or -> C<+,= or -> | <file:line of your evidence> | <evidence, one line>`.
 ```
 
 - The judge errors or returns no verdict lines → stop and report a judge failure; write no report.
@@ -111,7 +111,7 @@ HTML-escape `&`, `<` and `>` in every cell:
 td,th{border-bottom:1px solid #ccc;padding:3px 6px;text-align:left;vertical-align:top}
 .act{background:#d9f2d9}.later{background:#fff3cd}.skip{color:#777}</style>
 <h1><repo name> @ <short sha></h1>
-<table><tr><th>id</th><th>verdict</th><th>Q</th><th>P</th><th>R</th><th>file:line</th>
+<table><tr><th>id</th><th>verdict</th><th>Q</th><th>P</th><th>C</th><th>file:line</th>
 <th>claim</th><th>evidence</th><th>issue</th></tr>
 <tr class="act"><td>C1</td><td>Act now</td><td>+</td><td>=</td><td>+</td>
 <td>path:12</td><td>one-sentence claim</td><td>one-line evidence</td><td>#N</td></tr>
