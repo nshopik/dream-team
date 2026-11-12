@@ -36,9 +36,6 @@ ul.list{list-style:none;padding:0;margin:0}
 ul.list li{padding:12px 0;border-bottom:1px solid #e2e8f0}
 ul.list .muted{font-size:14px;margin-top:4px}
 .t-later{color:#b45309}
-details summary{cursor:pointer;font-family:Georgia,serif;font-size:24px;margin:48px 0 16px}
-details summary span{font:13px system-ui;color:#64748b}
-#skip li,#skip .muted{color:#64748b}
 </style>
 </head>
 <body>
@@ -49,7 +46,7 @@ details summary span{font:13px system-ui;color:#64748b}
   <div class="legend">
     <a href="#act" class="badge l-act"><n> Act now</a>
     <a href="#later" class="badge l-later"><n> Later</a>
-    <a href="#skip" class="badge l-skip"><n> Skip</a>
+    <span class="badge l-skip"><n> Skip</span>
   </div>
   <p class="sub">Q quality · P performance (veto only) · C change cost — + better, = same, − worse.</p>
 </header>
@@ -90,14 +87,6 @@ details summary span{font:13px system-ui;color:#64748b}
 <div class="muted"><evidence></div><div class="files">path/c.go:7</div></li>
 </ul>
 </section>
-
-<section id="skip"><details>
-<summary>Skip <span>(<n>, click to expand)</span></summary>
-<ul class="list">
-<li><div><span class="id">C9</span> <span class="badge mono">Q= P= C-</span> <claim></div>
-<div class="muted"><evidence></div><div class="files">path/d.go:3</div></li>
-</ul>
-</details></section>
 </main>
 </body>
 </html>

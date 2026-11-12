@@ -106,7 +106,7 @@ have no scratchpad; `<report dir>` below is that directory. Copy the layout and 
 [report-template.html](report-template.html), never Tailwind or another stylesheet:
 
 - Header: repository name and short SHA, date, scope, candidate count, verdict counts as
-  `.legend` anchor badges, Q/P/C legend.
+  `.legend` badges (Act now and Later as anchors, Skip as a count only), Q/P/C legend.
 - Act now: one card per item, in this order: id, short title, issue badge, Q/P/C badge, cited
   file:line list, before/after diagrams or side-by-side copies, Problem, Fix, then up to three
   wins of six words at most as plain `ul.wins` bullets, no label.
@@ -125,7 +125,7 @@ have no scratchpad; `<report dir>` below is that directory. Copy the layout and 
 - Mark the defect in a before diagram with
   `classDef gap stroke:#dc2626,stroke-width:2px`.
 - Later: one `ul.list` entry per item: id, Q/P/C, claim, evidence, file:line list.
-- Skip: the same entries inside the `<details>` element.
+- Skip: no entries in the report.
 - HTML-escape `&`, `<` and `>` in every text value and `<pre class="mermaid">` source.
 - Give each diagram a unique id: `c<n>-before`, `c<n>-after`.
 - Start every diagram source with this line:
