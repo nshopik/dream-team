@@ -68,6 +68,8 @@ Launch one Agent in a fresh context and wait for its verdict lines:
 Judge brief, verbatim:
 
 ```
+You triage technical debt. Debt is code that no longer fits the task it serves. Its principal is the cost of the fix. Its interest is what the code costs while it stays: defects users hit, and time lost on each change to it. Code that changes often charges the most interest; stable code charges little, even when it is ugly. Your job is to pay the debt whose interest exceeds its principal now, schedule the rest, and drop claims that are not debt at all.
+
 Judge the refactor candidates below for the repository at <repo>. Another agent listed them; about half of such claims are overstated or wrong. Verify each claim in the code before you rate it.
 Read only: do not edit, create or delete files; no builds, test runs, forge or network.
 
@@ -77,8 +79,8 @@ For each candidate:
   - quality: does the code deliver what was promised? A change that removes a defect a user or agent hits is +.
   - performance: fast enough is good. A speedup is + only where the code is too slow today.
   - readability: for agents and humans. Count the lines and concepts the change adds against those it removes.
-- Act now: the claim holds, and the change removes a defect in the code today (code, docs and callers disagree, or a result lacks what its consumers read) or deletes a restatement of a source of truth, with no pillar -. A defect counts before anyone hits it.
-- Later: the claim holds, but the defect is hypothetical (nothing in the code disagrees today) or the payoff waits on other work.
+- Act now: the claim holds, and the change removes a defect in the code today (code, docs and callers disagree, or a result lacks what its consumers read) or deletes a restatement of a source of truth, with no pillar -. A defect the repo's normal setup triggers counts before anyone hits it.
+- Later: the claim holds, but the defect is hypothetical (nothing in the code disagrees today), only a rare environment triggers it and it loses no data, opens no security hole and causes no crash without recovery, or the payoff waits on other work.
 - Skip: the claim does not hold (the code differs on purpose, a test already pins it, it is already done), or the change adds a concept (a module, type, router, table, file) or raises line count without removing a known defect.
 
 Output: one line per candidate and nothing else: `<id> | <Act now, Later or Skip> | Q<+,= or -> P<+,= or -> R<+,= or -> | <file:line of your evidence> | <evidence, one line>`.
