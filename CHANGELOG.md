@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Added
+
+- The `tech-debt-triage` skill, a work in progress, lists refactor candidates in a repository's most-changed paths, has a judge verify each and files the ones rated Act now.
+
 ### Changed
 
 - `qa-review` tells each lens to report every defect it finds, including uncertain or low-severity ones.
