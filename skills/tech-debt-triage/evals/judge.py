@@ -2,9 +2,10 @@
 """Builds the judge prompt for a case, or grades the judge's verdict lines against it.
 
 usage: judge.py prompt <case.json> <repo path>
-       judge.py grade <case.json> <verdicts.md>
+       judge.py grade <case.json> <verdicts.md> [verdicts.md ...]
 """
 import json
+from collections import Counter
 import re
 import sys
 from pathlib import Path
@@ -19,23 +20,31 @@ def prompt(case, repo):
     print(brief.replace('<repo>', repo) + '\n\n' + '\n'.join(lines))
 
 
-def grade(case, verdicts):
-    got = dict(re.findall(r'^\W*(C\d+)\s*\|\s*(Act now|Later|Skip)\s*\|', Path(verdicts).read_text(), re.M))
-    fails = 0
+def grade(case, files):
+    runs = [dict(re.findall(r'^\W*(C\d+)\s*\|\s*(Act now|Later|Skip)\s*\|', Path(f).read_text(), re.M))
+            for f in files]
+    fails, splits = 0, []
     for c in case['candidates']:
         want = {'Act now'} if c['expect'] == 'Act now' else {'Later', 'Skip'}
-        v = got.get(c['id'], 'none')
-        ok = v in want
+        vs = [r.get(c['id'], 'none') for r in runs]
+        top, n = Counter(vs).most_common(1)[0]
+        ok = sum(v in want for v in vs) * 2 > len(vs)
         fails += not ok
-        print(f"{c['id']:<4} {'/'.join(sorted(want)):<11} {v:<8} {'PASS' if ok else 'FAIL'}")
-    print(f"{len(case['candidates']) - fails}/{len(case['candidates'])} verdicts match")
+        if n < len(vs):
+            splits.append(f"{c['id']}: {', '.join(vs)}")
+        print(f"{c['id']:<4} {'/'.join(sorted(want)):<11} {top if n * 2 > len(vs) else 'split':<8} "
+              f"{'PASS' if ok else 'FAIL'}  ({', '.join(vs)})")
+    print(f"{len(case['candidates']) - fails}/{len(case['candidates'])} candidates pass by majority "
+          f"of {len(files)} runs")
+    for line in splits:
+        print(f"split: {line}")
     return fails
 
 
 if __name__ == '__main__':
-    cmd, case, arg = sys.argv[1:]
+    cmd, case, *args = sys.argv[1:]
     case = json.load(open(case))
     if cmd == 'prompt':
-        prompt(case, arg)
+        prompt(case, args[0])
     else:
-        sys.exit(1 if grade(case, arg) else 0)
+        sys.exit(1 if grade(case, args) else 0)
