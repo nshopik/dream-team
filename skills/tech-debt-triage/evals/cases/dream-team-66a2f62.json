@@ -1,77 +1,109 @@
 {
   "repo": "dream-team",
   "commit": "66a2f62",
-  "source": "Candidates and verdicts from the public findings comment on issue 388.",
+  "source": "Candidates and verdicts from the public findings comment on issue 388; C11 and the canned verdict lines for the report eval added in issue 453.",
   "candidates": [
     {
       "id": "C1",
       "claim": "dream-fixer-loop's review bookkeeping (state map, nits, questions, pre-existing findings, nit fix) is inline in the main script; split it into its own module.",
       "location": "workflows/dream-fixer-loop.js:584, workflows/dream-fixer-loop.js:589, workflows/dream-fixer-loop.js:629, workflows/dream-fixer-loop.js:718",
       "removes": "a 748-line script mixing stage control with finding bookkeeping",
-      "expect": "Skip"
+      "expect": "Skip",
+      "verdict": "C1 | Skip | Q= P= C- | workflows/dream-fixer-loop.js:593 | `record`, `handBack` and the fix loop close over `state`, `gates`, `MISSING_TYPES` and `UNTRACKED` in one self-contained workflow script; a module adds a file and a hop and removes no defect."
     },
     {
       "id": "C2",
       "claim": "Stage-failure results of dream-fixer-loop (implement, gate, simplify, fix) omit `degraded` and most omit `untrackedPaths`, which the review hand-back and success results carry.",
       "location": "workflows/dream-fixer-loop.js:495, workflows/dream-fixer-loop.js:535, workflows/dream-fixer-loop.js:560, workflows/dream-fixer-loop.js:655, workflows/dream-fixer-loop.js:619, skills/dream-fixer/reference/workflow-result.md:17",
       "removes": "missing result fields on every stage failure",
-      "expect": "Act now"
+      "expect": "Act now",
+      "verdict": "C2 | Act now | Q+ P= C+ | workflows/dream-fixer-loop.js:612 | Only `handBack` (js:612-620) and the success result (js:732-742) add `degraded` and `untrackedPaths`; the gate (js:495), implement (js:535), simplify (js:560) and fix (js:655) failures each build their own result without them, though skills/dream-fixer/SKILL.md:338 names each `degraded` type on every outcome; route every stage failure through one result builder that adds both.",
+      "report": "structural",
+      "issue": 455,
+      "filed": true
     },
     {
       "id": "C3",
       "claim": "qa-review and dream-fixer-loop each build the lens prompt and rules block on their own; share one lens prompt.",
       "location": "skills/qa-review/SKILL.md:92, workflows/dream-fixer-loop.js:357",
       "removes": "two copies of the lens prompt that can drift",
-      "expect": "Skip"
+      "expect": "Skip",
+      "verdict": "C3 | Skip | Q= P= C- | workflows/dream-fixer-loop.js:276 | The two differ on purpose: the loop's `REVIEW_RULES` asks for schema severities and blocking semantics, qa-review's block for emoji and `[verified]` text (SKILL.md:99); a markdown skill and a JS script cannot share a string without a new file."
     },
     {
       "id": "C4",
       "claim": "MAINTAINING.md's 'Pieces and where they live' section restates the README Contents list and each skill's and agent's description.",
       "location": "MAINTAINING.md:3, README.md:24",
       "removes": "an inventory that goes stale on every skill or agent change",
-      "expect": "Act now"
+      "expect": "Act now",
+      "verdict": "C4 | Act now | Q+ P= C+ | MAINTAINING.md:53 | The section restates README.md:24-71 and the frontmatter descriptions and has drifted: its jit-context entry (MAINTAINING.md:53-55) names `<upstream_repo>` and `<project_notes>` where README.md:70-71 names neither, and neither lists the `<issue_sized>` block jit-context.py:184 emits; keep only the body-cap heading-id fact (MAINTAINING.md:57-58).",
+      "report": "restatement",
+      "issue": 456,
+      "filed": true,
+      "dup": "<upstream_repo>"
     },
     {
       "id": "C5",
       "claim": "The dream-fixer step-6 fold of fixup! and amend! commits is shell inside SKILL.md; move it into a script.",
       "location": "skills/dream-fixer/SKILL.md:249",
       "removes": "a multi-line shell sequence the model must copy exactly",
-      "expect": "Later"
+      "expect": "Later",
+      "verdict": "C5 | Skip | Q= P= C- | skills/dream-fixer/test_fold.py:10 | The test already extracts the `sh` blocks from SKILL.md and runs both folds on scratch repos; a script adds a file and a hop for `<base>` and `<scratchpad>` substitution."
     },
     {
       "id": "C6",
       "claim": "The waiting-label rule (`workflow::future`) is stated in four skills; give it one home.",
       "location": "skills/cut-milestones/SKILL.md:39, skills/milestone-close/SKILL.md:116, skills/scope-issue/SKILL.md:74, skills/setup-dream-team/SKILL.md:83",
       "removes": "four statements of one rule",
-      "expect": "Skip"
+      "expect": "Skip",
+      "verdict": "C6 | Skip | Q= P= C- | MAINTAINING.md:140 | The rule already has one home; the four skills each state a different action (cut-milestones:61 adds, milestone-close:116 drops, scope-issue:74 sets on filing, setup-dream-team:83 creates the label), and each skill loads alone."
     },
     {
       "id": "C7",
       "claim": "review-bench's METHODOLOGY.md restates the ledger build, freeze, grading and promotion steps that its SKILL.md already gives.",
       "location": "skills/review-bench/METHODOLOGY.md:6, skills/review-bench/SKILL.md:35",
       "removes": "duplicated method text in two files",
-      "expect": "Act now"
+      "expect": "Act now",
+      "verdict": "C7 | Act now | Q= P= C+ | skills/review-bench/METHODOLOGY.md:6 | \"Ledger build\" (:6-13) and the bump bullets of \"Frozen ledger\" restate SKILL.md steps 2, 3 and 5 (SKILL.md:42-55); delete those bullets only, since grading is cited by SKILL.md:88, not restated.",
+      "report": "restatement",
+      "issue": 452,
+      "filed": false
     },
     {
       "id": "C8",
       "claim": "jit-context keeps its per-session state under a fixed /tmp path shared by every session and user on the host.",
       "location": "hooks/jit-context.py:17",
       "removes": "state collisions between concurrent sessions",
-      "expect": "Later"
+      "expect": "Later",
+      "verdict": "C8 | Later | Q+ P= C= | hooks/jit-context.py:166 | Sentinels are keyed by session id and created with `O_EXCL`, so sessions do not collide; on a multi-user host the directory belongs to the first user, so a second user's create fails and line 170 silences every rule, with no data loss or crash."
     },
     {
       "id": "C9",
       "claim": "WORKFLOW.md's walkthrough restates what each skill does; trim it to the diagram and pointers to the skills.",
       "location": "WORKFLOW.md:28",
       "removes": "a 176-line doc that repeats the skills",
-      "expect": "Skip"
+      "expect": "Skip",
+      "verdict": "C9 | Skip | Q- P= C= | README.md:11 | README promises \"the full walkthrough\" in WORKFLOW.md; it is the user-facing narrative across skills that no single skill holds. Trimming it removes a promised doc, not a defect."
     },
     {
       "id": "C10",
       "claim": "body-cap.py mixes shell-command parsing (heredocs, cwd, flags) with the scope-mr body checks; split the parser into its own module.",
       "location": "hooks/body-cap.py:135, hooks/body-cap.py:240, hooks/body-cap.py:307, hooks/body-cap.py:370",
       "removes": "a 432-line hook with two concerns",
-      "expect": "Skip"
+      "expect": "Skip",
+      "verdict": "C10 | Skip | Q= P= C- | hooks/body-cap.py:10 | The docstring already draws the split: rules live in the scope-mr skill, and this file only detects and measures. The parsing helpers have one caller, `main`, so a module adds a file and an import hop with no defect removed."
+    },
+    {
+      "id": "C11",
+      "claim": "jit-context.py's docstring says SessionStart injects the <project_notes> block, but main() also injects <issue_sized>.",
+      "location": "hooks/jit-context.py:3, hooks/jit-context.py:184",
+      "removes": "a docstring that misstates what the hook injects at session start",
+      "expect": "Act now",
+      "verdict": "C11 | Act now | Q+ P= C= | hooks/jit-context.py:184 | On SessionStart main() emits `NOTES + ISSUE_SIZED`, but the docstring at line 3 names only the `<project_notes>` block; add `<issue_sized>` to that line.",
+      "report": "none",
+      "issue": 457,
+      "filed": true
     }
-  ]
+  ],
+  "forge": "https://github.com/nshopik/dream-team"
 }
