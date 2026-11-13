@@ -40,9 +40,13 @@ for (a, b), s in pairs.most_common():
 '
 ```
 
-- Add the repository's other version files, which every release touches, to `skip`.
+- Add the repository's other version files, which every release touches, and its dependency
+  manifests and lockfiles (`go.mod`, `go.sum`, `package-lock.json`, `Cargo.toml`, `Cargo.lock`,
+  `pyproject.toml`, `uv.lock`, `poetry.lock`), which every dependency bump touches together, to
+  `skip`.
 - Rank the scope's files by their summed shared commits across the pair lines, then the rest by
-  commits touching them in the last 200 commits; keep the first 15 that still exist:
+  commits touching them in the last 200 commits; keep the first 15 that still exist and are not
+  in `skip`:
 
 ```sh
 git log -n 200 --format= --name-only -- <scope> | sort | uniq -c | sort -rn
