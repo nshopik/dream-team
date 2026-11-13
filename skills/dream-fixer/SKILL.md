@@ -193,7 +193,8 @@ object (never a stringified one):
 Then report, before the workflow returns:
 
 - Two bullets, the label in bold: the branch, and whether `externalReview` is set.
-- After them, 1-3 sentences on what the change builds, from the issue.
+- After them, 1-2 sentences on what the change builds, from the issue.
+- Nothing before the bullets or after the sentences.
 
 Layout:
 
@@ -201,7 +202,7 @@ Layout:
 - **Branch:** `issue-42-slug`
 - **External reviewer:** `yes`|`no`
 
-<1-3 sentences: what the change builds.>
+<1-2 sentences: what the change builds.>
 ```
 
 ## 5. Judge the result
