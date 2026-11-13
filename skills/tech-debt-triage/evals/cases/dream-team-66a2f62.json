@@ -39,8 +39,7 @@
       "verdict": "C4 | Act now | Q+ P= C+ | MAINTAINING.md:53 | The section restates README.md:24-71 and the frontmatter descriptions and has drifted: its jit-context entry (MAINTAINING.md:53-55) names `<upstream_repo>` and `<project_notes>` where README.md:70-71 names neither, and neither lists the `<issue_sized>` block jit-context.py:184 emits; keep only the body-cap heading-id fact (MAINTAINING.md:57-58).",
       "report": "restatement",
       "issue": 456,
-      "filed": true,
-      "dup": "<upstream_repo>"
+      "filed": true
     },
     {
       "id": "C5",
