@@ -28,7 +28,7 @@ if "--output-format" not in sys.argv:
     if "not frozen" in prompt:
         (Path(os.environ["STUB_OUT"]) / "ledger.json").write_text(json.dumps({"version": 1,
             "rows": [{"id": "C1", "finding": "panic", "location": "a.go:3", "severity": "critical",
-                      "plausible": False, "nit": False}]}))
+                      "plausible": False}]}))
     time.sleep(0.5)
     with log.open("a") as f:
         f.write(json.dumps({"grader": sys.argv, "prompt": prompt, "t": [t0, time.time()]}) + "\n")

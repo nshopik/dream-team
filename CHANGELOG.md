@@ -17,6 +17,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `setup-dream-team` applies fixes that change no code after one OK, commits its `CLAUDE.md` and repo-doc edits, and files a maintenance issue only for the rest.
 - `scope-issue` and `dream-fixer` file two or more light-tier findings from one run as one bundle issue, and `dream-fixer` ships a bundle as one MR with one commit per item.
 - `dream-fixer` watches an MR/PR's pipeline once the MR/PR opens, retries an infrastructure flake once, and pushes up to two fixes for a real failure before handing the MR/PR back with a comment.
+- `review-bench` weighs every minor ledger row 0.5, no longer reads a row's `nit` field, and holds every minor candidate for the next ledger bump.
 
 ### Removed
 
