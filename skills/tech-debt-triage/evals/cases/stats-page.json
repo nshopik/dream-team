@@ -3,6 +3,7 @@
   "commit": "HEAD",
   "path": "skills/tech-debt-triage/evals/fixtures/stats-page",
   "source": "Fixture for issue 458: a cross-boundary formula copy the finder missed.",
+  "finder": [["test_stats.py", "index.html"]],
   "candidates": [
     {
       "id": "C1",

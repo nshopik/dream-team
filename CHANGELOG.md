@@ -7,7 +7,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Added
 
-- The `tech-debt-triage` skill, a work in progress, lists refactor candidates in a repository's most-changed paths, has a judge verify each and files the ones rated Act now.
+- The `tech-debt-triage` skill, a work in progress, lists file clusters tied by one structural flaw in a repository's most co-changed paths, has a judge verify each and files the ones rated Act now.
 
 ### Changed
 

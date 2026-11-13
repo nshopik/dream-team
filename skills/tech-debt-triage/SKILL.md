@@ -1,10 +1,10 @@
 ---
 name: tech-debt-triage
 description: >-
-  Triages tech debt in a repository: ranks hot-spot paths by git log, has dream-team's
-  architect-reviewer list refactor and restructuring candidates under the deletion test, has a
-  fresh judge subagent on Fable verify each claim in the code and rate it Act now, Later or Skip
-  by a defect tier and a co-change interest tier, files the Act now items per scope-issue,
+  Triages tech debt in a repository: ranks hot-spot paths by co-change and commit counts, has
+  dream-team's architect-reviewer list file clusters tied by one structural flaw, has a fresh judge
+  subagent on Fable verify each claim in the code and rate it Act now, Later or Skip by a defect
+  tier and a co-change interest tier, files the Act now items per scope-issue,
   light-tier ones in one bundle issue, writes an HTML report with one card per Act now item, with
   before/after diagrams where it changes structure, and opens it in the browser. Use when the
   user runs /dream-team:tech-debt-triage or asks for a tech-debt triage, an architecture survey,
@@ -23,14 +23,7 @@ say.
 - Paths in `$ARGUMENTS` → they are the scope.
 - No paths → follow the "Audit map" section of `<base directory>/../qa-review/SKILL.md`; the
   paths it leaves in scope are the scope.
-- Rank the scope's files by commits touching them in the last 200 commits; keep the 15
-  most-touched that still exist:
-
-```sh
-git log -n 200 --format= --name-only -- <scope> | sort | uniq -c | sort -rn
-```
-
-- List the scope's co-changed file pairs over the same 200 commits, one line per pair:
+- List the scope's co-changed file pairs over the last 200 commits, one line per pair:
 
 ```sh
 git log -n 200 --format=%x00 --name-only -- <scope> | python3 -c '
@@ -48,6 +41,12 @@ for (a, b), s in pairs.most_common():
 ```
 
 - Add the repository's other version files, which every release touches, to `skip`.
+- Rank the scope's files by their summed shared commits across the pair lines, then the rest by
+  commits touching them in the last 200 commits; keep the first 15 that still exist:
+
+```sh
+git log -n 200 --format= --name-only -- <scope> | sort | uniq -c | sort -rn
+```
 
 ## 2. Find
 
@@ -56,19 +55,26 @@ Launch one Agent and wait for its report:
 - `subagent_type`: `dream-team:architect-reviewer`.
 - `model`: the session model's tier (`opus`, `sonnet`, `haiku` or `fable`), taken from the
   environment section of your system prompt.
-- `prompt`: the finder brief below, `<paths>` replaced by the hot-spot paths, one per line.
+- `prompt`: the finder brief below, `<paths>` replaced by the hot-spot paths, one per line, and
+  `<pairs>` by the step-1 pair lines, or `none`.
 
 Finder brief, verbatim:
 
 ```
-Survey these hot-spot paths for refactor candidates: deletions, merges, splits and moves.
+Survey these hot-spot paths for structural debt: clusters of one or more files tied by one flaw.
 <paths>
 
-Apply the deletion test to each module, function, rule and doc section: imagine deleting it. Complexity vanishes → a candidate. Complexity reappears across its callers → it earns its place.
-Compare logic written on both sides of a language or layer boundary (a test and the code it tests, an exporter and the page that reads its output): the same formula, constant or rule in two places is a candidate, and copies that disagree are a defect.
-Your job is coverage: list every candidate, including uncertain ones; a judge verifies each claim in the code later.
+Co-change pairs, last 200 commits (both files, commits that changed both, that count as a share of the two files' mean commit count):
+<pairs>
+
+Look through four lenses:
+- Seam leak: a module reads another's private state or repeats its rule. The same formula, constant or rule on both sides of a language or layer boundary (a test and the code it tests, an exporter and the page that reads its output) is a leak, and copies that disagree are a defect.
+- Locality: following one flow means opening many files; one concept is spread across modules.
+- Test reach: behaviour no test reaches through the interface, or a test that passes only through an unrelated path, such as an external tool's failure.
+- Change coupling: files the pair lines show changing together.
+A candidate is a cluster: its files, the flaw that ties them, and the symptoms the flaw causes (a stale doc, a repeated constant, a private-field read) grouped under it. A cluster may be one file when its flaw is in code. A single doc or comment line is never a candidate on its own.
 Read only: do not edit, create or delete files; no builds, test runs or network.
-Output: one line per candidate and nothing else: `C<n> | <claim, one sentence> | <file:line, comma-separated> | <what the change removes or fixes>`.
+Output: one line per cluster and nothing else: `C<n> | <the flaw and the change that fixes it, one sentence> | <file:line, comma-separated> | <symptoms, semicolon-separated>; <shared commits from the cluster's pair lines, or no pair>`.
 ```
 
 - No candidate lines → say so and stop.
