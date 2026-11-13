@@ -19,6 +19,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `scope-spec` ends each Decision and Design point settled in an issue, MR or comment with a link to it.
 - `ship-it` tags the release's merge commit without asking when the user passes the version as its argument.
 - `setup-dream-team` applies fixes that change no code after one OK, commits its `CLAUDE.md` and repo-doc edits, and files a maintenance issue only for the rest.
+- `scope-issue`, `tech-debt-triage` and `dream-fixer` file two or more light-tier findings from one run as one bundle issue, and `dream-fixer` ships a bundle as one MR with one commit per item.
 
 ### Removed
 
