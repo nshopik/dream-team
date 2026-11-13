@@ -4,11 +4,12 @@ description: >-
   Triages tech debt in a repository: ranks hot-spot paths by git log, has dream-team's
   architect-reviewer list refactor and restructuring candidates under the deletion test, has a
   fresh judge subagent on Fable verify each claim in the code and rate it Act now, Later or Skip
-  against quality, performance and change cost, files a scope-issue for each Act now item, writes
-  an HTML report with one card per Act now item, with before/after diagrams where it changes
-  structure and side-by-side copies where it deletes a restatement, and opens it in the
-  browser. Use when the user runs /dream-team:tech-debt-triage or asks for a tech-debt triage,
-  an architecture survey, refactor candidates or what to restructure in a codebase.
+  against quality, performance and change cost, files the Act now items per scope-issue, light-tier
+  ones in one bundle issue, writes an HTML report with one card per Act now item, with
+  before/after diagrams where it changes structure and side-by-side copies where it deletes a
+  restatement, and opens it in the browser. Use when the user runs /dream-team:tech-debt-triage
+  or asks for a tech-debt triage, an architecture survey, refactor candidates or what to
+  restructure in a codebase.
 disable-model-invocation: true
 argument-hint: "[path ...]"
 ---
@@ -96,8 +97,8 @@ Output: one line per candidate and nothing else: `<id> | <Act now, Later or Skip
 - List the repository's open issues as `#N title` lines; forge unreachable → file nothing, say so
   in chat.
 - An Act now item an open issue covers → file nothing, note `#N` for its report card.
-- Each other Act now item → load `scope-issue` and file one issue from its claim and the judge's
-  evidence.
+- The other Act now items → load `scope-issue` and file them per it, each item from its claim and
+  the judge's evidence.
 - Never file a Later or Skip item.
 
 ## 5. Report

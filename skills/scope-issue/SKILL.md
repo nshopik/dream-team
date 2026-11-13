@@ -28,11 +28,12 @@ history; a run that resumes the work reads them too.
 - Evidence (a table, a fenced block) sits under the claim it backs.
 - Origin is one clause ("Found by a docs review").
 - Each fact appears once.
-- Proposal: the next step, under `## Proposal`. Always present.
+- Proposal: the next step, under `## Proposal`. Always present, except a meta or bundle issue.
 - Proposal is concrete: a list of actions, a person to engage, or a research issue's questions.
 - Proposal ends with a `Done when …` paragraph after its items, naming an observable check. Never a bullet.
 - Never end at the problem.
 - Meta issue: a paragraph on the work it tracks, then the checklist. No bolded defect, no `## Proposal`.
+- Bundle issue: a paragraph on what its items share, then `## Items`. No bolded defect, no `## Proposal`.
 
 ### Open questions
 
@@ -46,9 +47,10 @@ history; a run that resumes the work reads them too.
 - Proposal would need a guess or an assumption → research issue, not a guessed proposal.
 - Title starts `Research:`.
 - Proposal lists the questions to answer.
-- Deliverable: a findings comment on the issue plus one follow-up issue per gap found. No code.
+- Deliverable: a findings comment on the issue plus follow-up issues for the gaps found
+  (Bundle). No code.
 - User asks for a file → a note in the repo's research docs; the comment carries the rest.
-- Done when every question has an answer or its own issue.
+- Done when every question has an answer or an issue tracking it.
 
 ### Evidence
 
@@ -66,6 +68,17 @@ history; a run that resumes the work reads them too.
 - File a child issue only when its work can start; tick its box when it closes.
 - No milestone; each child carries its own.
 - Closes when every line is ticked or ruled out.
+
+### Bundle
+
+- One run files two or more findings, each light tier on its own per step 2a of
+  `<base directory>/../dream-fixer/SKILL.md` → one bundle issue.
+- At most ~6 items; the rest start another bundle, or a plain issue when one is left.
+- Items may carry different `area::` labels.
+- Title names the group.
+- `## Items`: one `- [ ]` line per item, giving its defect, the exact edit and its done-when.
+- Labels: the items' majority `area::` and their `type::`.
+- A lone light-tier finding → a plain issue.
 
 ### Blockers
 
@@ -85,7 +98,7 @@ history; a run that resumes the work reads them too.
 - Multi-part work → `-` bullet list.
 - Each item independently completable and verifiable.
 - Default: plain `-` bullets.
-- `- [ ]` boxes only for complex multi-stage work, or a meta issue's checklist.
+- `- [ ]` boxes only for complex multi-stage work, a meta issue's checklist, or a bundle's items.
 - A paragraph contains an action → pull the action into an item; the paragraph keeps only the why.
 - Terse only after the next action is stated. "Stand up the lab" is a title, not a description.
 

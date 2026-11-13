@@ -29,8 +29,9 @@ A version milestone's `Gate:` bullet holds its release criteria; check each item
 Run or read the measurement it names: gate floors, a recorded run, a deployed host. A field-evidence
 gate reads its `Evidence:` issue for the deploy, the start date and how to collect.
 
-Not met → report the gap, and propose one issue per gap per `scope-issue`, in this milestone. The
-user approves or rejects each; file the approved ones and stop. The milestone stays open.
+Not met → report the gap, and propose the gap issues per `scope-issue`, light-tier ones bundled, in
+this milestone. The user approves or rejects each; file the approved ones and stop. The milestone
+stays open.
 
 A failed kill-gate (the criterion names a redesign) gets no gap issues: report it and stop. The
 redesign goes back to the spec.
