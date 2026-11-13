@@ -1,7 +1,7 @@
 {
   "repo": "dream-team",
   "commit": "66a2f62",
-  "source": "Candidates and verdicts from the public findings comment on issue 388; C11 and the canned verdict lines for the report eval added in issue 453; C12 added in issue 459; C11 relabelled Skip and C4, C7 given this repo's co-change counts at 5b7bd42 (last 200 non-merge commits) in issue 470.",
+  "source": "Candidates and verdicts from the public findings comment on issue 388; C11 and the canned verdict lines for the report eval added in issue 453; C12 added in issue 459; C11 relabelled Skip and C4, C7 given this repo's co-change counts at 5b7bd42 (last 200 non-merge commits) in issue 470; C5, C8 and C12 relabelled Skip under the tiers in issue 471.",
   "candidates": [
     {
       "id": "C1",
@@ -47,7 +47,7 @@
       "claim": "The dream-fixer step-6 fold of fixup! and amend! commits is shell inside SKILL.md; move it into a script.",
       "location": "skills/dream-fixer/SKILL.md:249",
       "removes": "a multi-line shell sequence the model must copy exactly",
-      "expect": "Later",
+      "expect": "Skip",
       "verdict": "C5 | Skip | Q= P= C- | skills/dream-fixer/test_fold.py:10 | The test already extracts the `sh` blocks from SKILL.md and runs both folds on scratch repos; a script adds a file and a hop for `<base>` and `<scratchpad>` substitution."
     },
     {
@@ -75,7 +75,7 @@
       "claim": "jit-context keeps its per-session state under a fixed /tmp path shared by every session and user on the host.",
       "location": "hooks/jit-context.py:17",
       "removes": "state collisions between concurrent sessions",
-      "expect": "Later",
+      "expect": "Skip",
       "verdict": "C8 | Later | Q+ P= C= | hooks/jit-context.py:166 | Sentinels are keyed by session id and created with `O_EXCL`, so sessions do not collide; on a multi-user host the directory belongs to the first user, so a second user's create fails and line 170 silences every rule, with no data loss or crash."
     },
     {
@@ -110,7 +110,7 @@
       "claim": "branch-guard.py's branch_of() guards a case that cannot happen: `or '.'` after dirname of an absolute path; delete it.",
       "location": "hooks/branch-guard.py:37",
       "removes": "an impossible-case guard in branch_of()",
-      "expect": "Later",
+      "expect": "Skip",
       "verdict": "C12 | Later | Q= P= C+ | hooks/branch-guard.py:37 | os.path.dirname of an absolute path is never empty, so `or '.'` never applies; deleting it is a single-site mechanical fix that changes nothing a caller sees."
     }
   ],

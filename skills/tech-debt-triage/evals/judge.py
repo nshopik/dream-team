@@ -22,7 +22,10 @@ def prompt(case, repo):
     text = SKILL.read_text()
     brief = re.search(r'Judge brief, verbatim:\n\n```\n(.*?)\n```', text, re.S).group(1)
     lines = [f"{c['id']} | {c['claim']} | {c['location']} | {c['removes']}" for c in case['candidates']]
-    print(brief.replace('<repo>', repo) + '\n\n' + '\n'.join(lines))
+    pairs = [f"{', '.join(p['files'])} | {p['shared']} shared | {round(p['coupling'] * 100)}%"
+             for p in (c['cochange'] for c in case['candidates'] if 'cochange' in c)]
+    print(brief.replace('<repo>', repo) + '\n\n' + '\n'.join(lines) +
+          '\n\nCo-change pairs, last 200 commits:\n' + ('\n'.join(pairs) or 'none'))
 
 
 def grade(case, files):
