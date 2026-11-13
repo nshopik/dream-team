@@ -82,16 +82,12 @@ class Report(HTMLParser):
         a, card = dict(attrs), self.card()
         cls = (a.get('class') or '').split()
         if tag == 'article' and 'card' in cls:
-            self.cards[a.get('id')] = {'dt': [], 'wins': 0, 'ba': 0, 'panes': 0, 'files': 0, 'diagrams': 0,
-                                       'ids': set(), 'dup': '', 'dup_tags': set()}
+            self.cards[a.get('id')] = {'dt': [], 'wins': 0, 'ba': 0, 'files': 0, 'diagrams': 0, 'ids': set()}
         elif card is not None:
             card['ids'].add(a.get('id'))
             card['ba'] += 'ba' in cls
-            card['panes'] += 'pane' in cls
-            card['files'] += 'files' in cls and not self.inside('pane')
+            card['files'] += 'files' in cls
             card['wins'] += tag == 'li' and self.inside('wins')
-            if self.inside('dup'):
-                card['dup_tags'].add(tag)
         if (tag == 'svg' and not any(t == 'svg' for t, _, _ in self.stack)) or (tag == 'pre' and 'mermaid' in cls):
             if card is None:
                 self.loose += 1
@@ -116,8 +112,6 @@ class Report(HTMLParser):
             return
         if self.stack and self.stack[-1][0] == 'dt':
             card['dt'].append(data.strip())
-        if self.inside('dup'):
-            card['dup'] += data
 
 
 def report(case, html):
@@ -136,13 +130,10 @@ def report(case, html):
                 bad += [f'no c{n}-{s} diagram' for s in ('before', 'after') if f'c{n}-{s}' not in card['ids']]
             else:
                 bad += [f"{card['diagrams']} diagrams"] * (card['diagrams'] > 0)
-            if c['report'] == 'restatement':
-                bad += [f"{card['panes']} copy panes"] * (card['panes'] < 2)
-                bad += ['card-level file list'] * (card['files'] > 0)
-                bad += [f"unescaped <{t}> in a copy" for t in sorted(card['dup_tags'] - {'span'})]
-                bad += [f"no {c.get('dup')} in a copy"] * (c.get('dup', '') not in card['dup'])
-            if c['report'] == 'none':
+            if c['report'] in ('restatement', 'none'):
                 bad += [f"{card['ba']} .ba panes"] * (card['ba'] > 0)
+            if c['report'] == 'restatement':
+                bad += ['no file list'] * (card['files'] == 0)
         fails += bool(bad)
         print(f"{c['id']:<4} {c['report']:<11} {'FAIL' if bad else 'PASS'}  {'; '.join(bad)}".rstrip())
     for line in [f'{r.loose} diagrams outside the Act now cards'] * (r.loose > 0) + r.errors + \

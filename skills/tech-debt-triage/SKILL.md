@@ -6,10 +6,9 @@ description: >-
   fresh judge subagent on Fable verify each claim in the code and rate it Act now, Later or Skip
   against quality, performance and change cost, files the Act now items per scope-issue, light-tier
   ones in one bundle issue, writes an HTML report with one card per Act now item, with
-  before/after diagrams where it changes structure and side-by-side copies where it deletes a
-  restatement, and opens it in the browser. Use when the user runs /dream-team:tech-debt-triage
-  or asks for a tech-debt triage, an architecture survey, refactor candidates or what to
-  restructure in a codebase.
+  before/after diagrams where it changes structure, and opens it in the browser. Use when the
+  user runs /dream-team:tech-debt-triage or asks for a tech-debt triage, an architecture survey,
+  refactor candidates or what to restructure in a codebase.
 disable-model-invocation: true
 argument-hint: "[path ...]"
 ---
@@ -110,17 +109,12 @@ have no scratchpad; `<report dir>` below is that directory. Copy the layout and 
 - Header: repository name and short SHA, date, scope, candidate count, verdict counts as
   `.legend` badges (Act now and Later as anchors, Skip as a count only), Q/P/C legend.
 - Act now: one card per item, in this order: id, short title, issue badge, Q/P/C badge, cited
-  file:line list, before/after diagrams or side-by-side copies, Problem, Fix, then up to three
-  wins of six words at most as plain `ul.wins` bullets, no label.
+  file:line list, before/after diagrams, Problem, Fix, then up to three wins of six words at most
+  as plain `ul.wins` bullets, no label.
 - Issue badge: `b-act` and `#N · filed` for an issue this run filed; `b-cov` and
   `#N · covered by open issue` for one already open.
 - Write the short title, Problem, Fix and wins from the finder claim and the judge evidence.
-- Act now item that deletes a restatement → one `.ba` pane per copy, as HTML, no Mermaid, in
-  place of the cited file:line list.
-- Copy pane: the copy's file:line in `.files`, then its lines in `.dup`.
-- Copy pane lines: each differing line plus at most 3 lines of context, 15 lines at most.
-- Line that differs between copies → wrap it in `.diff`; identical copies get none.
-- Other Act now item that changes call flow, ownership or file placement → before and after
+- Act now item that changes call flow, ownership or file placement → before and after
   Mermaid `flowchart TD` diagrams in the card's `.ba` panes.
 - Any other Act now item → no diagram.
 - Diagram node label: at most two short lines, no rhombus decision nodes.
