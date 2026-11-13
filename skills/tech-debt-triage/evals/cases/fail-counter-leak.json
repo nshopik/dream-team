@@ -1,0 +1,23 @@
+{
+  "repo": "fail-counter-leak",
+  "commit": "HEAD",
+  "path": "skills/tech-debt-triage/evals/fixtures/fail-counter-leak",
+  "source": "Fixture for issue 470: a seam leak from the architecture review of a real triage run on a 15-file Go package (#468). Co-change counts come from an analogous file pair in another repo: last 200 non-merge commits, commits of 30 files or fewer.",
+  "candidates": [
+    {
+      "id": "C1",
+      "claim": "Prober.Step reads the StateMachine's private fail count through fails() and repeats its withdraw threshold from cfg.WithdrawAfter, with seeded and force flags for the after-restart rule. Give StateMachine an Unknown start state so Step becomes a plain desired-vs-applied diff.",
+      "location": "prober.go:27, statemachine.go:26, statemachine.go:36",
+      "removes": "a second copy of the withdraw rule and two flags in the prober",
+      "expect": "Act now",
+      "cochange": {"files": ["statemachine.go", "prober.go"], "shared": 13, "coupling": 0.32, "window": 200, "files_per_change": [2, 1]}
+    },
+    {
+      "id": "C2",
+      "claim": "The comment on NewStateMachine names Prober.seed, which does not exist; the after-restart rule is in Prober.Step.",
+      "location": "statemachine.go:12",
+      "removes": "a stale comment",
+      "expect": "Skip"
+    }
+  ]
+}
