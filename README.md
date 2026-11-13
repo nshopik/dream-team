@@ -48,9 +48,9 @@ walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
   for gaps.
 - **[review-bench](skills/review-bench/SKILL.md)**: benchmarks code reviewers against qa-review on
   one pull request and prints a score table.
-- **[tech-debt-triage](skills/tech-debt-triage/SKILL.md)**: work in progress; lists refactor
-  candidates in a repo's hot spots, has a judge verify each in code, files the Act now ones and
-  writes an HTML report.
+- **[tech-debt-triage](skills/tech-debt-triage/SKILL.md)**: work in progress; lists file clusters
+  tied by one structural flaw in a repo's co-change hot spots, has a judge verify each in code,
+  files the Act now ones and writes an HTML report.
 
 ### Agents
 

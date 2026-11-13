@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """Builds the judge prompt for a case, or grades the judge's verdict lines against it; or builds
-the step-5 report prompt from the case's canned verdicts, or grades the HTML report against it.
+the step-5 report prompt from the case's canned verdicts, or grades the HTML report against it; or
+builds the finder prompt for the case's repository, or grades the finder's candidate lines.
 
 usage: judge.py prompt <case.json> <repo path>
        judge.py grade <case.json> <verdicts.md> [verdicts.md ...]
+       judge.py finder-prompt <case.json> <repo path>
+       judge.py finder <case.json> <candidates.md>
        judge.py report-prompt <case.json> <repo path> <report.html>
        judge.py report <case.json> <report.html>
 """
@@ -18,14 +21,48 @@ from pathlib import Path
 SKILL = Path(__file__).resolve().parent.parent / 'SKILL.md'
 
 
+def brief(name):
+    return re.search(name + r' brief, verbatim:\n\n```\n(.*?)\n```', SKILL.read_text(), re.S).group(1)
+
+
+def line(c):
+    tail = f"{c['cochange']['shared']} shared" if 'cochange' in c else 'no pair'
+    return f"{c['id']} | {c['claim']} | {c['location']} | {c['removes']}; {tail}"
+
+
+def pairs(case):
+    return '\n'.join(f"{', '.join(p['files'])} | {p['shared']} shared | {round(p['coupling'] * 100)}%"
+                     for p in (c['cochange'] for c in case['candidates'] if 'cochange' in c)) or 'none'
+
+
 def prompt(case, repo):
-    text = SKILL.read_text()
-    brief = re.search(r'Judge brief, verbatim:\n\n```\n(.*?)\n```', text, re.S).group(1)
-    lines = [f"{c['id']} | {c['claim']} | {c['location']} | {c['removes']}" for c in case['candidates']]
-    pairs = [f"{', '.join(p['files'])} | {p['shared']} shared | {round(p['coupling'] * 100)}%"
-             for p in (c['cochange'] for c in case['candidates'] if 'cochange' in c)]
-    print(brief.replace('<repo>', repo) + '\n\n' + '\n'.join(lines) +
-          '\n\nCo-change pairs, last 200 commits:\n' + ('\n'.join(pairs) or 'none'))
+    print(brief('Judge').replace('<repo>', repo) + '\n\n' + '\n'.join(map(line, case['candidates'])) +
+          '\n\nCo-change pairs, last 200 commits:\n' + pairs(case))
+
+
+def finder_prompt(case, repo):
+    paths = sorted(str(p.relative_to(repo)) for p in Path(repo).rglob('*') if p.is_file())
+    print(brief('Finder').replace('<paths>', '\n'.join(paths)).replace('<pairs>', pairs(case)))
+
+
+def finder(case, out):
+    rows = [[f.strip() for f in m.split('|')] for m in re.findall(r'^\W*(C\d+\s*\|.*)$', Path(out).read_text(), re.M)]
+    bad = [] if rows else ['no candidate lines']
+    for r in rows:
+        locs = r[2].split(',') if len(r) > 2 else []
+        if len(r) < 4:
+            bad.append(f'{r[0]}: {len(r)} fields')
+        elif not re.search(r'; *(\d+ shared|no pair)\W*$', r[-1]):
+            bad.append(f'{r[0]}: no co-change tail')
+        elif len(locs) == 1 and locs[0].split(':')[0].strip().endswith('.md'):
+            bad.append(f'{r[0]}: a single doc line')
+    for files in case['finder']:
+        if not any(all(f in r[2] for f in files) for r in rows if len(r) > 2):
+            bad.append(f"no line cites {' and '.join(files)}")
+    print(f"{len(rows)} candidate lines")
+    for b in bad:
+        print(f'FAIL  {b}')
+    return len(bad)
 
 
 def grade(case, files):
@@ -59,8 +96,7 @@ def report_prompt(case, repo, html):
     print(f"Run step 5 of the tech-debt-triage skill for the repository at {repo}: {case['repo']} "
           f"@ {case['commit']}, {date.today()}, scope: whole repository. Steps 1 to 4 are done; "
           f"their results are below. Write the report and nothing else.\n\n"
-          f"Finder candidate lines:\n" + '\n'.join(
-              f"{c['id']} | {c['claim']} | {c['location']} | {c['removes']}" for c in case['candidates']) +
+          f"Finder candidate lines:\n" + '\n'.join(map(line, case['candidates'])) +
           "\n\nJudge verdict lines:\n" + '\n'.join(c['verdict'] for c in case['candidates']) +
           f"\n\nIssues, at {case['forge']}/issues/<N>:\n" + '\n'.join(issues) + '\n\n' + step)
 
@@ -151,6 +187,10 @@ if __name__ == '__main__':
     case = json.load(open(case))
     if cmd == 'prompt':
         prompt(case, args[0])
+    elif cmd == 'finder-prompt':
+        finder_prompt(case, args[0])
+    elif cmd == 'finder':
+        sys.exit(1 if finder(case, args[0]) else 0)
     elif cmd == 'report-prompt':
         report_prompt(case, *args)
     elif cmd == 'report':

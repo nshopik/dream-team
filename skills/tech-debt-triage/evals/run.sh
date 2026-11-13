@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Judge and report evals for tech-debt-triage (#431, #453). Per case: export its commit to a temp dir, no .git,
+# Judge, report and finder evals for tech-debt-triage (#431, #453, #472). Per case: export its commit to a temp dir, no .git,
 # run the SKILL.md judge brief headless on its candidates RUNS times, grade the verdicts with
 # judge.py. Pass: a majority of runs put each `Act now` candidate at Act now, every other one at
 # Later or Skip.
@@ -8,10 +8,15 @@
 # verdicts instead, and grade the HTML with `judge.py report`. Pass: each candidate with a
 # `report` key has a card that meets its step-5 rules, and the HTML has no unbalanced tags. A case
 # with no `report` key is skipped.
+# FINDER=1: run the step-2 finder brief once, ignoring RUNS, as the architect-reviewer agent on the
+# case's whole repository, and grade its lines with `judge.py finder`. Pass: every line has four
+# fields and a co-change tail, none cites a single doc line alone, and for each file set in the
+# case's `finder` key one line cites them all. A case with no `finder` key is skipped.
 #
 # Usage:  ./run.sh [slug ...]                  (no args = every cases/*.json)
 #         MODEL=fable RUNS=3 OUT=runs/<name> ./run.sh
 #         REPORT=1 ./run.sh
+#         FINDER=1 ./run.sh
 set -euo pipefail
 cd "$(dirname "$0")"
 REPO=$(git rev-parse --show-toplevel)
@@ -26,6 +31,7 @@ fails=0
 for slug in "${SLUGS[@]}"; do
   case=cases/$slug.json
   [ "${REPORT:-}" = 1 ] && ! grep -q '"report":' "$case" && continue
+  [ "${FINDER:-}" = 1 ] && ! grep -q '"finder":' "$case" && continue
   tmp=$(mktemp -d)
   trap 'rm -rf "${tmp:?}"' EXIT
   read -r commit path < <(python3 -c 'import json, sys; c = json.load(open(sys.argv[1])); print(c["commit"], c.get("path", ""))' "$case")
@@ -40,6 +46,17 @@ for slug in "${SLUGS[@]}"; do
     rm -rf "${tmp:?}"
     echo "== $slug report ($MODEL)"
     python3 judge.py report "$case" "$OUT/$slug.html" | tee "$OUT/$slug.report.txt" || fails=$((fails + 1))
+    continue
+  fi
+  if [ "${FINDER:-}" = 1 ]; then
+    python3 judge.py finder-prompt "$case" "$tmp/repo" > "$OUT/$slug.finder.prompt.md"
+    (cd "$tmp/repo" && timeout 30m claude -p --model "$MODEL" --setting-sources project,local \
+       --permission-mode dontAsk --plugin-dir "$REPO" --agent dream-team:architect-reviewer \
+       --allowed-tools Read Grep Glob < "$OUT/$slug.finder.prompt.md" > "$OUT/$slug.finder.md") \
+       || echo "$slug finder: claude exited $?" >&2
+    rm -rf "${tmp:?}"
+    echo "== $slug finder ($MODEL)"
+    python3 judge.py finder "$case" "$OUT/$slug.finder.md" | tee "$OUT/$slug.finder.txt" || fails=$((fails + 1))
     continue
   fi
   python3 judge.py prompt "$case" "$tmp/repo" > "$OUT/$slug.prompt.md"
