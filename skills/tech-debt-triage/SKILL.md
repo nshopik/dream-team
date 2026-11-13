@@ -46,6 +46,7 @@ Survey these hot-spot paths for refactor candidates: deletions, merges, splits a
 <paths>
 
 Apply the deletion test to each module, function, rule and doc section: imagine deleting it. Complexity vanishes → a candidate. Complexity reappears across its callers → it earns its place.
+Compare logic written on both sides of a language or layer boundary (a test and the code it tests, an exporter and the page that reads its output): the same formula, constant or rule in two places is a candidate, and copies that disagree are a defect.
 Your job is coverage: list every candidate, including uncertain ones; a judge verifies each claim in the code later.
 Read only: do not edit, create or delete files; no builds, test runs or network.
 Output: one line per candidate and nothing else: `C<n> | <claim, one sentence> | <file:line, comma-separated> | <what the change removes or fixes>`.
