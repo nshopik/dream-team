@@ -4,8 +4,8 @@ description: >-
   Triages tech debt in a repository: ranks hot-spot paths by git log, has dream-team's
   architect-reviewer list refactor and restructuring candidates under the deletion test, has a
   fresh judge subagent on Fable verify each claim in the code and rate it Act now, Later or Skip
-  against quality, performance and change cost, files the Act now items per scope-issue, light-tier
-  ones in one bundle issue, writes an HTML report with one card per Act now item, with
+  by a defect tier and a co-change interest tier, files the Act now items per scope-issue,
+  light-tier ones in one bundle issue, writes an HTML report with one card per Act now item, with
   before/after diagrams where it changes structure, and opens it in the browser. Use when the
   user runs /dream-team:tech-debt-triage or asks for a tech-debt triage, an architecture survey,
   refactor candidates or what to restructure in a codebase.
@@ -29,6 +29,25 @@ say.
 ```sh
 git log -n 200 --format= --name-only -- <scope> | sort | uniq -c | sort -rn
 ```
+
+- List the scope's co-changed file pairs over the same 200 commits, one line per pair:
+
+```sh
+git log -n 200 --format=%x00 --name-only -- <scope> | python3 -c '
+import collections, itertools, sys
+skip = {"CHANGELOG.md", ".claude-plugin/plugin.json", "package.json"}
+commits = [set(c.split("\n")) - {""} for c in sys.stdin.read().split("\0")]
+commits = [c - skip for c in commits if len(c) <= 30]
+n = collections.Counter(f for c in commits for f in c)
+pairs = collections.Counter(p for c in commits for p in itertools.combinations(sorted(c), 2))
+for (a, b), s in pairs.most_common():
+    pct = round(200 * s / (n[a] + n[b]))
+    if s >= 5 and pct >= 30:
+        print(f"{a}, {b} | {s} shared | {pct}%")
+'
+```
+
+- Add the repository's other version files, which every release touches, to `skip`.
 
 ## 2. Find
 
@@ -60,8 +79,9 @@ Launch one Agent in a fresh context and wait for its verdict lines:
 
 - `subagent_type`: `general-purpose`.
 - `model`: `fable`.
-- `prompt`: the judge brief below, `<repo>` replaced by the repository path, a blank line, then
-  the finder's candidate lines.
+- `prompt`: the judge brief below, `<repo>` replaced by the repository path, a blank line, the
+  finder's candidate lines, a blank line, `Co-change pairs, last 200 commits:`, then the step-1
+  pair lines, or `none`.
 
 - Fable unavailable (the launch errors) → stop and ask the user whether to run the judge on
   `opus` at `effort` `xhigh`.
@@ -72,7 +92,7 @@ Judge brief, verbatim:
 ```
 You triage technical debt. Debt is code that no longer fits the task it serves. Its principal is the cost of the fix. Its interest is what the code costs while it stays: defects users hit, and time lost on each change to it. Code that changes often charges the most interest; stable code charges little, even when it is ugly. Your job is to pay the debt whose interest exceeds its principal now, schedule the rest, and drop claims that are not debt at all.
 
-Judge the refactor candidates below for the repository at <repo>. Another agent listed them; about half of such claims are overstated or wrong. Verify each claim in the code before you rate it.
+Judge the refactor candidates below for the repository at <repo>. Another agent listed them; about half of such claims are overstated or wrong. Verify each claim in the code before you rate it. The co-change pair lines after the candidates give, per file pair, the commits of the last 200 that changed both files, and that count as a share of the two files' mean commit count.
 Read only: do not edit, create or delete files; no builds, test runs, forge or network.
 
 For each candidate:
@@ -81,9 +101,13 @@ For each candidate:
   - quality: does the code deliver what was promised? A change that removes a defect a user or agent hits is +.
   - performance: a veto only. Rate - when the change slows a path that runs often, otherwise =; never +.
   - change cost: the interest a tangled flow charges agents and humans on every read and edit. Count the files and hops one must read to follow or change the flow, before against after.
-- Act now: the claim holds, and the change removes a defect in the code today (code, docs and callers disagree, or a result lacks what its consumers read) or deletes a restatement of a source of truth, with no pillar -, and it is not a mechanical code fix (see Later). A defect the repo's normal setup triggers counts before anyone hits it.
-- Later: the claim holds, but the defect is hypothetical (nothing in the code disagrees today), only a rare environment triggers it and it loses no data, opens no security hole and causes no crash without recovery, the payoff waits on other work, or the change is a mechanical code fix: a deletion at one site (dead code, an impossible-case guard) that changes no interface or behaviour a caller sees and deletes no restatement. A stale doc line or wrong docstring is a defect a reader hits, not a mechanical code fix.
-- Skip: the claim does not hold (the code differs on purpose, a test already pins it, it is already done), or the change adds a concept (a module, type, router, table, file) or adds files or hops to follow a flow without removing a known defect.
+- Check two tiers:
+  - Defect: a named test or consumer gets a wrong result today in the repository's normal setup; cite the line where it diverges.
+  - Interest: a pair line names two of the candidate's files with at least 5 shared commits, and the change cuts the files a typical change there must touch from H to H' < H; count H and H' in the code.
+- Act now: the claim holds, a tier holds today, and no pillar is -.
+- Later: the claim holds, but its tier holds only once other work lands, or only a rare environment triggers its defect and that defect loses data, opens a security hole or causes a crash.
+- Skip: the claim does not hold (the code differs on purpose, a test already pins it, it is already done), or neither Act now nor Later holds.
+- A new module is no reason to Skip unless it has one adapter, H' is not below H and the Defect tier fails.
 
 Output: one line per candidate and nothing else: `<id> | <Act now, Later or Skip> | Q<+,= or -> P<= or -> C<+,= or -> | <file:line of your evidence> | <evidence, one line>`.
 ```

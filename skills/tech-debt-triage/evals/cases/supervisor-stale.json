@@ -6,7 +6,7 @@
   "candidates": [
     {
       "id": "C1",
-      "claim": "Supervisor.Run exits through log.Fatalf, so a stale loop is observable only by re-running the test binary as a subprocess, and main repeats the prober's register-before-stall contract and its beat interval. Give Supervisor a pure Check(now) that returns the stale loops, plus an onStale callback.",
+      "claim": "Supervisor.Run exits through log.Fatalf, so a stale loop is observable only by re-running the test binary as a subprocess, and main repeats the prober's register-before-stall contract and its beat interval. Give Supervisor a pure Check(now) that returns the stale loops, an onStale callback, and a Go(name, interval, loop) that registers the loop before starting it and sets its stale limit from the interval, so neither main nor the prober states the contract.",
       "location": "supervisor.go:34, supervisor_test.go:19, main.go:13, main.go:14, prober.go:11",
       "removes": "a subprocess test and a contract stated in two files",
       "expect": "Act now",
