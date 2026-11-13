@@ -1,7 +1,7 @@
 {
   "repo": "dream-team",
   "commit": "66a2f62",
-  "source": "Candidates and verdicts from the public findings comment on issue 388; C11 and the canned verdict lines for the report eval added in issue 453.",
+  "source": "Candidates and verdicts from the public findings comment on issue 388; C11 and the canned verdict lines for the report eval added in issue 453; C12 added in issue 459.",
   "candidates": [
     {
       "id": "C1",
@@ -103,6 +103,14 @@
       "report": "none",
       "issue": 457,
       "filed": true
+    },
+    {
+      "id": "C12",
+      "claim": "branch-guard.py's branch_of() guards a case that cannot happen: `or '.'` after dirname of an absolute path; delete it.",
+      "location": "hooks/branch-guard.py:37",
+      "removes": "an impossible-case guard in branch_of()",
+      "expect": "Later",
+      "verdict": "C12 | Later | Q= P= C+ | hooks/branch-guard.py:37 | os.path.dirname of an absolute path is never empty, so `or '.'` never applies; deleting it is a single-site mechanical fix that changes nothing a caller sees."
     }
   ],
   "forge": "https://github.com/nshopik/dream-team"
