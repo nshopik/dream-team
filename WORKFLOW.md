@@ -115,8 +115,10 @@ asking. Smaller changes it makes inline.
      `milestone-close`.
   6. Small adjacent fixes found on the way ride in the MR as their own commits; other adjacent
      defects are filed as issues, never left in the MR text.
+  7. Watches the MR pipeline: retries a flake once, pushes up to two folded fixes for a real
+     failure, else posts a CI hand-back comment on the MR.
 - You: check the branch and external-reviewer lines, any assumptions at the top of the report,
-  any reviewer questions under Notes, and the MR.
+  any reviewer questions under Notes, the MR, and any `**Pipeline:**` follow-up.
 
 ### 4. You read the MR
 

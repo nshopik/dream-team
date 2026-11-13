@@ -302,18 +302,45 @@ skill, if present, is the source of truth for it.
 ## 7. Watch the MR/PR
 
 Once the MR/PR is open, start a Bash `run_in_background` poll that exits on a final state,
-`merged` or `closed` — never on "not open": GitLab reports a transient `locked` while it merges.
-Poll every 30s through the host's tooling skill, e.g.:
+`merged` or `closed`, or when the pipeline for the MR/PR head finishes — never on "not open":
+GitLab reports a transient `locked` while it merges. Poll every 30s through the host's tooling
+skill, e.g.:
 
 ```sh
-until s=$(glab api "projects/<p>/merge_requests/<iid>" | jq -r .state)
-      [ "$s" = merged ] || [ "$s" = closed ]; do
+h=$(git rev-parse HEAD)
+until s=$(glab api "projects/<p>/merge_requests/<iid>" | jq -r .state) &&
+      p=$(glab api "projects/<p>/merge_requests/<iid>/pipelines" |
+        jq -r --arg h "$h" 'map(select(.sha == $h))[0].status')
+      [ "$s" = merged ] || [ "$s" = closed ] || [ "$p" = success ] || [ "$p" = failed ]; do
   sleep 30
 done
+echo "$s $p"
 ```
+
+- GitHub → state from `gh pr view <n> --json state`, pipeline from `gh run list --commit "$h"
+  --json status,conclusion`: finished once it lists runs and all are `completed`, failed when one
+  concludes `failure`.
 
 Give the report (below) without waiting for the poll, and leave the poll out of it. When it
 exits:
+
+- **Pipeline passed** → restart the poll on `merged` or `closed` only.
+- **Pipeline failed** → read the failing job's log with the `ci-logs` skill if present, else the
+  host's tooling skill; judge it a real failure or an infrastructure flake (runner, network or
+  registry, not the code).
+- A flake → retry that job once (`glab api -X POST projects/<p>/jobs/<id>/retry`, `gh run rerun
+  --job <job-id>`); a retry does not count as a fix push.
+- After the retry → wait until the head pipeline no longer reads `failed`, then restart the poll.
+- The retried job fails again → handle it as real.
+- A real failure → dispatch one `general-purpose` agent with the failing log excerpt, the worktree
+  path, the base and `gateCommands`, told to make the smallest fix, run every `gateCommands` entry
+  and commit it as `fixup! <subject of the commit it repairs>`.
+- Its `fixup!` committed with `gateCommands` green → fold per step 6, `git push
+  --force-with-lease`, and restart the poll.
+- A real failure after 2 fix pushes, or an agent that commits no green fix → stop fixing, post a
+  CI hand-back comment on the MR/PR with the failing job link, and restart the poll on `merged` or
+  `closed` only.
+- Review comments on the MR/PR → leave them to the user.
 
 - **Merged** → `cd` to the main checkout (step 3), run the block below, then check the issue
   closed. Report one line: new `<target>` head, worktree and branch deleted, issue state.
@@ -358,6 +385,8 @@ The report carries only what the user must know or act on.
 - Name each adjacent defect that could not be filed, and why, one line each.
 - Say so when `redEvidence` is empty on a bug fix.
 - Give a lab step one line: its verdict, or its numbers when there are fewer than three.
+- Give each pipeline failure step 7 acts on one `**Pipeline:**` line in a follow-up message: the
+  job, real or flake, and the fix commit.
 - Name each reviewer that could not check something, and the check you ran in its place.
 - Stopped at triage → say what is blocking and stop there.
 - Leave out nits, applied or dropped, and reviewer verdicts with no finding.
