@@ -1,7 +1,7 @@
 {
   "repo": "dream-team",
   "commit": "66a2f62",
-  "source": "Candidates and verdicts from the public findings comment on issue 388; C11 and the canned verdict lines for the report eval added in issue 453; C12 added in issue 459.",
+  "source": "Candidates and verdicts from the public findings comment on issue 388; C11 and the canned verdict lines for the report eval added in issue 453; C12 added in issue 459; C11 relabelled Skip and C4, C7 given this repo's co-change counts at 5b7bd42 (last 200 non-merge commits) in issue 470.",
   "candidates": [
     {
       "id": "C1",
@@ -36,6 +36,7 @@
       "location": "MAINTAINING.md:3, README.md:24",
       "removes": "an inventory that goes stale on every skill or agent change",
       "expect": "Act now",
+      "cochange": {"files": ["MAINTAINING.md", "README.md"], "shared": 23, "coupling": 0.55, "window": 200, "files_per_change": [2, 1]},
       "verdict": "C4 | Act now | Q+ P= C+ | MAINTAINING.md:53 | The section restates README.md:24-71 and the frontmatter descriptions and has drifted: its jit-context entry (MAINTAINING.md:53-55) names `<upstream_repo>` and `<project_notes>` where README.md:70-71 names neither, and neither lists the `<issue_sized>` block jit-context.py:184 emits; keep only the body-cap heading-id fact (MAINTAINING.md:57-58).",
       "report": "restatement",
       "issue": 456,
@@ -63,6 +64,7 @@
       "location": "skills/review-bench/METHODOLOGY.md:6, skills/review-bench/SKILL.md:35",
       "removes": "duplicated method text in two files",
       "expect": "Act now",
+      "cochange": {"files": ["skills/review-bench/METHODOLOGY.md", "skills/review-bench/SKILL.md"], "shared": 9, "coupling": 0.75, "window": 200, "files_per_change": [2, 1]},
       "verdict": "C7 | Act now | Q= P= C+ | skills/review-bench/METHODOLOGY.md:6 | \"Ledger build\" (:6-13) and the bump bullets of \"Frozen ledger\" restate SKILL.md steps 2, 3 and 5 (SKILL.md:42-55); delete those bullets only, since grading is cited by SKILL.md:88, not restated.",
       "report": "restatement",
       "issue": 452,
@@ -97,7 +99,7 @@
       "claim": "jit-context.py's docstring says SessionStart injects the <project_notes> block, but main() also injects <issue_sized>.",
       "location": "hooks/jit-context.py:3, hooks/jit-context.py:184",
       "removes": "a docstring that misstates what the hook injects at session start",
-      "expect": "Act now",
+      "expect": "Skip",
       "verdict": "C11 | Act now | Q+ P= C= | hooks/jit-context.py:184 | On SessionStart main() emits `NOTES + ISSUE_SIZED`, but the docstring at line 3 names only the `<project_notes>` block; add `<issue_sized>` to that line.",
       "report": "none",
       "issue": 457,
