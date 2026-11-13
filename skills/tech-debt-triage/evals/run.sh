@@ -3,9 +3,11 @@
 # run the SKILL.md judge brief headless on its candidates RUNS times, grade the verdicts with
 # judge.py. Pass: a majority of runs put each `Act now` candidate at Act now, every other one at
 # Later or Skip.
+# A case's optional `path` key exports only that subdirectory of its commit as the repository.
 # REPORT=1: run the step-5 report instructions once, ignoring RUNS, on the case's canned
 # verdicts instead, and grade the HTML with `judge.py report`. Pass: each candidate with a
-# `report` key has a card that meets its step-5 rules, and the HTML has no unbalanced tags.
+# `report` key has a card that meets its step-5 rules, and the HTML has no unbalanced tags. A case
+# with no `report` key is skipped.
 #
 # Usage:  ./run.sh [slug ...]                  (no args = every cases/*.json)
 #         MODEL=fable RUNS=3 OUT=runs/<name> ./run.sh
@@ -23,11 +25,12 @@ SLUGS=("$@")
 fails=0
 for slug in "${SLUGS[@]}"; do
   case=cases/$slug.json
+  [ "${REPORT:-}" = 1 ] && ! grep -q '"report":' "$case" && continue
   tmp=$(mktemp -d)
   trap 'rm -rf "${tmp:?}"' EXIT
-  commit=$(python3 -c 'import json, sys; print(json.load(open(sys.argv[1]))["commit"])' "$case")
+  read -r commit path < <(python3 -c 'import json, sys; c = json.load(open(sys.argv[1])); print(c["commit"], c.get("path", ""))' "$case")
   mkdir "$tmp/repo"
-  git -C "$REPO" archive "$commit" | tar -x -C "$tmp/repo"
+  git -C "$REPO" archive "$commit${path:+:$path}" | tar -x -C "$tmp/repo"
   if [ "${REPORT:-}" = 1 ]; then
     python3 judge.py report-prompt "$case" "$tmp/repo" "$OUT/$slug.html" > "$OUT/$slug.report.prompt.md"
     rm -f "${OUT:?}/${slug:?}.html"
