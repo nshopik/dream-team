@@ -104,25 +104,6 @@ On pi the agents get pi's default tools, `write` and `edit` included.
 
 - `DREAM_TEAM_OWN_REMOTES`: regex matching the git remote URLs you own. Default: unset.
 
-## Development
-
-Test a local checkout with:
-
-```
-claude --plugin-dir .
-python3 hooks/test_body_cap.py
-python3 hooks/test_branch_guard.py
-python3 hooks/test_jit_context.py
-python3 skills/dream-fixer/test_fold.py
-python3 skills/friction/test_friction.py
-python3 skills/review-bench/test_score.py
-python3 skills/review-bench/test_extract.py
-python3 skills/review-bench/test_run.py
-python3 skills/tech-debt-triage/test_cochange.py
-node workflows/test_simplify.mjs
-python3 test_frontmatter.py
-```
-
 ## License
 
 MIT
