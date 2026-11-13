@@ -128,6 +128,27 @@ assert second[0] == "DENY" and "budget" in second[1]
 assert third[0] == "ALLOW+RULES"
 print(f"{'per-gate bounce':34} {'OK':12} 2 deny / 1 pass")
 
+# 10a. an MR opened from a checkout on the target branch measures the source branch
+# it names; a 0-line measurement is the wrong tree, so it never blocks.
+git("checkout", "-q", "main")
+w90, w140 = shlex.quote("word " * 90), shlex.quote("word " * 140)
+for name, want, cmd in [
+    ("glab api source_branch",  "ALLOW+RULES", f"cd {repo} && glab api -X POST projects/1/merge_requests -f source_branch=topic -f target_branch=main -f description={w90}"),
+    ("glab api source, long",   "DENY", f"glab api -X POST projects/1/merge_requests -f source_branch=topic -f description={w140}"),
+    ("glab api target_branch",  "ALLOW+RULES", f"glab api -X POST projects/1/merge_requests -f source_branch=topic -f target_branch=topic -f description={w140}"),
+    ("glab mr create -s -b",    "DENY", f"glab mr create -s topic -b main -d {w140}"),
+    ("gh pr create --head=",    "DENY", f"gh pr create --head=topic --base=main --body {w140}"),
+    ("gh pr create -H, -b body", "DENY", f"gh pr create -H topic -b {w140}"),
+    ("gh api pulls head=o:x",   "DENY", f"gh api -X POST repos/o/r/pulls -f head=o:topic -f base=main -f body={w140}"),
+    ("gh api -H header, head=", "DENY", f"gh api -X POST repos/o/r/pulls -H 'Accept: application/vnd.github+json' -f head=topic -f body={w140}"),
+    ("0-line diff allows",      "ALLOW+RULES", f"gh pr create --body {w140}"),
+]:
+    os.path.exists(SEEN) and os.remove(SEEN)
+    v, r = run_in(cmd, repo)
+    print(f"{name:34} {v:12} {r.splitlines()[0][:70]}")
+    assert v == want, name
+print(f"{'source branch measured':34} {'OK':12} 9 cases")
+
 # 10b. commits are the scope-commit skill's job: the hook stays silent on them.
 assert run("git commit -F - <<'EOF'\n" + BODY + "\nEOF") == ("ALLOW-SILENT", "")
 print(f"{'commit passes silently':34} {'OK':12}")

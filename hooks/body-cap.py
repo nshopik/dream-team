@@ -143,8 +143,39 @@ def cmd_cwd(cmd, at):
     return path if os.path.isdir(path) else None
 
 
-def diff_lines(cwd=None):
-    """Lines changed on this branch against its base, or None if unmeasurable."""
+# Flags naming the MR's source and target branch. glab's `-b` is the target, gh's the body.
+BRANCH_FLAGS = {
+    'gh': ({'--head', '-H', 'head'}, {'--base', '-B', 'base'}),
+    'gh api': ({'head'}, {'base'}),             # its -H is --header
+    'glab': ({'--source-branch', '-s', 'source_branch'},
+             {'--target-branch', '-b', 'target_branch'}),
+}
+
+
+def mr_branches(cmd, tool):
+    """Source and target branch the MR command names; None for one it omits."""
+    try:
+        parts = shlex.split(cmd)
+    except ValueError:
+        return None, None
+    if tool == 'gh' and parts[1:2] == ['api']:
+        tool = 'gh api'
+    found = [None, None]
+    for p, nxt in zip(parts, parts[1:] + ['']):
+        if p in ('-f', '-F', '--field', '--raw-field') and '=' in nxt:
+            p, nxt = nxt.split('=', 1)
+        elif p.startswith('--') and '=' in p:
+            p, nxt = p.split('=', 1)
+        elif not p.startswith('-'):
+            continue
+        for i, flags in enumerate(BRANCH_FLAGS[tool]):
+            if p in flags and found[i] is None:
+                found[i] = nxt.rsplit(':', 1)[-1]       # gh `head=owner:branch`
+    return tuple(found)
+
+
+def diff_lines(cwd=None, source=None, target=None):
+    """Lines changed on the MR's branch against its base, or None if unmeasurable."""
     def git(*args):
         try:
             p = subprocess.run(('git',) + args, capture_output=True, text=True,
@@ -160,22 +191,26 @@ def diff_lines(cwd=None):
         return sum(int(c) for line in out.splitlines()
                    for c in line.split('\t')[:2] if c.isdigit())
 
+    tip = source or 'HEAD'
     base = None
-    for ref in ('origin/HEAD', 'main', 'master'):
-        out = git('merge-base', 'HEAD', ref)
+    for ref in (target, f'origin/{target}') if target else ('origin/HEAD', 'main', 'master'):
+        out = git('merge-base', tip, ref)
         if out and out.strip():
             base = out.strip()
             break
     if not base:
         return None
-    committed = numstat(f'{base}..HEAD')
+    committed = numstat(f'{base}..{tip}')
     if committed is None:
         return None
     # An MR is often written before the last commit lands, so the committed
-    # range alone reads 0 and every description falls back to the floor. The
+    # range alone reads 0 and the budget check is skipped. The
     # working tree against HEAD is disjoint from that range; summing them sizes
-    # the change the description actually covers.
-    return committed + (numstat('HEAD') or 0)
+    # the change the description actually covers. A named source branch is not
+    # what the working tree holds.
+    if not source:
+        committed += numstat('HEAD') or 0
+    return committed or None                    # an MR always has a diff: 0 is the wrong tree
 
 # Rung rubrics stamped as a heading or lead-in. The scope-mr ladder decides what
 # to write; naming the rung in the text ("## Look at first", "Decision worth
@@ -415,7 +450,8 @@ def main():
         return deny(RUBRIC_DENY.format(hit=m.group(0).strip()) + out)
     if RUNG4.search('\n'.join(body)) and not seen(body, 'rung4'):
         return deny(RUNG4_CONFIRM + reminder('rung-four'))
-    lines = diff_lines(cmd_cwd(cmd, at))
+    lines = diff_lines(cmd_cwd(cmd, at),
+                       *mr_branches(shell[at:], 'gh' if field == 'body=' else 'glab'))
     budget = (max(DIFF_FLOOR, DIFF_FACTOR * lines) if lines is not None
               else None)
     if budget and n > budget and not seen(body, 'budget'):
