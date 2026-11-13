@@ -5,10 +5,6 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
-### Added
-
-- The `tech-debt-triage` skill, a work in progress, lists file clusters tied by one structural flaw in a repository's most co-changed paths, has a judge verify each and files the ones rated Act now.
-
 ### Changed
 
 - `qa-review` tells each lens to report every defect it finds, including uncertain or low-severity ones.
@@ -19,7 +15,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `scope-spec` ends each Decision and Design point settled in an issue, MR or comment with a link to it.
 - `ship-it` tags the release's merge commit without asking when the user passes the version as its argument.
 - `setup-dream-team` applies fixes that change no code after one OK, commits its `CLAUDE.md` and repo-doc edits, and files a maintenance issue only for the rest.
-- `scope-issue`, `tech-debt-triage` and `dream-fixer` file two or more light-tier findings from one run as one bundle issue, and `dream-fixer` ships a bundle as one MR with one commit per item.
+- `scope-issue` and `dream-fixer` file two or more light-tier findings from one run as one bundle issue, and `dream-fixer` ships a bundle as one MR with one commit per item.
 - `dream-fixer` watches an MR/PR's pipeline once the MR/PR opens, retries an infrastructure flake once, and pushes up to two fixes for a real failure before handing the MR/PR back with a comment.
 
 ### Removed
