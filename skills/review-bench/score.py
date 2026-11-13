@@ -11,14 +11,13 @@ import statistics
 import sys
 from pathlib import Path
 
-WEIGHT = {"critical": 10, "important": 4, "performance": 3, "test": 3, "minor": 1}
+WEIGHT = {"critical": 10, "important": 4, "performance": 3, "test": 3, "minor": 0.5}
 B = 2000
 
 ledger = json.load(open(sys.argv[1]))
 weight = {}
 for r in ledger["rows"]:
-    w = 0.5 if r["severity"] == "minor" and r["nit"] else WEIGHT[r["severity"]]
-    weight[r["id"]] = w * (0.5 if r["plausible"] else 1)
+    weight[r["id"]] = WEIGHT[r["severity"]] * (0.5 if r["plausible"] else 1)
 crit = [r["id"] for r in ledger["rows"] if r["severity"] == "critical"]
 
 runs = {}  # run -> {id: best credit across its lenses}

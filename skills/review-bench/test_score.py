@@ -13,19 +13,19 @@ TMP = tempfile.TemporaryDirectory()
 LEDGER = HERE / "testdata/ledger.json"
 
 
-def score(marks):
-    return subprocess.run([sys.executable, HERE / "score.py", LEDGER, marks], capture_output=True, text=True)
+def score(marks, ledger=LEDGER):
+    return subprocess.run([sys.executable, HERE / "score.py", ledger, marks], capture_output=True, text=True)
 
 
 out = score(HERE / "testdata/marks.txt")
 assert out.returncode == 0, out.stderr
 assert out.stdout == """\
-ledger v1: 7 findings, weight 26.5, 2 criticals
+ledger v1: 7 findings, weight 26, 2 criticals
 tier  reviewer     model             runs  quality     sd  criticals  rejected   $/run
-   1  qa-review    opus-4-8-high        2     86.8    2.7  1.5/2           0.5   $0.56
-   2  code-review  opus-4-8-high        2     38.7    1.3  0.0/2           1.0   $0.33
-   2                                    1     22.6         1.0/2           0.0
-   3  vllm-review  qwen3-coder-high     1     18.9         0.0/2           0.0   $0.12
+   1  qa-review    opus-4-8-high        2     87.5    1.4  1.5/2           0.5   $0.56
+   2  code-review  opus-4-8-high        2     38.5    0.0  0.0/2           1.0   $0.33
+   2                                    1     21.2         1.0/2           0.0
+   3  vllm-review  qwen3-coder-high     1     17.3         0.0/2           0.0   $0.12
 """, out.stdout
 print("PASS fixture table: shown= replaces the model; a run without stats blanks its labels")
 
@@ -47,9 +47,19 @@ for run, stats in [("QR-r1", "exit=0 wall=118s cost=$0.53 report=5644 lenses=1")
     (Path(TMP.name) / run / "stats.txt").write_text(
         f"reviewer=qa-review model=claude-opus-4-8 effort=high {stats}\n")
 out = score(bare)
-row = "   1  qa-review  opus-4-8-high     2     18.9   26.7  0.5/2           0.0\n"
+row = "   1  qa-review  opus-4-8-high     2     19.2   27.2  0.5/2           0.0\n"
 assert row in out.stdout, out
 print("PASS a bare last line with no newline is a scored run; an uncosted run blanks $/run")
+
+minor = Path(TMP.name) / "minor"
+minor.mkdir()
+(minor / "ledger.json").write_text('{"version": 1, "rows": ['
+    '{"id": "C1", "severity": "critical", "plausible": false},'
+    '{"id": "N1", "severity": "minor", "plausible": false}]}')
+(minor / "marks.txt").write_text("QR-r1 N1\n")
+out = score(minor / "marks.txt", minor / "ledger.json")
+assert "2 findings, weight 10.5," in out.stdout and "     4.8  " in out.stdout, out
+print("PASS a minor row weighs 0.5")
 
 same = Path(TMP.name) / "same"
 same.mkdir()

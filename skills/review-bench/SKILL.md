@@ -81,10 +81,10 @@ After each `run.sh` call from step 3 on:
 - List `grep -h ^Candidate <out>/*/marks.txt`.
 - Check each against the code: drop one that is refuted, pre-existing, already a row, or a
   duplicate of another candidate.
-- A non-nit candidate survives → add every surviving candidate as a row per METHODOLOGY
+- A non-minor candidate survives → add every surviving candidate as a row per METHODOLOGY
   "Ledger file", and bump `version` by one.
-- Only nit candidates survive → bump nothing; they wait for the next bump.
-- Any other row change (severity, `plausible`, `nit`) also bumps `version` by one.
+- Only minor candidates survive → bump nothing; they wait for the next bump.
+- Any other row change (severity, `plausible`) also bumps `version` by one.
 - On a bump, read each earlier run's `report.md` or `lenses/*.md` against the new rows only, per
   METHODOLOGY "Grading a run"; add the IDs each report or lens earns to its own scored line;
   existing marks stand.

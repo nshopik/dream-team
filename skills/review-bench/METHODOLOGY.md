@@ -9,17 +9,15 @@ ledger and, on a clean change, by false alarms.
 
 ```json
 {"version": 1, "frozen": true, "rows": [{"id": "C1", "finding": "…", "location": "src/a.c:412",
-  "severity": "critical", "plausible": false, "nit": false}]}
+  "severity": "critical", "plausible": false}]}
 ```
 
 - `frozen`: true or false; default false (absent).
 - `id`: the severity's letter (C, I, P, T, or N for minor) and the next free number.
 - `severity`: `critical` (crash, use-after-free, deadlock, data loss, build break), `important`
-  (risk, race, regression, silent failure), `performance`, `test` (test gap) or `minor` (bug or
-  nit).
+  (risk, race, regression, silent failure), `performance`, `test` (test gap) or `minor`.
 - `plausible`: true when every reviewer who reported the row marked it suspected or unverified,
   even if the grader later traced it.
-- `nit`: true for a minor row that is a nit.
 - IDs stay stable across versions.
 
 ## Grading a run
@@ -67,7 +65,7 @@ Candidate (qa-high-r1.arch, code-review-r1): <claim>.
 
 ```
 w_i     = base(severity_i) × (0.5 if plausible_i else 1)
-base    = critical 10, important 4, performance 3, test 3, minor bug 1, nit 0.5
+base    = critical 10, important 4, performance 3, test 3, minor 0.5
 quality = 100 × Σ_i w_i·c_i / Σ_i w_i        per run, c_i in {1, 0.5, 0}
 ```
 
