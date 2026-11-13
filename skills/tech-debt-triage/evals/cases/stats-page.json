@@ -1,0 +1,16 @@
+{
+  "repo": "stats-page",
+  "commit": "HEAD",
+  "path": "skills/tech-debt-triage/evals/fixtures/stats-page",
+  "source": "Fixture for issue 458: a cross-boundary formula copy the finder missed.",
+  "candidates": [
+    {
+      "id": "C1",
+      "claim": "test_stats.py re-implements the page's win-rate formatting with half-up rounding instead of checking what index.html shows; the copies disagree, so the page shows 0.74 for 0.745 while the test asserts 0.75 and passes.",
+      "location": "test_stats.py:6, test_stats.py:15, index.html:11",
+      "removes": "a test that checks its own copy of the page's formatting, which disagrees with the page",
+      "expect": "Act now",
+      "verdict": "C1 | Act now | Q+ P= C+ | index.html:11 | The page shows `stats.win_rate.toFixed(2)`, which gives 0.74 for the binary float 0.745, while `shown` (test_stats.py:6) rounds the decimal string half up to 0.75 and test_stats.py:15 asserts that; the test pins its own copy, not the page, so the number users see is untested and differs from the asserted one."
+    }
+  ]
+}
