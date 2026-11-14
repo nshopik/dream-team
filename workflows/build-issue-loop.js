@@ -23,6 +23,8 @@ const BRANCH = String(A.branch || '')
 const BASE = String(A.base || '')
 const GATE_COMMANDS = Array.isArray(A.gateCommands) ? A.gateCommands.map(String).filter(Boolean) : []
 const EXTERNAL = String(A.externalReview || '')
+const STOP_AFTER_GATE = A.stopAfterGate === true
+const START_AT_SIMPLIFY = A.startAtSimplify === true
 const FIX_ROUNDS = 3
 const VERIFY_ROUNDS = 3
 
@@ -527,20 +529,29 @@ async function gate(after, tag, withAspects) {
   }
 }
 
-phase('Implement')
-const impl = await agentR(implPrompt(), {
-  label: `impl:#${ISSUE}`,
-  phase: 'Implement',
-  schema: IMPL_SCHEMA,
-  ...IMPLEMENTER,
-})
-if (!impl) return result({ ok: false, stage: 'implement', reason: 'implementer returned no result' })
-if (!impl.committed) return result({ ok: false, stage: 'implement', reason: impl.summary || 'implementer committed nothing' })
+// startAtSimplify: redEvidence is the failing output the earlier runs observed.
+let impl = { redEvidence: String(A.redEvidence || ''), assumptions: [] }
+if (!START_AT_SIMPLIFY) {
+  phase('Implement')
+  impl = await agentR(implPrompt(), {
+    label: `impl:#${ISSUE}`,
+    phase: 'Implement',
+    schema: IMPL_SCHEMA,
+    ...IMPLEMENTER,
+  })
+  if (!impl) return result({ ok: false, stage: 'implement', reason: 'implementer returned no result' })
+  if (!impl.committed) return result({ ok: false, stage: 'implement', reason: impl.summary || 'implementer committed nothing' })
+}
 
+// With startAtSimplify the gate still runs first: Simplify needs its head and aspects.
 phase('Gate')
 const first = await gate('', '', true)
 if (!first.ok) return result(gateFail(first))
 let verified = first.verify
+if (STOP_AFTER_GATE) {
+  return result({ ok: true, issue: ISSUE, branch: BRANCH, head: verified.head, assumptions: impl.assumptions || [],
+    redEvidence: impl.redEvidence, changedFiles: verified.changedFiles })
+}
 
 // Must precede Review: a cut made after it ships unreviewed.
 let simplify = null

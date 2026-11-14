@@ -1,4 +1,4 @@
-// What build-issue-loop does with each Simplify review and externalReview arg, which lenses review, and the prompt rules agents get, through stub agents; no claude call.
+// What build-issue-loop does with each Simplify review and externalReview arg, which lenses review, and the prompt rules agents get, and how build-meta-loop runs it per child, through stub agents; no claude call.
 // Usage: node test_simplify.mjs
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
@@ -12,8 +12,8 @@ const args = { issue: '1', branch: 'issue-1', base: 'abc1234', gateCommands: ['t
 // externalRuns: the external reviewer's replies, the first to its review, the rest to its re-reviews and full-review retries, in call order.
 // domainRuns: the same for the domain reviewer, fix-diff reviews included, which passes once they run out. fixes: fix-round replies, then defaults.
 // status: the gate's `git status --porcelain` lines; the nth gate run reports head gate<n>. nullOnce: labels whose next call returns null, once per listing.
-// throwFor: agent types whose dispatch throws.
-async function run(review, cuts, { aspects = ['code'], gateFails = 0, externalReview, externalRuns = [], domainRuns = [], fixes = [], redEvidence = '', status = [], nullOnce = [], throwFor = [] } = {}) {
+// throwFor: agent types whose dispatch throws. extra: more loop args.
+async function run(review, cuts, { aspects = ['code'], gateFails = 0, externalReview, externalRuns = [], domainRuns = [], fixes = [], redEvidence = '', status = [], nullOnce = [], throwFor = [], extra = {} } = {}) {
   const labels = []
   const prompts = {}
   const types = {}
@@ -43,7 +43,7 @@ async function run(review, cuts, { aspects = ['code'], gateFails = 0, externalRe
     throw new Error(`unexpected agent ${opts.label}`)
   }
   const result = await new AsyncFunction('args', 'agent', 'phase', 'log', 'parallel', body)(
-    { ...args, externalReview }, agent, () => {}, () => {}, (fns) => Promise.all(fns.map((f) => f())))
+    { ...args, externalReview, ...extra }, agent, () => {}, () => {}, (fns) => Promise.all(fns.map((f) => f())))
   assert.ok(!JSON.stringify(result).includes('stub friction'), 'friction stays out of the result')
   return { result, labels, prompts, types, schemas }
 }
@@ -146,6 +146,7 @@ const promptRows = [
     cuts: { committed: true, addressed: ['stdlib cut'], disputed: [], summary: '' } },
   { name: 'fix round commits fixups', label: 'fix:#1:r1', rule: fixup, opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] } },
   { name: 'test lens checks red evidence', label: 'review:dream-team:test-coverage-reviewer', rule: red, opts: { redEvidence: red } },
+  { name: 'startAtSimplify test lens checks the red evidence it is given', label: 'review:dream-team:test-coverage-reviewer', rule: red, opts: { extra: { startAtSimplify: true, redEvidence: red } } },
   { name: 'domain lens skips without a source', label: 'review:domain', rule: 'Either one missing → raise no finding on it and say why in your summary' },
   { name: 'domain lens checks each Done-when bullet', label: 'review:domain', rule: 'check each of its checks on its own by reading, cite what you read, and say in your summary whether each one holds' },
   { name: 'domain lens cites its source', label: 'review:domain', rule: 'cite what you read — file and line' },
@@ -282,5 +283,96 @@ for (const row of handBackRows) {
   assert.deepEqual(result.questions, row.questions || [], `${row.name}: questions`)
   assert.deepEqual(result.preExisting, row.preExisting || [], `${row.name}: preExisting`)
   assert.ok(!labels.some((l) => l.startsWith('review:external:retry')), `${row.name}: no full-review retry`)
+  console.log(`PASS ${row.name}`)
+}
+
+const loopArgRows = [
+  { name: 'stopAfterGate ends the run after the gate', extra: { stopAfterGate: true },
+    labels: ['impl:#1', 'gate:#1'], head: 'gate1' },
+  { name: 'startAtSimplify skips the implementer', extra: { startAtSimplify: true },
+    labels: ['gate:#1', 'simplify:#1', ...lensLabels, 'review:domain'] },
+]
+
+for (const row of loopArgRows) {
+  const { result, labels } = await run(lean, undefined, { extra: row.extra })
+  assert.equal(result.ok, true, row.name)
+  assert.deepEqual(labels, row.labels, `${row.name}: agents`)
+  assert.equal(result.head, row.head, `${row.name}: head`)
+  console.log(`PASS ${row.name}`)
+}
+
+const metaBody = readFileSync(new URL('build-meta-loop.js', import.meta.url), 'utf8').replace(/^export /m, '')
+const metaArgs = { meta: { issue: '10', title: 'Meta: rotation', body: 'meta body' }, branch: 'issue-10-rotation', base: 'base0', gateCommands: ['true'] }
+const child = (issue, blockedBy = [], extra = {}) => ({ issue, title: `child ${issue}`, body: `body ${issue}`, blockedBy, ...extra })
+
+// fail: child issues whose loop run fails; resetHead: the head the reset agent reports, else the sha it was told.
+// resetStatus: the porcelain lines it reports; reviewFail: the review run fails; red: per child, the redEvidence its run returns; extra: more args.
+async function runMeta(children, { fail = [], resetHead, resetStatus = [], reviewFail = false, red = {}, extra = {} } = {}) {
+  const calls = []
+  const resets = []
+  async function workflow(name, a) {
+    calls.push({ name, ...a })
+    if (a.startAtSimplify) return reviewFail ? { ok: false, stage: 'review', issue: a.issue } : { ok: true, issue: a.issue }
+    if (fail.includes(a.issue)) return { ok: false, stage: 'gate', reason: 'red' }
+    return { ok: true, issue: a.issue, head: `head${a.issue}`, redEvidence: red[a.issue] || '' }
+  }
+  async function agent(prompt, opts) {
+    const sha = prompt.match(/git reset --hard (\S+)`/)[1]
+    resets.push({ label: opts.label, sha, clean: prompt.includes('`git clean -fd`') })
+    return { head: resetHead || sha, status: resetStatus }
+  }
+  const result = await new AsyncFunction('args', 'agent', 'workflow', 'phase', 'log', metaBody)(
+    { ...metaArgs, ...extra, children }, agent, workflow, () => {}, () => {})
+  return { result, calls, resets }
+}
+
+const metaRows = [
+  { name: 'meta: blocked child runs after its blocker, each on the tip before it', children: [child('13', ['11']), child('12', [], { notes: 'keep 5' }), child('11')],
+    opts: { extra: { externalReview: 'ext-cmd', notes: 'shared' }, red: { 11: 'FAIL a', 13: 'FAIL c' } },
+    order: ['11', '12', '13'], bases: ['base0', 'head11', 'head12'], ok: true, done: ['11', '12', '13'], failed: [], skipped: [], resets: [], reviewBody: ['#11', '#12', '#13'],
+    kidNotes: { 11: 'shared', 12: 'shared\nkeep 5' }, reviewNotes: 'shared\n#12: keep 5', externalReview: 'ext-cmd', redEvidence: '#11: FAIL a\n#13: FAIL c' },
+  { name: 'meta: older child blocked by a newer one waits for it', children: [child('11', ['12']), child('12')],
+    order: ['12', '11'], bases: ['base0', 'head12'], ok: true, done: ['12', '11'], failed: [], skipped: [], resets: [], reviewBody: ['#11', '#12'] },
+  { name: 'meta: failed review fails the run', children: [child('11')], opts: { reviewFail: true },
+    order: ['11'], bases: ['base0'], ok: false, reviewStage: 'review', done: ['11'], failed: [], skipped: [], resets: [], reviewBody: ['#11'] },
+  { name: 'meta: reset that leaves untracked files stops the run', children: [child('11'), child('12')], opts: { fail: ['11'], resetStatus: ['?? new_test.py'] },
+    order: ['11'], bases: ['base0'], ok: false, stage: 'reset', done: [], failed: ['11'], skipped: ['12'], resets: [{ label: 'reset:#11', sha: 'base0', clean: true }] },
+  { name: 'meta: failed child is reset off the branch and its dependents skipped', children: [child('11'), child('12', ['11']), child('13')], opts: { fail: ['11'] },
+    order: ['11', '13'], bases: ['base0', 'base0'], ok: true, done: ['13'], failed: ['11'], skipped: ['12'], resets: [{ label: 'reset:#11', sha: 'base0', clean: true }], reviewBody: ['#13'] },
+  { name: 'meta: blocker outside the children does not hold a child', children: [child('12', ['5'])],
+    order: ['12'], bases: ['base0'], ok: true, done: ['12'], failed: [], skipped: [], resets: [], reviewBody: ['#12'] },
+  { name: 'meta: no child passes, no review', children: [child('11'), child('12', ['11'])], opts: { fail: ['11'] },
+    order: ['11'], bases: ['base0'], ok: false, done: [], failed: ['11'], skipped: ['12'], resets: [{ label: 'reset:#11', sha: 'base0', clean: true }] },
+  { name: 'meta: reset that misses the tip stops the run', children: [child('11'), child('12')], opts: { fail: ['11'], resetHead: 'head11' },
+    order: ['11'], bases: ['base0'], ok: false, stage: 'reset', done: [], failed: ['11'], skipped: ['12'], resets: [{ label: 'reset:#11', sha: 'base0', clean: true }] },
+]
+
+for (const row of metaRows) {
+  const { result, calls, resets } = await runMeta(row.children, row.opts)
+  const kids = calls.filter((c) => c.stopAfterGate)
+  const reviews = calls.filter((c) => c.startAtSimplify)
+  assert.ok(calls.every((c) => c.name === 'dream-team:build-issue-loop' && c.branch === metaArgs.branch), `${row.name}: loop and branch`)
+  assert.deepEqual(kids.map((c) => c.issue), row.order, `${row.name}: order`)
+  assert.deepEqual(kids.map((c) => c.base), row.bases, `${row.name}: bases`)
+  assert.ok(kids.every((c) => !c.externalReview), `${row.name}: no externalReview per child`)
+  for (const [id, notes] of Object.entries(row.kidNotes || {})) assert.equal(kids.find((c) => c.issue === id).notes, notes, `${row.name}: #${id} notes`)
+  assert.equal(result.ok, row.ok, row.name)
+  if (row.stage) assert.equal(result.stage, row.stage, `${row.name}: stage`)
+  assert.deepEqual(result.children.map((c) => c.issue), row.done, `${row.name}: children`)
+  assert.deepEqual(result.failed.map((c) => c.issue), row.failed, `${row.name}: failed`)
+  assert.deepEqual(result.skipped, row.skipped, `${row.name}: skipped`)
+  assert.deepEqual(resets, row.resets, `${row.name}: resets`)
+  if (row.reviewBody) {
+    assert.equal(reviews.length, 1, `${row.name}: one review`)
+    assert.equal(reviews[0].issue, '10', `${row.name}: review issue`)
+    assert.equal(reviews[0].base, 'base0', `${row.name}: review base`)
+    for (const id of ['#11', '#12', '#13']) assert.equal(reviews[0].body.includes(id), row.reviewBody.includes(id), `${row.name}: review body ${id}`)
+    if (row.reviewStage) assert.equal(result.review.stage, row.reviewStage, `${row.name}: review stage`)
+    if (row.reviewNotes) assert.equal(reviews[0].notes, row.reviewNotes, `${row.name}: review notes`)
+    if (row.externalReview) assert.equal(reviews[0].externalReview, row.externalReview, `${row.name}: review externalReview`)
+    if (row.redEvidence) assert.equal(reviews[0].redEvidence, row.redEvidence, `${row.name}: review redEvidence`)
+  } else {
+    assert.equal(reviews.length, 0, `${row.name}: no review`)
+  }
   console.log(`PASS ${row.name}`)
 }
