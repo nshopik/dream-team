@@ -71,8 +71,9 @@ The answer:
 - Post it as a comment on the issue.
 - Passes the test in [`reference/decision-record.md`](reference/decision-record.md) → step 3 also
   writes its record to `docs/decisions/` in its own docs MR.
-- Changes the work remaining → write it into the proposal, or into a new issue that supersedes
-  this one when the title or problem no longer holds (`scope-issue` Updates).
+- Changes the work remaining → write it into the proposal and its `## Done when` section, or
+  into a new issue that supersedes this one when the title or problem no longer holds
+  (`scope-issue` Updates).
 
 ## 2a. Tier
 

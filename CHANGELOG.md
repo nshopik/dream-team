@@ -22,6 +22,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `review-bench` weighs every minor ledger row 0.5, no longer reads a row's `nit` field, and holds every minor candidate for the next ledger bump.
 - `build-issue`'s report at workflow launch describes the change in 1-2 sentences and adds nothing before or after the layout.
 - `scope-issue` and `build-issue` write a hard-to-reverse design decision to `docs/decisions/` in its own docs MR when it is made, `scope-spec` through `scope-issue`, and `build-issue` stacks the issue branch on that record.
+- `scope-issue` ends an issue with a `## Done when` section, one bullet per check, and `build-issue-loop` checks each bullet on its own, reading the old `Done when …` paragraph on older issues; `build-issue` lists each check and whether it holds in the MR description.
 
 ### Removed
 

@@ -285,7 +285,7 @@ function implPrompt() {
     CONTEXT,
     '',
     'Implement the smallest change that resolves this issue. Reuse what is already in the repo before writing anything new.',
-    'The issue\'s `Done when …` paragraph, when present, is the finish line: stop once it holds and every gate command is green.',
+    'The issue\'s `## Done when` section, or on an older issue its `Done when …` paragraph, is the finish line when present: stop once each of its checks holds and every gate command is green.',
     'Build only what the issue needs: no abstractions for hypothetical requirements, no error handling for cases that cannot happen, no cleanup around the change, no feature flag or back-compat shim.',
     'A bug fix gets a test that reproduces the bug; new behaviour gets a unit or e2e test. Prefer a new case in an existing table-driven test over a new test function.',
     'For a bug fix, write the test first, run it, and keep the key lines of its failing output: return them as redEvidence. Not a bug fix: return an empty string.',
@@ -352,7 +352,7 @@ function simplifyFixPrompt(findings) {
   ].join('\n')
 }
 
-const DONE_WHEN = 'The issue\'s `Done when …` paragraph, when present, must hold on this branch: check it by reading and cite what you read. A condition that does not hold is an important finding; one only a build or test run can show is left to the gate.'
+const DONE_WHEN = 'The issue\'s `## Done when` section, or on an older issue its `Done when …` paragraph, must hold on this branch when present: check each of its checks on its own by reading, cite what you read, and say in your summary whether each one holds. A check that does not hold is an important finding; one only a build or test run can show is left to the gate.'
 
 function lensPrompt(agentType, redEvidence) {
   return [
@@ -591,6 +591,8 @@ const initial = await parallel(gates.map((g) => () =>
 const nits = []
 const questions = []
 const preExisting = []
+// The domain lens's first full review holds the per-bullet Done-when report; fix rounds replace its summary.
+let doneWhen
 const ofKind = (v, g, k) => v.findings.filter((f) => (f.preExisting ? 'preExisting' : f.severity) === k).map((f) => ({ ...f, gate: g.key }))
 const record = (g, v) => {
   if (v?.ran === false) {
@@ -600,6 +602,7 @@ const record = (g, v) => {
   }
   state.set(g.key, v || deadReviewer(g.key))
   if (!v) return
+  if (g.key === 'domain' && doneWhen === undefined) doneWhen = v.summary
   nits.push(...ofKind(v, g, 'nit'))
   questions.push(...ofKind(v, g, 'question'))
   preExisting.push(...ofKind(v, g, 'preExisting'))
@@ -743,4 +746,5 @@ return result({
   simplify,
   ...carried,
   summaries: Object.fromEntries(gates.map((g) => [g.key, state.get(g.key).summary])),
+  doneWhen,
 })
