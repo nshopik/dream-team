@@ -82,12 +82,12 @@ A field-evidence milestone gets its `Evidence:` issue when its issues are filed,
 
 ## Version milestone
 
-A release after the MVP: one headline feature plus backlog.
+A release after the MVP: one headline feature, optional in flow mode, plus backlog.
 
 - It needs no spec.
-- Its exit criterion: the headline issue closed.
+- Outside flow mode, its exit criterion: the headline issue closed.
 - The project `CLAUDE.md` says `Version milestones release in flow mode.` → its `Exit:` is its
-  due date plus the headline as a target, not a requirement.
+  due date, plus a headline as a target only when the user names one.
 - Its `Gate:` bullet holds the release criteria.
 - Outside flow mode, a headline with a spec takes its gate from the spec in place of the issue
   close.
@@ -98,5 +98,5 @@ A release after the MVP: one headline feature plus backlog.
 - No earlier version milestone to copy the release criteria from → draft them for the user to
   edit: CI green on the release commit, upgrade from the previous version works, and in a
   SemVer repo no breaking change in a minor version.
-- Steps 1–3 shrink to: read the tracker milestones, ask the user for the headline issue, draft
-  the one milestone.
+- Steps 1–3 shrink to: read the tracker milestones; outside flow mode, ask the user for the
+  headline issue; draft the one milestone.

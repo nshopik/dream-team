@@ -38,10 +38,10 @@ Planning stays explicit, at issue size, because you review every plan.
   standing release criteria in the version milestone's `Gate:` bullet. Its `YY.MM` name is the month
   it targets, not a promise about the API. A project whose `CLAUDE.md` says `Version milestones
   release in flow mode.` releases each version milestone at its due date with whatever has merged,
-  behind the same `Gate:` release criteria, its headline a target. The style is a project choice,
-  independent of the version scheme: Kubernetes and the Linux kernel release on a timeline,
-  Kubernetes under SemVer, and CalVer projects can gate on features. Continuous delivery, every
-  merge a release with no version milestones, is out of scope.
+  behind the same `Gate:` release criteria, its headline an optional target. The style is a
+  project choice, independent of the version scheme: Kubernetes and the Linux kernel release on a
+  timeline, Kubernetes under SemVer, and CalVer projects can gate on features. Continuous
+  delivery, every merge a release with no version milestones, is out of scope.
 - Versions are `0.x` before the MVP and CalVer `YY.MM.MICRO` from it on: a project that ships
   often and makes no API promise gets nothing from major and minor numbers, and a date says when
   the release shipped. The form stays SemVer-parseable and sorts above any `0.x`. The last
