@@ -17,6 +17,8 @@ Only include these when they add genuine value. Most decision records won't need
 
 - **Considered Options**: only when the rejected alternatives are worth remembering
 - **Consequences**: only when non-obvious downstream effects need to be called out
+- **Diagram**: only when the decision relates 3 or more named parts; one fenced `mermaid` block
+  of at most 12 nodes, no styling, replacing the prose it shows
 
 ## Superseding
 
