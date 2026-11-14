@@ -25,6 +25,8 @@ walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
 
 - **[build-issue](skills/build-issue/SKILL.md)**: takes one tracker issue to an open MR/PR via the
   `build-issue-loop` workflow.
+- **[build-meta](skills/build-meta/SKILL.md)**: takes a Meta issue's children to one MR/PR on one
+  integration branch via the `build-meta-loop` workflow.
 - **[setup-dream-team](skills/setup-dream-team/SKILL.md)**: checks an existing project against the
   flow, applies fixes that change no code after one OK, commits its doc edits and files one issue
   for the rest.
@@ -86,7 +88,8 @@ For the [pi](https://github.com/earendil-works/pi) harness:
 pi install git:github.com/nshopik/dream-team
 ```
 
-pi loads the skills; the hooks and the `build-issue-loop` workflow are Claude Code only.
+pi loads the skills; the hooks and the `build-issue-loop` and `build-meta-loop` workflows are
+Claude Code only.
 
 `qa-review` runs its lenses through the `pi-sub-agent` extension:
 

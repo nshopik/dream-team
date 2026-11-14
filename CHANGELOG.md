@@ -5,6 +5,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Added
+
+- The `build-meta` skill takes a Meta issue's children to one MR/PR: it triages them all before any code, builds each child up to the gate on one integration branch, reviews and fixes the whole branch once, and closes the finished children.
+- `build-issue-loop` takes `stopAfterGate` to end a run after the gate and `startAtSimplify` to start one at Simplify over the diff from `base`, with `redEvidence` handing that run the failing output earlier runs saw.
+
 ### Changed
 
 - **Breaking:** The `dream-fixer` skill is renamed `build-issue` and the `dream-fixer-loop` workflow `build-issue-loop`, so the command is `/dream-team:build-issue`.

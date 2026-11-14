@@ -8,7 +8,7 @@ flowchart TD
   S1 --> S2["2 · Milestone to issues"]
   bug[/outside bug report/] -.-> S2
   S2 --> S3
-  subgraph loop ["repeats per issue"]
+  subgraph loop ["repeats per issue or Meta issue"]
     S3[["3 · Issue to MR"]] --> S4["4 · You read the MR"]
     S4 -->|next issue| S3
   end
@@ -123,6 +123,11 @@ asking. Smaller changes it makes inline.
      defects are filed as issues, never left in the MR text.
   7. Watches the MR pipeline: retries a flake once, pushes up to two folded fixes for a real
      failure, else posts a CI hand-back comment on the MR.
+- A `Meta:` issue whose children build on each other: "build-meta #40". The agent runs
+  `dream-team:build-meta`: it triages the Meta issue and every child before any code, asking all
+  open questions in one batch, builds each child up to the gate on one integration branch, oldest
+  ready child first, reviews and fixes the whole branch once, and opens one MR with one commit
+  per change. A child whose run fails is dropped with the children it blocks.
 - You: check the branch and external-reviewer lines, any assumptions at the top of the report,
   any reviewer questions under Notes, the MR, and any `**Pipeline:**` follow-up.
 
