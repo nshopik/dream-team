@@ -45,7 +45,12 @@ A `Meta:` issue is not a work item. Pick its next child:
 
 ## 2. Triage: is this actionable without the user?
 
-Fail *before* code is written on a guess, not after. Triage blocks on:
+Fail *before* code is written on a guess, not after.
+
+- The issue is untriaged per `<base directory>/../triage-issue/SKILL.md` Untriaged → stop with
+  "run `triage-issue #<n>` first".
+
+Triage blocks on:
 
 - An open decision: anything the issue leaves to a guess — which screen or endpoint, what happens
   on failure, whether it needs a migration, a public API or schema change, product copy or

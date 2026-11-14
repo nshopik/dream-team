@@ -23,6 +23,9 @@ walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
 
 ### Skills
 
+- **[triage-issue](skills/triage-issue/SKILL.md)**: checks a legacy issue, or one filed from
+  outside the project, against the code before it is built, and rewrites it in `scope-issue`
+  form.
 - **[build-issue](skills/build-issue/SKILL.md)**: takes one tracker issue to an open MR/PR via the
   `build-issue-loop` workflow.
 - **[build-meta](skills/build-meta/SKILL.md)**: takes a Meta issue's children to one MR/PR on one

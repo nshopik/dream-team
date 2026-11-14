@@ -84,7 +84,7 @@ Planning stays explicit, at issue size, because you review every plan.
   an external gate someone must chase; future clears itself when the dependency closes.
 - A parked issue has no milestone and the waiting or blocked label, not a `Future` milestone: a
   milestone with no exit gate fails the naming and exit checks and never closes. No
-  milestone and no `workflow::` label stays the untriaged state the setup check flags.
+  milestone and no `workflow::` label stays the unplaced state the setup check flags.
 - `setup-dream-team` applies the fix for a failing check after one confirm when that fix changes no
   code and the draft can state it, since a filed issue for one label cost a milestone choice and a
   `build-issue` run. It files the

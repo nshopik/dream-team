@@ -6,7 +6,7 @@ flowchart TD
   xcut[/cross-cutting decision/] -.-> S0
   S0(["0 · Idea to spec"]) --> S1{{"1 · Spec to milestones"}}
   S1 --> S2["2 · Milestone to issues"]
-  bug[/outside bug report/] -.-> S2
+  bug[/outside or legacy issue/] -.->|triage-issue| S2
   S2 --> S3
   subgraph loop ["repeats per issue or Meta issue"]
     S3[["3 · Issue to MR"]] --> S4["4 · You read the MR"]
@@ -74,8 +74,17 @@ issues join it as they are filed.
   a piece waits on. A child is filed only when its work can start.
 - You: skim the titles; fix anything missing now.
 
-A bug reported from outside (the dogfood router, a user) enters here too: one issue per
-`scope-issue`, in the milestone it belongs to.
+A bug reported from outside (the dogfood router, a user) enters here too. One the agent files
+gets one issue per `scope-issue`, in the milestone it belongs to. One the reporter filed on the
+tracker, or any issue not in `scope-issue` form, goes through `triage-issue #N` first:
+
+- It closes the issue when the code already does what it asks or you reject it.
+- It tries to reproduce a bug claim, and parks the issue on the blocked label with questions for
+  facts only the reporter knows.
+- It asks you the open design or scope choices, then rewrites the body in `scope-issue` form with
+  the original report collapsed at the end.
+
+With no argument it lists the untriaged issues and the blocked ones whose reporter replied.
 
 A change you describe in chat enters here when it is issue-sized: it needs a decision from you,
 contradicts the spec, adds a component, or needs a lab check. The agent gives its assessment and
@@ -100,7 +109,8 @@ asking. Smaller changes it makes inline.
      posted on the issue as a comment, and written into the description when it changes the work
      remaining. An answer that passes the decision-record test gets its record in its own docs
      MR; the issue branch stacks on it, and the issue MR says it depends on it. A `Blocked by`
-     line naming an open issue stops here.
+     line naming an open issue stops here, and an untriaged issue stops with
+     `triage-issue #N`.
   3. Tier:
      - Research: answers, follow-up issues, and a findings comment on the
        research issue, which closes with no MR. Asked for a file, it writes a note in
@@ -185,7 +195,7 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
 |---|---|
 | 0 | Approve the spec |
 | 1 | Exit criteria and their numbers |
-| 2 | Is anything missing from the issue list |
+| 2 | Is anything missing from the issue list; design and scope choices `triage-issue` asks |
 | 3 | Which issue is next; triage dialogs, only when a decision is open |
 | 4 | Read the MR, note what you learned, merge |
 | 5 | Gap issues to file; close or move per leftover issue; new milestones; each cut and promotion; the release |

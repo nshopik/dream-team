@@ -8,6 +8,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 ### Added
 
 - The `build-meta` skill takes a Meta issue's children to one MR/PR: it triages them all before any code, builds each child up to the gate on one integration branch, reviews and fixes the whole branch once, and closes the finished children.
+- The `triage-issue` skill checks a legacy or outside-filed issue against the code and rewrites it in `scope-issue` form before it is built.
 - `build-issue-loop` takes `stopAfterGate` to end a run after the gate and `startAtSimplify` to start one at Simplify over the diff from `base`, with `redEvidence` handing that run the failing output earlier runs saw.
 
 ### Changed
@@ -31,6 +32,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `scope-issue` ends an issue with a `## Done when` section, one bullet per check, and `build-issue-loop` checks each bullet on its own, reading the old `Done when …` paragraph on older issues; `build-issue` lists each check and whether it holds in the MR description.
 - `build-issue` given a `Meta:` issue works its oldest open, unticked child with no open blocker, reports each child's open blockers when every one is blocked, and reports no work left when none is open.
 - `scope-issue` asks nothing when no question is open, and runs `mattpocock-skills:grilling` on a hard-to-reverse design choice whose options are not yet known or a done-when check that is not observable.
+- `build-issue` stops on an untriaged issue and says to run `triage-issue #<n>` first.
 
 ### Removed
 
