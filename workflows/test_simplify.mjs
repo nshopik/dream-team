@@ -1,10 +1,10 @@
-// What dream-fixer-loop does with each Simplify review and externalReview arg, which lenses review, and the prompt rules agents get, through stub agents; no claude call.
+// What build-issue-loop does with each Simplify review and externalReview arg, which lenses review, and the prompt rules agents get, through stub agents; no claude call.
 // Usage: node test_simplify.mjs
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
-const body = readFileSync(new URL('dream-fixer-loop.js', import.meta.url), 'utf8').replace(/^export /m, '')
+const body = readFileSync(new URL('build-issue-loop.js', import.meta.url), 'utf8').replace(/^export /m, '')
 const args = { issue: '1', branch: 'issue-1', base: 'abc1234', gateCommands: ['true'] }
 
 // Every other reviewer passes, so the run ends after Review or its fix rounds.

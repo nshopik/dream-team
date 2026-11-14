@@ -7,6 +7,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Changed
 
+- **Breaking:** The `dream-fixer` skill is renamed `build-issue` and the `dream-fixer-loop` workflow `build-issue-loop`, so the command is `/dream-team:build-issue`.
+- **Upgrade note:** Replace `dream-fixer` with `build-issue` in any `CLAUDE.md`, `CLAUDE.local.md` or `settings.json` line that names the skill or its workflow.
 - `qa-review` tells each lens to report every defect it finds, including uncertain or low-severity ones.
 - `scope-issue` cites a doc the forge's readers can open by its URL or path, at the claim it backs.
 - `scope-issue` draws one Mermaid diagram when the defect or new design is a relationship between 3 or more named modules or paths.
@@ -15,11 +17,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `scope-spec` ends each Decision and Design point settled in an issue, MR or comment with a link to it.
 - `ship-it` tags the release's merge commit without asking when the user passes the version as its argument.
 - `setup-dream-team` applies fixes that change no code after one OK, commits its `CLAUDE.md` and repo-doc edits, and files a maintenance issue only for the rest.
-- `scope-issue` and `dream-fixer` file two or more light-tier findings from one run as one bundle issue, and `dream-fixer` ships a bundle as one MR with one commit per item.
-- `dream-fixer` watches an MR/PR's pipeline once the MR/PR opens, retries an infrastructure flake once, and pushes up to two fixes for a real failure before handing the MR/PR back with a comment.
+- `scope-issue` and `build-issue` file two or more light-tier findings from one run as one bundle issue, and `build-issue` ships a bundle as one MR with one commit per item.
+- `build-issue` watches an MR/PR's pipeline once the MR/PR opens, retries an infrastructure flake once, and pushes up to two fixes for a real failure before handing the MR/PR back with a comment.
 - `review-bench` weighs every minor ledger row 0.5, no longer reads a row's `nit` field, and holds every minor candidate for the next ledger bump.
-- `dream-fixer`'s report at workflow launch describes the change in 1-2 sentences and adds nothing before or after the layout.
-- `scope-issue` and `dream-fixer` write a hard-to-reverse design decision to `docs/decisions/` in its own docs MR when it is made, `scope-spec` through `scope-issue`, and `dream-fixer` stacks the issue branch on that record.
+- `build-issue`'s report at workflow launch describes the change in 1-2 sentences and adds nothing before or after the layout.
+- `scope-issue` and `build-issue` write a hard-to-reverse design decision to `docs/decisions/` in its own docs MR when it is made, `scope-spec` through `scope-issue`, and `build-issue` stacks the issue branch on that record.
 
 ### Removed
 
@@ -27,8 +29,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Fixed
 
-- `dream-fixer-loop` returns `degraded` and `untrackedPaths` on every result, including an implement, gate, simplify or fix stage failure.
-- `scope-mr` allows before/after measurements in an MR/PR description, matching `dream-fixer`, which puts lab numbers there.
+- `build-issue-loop` returns `degraded` and `untrackedPaths` on every result, including an implement, gate, simplify or fix stage failure.
+- `scope-mr` allows before/after measurements in an MR/PR description, matching `build-issue`, which puts lab numbers there.
 - `scope-commit` and the git-context hook say to amend a commit only for a late change the user asks for on an open MR/PR.
 - `scope-issue` leaves out chat threads, shared docs, local paths and internal hosts the forge's readers cannot open, and the names of customers and people outside the project.
 - `review-bench`'s `run.sh` no longer loses a run when parallel runs add their worktrees at once, and prints each run that leaves no `stats.txt` as failed.

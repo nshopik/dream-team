@@ -81,7 +81,7 @@ A change you describe in chat enters here when it is issue-sized: it needs a dec
 contradicts the spec, adds a component, or needs a lab check. The agent gives its assessment and
 offers to file the issue instead of editing. Before filing, it asks you the open questions,
 milestone included, and writes the answers into the issue. An issue it finds during other work,
-such as a dream-fixer run or a review, it files without asking: open questions go in the issue
+such as a build-issue run or a review, it files without asking: open questions go in the issue
 as listed items. Two or more light-tier findings from one run go in one bundle issue, a checklist
 of their edits. It posts a lab or research result for an open issue there as a comment, without
 asking. Smaller changes it makes inline.
@@ -91,7 +91,7 @@ asking. Smaller changes it makes inline.
 - You: "what's next in M4?" The agent lists the milestone's open issues without an open
   blocker and proposes one.
 - You: "work on #126."
-- Agent: `dream-team:dream-fixer`:
+- Agent: `dream-team:build-issue`:
   1. Reads the issue and the project `CLAUDE.md`. Given a `Meta:` issue, it picks an open
      child with no open blocker and works that.
   2. Triage: an open decision gets a dialog with 2–3 options and their costs. The answer is
@@ -108,7 +108,7 @@ asking. Smaller changes it makes inline.
        — `dream-team:docs-reviewer` for docs, a `general-purpose` reviewer checking the project's
        reference sources otherwise. A bundle issue ships as one MR with one commit per item; an
        item that stops being light tier, or that review blocks, moves to its own issue.
-       Full criteria: dream-fixer step 2a.
+       Full criteria: build-issue step 2a.
      - Full: implementer, mechanical gate, over-engineering cuts, quality reviewers, a domain
        lens that checks any claim in the diff against a reference source the project names,
        bounded fix rounds that also fix the cheap nits.

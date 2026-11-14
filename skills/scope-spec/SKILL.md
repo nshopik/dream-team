@@ -19,7 +19,7 @@ disable-model-invocation: true
 - A question the user cannot answer yet (needs research, a lab run, someone else) → an
   `## Open items` entry.
 - Work that fits one issue → no spec.
-- Its decision passes the test in `<base directory>/../dream-fixer/reference/decision-record.md`
+- Its decision passes the test in `<base directory>/../build-issue/reference/decision-record.md`
   → a record in `docs/decisions/`, in its own docs MR, via `scope-issue` Decisions.
 - Its decision fails that test → write it into the issue with `scope-issue`.
 - Filename: `docs/specs/NNNN-<topic>-design.md`.

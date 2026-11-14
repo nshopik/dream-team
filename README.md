@@ -23,8 +23,8 @@ walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
 
 ### Skills
 
-- **[dream-fixer](skills/dream-fixer/SKILL.md)**: takes one tracker issue to an open MR/PR via the
-  `dream-fixer-loop` workflow.
+- **[build-issue](skills/build-issue/SKILL.md)**: takes one tracker issue to an open MR/PR via the
+  `build-issue-loop` workflow.
 - **[setup-dream-team](skills/setup-dream-team/SKILL.md)**: checks an existing project against the
   flow, applies fixes that change no code after one OK, commits its doc edits and files one issue
   for the rest.
@@ -42,7 +42,7 @@ walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
 - **[scope-issue](skills/scope-issue/SKILL.md)**: tracker issues (problem, proposal), and
   the docs MR for a design decision they cite.
 - **[friction](skills/friction/SKILL.md)**: reports agent friction repeated across past
-  `dream-fixer-loop` runs.
+  `build-issue-loop` runs.
 - **[qa-review](skills/qa-review/SKILL.md)**: reviews a branch or audits a repo with parallel
   read-only lenses.
 - **[chaos-planning](skills/chaos-planning/SKILL.md)**: reviews a launch's failure-experiment plan
@@ -86,7 +86,7 @@ For the [pi](https://github.com/earendil-works/pi) harness:
 pi install git:github.com/nshopik/dream-team
 ```
 
-pi loads the skills; the hooks and the `dream-fixer-loop` workflow are Claude Code only.
+pi loads the skills; the hooks and the `build-issue-loop` workflow are Claude Code only.
 
 `qa-review` runs its lenses through the `pi-sub-agent` extension:
 

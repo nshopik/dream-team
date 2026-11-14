@@ -1,6 +1,6 @@
 {
-  "skill_name": "dream-fixer",
-  "notes": "Each case hands the model a finished dream-fixer-loop result and what steps 5-7 already did, and asks for the final report only. It grades the Report back section, not the workflow. `checks` are mechanical and decide the regression-prone rules (heading position, leaked nits); `expectations` go to an LLM grader. Every case also expects silence on anything that went smoothly; the summary counts the grader's deletable lines as a second minimality signal. A `kind: tier` case instead hands it an issue and a project `CLAUDE.md` and asks for the step-2a tier only; its `tier` check is the whole grade. A `kind: comment` case asks for the hand-back comment the skill posts on the issue instead; its `checks` are the whole grade.",
+  "skill_name": "build-issue",
+  "notes": "Each case hands the model a finished build-issue-loop result and what steps 5-7 already did, and asks for the final report only. It grades the Report back section, not the workflow. `checks` are mechanical and decide the regression-prone rules (heading position, leaked nits); `expectations` go to an LLM grader. Every case also expects silence on anything that went smoothly; the summary counts the grader's deletable lines as a second minimality signal. A `kind: tier` case instead hands it an issue and a project `CLAUDE.md` and asks for the step-2a tier only; its `tier` check is the whole grade. A `kind: comment` case asks for the hand-back comment the skill posts on the issue instead; its `checks` are the whole grade.",
   "gateCommands": "go build ./..., go test ./..., golangci-lint run",
   "evals": [
     {

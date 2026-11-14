@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Scans unscanned dream-fixer-loop workflow runs for agent friction, caches every hit, and
+"""Scans unscanned build-issue-loop workflow runs for agent friction, caches every hit, and
 prints the patterns seen in two or more runs, or with --time each role's wall clock in minutes.
 """
 import json
