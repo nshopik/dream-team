@@ -1,4 +1,4 @@
-// What build-issue-loop does with each Simplify review and externalReview arg, which lenses review, and the prompt rules agents get, and how build-meta-loop runs it per child, through stub agents; no claude call.
+// What build-issue-loop does with each Simplify review and externalReview arg, which lenses review, and the prompt rules agents get, and how assemble-meta-loop runs it per child, through stub agents; no claude call.
 // Usage: node test_simplify.mjs
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
@@ -301,7 +301,7 @@ for (const row of loopArgRows) {
   console.log(`PASS ${row.name}`)
 }
 
-const metaBody = readFileSync(new URL('build-meta-loop.js', import.meta.url), 'utf8').replace(/^export /m, '')
+const metaBody = readFileSync(new URL('assemble-meta-loop.js', import.meta.url), 'utf8').replace(/^export /m, '')
 const metaArgs = { meta: { issue: '10', title: 'Meta: rotation', body: 'meta body' }, branch: 'issue-10-rotation', base: 'base0', gateCommands: ['true'] }
 const child = (issue, blockedBy = [], extra = {}) => ({ issue, title: `child ${issue}`, body: `body ${issue}`, blockedBy, ...extra })
 

@@ -133,8 +133,8 @@ asking. Smaller changes it makes inline.
      defects are filed as issues, never left in the MR text.
   7. Watches the MR pipeline: retries a flake once, pushes up to two folded fixes for a real
      failure, else posts a CI hand-back comment on the MR.
-- A `Meta:` issue whose children build on each other: "build-meta #40". The agent runs
-  `dream-team:build-meta`: it triages the Meta issue and every child before any code, asking all
+- A `Meta:` issue whose children build on each other: "assemble-meta #40". The agent runs
+  `dream-team:assemble-meta`: it triages the Meta issue and every child before any code, asking all
   open questions in one batch, builds each child up to the gate on one integration branch, oldest
   ready child first, reviews and fixes the whole branch once, and opens one MR with one commit
   per change. A child whose run fails is dropped with the children it blocks.
