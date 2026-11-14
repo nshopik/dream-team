@@ -40,13 +40,13 @@ history; a run that resumes the work reads them too.
 
 - User asked for the issue in chat → ask its open questions, milestone included, with
   AskUserQuestion before writing it; write the answers into the issue.
-- Issue found during other work (dream-fixer, a review, a lab check) → do not prompt; list the
+- Issue found during other work (build-issue, a review, a lab check) → do not prompt; list the
   open questions as open items in the proposal, or file a `Research:` issue.
 
 ### Decisions
 
 - Proposal carries a decided design choice that passes the test in
-  `<base directory>/../dream-fixer/reference/decision-record.md` → before filing, write its record
+  `<base directory>/../build-issue/reference/decision-record.md` → before filing, write its record
   to `docs/decisions/` in that file's format.
 - Commit the record alone on its own branch per `scope-commit`, push it and open its own docs MR
   per `scope-mr`.
@@ -87,7 +87,7 @@ history; a run that resumes the work reads them too.
 ### Bundle
 
 - One run files two or more findings, each light tier on its own per step 2a of
-  `<base directory>/../dream-fixer/SKILL.md` → one bundle issue.
+  `<base directory>/../build-issue/SKILL.md` → one bundle issue.
 - At most ~6 items; the rest start another bundle, or a plain issue when one is left.
 - Items may carry different `area::` labels.
 - Title names the group.

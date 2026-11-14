@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Baseline runner for the dream-fixer report and step-2a tier. Two phases:
+# Baseline runner for the build-issue report and step-2a tier. Two phases:
 #   generate — one headless claude per case, writes the final report from a canned workflow result,
 #              or a `kind: tier` case's tier from a canned issue and project CLAUDE.md
 #   grade    — mechanical `checks` from evals.json, then one headless claude per report case
@@ -29,7 +29,7 @@ slug, here = sys.argv[1:]
 top = json.load(open('evals.json'))
 e = next(e for e in top['evals'] if e['slug'] == slug)
 if e.get('kind') == 'tier':
-    print(f"""Use the dream-team:dream-fixer skill. You are its orchestrator on issue #{e['issue']}
+    print(f"""Use the dream-team:build-issue skill. You are its orchestrator on issue #{e['issue']}
 of github.com/acme/flowlog, "{e['title']}", labels {', '.join(e['labels'])}.
 
 The issue body is in {here}/files/{slug}.issue.md and the project's CLAUDE.md is
@@ -43,13 +43,13 @@ if 'result' in e:
     result = f"{here}/files/{slug}.result.json"
     branch = e.get('branch') or json.load(open(result))['branch']
     steps = f"""Steps 1-5 are done. The branch is {branch}; gateCommands were {top['gateCommands']}.
-No lab host is named unless stated below. The dream-fixer-loop workflow returned the JSON in
+No lab host is named unless stated below. The build-issue-loop workflow returned the JSON in
 {result} — read it.
 
 """
 what = ('the hand-back comment you post on the issue' if e.get('kind') == 'comment'
         else 'the final message you send the user')
-print(f"""Use the dream-team:dream-fixer skill. You are its orchestrator on issue #{e['issue']}
+print(f"""Use the dream-team:build-issue skill. You are its orchestrator on issue #{e['issue']}
 of github.com/acme/flowlog, "{e['title']}", labels {', '.join(e['labels'])}.
 
 {steps}{e['after']}
@@ -166,7 +166,7 @@ grade() {
   python3 -c "import json, sys; sys.exit(any(e['slug'] == sys.argv[1] and e.get('kind') in
     ('tier', 'comment') for e in json.load(open('evals.json'))['evals']))" "$slug" || return 0
   ask <<EOF > "$OUT/$slug.grade.json"
-You are grading one dream-fixer final report against a fixed expectation list. Be adversarial:
+You are grading one build-issue final report against a fixed expectation list. Be adversarial:
 a pass on a report that breaks a rule is worse than useless. Judge only what the expectations
 ask; do not invent extra rules.
 

@@ -39,7 +39,7 @@ def age(d):
 
 
 def run_dir(run, label, calls, friction=(), fresh=False):
-    """Writes one dream-fixer-loop run whose single agent makes calls: (bash command, failed)."""
+    """Writes one build-issue-loop run whose single agent makes calls: (bash command, failed)."""
     d = home / ".claude/projects/-r/sess/subagents/workflows" / run
     d.mkdir(parents=True)
     agent = f"a{run[-3:]}"

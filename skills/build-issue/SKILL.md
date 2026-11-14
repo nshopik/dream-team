@@ -1,15 +1,15 @@
 ---
-name: dream-fixer
+name: build-issue
 description: >-
   Takes one tracker issue from its number to an open MR/PR: reads and triages it, runs the
-  dream-fixer-loop workflow, and opens the MR/PR from the result. Use when the user points at an
+  build-issue-loop workflow, and opens the MR/PR from the result. Use when the user points at an
   issue by number and asks to work on, take, pick up, handle, do or close it — e.g. "work on
   #42", "do GL-88 end to end". Not for vague feature ideas with no issue (file one with
   scope-issue), and not for reviewing an existing PR (use qa-review).
 argument-hint: <issue-number>
 ---
 
-# dream-fixer
+# build-issue
 
 One issue per invocation. If the user names several, do them one at a time.
 
@@ -171,7 +171,7 @@ remote's default branch unless the project's `CLAUDE.md` or `AGENTS.md` names an
 
 ## 4. Run the workflow
 
-Invoke the **Workflow** tool with `name: "dream-team:dream-fixer-loop"` and `args` as a real JSON
+Invoke the **Workflow** tool with `name: "dream-team:build-issue-loop"` and `args` as a real JSON
 object (never a stringified one):
 
 ```json

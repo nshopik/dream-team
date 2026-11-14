@@ -1,4 +1,4 @@
-# dream-fixer-loop result fields
+# build-issue-loop result fields
 
 - **`ok: false` with `handBack: true`** — blocking findings survived. `reason` says which case:
   - *Fix rounds ran out.* Do not open an MR. Report the outstanding findings and hand the branch

@@ -4,7 +4,7 @@ description: >-
   Checks a project against the dream-team flow, applies fixes that change no code after one
   OK, commits its doc edits and files one maintenance issue for the other failing checks. Use when
   the user asks to set up, audit or align a project with the dream-team flow. Not for working an
-  issue (use dream-fixer) or closing a milestone (use milestone-close).
+  issue (use build-issue) or closing a milestone (use milestone-close).
 disable-model-invocation: true
 ---
 
@@ -12,7 +12,7 @@ disable-model-invocation: true
 
 Bringing a project into line is a program, not a change. This skill audits, makes the
 **Direct fixes** below after one confirm, commits its doc edits and files one issue for the rest.
-It changes no code; the filed issue goes through `dream-fixer`.
+It changes no code; the filed issue goes through `build-issue`.
 
 ## Checks
 
@@ -128,4 +128,4 @@ Values from GitLab's label-picker palette; one colour per `type::` value, one fo
 13. File one `type::maintenance` issue per `scope-issue`, in that milestone, with one item per
     remaining failing check.
 14. A check that fails on many items → one item listing them.
-15. Report the fixes, any commit and the filed issue. It is worked through `dream-fixer`.
+15. Report the fixes, any commit and the filed issue. It is worked through `build-issue`.

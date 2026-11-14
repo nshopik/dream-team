@@ -14,15 +14,15 @@ Planning stays explicit, at issue size, because you review every plan.
 - `body-cap.py` quotes a `## <id>` section of the `scope-mr` `SKILL.md` back verbatim; keep
   those heading ids stable and sub-headings at `###`, since any `##` closes a section.
 - In the `qa-review` skill, a lens with no installed agent type fails dispatch and is listed as
-  missing; it never falls back to a generic agent. `dream-fixer-loop` instead retries that lens
+  missing; it never falls back to a generic agent. `build-issue-loop` instead retries that lens
   as a generic agent and lists its type in `degraded`.
 - No global "issue-sized work gets no spec" rule: it duplicates the scope rules. The unreviewed,
-  plan-like September specs came from a skill that has since been rewritten into `dream-fixer`.
+  plan-like September specs came from a skill that has since been rewritten into `build-issue`.
 - The upstream-repo guard lives in `jit-context.py`, not a tracker skill: that skill loads only
   before the tracker CLI and only on owned remotes, so it fires too late and on the wrong repos.
 - A living doc stays small by holding current state only: rationale goes in commits and MRs,
   plans in issues, component internals nowhere beyond one module-doc sentence.
-- Retired: the `dream-team` skill, `dream-team-loop` and `dream-team-run`. `dream-fixer`
+- Retired: the `dream-team` skill, `dream-team-loop` and `dream-team-run`. `build-issue`
   replaces them.
 - ROADMAP status moved from each feature MR to `milestone-close`: status lags until the close,
   but concurrent MRs stop conflicting on it.
@@ -87,9 +87,9 @@ Planning stays explicit, at issue size, because you review every plan.
   milestone and no `workflow::` label stays the untriaged state the setup check flags.
 - `setup-dream-team` applies the fix for a failing check after one confirm when that fix changes no
   code and the draft can state it, since a filed issue for one label cost a milestone choice and a
-  `dream-fixer` run. It files the
+  `build-issue` run. It files the
   remaining checks as one maintenance issue, not one issue per check: one issue each added a
-  branch, an MR and a `dream-fixer` run per edit.
+  branch, an MR and a `build-issue` run per edit.
 - Issues are the log, docs the reference: a fact the code and paths don't show has one reference
   doc, updated in the MR that changes it. One large spec went stale and hard to skim; a closed
   issue is not a place anyone looks things up.
@@ -99,11 +99,11 @@ Planning stays explicit, at issue size, because you review every plan.
 - The component table is optional. Where folder names already say what each component does, a
   table restating them is a pointer list and rots like one. A project that keeps one gives each
   component a row and a note only where the name and path fall short.
-- `dream-fixer-loop` reviews with the `qa-review` lenses, not `pr-review-toolkit`: the lenses
+- `build-issue-loop` reviews with the `qa-review` lenses, not `pr-review-toolkit`: the lenses
   scored as well at about 64% of the cost (#217, #219).
 - `performance-engineer` runs in neither lens roster: it added 0-6 points over the other lenses
   at about a fifth of the lens cost (#224). It still ships as an agent.
-- `dream-fixer` picks no implementer or domain reviewer: specialist implementers made no
+- `build-issue` picks no implementer or domain reviewer: specialist implementers made no
   difference (#192), and the domain check is a `qa-review` lens (#225).
 
 ## Building agents

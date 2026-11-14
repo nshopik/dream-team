@@ -1,11 +1,11 @@
 ---
 name: friction
 description: >-
-  Scans past dream-fixer-loop workflow runs for agent friction (skill or tool hunting under
+  Scans past build-issue-loop workflow runs for agent friction (skill or tool hunting under
   ~/.claude, denied or erroring tool calls, repeated failing commands, forbidden actions,
   self-reported friction, token and tool-call outliers) and reports the patterns seen in two or
   more runs, each with the deterministic check that would stop it or the prompt line it points to.
-  Use when the user runs /dream-team:friction or asks what keeps going wrong across dream-fixer
+  Use when the user runs /dream-team:friction or asks what keeps going wrong across build-issue
   runs.
 disable-model-invocation: true
 ---
@@ -35,7 +35,7 @@ Pattern names the script prints:
 
 For each printed pattern:
 
-- Find the prompt that role runs in `<base directory>/../../workflows/dream-fixer-loop.js`:
+- Find the prompt that role runs in `<base directory>/../../workflows/build-issue-loop.js`:
   `impl` → `implPrompt`, `gate` → `verifyPrompt`, `build-fix` → `buildFixPrompt`, `simplify` →
   `simplifyPrompt`, `simplify-fix` → `simplifyFixPrompt`, `review:domain` →
   `domainPrompt`, `review:external` → `externalPrompt`,

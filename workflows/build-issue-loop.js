@@ -1,5 +1,5 @@
 export const meta = {
-  name: 'dream-fixer-loop',
+  name: 'build-issue-loop',
   description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review simplify pass, qa-review lenses plus a self-selecting domain lens, bounded fix loop',
   phases: [
     { title: 'Implement', detail: 'one agent writes the change and commits' },
@@ -27,7 +27,7 @@ const FIX_ROUNDS = 3
 const VERIFY_ROUNDS = 3
 
 if (!ISSUE || !BRANCH || !BASE || !GATE_COMMANDS.length) {
-  throw new Error('dream-fixer-loop: args.issue, args.branch, args.base and args.gateCommands are required')
+  throw new Error('build-issue-loop: args.issue, args.branch, args.base and args.gateCommands are required')
 }
 
 // ---------------------------------------------------------------------------
