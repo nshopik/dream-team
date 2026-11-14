@@ -32,7 +32,7 @@ walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
   integration branch via the `build-meta-loop` workflow.
 - **[setup-dream-team](skills/setup-dream-team/SKILL.md)**: checks an existing project against the
   flow, applies fixes that change no code after one OK, commits its doc edits and files one issue
-  for the rest.
+  for the rest; in an upstream clone it only marks the clone as upstream.
 - **[scope-spec](skills/scope-spec/SKILL.md)**: the project spec in `docs/specs/`, written from its
   template.
 - **[cut-milestones](skills/cut-milestones/SKILL.md)**: drafts milestones from a spec, one exit gate
@@ -106,7 +106,8 @@ On pi the agents get pi's default tools, `write` and `edit` included.
 
 ## Configuration
 
-- `DREAM_TEAM_OWN_REMOTES`: regex matching the git remote URLs you own. Default: unset.
+Run `setup-dream-team` once in each upstream clone; it marks the clone with
+`git config --local dream-team.upstream true`.
 
 ## License
 

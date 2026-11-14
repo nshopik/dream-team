@@ -15,6 +15,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - **Breaking:** The `dream-fixer` skill is renamed `build-issue` and the `dream-fixer-loop` workflow `build-issue-loop`, so the command is `/dream-team:build-issue`.
 - **Upgrade note:** Replace `dream-fixer` with `build-issue` in any `CLAUDE.md`, `CLAUDE.local.md` or `settings.json` line that names the skill or its workflow.
+- **Breaking:** `jit-context.py` adds the upstream-project rules only in a clone whose `dream-team.upstream` git config is `true`, and no longer reads the `DREAM_TEAM_OWN_REMOTES` environment variable.
+- **Upgrade note:** Run `setup-dream-team` once in each upstream clone and answer that it is upstream.
 - `qa-review` tells each lens to report every defect it finds, including uncertain or low-severity ones.
 - `scope-issue` cites a doc the forge's readers can open by its URL or path, at the claim it backs.
 - `scope-issue` draws one Mermaid diagram when the defect or new design is a relationship between 3 or more named modules or paths.

@@ -102,8 +102,8 @@ Editing a CLAUDE.md or CLAUDE.local.md.
 </claude_md>"""
 
 UPSTREAM = """<upstream_repo>
-This repo has a git remote outside the namespaces in `DREAM_TEAM_OWN_REMOTES`: it is
-an upstream project, not mine.
+This clone carries the `dream-team.upstream` git config marker: it is an upstream
+project, not mine.
 - Its CONTRIBUTING, commit style, changelog and tracker conventions win where they
   conflict with mine (scope-commit, scope-mr, vcs workflow).
 - Still load scope-commit and scope-mr; apply each rule upstream does not set.
@@ -113,26 +113,17 @@ an upstream project, not mine.
 - Ask before opening an MR/PR, issue or comment on its forge.
 </upstream_repo>"""
 
-# A regex matched against each remote URL; unset disables the upstream rule.
-OWN = os.environ.get('DREAM_TEAM_OWN_REMOTES')
-OWN = re.compile(OWN, re.I) if OWN else None
-
-
-def upstream_remote(urls):
-    """True if any remote URL is outside my namespaces."""
-    return OWN is not None and any(not OWN.search(u) for u in urls)
-
-
 def is_upstream(payload):
     d = os.path.dirname(payload['tool_input'].get('file_path') or '') or payload.get('cwd') or '.'
     while d and not os.path.isdir(d):           # Write may target a dir not made yet
         d = os.path.dirname(d)
     try:
-        out = subprocess.run(['git', '-C', d or '.', 'remote', '-v'],
+        out = subprocess.run(['git', '-C', d or '.', 'config', '--local', '--type=bool', '--get',
+                              'dream-team.upstream'],
                              capture_output=True, text=True, timeout=5).stdout
     except Exception:
         return False
-    return upstream_remote(line.split()[1] for line in out.splitlines())
+    return out.strip() == 'true'
 
 
 # Lookbehind lets `sudo glab` / `/usr/bin/glab` match while `myglabthing`
