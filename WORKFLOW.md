@@ -79,7 +79,8 @@ A bug reported from outside (the dogfood router, a user) enters here too: one is
 
 A change you describe in chat enters here when it is issue-sized: it needs a decision from you,
 contradicts the spec, adds a component, or needs a lab check. The agent gives its assessment and
-offers to file the issue instead of editing. Before filing, it asks you the open questions,
+offers to file the issue instead of editing. Before filing, it settles what reading the code
+can, grills you on an undecided hard-to-reverse choice, asks you any other open question,
 milestone included, and writes the answers into the issue. An issue it finds during other work,
 such as a build-issue run or a review, it files without asking: open questions go in the issue
 as listed items. Two or more light-tier findings from one run go in one bundle issue, a checklist
