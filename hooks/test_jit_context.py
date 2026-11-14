@@ -11,24 +11,24 @@ def context(tool_input, cwd="/", session=None):
     return json.loads(p.stdout)["hookSpecificOutput"]["additionalContext"] if p.stdout else ""
 
 
-def repo(marker=None):
+def repo(own=None):
     d = tempfile.mkdtemp()
     subprocess.run(["git", "init", "-q", d], check=True)
-    if marker:
-        subprocess.run(["git", "-C", d, "config", "--local", "dream-team.upstream", marker],
-                       check=True)
+    if own:
+        subprocess.run(["git", "-C", d, "config", "--local", "dream-team.own", own], check=True)
     return d
 
 
-upstream = repo("true")
-assert "<upstream_repo>" in context({"file_path": os.path.join(upstream, "new/x.c")})
-for cmd in ["git commit -m x", "gh pr create -t x"]:
-    assert "load scope-commit and scope-mr" in context({"command": cmd}, upstream), cmd
-for d in [repo(), repo("false")]:
+for upstream in [repo(), repo("false"), repo("maybe")]:
+    c = context({"file_path": os.path.join(upstream, "new/x.c")})
+    assert "<upstream_repo>" in c and "/dream-team:setup-dream-team" in c, upstream
+    for cmd in ["git commit -m x", "gh pr create -t x"]:
+        assert "load scope-commit and scope-mr" in context({"command": cmd}, upstream), cmd
+for d in [repo("true"), tempfile.mkdtemp()]:
     c = context({"command": "git commit -m x"}, d)
     assert "<vcs_workflow>" in c and "<upstream_repo>" not in c, d
 
-mine = repo()
+mine = repo("true")
 c = context({"file_path": os.path.join(mine, "x.md")})
 assert "<prose_style>" in c and "<upstream_repo>" not in c
 

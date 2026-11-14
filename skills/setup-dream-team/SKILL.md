@@ -1,12 +1,12 @@
 ---
 name: setup-dream-team
 description: >-
-  Checks a project against the dream-team flow, applies fixes that change no code after one
-  OK, commits its doc edits and files one maintenance issue for the other failing checks; in an
-  upstream clone it only marks the clone as upstream. Use when the user asks to set up, audit or
-  align a project with the dream-team flow, or to mark an upstream clone or a project that is not
-  theirs. Not for working an issue (use build-issue) or closing a milestone (use
-  milestone-close).
+  Marks the user's own clone with a git config key, checks the project against the dream-team
+  flow, applies fixes that change no code after one OK, commits its doc edits and files one
+  maintenance issue for the other failing checks; in an upstream clone it only keeps
+  CLAUDE.local.md out of git. Use when the user asks to set up, audit or align a project with the
+  dream-team flow, or to mark a clone as their own. Not for working an issue (use build-issue) or
+  closing a milestone (use milestone-close).
 disable-model-invocation: true
 ---
 
@@ -14,8 +14,8 @@ disable-model-invocation: true
 
 Bringing a project into line is a program, not a change. This skill audits, makes the
 **Direct fixes** below after one confirm, commits its doc edits and files one issue for the rest.
-It changes no code; the filed issue goes through `build-issue`. In an upstream clone it only sets
-the `dream-team.upstream` marker.
+It changes no code; the filed issue goes through `build-issue`. It marks an own clone with the
+`dream-team.own` key; in an upstream clone it only adds `CLAUDE.local.md` to the git exclude file.
 
 ## Checks
 
@@ -110,11 +110,11 @@ Values from GitLab's label-picker palette; one colour per `type::` value, one fo
 ## Steps
 
 1. Ask whether the repo is the user's own project or an upstream project; a fork counts as own.
-   - Upstream → run `git config --local dream-team.upstream true`.
    - Upstream and `git check-ignore CLAUDE.local.md` prints nothing → add `CLAUDE.local.md` to
      the file `git rev-parse --git-path info/exclude` prints.
-   - Upstream → report the marker and stop; change nothing else in the repo or its tracker.
-   - Own → go on to step 2 and write no marker.
+   - Upstream → write no marker, report whether `CLAUDE.local.md` was added to or already in the
+     exclude file, and stop; change nothing else in the repo or its tracker.
+   - Own → run `git config --local dream-team.own true`, then go on to step 2.
 2. Read the project `CLAUDE.md` or `AGENTS.md`, the contributor doc, the ROADMAP and `docs/specs/`.
 3. Read the tracker's milestones, labels and open issues through the host's tooling skill.
 4. Run every check. Record pass or fail, with the evidence: issue numbers, file and line.

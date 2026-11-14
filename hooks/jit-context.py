@@ -102,8 +102,9 @@ Editing a CLAUDE.md or CLAUDE.local.md.
 </claude_md>"""
 
 UPSTREAM = """<upstream_repo>
-This clone carries the `dream-team.upstream` git config marker: it is an upstream
-project, not mine.
+This clone is not marked own (`dream-team.own` is not `true`): it is an upstream
+project, not mine. If it is mine, ask me to run `/dream-team:setup-dream-team`
+to mark it.
 - Its CONTRIBUTING, commit style, changelog and tracker conventions win where they
   conflict with mine (scope-commit, scope-mr, vcs workflow).
 - Still load scope-commit and scope-mr; apply each rule upstream does not set.
@@ -118,12 +119,12 @@ def is_upstream(payload):
     while d and not os.path.isdir(d):           # Write may target a dir not made yet
         d = os.path.dirname(d)
     try:
-        out = subprocess.run(['git', '-C', d or '.', 'config', '--local', '--type=bool', '--get',
-                              'dream-team.upstream'],
-                             capture_output=True, text=True, timeout=5).stdout
+        p = subprocess.run(['git', '-C', d or '.', 'config', '--local', '--type=bool', '--get',
+                            'dream-team.own'],
+                           capture_output=True, text=True, timeout=5)
     except Exception:
         return False
-    return out.strip() == 'true'
+    return 'inside a git repository' not in p.stderr and p.stdout.strip() != 'true'
 
 
 # Lookbehind lets `sudo glab` / `/usr/bin/glab` match while `myglabthing`
