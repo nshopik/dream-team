@@ -1,50 +1,36 @@
-import importlib.util, json, os, subprocess, sys, tempfile, uuid
-
-OWN = r"git\.example\.org[:/]|github\.com[:/]me/"
-os.environ["DREAM_TEAM_OWN_REMOTES"] = OWN
+import json, os, subprocess, sys, tempfile, uuid
 
 HOOK = os.path.join(os.path.dirname(os.path.abspath(__file__)), "jit-context.py")
-spec = importlib.util.spec_from_file_location("jit", HOOK)
-jit = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(jit)
-
-for urls, want in [
-    (["git@git.example.org:me/tools.git"], False),
-    (["ssh://git@git.example.org:2222/team/tools.git"], False),
-    (["https://github.com/me/dotfiles.git"], False),
-    (["git@github.com:ME/x.git"], False),
-    ([], False),                                               # no remote: local scratch repo
-    (["https://github.com/NLnetLabs/unbound.git"], True),
-    (["https://github.com/NLnetLabs/unbound.git",               # fork + upstream
-      "git@github.com:me/unbound.git"], True),
-    (["https://github.com/meandyou/x.git"], True),             # prefix of my name is not me
-]:
-    assert jit.upstream_remote(urls) == want, urls
 
 
-def context(tool_input, cwd="/", own=OWN, session=None):
-    env = {**os.environ, "DREAM_TEAM_OWN_REMOTES": own}
+def context(tool_input, cwd="/", session=None):
+    env = {**os.environ, "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1"}
     p = subprocess.run([sys.executable, HOOK], text=True, capture_output=True, env=env,
                        input=json.dumps({"session_id": session or uuid.uuid4().hex, "cwd": cwd,
                                          "tool_input": tool_input}))
     return json.loads(p.stdout)["hookSpecificOutput"]["additionalContext"] if p.stdout else ""
 
 
-def repo(remote):
+def repo(marker=None):
     d = tempfile.mkdtemp()
     subprocess.run(["git", "init", "-q", d], check=True)
-    subprocess.run(["git", "-C", d, "remote", "add", "origin", remote], check=True)
+    if marker:
+        subprocess.run(["git", "-C", d, "config", "--local", "dream-team.upstream", marker],
+                       check=True)
     return d
 
 
-upstream = repo("https://github.com/NLnetLabs/unbound.git")
+upstream = repo("true")
 assert "<upstream_repo>" in context({"file_path": os.path.join(upstream, "new/x.c")})
 for cmd in ["git commit -m x", "gh pr create -t x"]:
     assert "load scope-commit and scope-mr" in context({"command": cmd}, upstream), cmd
-assert "<upstream_repo>" not in context({"command": "git commit -m x"}, upstream, own="")
+for d in [repo(), repo("false")]:
+    c = context({"command": "git commit -m x"}, d)
+    assert "<vcs_workflow>" in c and "<upstream_repo>" not in c, d
 
-mine = repo("git@github.com:me/x.git")
-assert "<prose_style>" in context({"file_path": os.path.join(mine, "x.md")})
+mine = repo()
+c = context({"file_path": os.path.join(mine, "x.md")})
+assert "<prose_style>" in c and "<upstream_repo>" not in c
 
 s = uuid.uuid4().hex                                           # vcs fires first, forge on the next call
 assert "<vcs_workflow>" in context({"command": "gh pr view 1"}, session=s)
