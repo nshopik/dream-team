@@ -97,8 +97,8 @@ Values from GitLab's label-picker palette; one colour per `type::` value, one fo
   blocker.
 - An open issue in a milestone carries the waiting label without an open milestone dependency,
   or lacks it with one → add or remove the label.
-- The check that every open issue runs problem, proposal fails → an item in the maintenance issue
-  (step 13), never a rewrite.
+- The check that every open issue runs problem, proposal fails → name `triage-issue #<n>` for each
+  in the step 15 report, never a rewrite.
 - Any other failing check whose fix changes no code and the draft can state, tracker edits and
   repo docs included → a direct fix, shown in the step 7 draft.
 - A failing check that needs a code change, or a decision the draft cannot state such as a missing
