@@ -1,10 +1,11 @@
 ---
 name: scope-issue
 description: >
-  Writes issue descriptions: a problem paragraph opening with the defect, then a proposal, and
-  opens a docs MR with the record of a hard-to-reverse design choice the proposal cites. Use
-  when writing or editing an issue (`gh issue create`, `gh api …/issues`, `glab issue create`,
-  `-f description=`). Commit messages: use `scope-commit`; MR/PR descriptions: use `scope-mr`.
+  Writes issue descriptions: a problem paragraph opening with the defect, a proposal, then a
+  `## Done when` section of observable checks, and opens a docs MR with the record of a
+  hard-to-reverse design choice the proposal cites. Use when writing or editing an issue
+  (`gh issue create`, `gh api …/issues`, `glab issue create`, `-f description=`). Commit
+  messages: use `scope-commit`; MR/PR descriptions: use `scope-mr`.
 ---
 
 Issue is actionable items, not prose. Read days or weeks later with zero conversation context.
@@ -21,7 +22,7 @@ history; a run that resumes the work reads them too.
 
 ### Shape
 
-- Two parts, in order: problem, proposal.
+- Three parts, in order: problem, proposal, `## Done when`.
 - Problem opens the description unlabeled. No `## Problem` heading.
 - Problem opens with the defect or gap, bolded.
 - Background the defect or gap needs follows it.
@@ -31,7 +32,7 @@ history; a run that resumes the work reads them too.
 - Each fact appears once.
 - Proposal: the next step, under `## Proposal`. Always present, except a meta or bundle issue.
 - Proposal is concrete: a list of actions, a person to engage, or a research issue's questions.
-- Proposal ends with a `Done when …` paragraph after its items, naming an observable check. Never a bullet.
+- `## Done when` follows `## Proposal`: one plain `-` bullet per observable check. No `- [ ]` boxes. Not in a meta or bundle issue.
 - Never end at the problem.
 - Meta issue: a paragraph on the work it tracks, then the checklist. No bolded defect, no `## Proposal`.
 - Bundle issue: a paragraph on what its items share, then `## Items`. No bolded defect, no `## Proposal`.
@@ -65,7 +66,7 @@ history; a run that resumes the work reads them too.
 - Deliverable: a findings comment on the issue plus follow-up issues for the gaps found
   (Bundle). No code.
 - User asks for a file → a note in the repo's research docs; the comment carries the rest.
-- Done when every question has an answer or an issue tracking it.
+- A research issue's `## Done when`: every question has an answer or an issue tracking it.
 
 ### Evidence
 
@@ -123,7 +124,7 @@ history; a run that resumes the work reads them too.
 - Cite a brief or doc the target forge's readers can open by URL or path, at the claim it backs;
   don't repeat it.
 - Problem carries the substance. Longest part.
-- Proposal is the outro.
+- Proposal and `## Done when` are the outro.
 
 ### Format
 
@@ -166,8 +167,8 @@ history; a run that resumes the work reads them too.
 - Small amendment that leaves the work remaining unchanged → a new comment; leave the
   description as written.
 - Finding with no decision on direction yet → a new comment; leave the description as written.
-- Direction decided, title and problem paragraph still hold → rewrite the proposal and its `Done
-  when` paragraph, then comment why it changed with the replaced proposal quoted.
+- Direction decided, title and problem paragraph still hold → rewrite the proposal and
+  its `## Done when` section, then comment why it changed with the replaced proposal quoted.
 - Direction decided, title or problem paragraph no longer holds → file a new issue that links the
   findings comment, then close this one with a `Superseded by #<n>` comment.
 - Description is the current spec. Comments are the log.

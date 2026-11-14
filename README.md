@@ -39,7 +39,7 @@ walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
 - **[scope-commit](skills/scope-commit/SKILL.md)**: commit messages in
   [Scoped Commits](https://scopedcommits.com/) format.
 - **[scope-mr](skills/scope-mr/SKILL.md)**: MR/PR descriptions.
-- **[scope-issue](skills/scope-issue/SKILL.md)**: tracker issues (problem, proposal), and
+- **[scope-issue](skills/scope-issue/SKILL.md)**: tracker issues (problem, proposal, done when), and
   the docs MR for a design decision they cite.
 - **[friction](skills/friction/SKILL.md)**: reports agent friction repeated across past
   `build-issue-loop` runs.

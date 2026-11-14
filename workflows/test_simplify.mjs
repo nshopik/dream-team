@@ -108,7 +108,7 @@ for (const row of rows) {
 
 const lean = loaded([], 0)
 
-const doneWhenCheck = 'The issue\'s `Done when …` paragraph, when present, must hold on this branch'
+const doneWhenCheck = 'The issue\'s `## Done when` section, or on an older issue its `Done when …` paragraph, must hold on this branch'
 const lensLabels = ['architect-reviewer', 'sre-engineer', 'test-coverage-reviewer'].map((l) => `review:dream-team:${l}`)
 {
   const name = 'domain lens'
@@ -137,6 +137,7 @@ const fixDiffBlocks = () => ({ externalReview: cmd, externalRuns: [{ ran: true, 
   domainRuns: [{ summary: '', findings: [] }, { summary: '', findings: [{ ...extFinding, file: 'main.js' }, { severity: 'nit', description: 'rename n', file: 'main.js' }] },
     { summary: '', findings: [], resolved: [{ ...extFinding, file: 'main.js' }] }] })
 const promptRows = [
+  { name: 'implementer stops at the Done-when checks', label: 'impl:#1', rule: 'stop once each of its checks holds and every gate command is green' },
   { name: 'implementer splits only independent changes', label: 'impl:#1', rule: 'commit each change separately under its own subject' },
   { name: 'gate is read-only and lists its allowed commands', label: 'gate:#1', rule: 'The gate is read-only. Run only the commands written below — `git status`, the gate commands, `git diff`, `git rev-parse` and any aspects pipeline — each once, in order.' },
   { name: 'build-fix commits fixups', label: 'build-fix:#1:r1', rule: fixup, opts: { gateFails: 1 } },
@@ -146,6 +147,7 @@ const promptRows = [
   { name: 'fix round commits fixups', label: 'fix:#1:r1', rule: fixup, opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] } },
   { name: 'test lens checks red evidence', label: 'review:dream-team:test-coverage-reviewer', rule: red, opts: { redEvidence: red } },
   { name: 'domain lens skips without a source', label: 'review:domain', rule: 'Either one missing → raise no finding on it and say why in your summary' },
+  { name: 'domain lens checks each Done-when bullet', label: 'review:domain', rule: 'check each of its checks on its own by reading, cite what you read, and say in your summary whether each one holds' },
   { name: 'domain lens cites its source', label: 'review:domain', rule: 'cite what you read — file and line' },
   { name: 'retry after a null result checks earlier commits', label: 'impl:#1', rule: 'may already have committed part of it', opts: { nullOnce: ['impl:#1'] } },
   { name: 'lens may rate a question', label: 'review:dream-team:architect-reviewer', rule: 'as question: it goes to the user and never blocks the MR' },
@@ -227,6 +229,9 @@ const externalRows = [
   { name: 'pre-existing finding survives the re-review that replaces its gate',
     opts: { domainRuns: [verdict(worsened, pre), { summary: '', findings: [], resolved: [worsened] }] },
     reviewer: false, agents: 0, degraded: [], fixRounds: 1, resolved: [{ ...worsened, gate: 'domain', round: 1 }], prompts: [], preExisting: [{ ...pre, gate: 'domain' }] },
+  { name: 'Done-when report survives the re-review that replaces its gate',
+    opts: { domainRuns: [{ summary: 'bullet 1 holds', findings: [worsened] }, { summary: 'fixed', findings: [], resolved: [worsened] }] },
+    reviewer: false, agents: 0, degraded: [], fixRounds: 1, resolved: [{ ...worsened, gate: 'domain', round: 1 }], prompts: [], doneWhen: 'bullet 1 holds' },
   { name: 'pre-existing finding added on a re-review is returned, not fixed',
     opts: { domainRuns: [verdict(worsened), { summary: '', findings: [], resolved: [worsened], added: [pre] }] },
     reviewer: false, agents: 0, degraded: [], fixRounds: 1, resolved: [{ ...worsened, gate: 'domain', round: 1 }], prompts: [], preExisting: [{ ...pre, gate: 'domain' }] },
@@ -250,6 +255,7 @@ for (const row of externalRows) {
   assert.deepEqual(result.preExisting, row.preExisting || [], `${row.name}: preExisting`)
   for (const f of row.preExisting || []) assert.ok(!Object.keys(prompts).some((l) => /^(fix|re-review):/.test(l) && prompts[l].includes(f.description)), `${row.name}: pre-existing finding kept out of the fix loop`)
   assert.deepEqual(result.nitFix, row.nitFix || null, `${row.name}: nitFix`)
+  assert.equal(result.doneWhen, row.doneWhen || '', `${row.name}: doneWhen`)
   assert.deepEqual(labels.filter((l) => l.endsWith(':nits')), row.labels || [], `${row.name}: nit pass`)
   assert.ok(!labels.some((l) => l.startsWith('re-review:')) || row.fixRounds, `${row.name}: no re-review`)
   if (row.fixdiff) assert.deepEqual(labels.filter((l) => /^fixdiff:(domain|external)/.test(l)), row.fixdiff, `${row.name}: fix-diff reviews`)
