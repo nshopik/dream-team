@@ -20,6 +20,8 @@ Planning stays explicit, at issue size, because you review every plan.
   plan-like September specs came from a skill that has since been rewritten into `build-issue`.
 - The upstream-repo guard lives in `jit-context.py`, not a tracker skill: that skill loads only
   before the tracker CLI and only on owned remotes, so it fires too late and on the wrong repos.
+- Run `git config --local dream-team.own true` in your clone of this repo; without it every
+  session here gets the upstream-repo rules.
 - A living doc stays small by holding current state only: rationale goes in commits and MRs,
   plans in issues, component internals nowhere beyond one module-doc sentence.
 - Retired: the `dream-team` skill, `dream-team-loop` and `dream-team-run`. `build-issue`

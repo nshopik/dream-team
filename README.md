@@ -30,9 +30,10 @@ walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
   `build-issue-loop` workflow.
 - **[build-meta](skills/build-meta/SKILL.md)**: takes a Meta issue's children to one MR/PR on one
   integration branch via the `build-meta-loop` workflow.
-- **[setup-dream-team](skills/setup-dream-team/SKILL.md)**: checks an existing project against the
-  flow, applies fixes that change no code after one OK, commits its doc edits and files one issue
-  for the rest; in an upstream clone it only marks the clone as upstream.
+- **[setup-dream-team](skills/setup-dream-team/SKILL.md)**: marks a clone of your own project or
+  fork, checks the project against the flow, applies fixes that change no code after one OK,
+  commits its doc edits and files one issue for the rest; in an upstream clone it only keeps
+  `CLAUDE.local.md` out of git.
 - **[scope-spec](skills/scope-spec/SKILL.md)**: the project spec in `docs/specs/`, written from its
   template.
 - **[cut-milestones](skills/cut-milestones/SKILL.md)**: drafts milestones from a spec, one exit gate
@@ -106,8 +107,9 @@ On pi the agents get pi's default tools, `write` and `edit` included.
 
 ## Configuration
 
-Run `setup-dream-team` once in each upstream clone; it marks the clone with
-`git config --local dream-team.upstream true`.
+Run `setup-dream-team` once in each clone of your own project or fork; it marks the clone with
+`git config --local dream-team.own true`. A git repo without that key gets the upstream-project
+rules.
 
 ## License
 

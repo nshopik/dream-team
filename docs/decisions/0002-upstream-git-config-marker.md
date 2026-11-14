@@ -1,5 +1,7 @@
 # An upstream clone is marked by an untracked git config key
 
+Superseded by 0003-own-repo-git-config-marker.md
+
 `setup-dream-team` marks an upstream clone with `git config --local dream-team.upstream true`, and
 `jit-context.py` adds the `<upstream_repo>` rules only where that key is `true`. The marker lives
 in `.git/config`, so an upstream project never takes a committed dream-team file, and each clone
