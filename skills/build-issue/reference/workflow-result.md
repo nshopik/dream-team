@@ -45,5 +45,5 @@
 - **`redEvidence`** — the new test's failing output from before the fix; the test reviewer checked
   it. Empty on a bug-fix issue means nobody saw the test fail.
 - **`doneWhen`** — the domain lens's first-review report on each check in the issue's `## Done
-  when` section or older `Done when …` paragraph. Put each check and whether it holds in the MR
-  description.
+  when` section or older `Done when …` paragraph. A check it reports as not held, with no
+  `resolved` entry for it → hand the branch back.
