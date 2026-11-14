@@ -39,8 +39,16 @@ history; a run that resumes the work reads them too.
 
 ### Open questions
 
-- User asked for the issue in chat → ask its open questions, milestone included, with
+- User asked for the issue in chat, no open question or each one settled by reading the code or
+  the reference source → ask nothing.
+- User asked for the issue in chat, a choice that would pass the test in
+  `<base directory>/../build-issue/reference/decision-record.md` once decided, its options not yet
+  known, or a `## Done when` check with no observable form → run `mattpocock-skills:grilling`
+  until the choice is decided and each check is observable (Decisions writes its record).
+- User asked for the issue in chat, any other open question, milestone included → ask it with
   AskUserQuestion before writing it; write the answers into the issue.
+- Grilling tier, `mattpocock-skills:grilling` not installed → AskUserQuestion rounds instead, one
+  question each.
 - Issue found during other work (build-issue, a review, a lab check) → do not prompt; list the
   open questions as open items in the proposal, or file a `Research:` issue.
 
@@ -56,11 +64,12 @@ history; a run that resumes the work reads them too.
   .claude/worktrees/decision-<slug> origin/<default>`.
 - Docs MR open → `git worktree remove .claude/worktrees/decision-<slug>`.
 - The issue cites the record path and the docs MR link at the choice; the body never argues it.
-- A choice still undecided has no record: it stays an open question (Open questions).
+- A choice still undecided after Open questions has no record: it stays an open question.
 
 ### Research
 
-- Proposal would need a guess or an assumption → research issue, not a guessed proposal.
+- Proposal would need a guess or an assumption no Open questions tier settles → research issue,
+  not a guessed proposal.
 - Title starts `Research:`.
 - Proposal lists the questions to answer.
 - Deliverable: a findings comment on the issue plus follow-up issues for the gaps found
