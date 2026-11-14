@@ -1,6 +1,6 @@
 # A Meta issue's children are reviewed once, over the whole integration branch
 
-`build-meta-loop` runs `build-issue-loop` on each child only up to the gate, then runs its
+`assemble-meta-loop` runs `build-issue-loop` on each child only up to the gate, then runs its
 Simplify, Review and Fix phases once over the integration branch's diff from its base.
 A reviewer of one child judges it against a partial design: it flags a function no caller uses
 yet or an error path a later child fills, and misses defects between children, such as a helper

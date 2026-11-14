@@ -1,5 +1,5 @@
 export const meta = {
-  name: 'build-meta-loop',
+  name: 'assemble-meta-loop',
   description: 'One Meta issue on one integration branch: build-issue-loop to the gate per child, oldest ready first, then build-issue-loop once from Simplify over the whole branch',
   phases: [
     { title: 'Children', detail: 'build-issue-loop up to the gate per child, one at a time; a child that fails is reset off the branch and its dependents skipped' },
@@ -8,7 +8,7 @@ export const meta = {
 }
 
 // ---------------------------------------------------------------------------
-// Inputs (all from the build-meta skill, which already triaged and branched)
+// Inputs (all from the assemble-meta skill, which already triaged and branched)
 // ---------------------------------------------------------------------------
 const A = args || {}
 const META = A.meta || {}
@@ -20,7 +20,7 @@ const NOTES = String(A.notes || '')
 const LOOP = 'dream-team:build-issue-loop'
 
 if (!META.issue || !CHILDREN.length || !BRANCH || !BASE || !GATE_COMMANDS.length) {
-  throw new Error('build-meta-loop: args.meta.issue, args.children, args.branch, args.base and args.gateCommands are required')
+  throw new Error('assemble-meta-loop: args.meta.issue, args.children, args.branch, args.base and args.gateCommands are required')
 }
 
 const RESET_SCHEMA = {

@@ -1,17 +1,17 @@
 ---
-name: build-meta
+name: assemble-meta
 description: >-
   Takes a tracker Meta issue to one MR/PR: triages the Meta issue and every child before any
   code, asking all open questions in one batch, builds each child up to the gate on one
-  integration branch through the build-meta-loop workflow, reviews and fixes the whole branch
+  integration branch through the assemble-meta-loop workflow, reviews and fixes the whole branch
   once, and opens one MR/PR with one commit per change. Use when the user runs
-  /dream-team:build-meta or asks to build, work or ship a Meta issue's children together, on one
-  branch or as one MR/PR — e.g. "build-meta #40", "do Meta #40 in one MR". Not for a single
+  /dream-team:assemble-meta or asks to build, work or ship a Meta issue's children together, on one
+  branch or as one MR/PR — e.g. "assemble-meta #40", "do Meta #40 in one MR". Not for a single
   issue or a Meta issue whose children are independent (run build-issue per child).
 argument-hint: <meta-issue-number>
 ---
 
-# build-meta
+# assemble-meta
 
 One Meta issue per invocation. Read `<base directory>/../build-issue/SKILL.md` first: each
 "build-issue step N" below runs as written there, with the Meta issue's number as `<n>`.
@@ -45,7 +45,7 @@ are build-issue's step-5 edits and a step-3 decision record. Lab work is yours, 
 
 ## 4. Run the workflow
 
-Invoke the **Workflow** tool with `name: "dream-team:build-meta-loop"` and `args` as a real JSON
+Invoke the **Workflow** tool with `name: "dream-team:assemble-meta-loop"` and `args` as a real JSON
 object:
 
 ```json
