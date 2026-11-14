@@ -19,6 +19,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `dream-fixer` watches an MR/PR's pipeline once the MR/PR opens, retries an infrastructure flake once, and pushes up to two fixes for a real failure before handing the MR/PR back with a comment.
 - `review-bench` weighs every minor ledger row 0.5, no longer reads a row's `nit` field, and holds every minor candidate for the next ledger bump.
 - `dream-fixer`'s report at workflow launch describes the change in 1-2 sentences and adds nothing before or after the layout.
+- `scope-issue` and `dream-fixer` write a hard-to-reverse design decision to `docs/decisions/` in its own docs MR when it is made, `scope-spec` through `scope-issue`, and `dream-fixer` stacks the issue branch on that record.
 
 ### Removed
 
