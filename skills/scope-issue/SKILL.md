@@ -1,7 +1,8 @@
 ---
 name: scope-issue
 description: >
-  Writes issue descriptions: a problem paragraph opening with the defect, then a proposal. Use
+  Writes issue descriptions: a problem paragraph opening with the defect, then a proposal, and
+  opens a docs MR with the record of a hard-to-reverse design choice the proposal cites. Use
   when writing or editing an issue (`gh issue create`, `gh api …/issues`, `glab issue create`,
   `-f description=`). Commit messages: use `scope-commit`; MR/PR descriptions: use `scope-mr`.
 ---
@@ -41,6 +42,20 @@ history; a run that resumes the work reads them too.
   AskUserQuestion before writing it; write the answers into the issue.
 - Issue found during other work (dream-fixer, a review, a lab check) → do not prompt; list the
   open questions as open items in the proposal, or file a `Research:` issue.
+
+### Decisions
+
+- Proposal carries a decided design choice that passes the test in
+  `<base directory>/../dream-fixer/reference/decision-record.md` → before filing, write its record
+  to `docs/decisions/` in that file's format.
+- Commit the record alone on its own branch per `scope-commit`, push it and open its own docs MR
+  per `scope-mr`.
+- Cut that branch in its own worktree from the fetched tip of the remote's default branch, never
+  from the current checkout: `git worktree add -b decision-<slug>
+  .claude/worktrees/decision-<slug> origin/<default>`.
+- Docs MR open → `git worktree remove .claude/worktrees/decision-<slug>`.
+- The issue cites the record path and the docs MR link at the choice; the body never argues it.
+- A choice still undecided has no record: it stays an open question (Open questions).
 
 ### Research
 

@@ -39,7 +39,9 @@ user-approved release.
 A spec is only for decisions wider than one issue: the v1 design, a cross-cutting change. Work
 that fits one issue gets no spec; a decision made during it is posted on the issue and rewrites
 the issue's proposal, or supersedes the issue with a new one when its title or problem no longer
-holds.
+holds. A decision that is hard to reverse, surprising without context and a real trade-off (the
+decision-record test) also gets a record in `docs/decisions/`, opened as its own docs MR, which
+the issue cites.
 
 ### 1. Spec to milestones
 
@@ -94,7 +96,9 @@ asking. Smaller changes it makes inline.
      child with no open blocker and works that.
   2. Triage: an open decision gets a dialog with 2–3 options and their costs. The answer is
      posted on the issue as a comment, and written into the description when it changes the work
-     remaining. A `Blocked by` line naming an open issue stops here.
+     remaining. An answer that passes the decision-record test gets its record in its own docs
+     MR; the issue branch stacks on it, and the issue MR says it depends on it. A `Blocked by`
+     line naming an open issue stops here.
   3. Tier:
      - Research: answers, follow-up issues, and a findings comment on the
        research issue, which closes with no MR. Asked for a file, it writes a note in

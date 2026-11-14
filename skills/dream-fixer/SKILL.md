@@ -16,10 +16,10 @@ One issue per invocation. If the user names several, do them one at a time.
 Spell `<scratchpad>` as your scratchpad directory's literal path.
 
 You are the orchestrator. You read, triage, branch and ship. **You do not write the change** — the
-workflow's implementer does. Everything between the branch and the MR happens in dispatched
+workflow's implementer does. Everything between the issue branch and the MR happens in dispatched
 agents. Your only edits are step 5's settled disputes, nits and small adjacent fixes, which step 6
-reruns `gateCommands` on, a light-tier issue's edit, and a research note the user asks for
-(step 2a).
+reruns `gateCommands` on, a light-tier issue's edit, a research note the user asks for
+(step 2a), and a step-3 decision record.
 
 **Lab work is yours, not the workflow's.** Workflow agents never ssh to a lab host. Anything the
 issue or the repo's `CLAUDE.md` or `AGENTS.md` needs run on a lab host — a measurement the issue
@@ -59,14 +59,20 @@ Then:
 
 - **The options are enumerable** — two or three concrete paths, and the user's pick is the only
   thing missing: put them in an **AskUserQuestion** dialog, one option per path, cost in the
-  description. Post the answer as a comment on the issue; an answer that changes the work
-  remaining goes into the proposal, or into a new issue that supersedes this one when the title
-  or problem no longer holds (`scope-issue` Updates). Carry straight on to step 3.
+  description. Handle the answer as below, then carry straight on to step 3.
   Deferring the issue is an option when its tracker state says it is not due yet.
 - **The options are not enumerable** — a missing acceptance criterion, a credential you don't
   have, an intent only the user knows: report what is blocking in prose and stop.
 
 Never open a dialog whose options you had to invent to fill the slots.
+
+The answer:
+
+- Post it as a comment on the issue.
+- Passes the test in [`reference/decision-record.md`](reference/decision-record.md) → step 3 also
+  writes its record to `docs/decisions/` in its own docs MR.
+- Changes the work remaining → write it into the proposal, or into a new issue that supersedes
+  this one when the title or problem no longer holds (`scope-issue` Updates).
 
 ## 2a. Tier
 
@@ -142,7 +148,7 @@ prints; `cd` there first.
 
 Stop and ask whether to continue that work or start over when any holds:
 
-- A branch `issue-<n>-*` exists locally or on the remote.
+- A branch `issue-<n>-*` or `decision-<n>-*` exists locally or on the remote.
 - A path `.claude/worktrees/issue-<n>-*` exists.
 - An open MR/PR references the issue.
 
@@ -153,8 +159,15 @@ remote's default branch unless the project's `CLAUDE.md` or `AGENTS.md` names an
 - `$(git rev-parse --git-common-dir)/info/exclude` has no `.claude/worktrees/` line → append
   `/.claude/worktrees/` before the `worktree add`.
 - `cd` into the worktree; make it the last Bash `cd` before step 4.
+- A step-2 answer passed the test in `reference/decision-record.md` → name the `worktree add`
+  branch `decision-<n>-<slug>` in place of `issue-<n>-<slug>`.
+- On it, write the record to `docs/decisions/` in that file's format, commit it per
+  `scope-commit`, push it and open its docs MR against `<target>` per `scope-mr`.
+- Comment that docs MR's link on the issue.
+- Then `git checkout -b issue-<n>-<slug>`: the issue branch stacks on the record commit.
 - Never work on `master`/`main`.
-- Record `git rev-parse HEAD` in the worktree — it is the workflow's `base`.
+- Record `git rev-parse HEAD` in the worktree — it is the workflow's `base`; on a stacked branch
+  it is the record commit, so step 6's fold leaves the record out.
 
 ## 4. Run the workflow
 
@@ -177,9 +190,10 @@ object (never a stringified one):
 - `notes`: decisions made in the tracker discussion, the answer the user gave at step-2 triage,
   and the lab work the implementer must leave alone. Optional.
 - The change carries a decision that passes the test in
-  [`reference/decision-record.md`](reference/decision-record.md) → name the decision in `notes`
-  with that file's absolute path, and tell the implementer to add its record to `docs/decisions/`
-  in that format, in the same commit as the change.
+  [`reference/decision-record.md`](reference/decision-record.md) and has no record yet, from step
+  3 or cited by the issue → name the decision in `notes` with that file's absolute path, and tell
+  the implementer to add its record to `docs/decisions/` in that format, in the same commit as the
+  change.
 - `gateCommands`: the build, test and lint commands the repo's CI config runs that also run in this
   checkout — CI config first, `CLAUDE.md`, `AGENTS.md` and README second. The mechanical gate
   runs exactly these after the implementation and after every fix commit. Leave out lab work.
@@ -300,6 +314,8 @@ Then push and open the MR/PR against the branch the project's `CLAUDE.md` or `AG
 Link the issue so it auto-closes (`Closes #<n>`). Write the description review-facing; a `scope-mr`
 skill, if present, is the source of truth for it.
 
+- A stacked branch → the description says the MR depends on the step-3 docs MR, by its link.
+
 ## 7. Watch the MR/PR
 
 Once the MR/PR is open, start a Bash `run_in_background` poll that exits on a final state,
@@ -347,6 +363,7 @@ exits:
   closed. Report one line: new `<target>` head, worktree and branch deleted, issue state.
 - The main checkout is not on `<target>`, or its `git status --porcelain` prints anything → run
   `git fetch` in place of `git pull --ff-only`, and say so in the report.
+- A stacked branch → also run `git branch -d decision-<n>-<slug>` after the block.
 - The block fails → report the git error; leave the worktree and the branch.
 - **Closed unmerged** → `cd` to the main checkout, `git worktree remove
   .claude/worktrees/issue-<n>-<slug>`, report it; leave the branch.

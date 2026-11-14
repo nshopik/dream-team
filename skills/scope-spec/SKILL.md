@@ -18,7 +18,10 @@ disable-model-invocation: true
 - A Decision or Design point settled in an issue, MR or comment → end it with a link to it.
 - A question the user cannot answer yet (needs research, a lab run, someone else) → an
   `## Open items` entry.
-- Work that fits one issue → no spec; write the decision into the issue with `scope-issue`.
+- Work that fits one issue → no spec.
+- Its decision passes the test in `<base directory>/../dream-fixer/reference/decision-record.md`
+  → a record in `docs/decisions/`, in its own docs MR, via `scope-issue` Decisions.
+- Its decision fails that test → write it into the issue with `scope-issue`.
 - Filename: `docs/specs/NNNN-<topic>-design.md`.
 - `NNNN`: four digits, sequential, starting at `0001`.
 - The date goes in the header, never the filename.
