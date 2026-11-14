@@ -12,6 +12,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `qa-review` tells each lens to report every defect it finds, including uncertain or low-severity ones.
 - `scope-issue` cites a doc the forge's readers can open by its URL or path, at the claim it backs.
 - `scope-issue` draws one Mermaid diagram when the defect or new design is a relationship between 3 or more named modules or paths.
+- A decision record can carry one Mermaid diagram of at most 12 nodes when the decision relates 3 or more named parts.
 - `scope-issue` comments a finding while its direction is open, rewrites only the proposal once it is decided, and supersedes the issue with a new one when the title or problem no longer holds.
 - A lab or research result for an open issue is posted on it as a comment without asking.
 - `scope-spec` ends each Decision and Design point settled in an issue, MR or comment with a link to it.
