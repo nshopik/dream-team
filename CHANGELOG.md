@@ -24,6 +24,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `build-issue`'s report at workflow launch describes the change in 1-2 sentences and adds nothing before or after the layout.
 - `scope-issue` and `build-issue` write a hard-to-reverse design decision to `docs/decisions/` in its own docs MR when it is made, `scope-spec` through `scope-issue`, and `build-issue` stacks the issue branch on that record.
 - `scope-issue` ends an issue with a `## Done when` section, one bullet per check, and `build-issue-loop` checks each bullet on its own, reading the old `Done when …` paragraph on older issues; `build-issue` lists each check and whether it holds in the MR description.
+- `build-issue` given a `Meta:` issue works its oldest open, unticked child with no open blocker, reports each child's open blockers when every one is blocked, and reports no work left when none is open.
 - `scope-issue` asks nothing when no question is open, and runs `mattpocock-skills:grilling` on a hard-to-reverse design choice whose options are not yet known or a done-when check that is not observable.
 
 ### Removed
