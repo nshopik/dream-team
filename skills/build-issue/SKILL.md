@@ -19,7 +19,7 @@ You are the orchestrator. You read, triage, branch and ship. **You do not write 
 workflow's implementer does. Everything between the issue branch and the MR happens in dispatched
 agents. Your only edits are step 5's settled disputes, nits and small adjacent fixes, which step 6
 reruns `gateCommands` on, a light-tier issue's edit, a research note the user asks for
-(step 2a), and a step-3 decision record.
+(step 2a), and a step-3 decision record with the files `repo-conventions.md` adds with it.
 
 **Lab work is yours, not the workflow's.** Workflow agents never ssh to a lab host. Anything the
 issue or the repo's `CLAUDE.md` or `AGENTS.md` needs run on a lab host — a measurement the issue
@@ -80,7 +80,7 @@ The answer:
 
 - Post it as a comment on the issue.
 - Passes the test in [`reference/decision-record.md`](reference/decision-record.md) → step 3 also
-  writes its record to `docs/decisions/` in its own docs MR.
+  writes its record in its own docs MR.
 - Changes the work remaining → write it into the proposal and its `## Done when` section, or
   into a new issue that supersedes this one when the title or problem no longer holds
   (`scope-issue` Updates).
@@ -172,8 +172,10 @@ remote's default branch unless the project's `CLAUDE.md` or `AGENTS.md` names an
 - `cd` into the worktree; make it the last Bash `cd` before step 4.
 - A step-2 answer passed the test in `reference/decision-record.md` → name the `worktree add`
   branch `decision-<n>-<slug>` in place of `issue-<n>-<slug>`.
-- On it, write the record to `docs/decisions/` in that file's format, commit it per
-  `scope-commit`, push it and open its docs MR against `<target>` per `scope-mr`.
+- On it, write the record at the path, naming and template
+  `<base directory>/../../references/repo-conventions.md` resolves, commit it with the files that
+  reference adds per `scope-commit`, push it and open its docs MR against `<target>` per
+  `scope-mr`.
 - Comment that docs MR's link on the issue.
 - Then `git checkout -b issue-<n>-<slug>`: the issue branch stacks on the record commit.
 - Never work on `master`/`main`.
@@ -202,9 +204,9 @@ object (never a stringified one):
   and the lab work the implementer must leave alone. Optional.
 - The change carries a decision that passes the test in
   [`reference/decision-record.md`](reference/decision-record.md) and has no record yet, from step
-  3 or cited by the issue → name the decision in `notes` with that file's absolute path, and tell
-  the implementer to add its record to `docs/decisions/` in that format, in the same commit as the
-  change.
+  3 or cited by the issue → name the decision in `notes` with the absolute paths of that file and
+  `<base directory>/../../references/repo-conventions.md`, and tell the implementer to add its
+  record per both, in the same commit as the change.
 - `gateCommands`: the build, test and lint commands the repo's CI config runs that also run in this
   checkout — CI config first, `CLAUDE.md`, `AGENTS.md` and README second. The mechanical gate
   runs exactly these after the implementation and after every fix commit. Leave out lab work.
@@ -267,7 +269,8 @@ Adjacent defects — anything found outside the diff or returned in `preExisting
 
 Every issue you open gets the milestone it belongs to, set at creation, and the host's waiting
 label when that milestone has an open dependency. Pick the milestone from the tracker's open
-milestones and the `planned` rows of the repo's roadmap (`ROADMAP.md` or `docs/ROADMAP.md`). A
+milestones and the `planned` rows of the repo's ROADMAP, found per
+`<base directory>/../../references/repo-conventions.md`. A
 `planned` row fits best → no milestone and the waiting label. None clearly fits → ask.
 
 ## 6. Open the MR/PR
@@ -433,6 +436,7 @@ Layout, with sections that have nothing to report left out:
 - <assumption>
 
 **Notes:**
+- **Conventions:** <path, naming> (<source>)
 - **Dispute accepted:** <finding> — <why>
 - **Lab:** <verdict>
 - **Questions:**

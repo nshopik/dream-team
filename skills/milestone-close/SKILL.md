@@ -22,6 +22,9 @@ and filed issue.
 Milestone description, and its roadmap row if it has one. No measurable exit
 criterion → stop and ask for one; a milestone without one cannot close.
 
+The ROADMAP and specs folder are at the paths
+`<base directory>/../../references/repo-conventions.md` resolves.
+
 A version milestone's `Gate:` bullet holds its release criteria; check each item there too.
 
 ## 2. Check the criterion
@@ -62,8 +65,8 @@ Collect the docs-MR edits and the proposals; fix nothing yet.
 Docs-MR edits, applied in step 5 without asking:
 
 - Architecture doc and diagram against the workspace's component list.
-- Specs whose decision the code no longer follows, recorded on a closed issue or merged MR → a
-  `Superseded by` status line. No such record → propose it.
+- Specs in the specs folder whose decision the code no longer follows, recorded on a closed issue
+  or merged MR → a `Superseded by` status line. No such record → propose it.
 - README, `docs/` pages, help text and comments: dispatch `dream-team:docs-reviewer`, told to
   read the milestone's merged diff with `git diff <base>..<head>`, `<base>` the first-merged MR's
   merge base and `<head>` the last-merged MR's merge commit.

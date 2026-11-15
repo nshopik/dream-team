@@ -10,6 +10,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - The `assemble-meta` skill takes a Meta issue's children to one MR/PR: it triages them all before any code, builds each child up to the gate on one integration branch, reviews and fixes the whole branch once, and closes the finished children.
 - The `triage-issue` skill checks a legacy or outside-filed issue against the code and rewrites it in `scope-issue` form before it is built.
 - `build-issue-loop` takes `stopAfterGate` to end a run after the gate and `startAtSimplify` to start one at Simplify over the diff from `base`, with `redEvidence` handing that run the failing output earlier runs saw.
+- In an own clone whose `CLAUDE.md` or `AGENTS.md` declares no doc conventions, skills commit the first new decision record, spec or ROADMAP with a `docs/CONVENTIONS.md` and a pointer line in `CLAUDE.md`, or in `AGENTS.md` when only that exists.
 
 ### Changed
 
@@ -35,6 +36,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `build-issue` given a `Meta:` issue works its oldest open, unticked child with no open blocker, reports each child's open blockers when every one is blocked, and reports no work left when none is open.
 - `scope-issue` asks nothing when no question is open, and runs `mattpocock-skills:grilling` on a hard-to-reverse design choice whose options are not yet known or a done-when check that is not observable.
 - `build-issue` stops on an untriaged issue and says to run `triage-issue #<n>` first.
+- Skills take the path, file naming and template of decision records, specs and the ROADMAP from the project's `CLAUDE.md` or `AGENTS.md`, else, for decision records only, from an existing records folder such as `docs/adr/`, else from the defaults `docs/decisions/`, `docs/specs/` and `ROADMAP.md`.
 
 ### Removed
 

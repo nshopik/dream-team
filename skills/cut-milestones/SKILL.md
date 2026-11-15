@@ -45,7 +45,8 @@ the numbers.
 
 ## Steps
 
-1. Read the spec and the existing ROADMAP and tracker milestones.
+1. Read the spec, the existing ROADMAP and the tracker milestones; the ROADMAP's path is what
+   `<base directory>/../../references/repo-conventions.md` resolves.
 2. Draft each milestone: title, exit criterion, gate type, what it depends on, and for each to be
    created now a `<due date>` placeholder, 2–4 weeks out (the appetite). A
    dependency that gates only the exit measurement goes in the exit criterion, as "on a commit

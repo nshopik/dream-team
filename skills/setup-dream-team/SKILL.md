@@ -40,7 +40,7 @@ It changes no code; the filed issue goes through `build-issue`. It marks an own 
   proposal.
 - A `Meta:` issue has no `area::` label and no milestone.
 - An issue with an open blocker ends with one `Blocked by #<n>` line per blocker.
-- `docs/specs/` holds only specs the code still follows; every other spec carries a
+- The specs folder holds only specs the code still follows; every other spec carries a
   `Superseded by` line.
 - A component table, if the contributor doc has one, matches the code.
 - A component table cell says only what the component's name and path don't.
@@ -115,7 +115,8 @@ Values from GitLab's label-picker palette; one colour per `type::` value, one fo
    - Upstream → write no marker, report whether `CLAUDE.local.md` was added to or already in the
      exclude file, and stop; change nothing else in the repo or its tracker.
    - Own → run `git config --local dream-team.own true`, then go on to step 2.
-2. Read the project `CLAUDE.md` or `AGENTS.md`, the contributor doc, the ROADMAP and `docs/specs/`.
+2. Read the project `CLAUDE.md` or `AGENTS.md`, the contributor doc, the ROADMAP and the specs
+   folder, at the paths `<base directory>/../../references/repo-conventions.md` resolves.
 3. Read the tracker's milestones, labels and open issues through the host's tooling skill.
 4. Run every check. Record pass or fail, with the evidence: issue numbers, file and line.
 5. Report one line per check to the user before changing or filing anything.

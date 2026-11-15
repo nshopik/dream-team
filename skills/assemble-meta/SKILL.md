@@ -17,7 +17,8 @@ One Meta issue per invocation. Read `<base directory>/../build-issue/SKILL.md` f
 "build-issue step N" below runs as written there, with the Meta issue's number as `<n>`.
 
 You are the orchestrator, as in build-issue: **you do not write the change**. Your only edits
-are build-issue's step-5 edits and a step-3 decision record. Lab work is yours, per build-issue.
+are build-issue's step-5 edits and a step-3 decision record with the files `repo-conventions.md`
+adds with it. Lab work is yours, per build-issue.
 
 ## 1. Read the Meta issue and its children
 
