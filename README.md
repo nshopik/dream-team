@@ -9,7 +9,7 @@ milestones into issues small enough to finish, take each issue to a reviewed MR/
 with you through release. Bring them your biggest task.
 
 It works on GitHub and GitLab, for application code and infrastructure-as-code. The full
-walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
+walkthrough is in [`WORKFLOW.md`](skills/ask-team/WORKFLOW.md).
 
 ## How it works
 
@@ -34,6 +34,8 @@ walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
   fork, checks the project against the flow, applies fixes that change no code after one OK,
   commits its doc edits and files one issue for the rest; in an upstream clone it only keeps
   `CLAUDE.local.md` out of git.
+- **[ask-team](skills/ask-team/SKILL.md)**: answers which step or skill fits now, with one
+  command to run.
 - **[brainstorm](skills/brainstorm/SKILL.md)**: grills a vague idea in rounds of questions, then
   proposes its path.
 - **[scope-spec](skills/scope-spec/SKILL.md)**: the project spec in the repo's specs folder
