@@ -35,14 +35,15 @@ description: >-
   ask the user.
 - A fact still being looked up → hold only the questions that depend on it; ask the rest now.
 - A decision → put it to the user and wait.
-- Done when no decision is left unsettled and nothing is silently assumed.
+- Done when you and the user reach a shared understanding: no decision is left unsettled and
+  nothing is silently assumed.
 
 ## 3. Handed-back choices
 
 - Two answers in a row hand the choice back ("you decide", "whatever you think") on questions
   that need domain knowledge → offer, once per area, a map of that area's decisions, each with
   its default.
-- Map declined → take its defaults and list them as assumptions in the shared understanding.
+- Map declined → take its defaults and mark each `(default)` in its decision bullet.
 - A user who can weigh the options but has not decided → normal questions.
 
 ## 4. Propose the path
@@ -51,17 +52,29 @@ description: >-
   research issue, decision record, inline edit, or drop.
 - Issue or inline edit: needs a user decision, contradicts the spec, adds a component, or needs a
   lab check → issue; otherwise inline edit.
+- Use the layout below as the default; adjust its sections to the result.
+- Label each bullet by its decision; never repeat a label.
+- Decisions span several aspects or artifacts → group them under bold section lines; else one
+  flat list.
+- A decision with parts (files, steps, checks) → sub-bullets under it.
+- A fact that bears on the decision → one note paragraph of 1-2 sentences after the bullets.
+- End with one question that names the path and its action.
 
 ```
-- **Idea:** <one sentence>
-- **Settled:** <decision> — <answer>
-- **Assumptions:** <default taken>
-- **Path:** <path> — <one-line reason>
+**<section>**
+- **<decision>:** <answer>
+- **<decision>:** <answer>
+  - <part>
+  - <part>
+
+<note>
+
+<path>: <one-line reason>. <question naming the action>?
 ```
 
 ## 5. Hand off
 
-- Wait for the user to approve or change the path.
+- Wait for the user to confirm the shared understanding and approve or change the path.
 - Spec → ask the user to run `/dream-team:scope-spec`.
 - Issue, Meta issue or research issue → load `scope-issue`.
 - Decision record → load `scope-issue` and follow its Decisions with no issue; skip the line

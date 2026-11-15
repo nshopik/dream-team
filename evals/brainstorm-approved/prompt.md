@@ -10,12 +10,12 @@ Session so far:
 [user] 1 RFC 8482. 2 UDP only. 3 one key, default on.
 [assistant] Round 2: 1. Count minimized answers? Recommended: one counter, `any_minimized_total`, in the existing `src/metrics.rs` registry.
 [user] Yes, add the counter. That's everything I had.
-[assistant] - **Idea:** answer ANY queries over UDP with the RFC 8482 minimal response
-- **Settled:** response — RFC 8482 minimal answer
-- **Settled:** scope — UDP only
-- **Settled:** config — one on/off key, default on
-- **Settled:** metrics — `any_minimized_total` counter in `src/metrics.rs`
-- **Path:** issue — adds a config key and a counter the user decided on
+[assistant] - **Response:** RFC 8482 minimal answer to ANY queries
+- **Scope:** UDP only
+- **Config:** one on/off key, default on
+- **Metrics:** `any_minimized_total` counter in `src/metrics.rs`
+
+Issue: adds a config key and a counter the user decided on. File it with scope-issue?
 [user] Yes, file the issue.
 
 You are the assistant in this session. Take your next step on the user's last message. You cannot run commands: show the message you would send the user.
