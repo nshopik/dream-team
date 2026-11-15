@@ -189,6 +189,8 @@ history; a run that resumes the work reads them too.
 
 ### Length
 
-- ~250 words the shape. 500 hard cap.
+- ~250 words the shape. 500 hard cap, except the two cases below.
 - Fenced blocks are evidence or a diagram, not prose; they don't count toward the cap.
 - Background overgrows first. Cut it first.
+- Still over 500 with every fact one the next run needs, user asked for the issue in chat → before filing, give the word count and ask: split into a meta issue with children, or file over the cap.
+- Still over 500 with every fact one the next run needs, issue found during other work → file it over the cap; name the issue and its word count in the run's report.

@@ -39,6 +39,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `build-issue` given a `Meta:` issue works its oldest open, unticked child with no open blocker, reports each child's open blockers when every one is blocked, and reports no work left when none is open.
 - `scope-issue` asks nothing when no question is open, and runs `mattpocock-skills:grilling` on a hard-to-reverse design choice whose options are not yet known or a done-when check that is not observable.
 - `build-issue` stops on an untriaged issue and says to run `triage-issue #<n>` first.
+- `scope-issue` asks before filing an issue whose needed facts run over the 500-word cap, offering a meta issue split or an over-cap filing, and files one found during other work over the cap with its word count in the run's report.
 - Skills take the path, file naming and template of decision records, specs and the ROADMAP from the project's `CLAUDE.md` or `AGENTS.md`, else, for decision records only, from an existing records folder such as `docs/adr/`, else from the defaults `docs/decisions/`, `docs/specs/` and `ROADMAP.md`.
 - `setup-dream-team` checks milestone names, exit criteria and bold bullets, `area::` labels, the architecture diagram and the contributor doc path only in a repo that uses them, and checks `type::` and `area::` labels only on issues in an open milestone.
 - `milestone-close` and `cut-milestones` stop on a milestone not named `M<n>`, `YY.MM` or `v<major>.<minor>` (SemVer past 1.0) and point to `setup-dream-team`.
