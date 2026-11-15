@@ -49,6 +49,8 @@ Fail *before* code is written on a guess, not after.
 
 - The issue is untriaged per `<base directory>/../triage-issue/SKILL.md` Untriaged → stop with
   "run `triage-issue #<n>` first".
+- The issue has the host's needs-brainstorm label (`workflow::needs-brainstorm` on GitLab) → stop
+  with "run `triage-issue #<n>` first".
 
 Triage blocks on:
 

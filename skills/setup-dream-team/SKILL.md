@@ -44,7 +44,7 @@ It changes no code; the filed issue goes through `build-issue`. It marks an own 
 - A component table, if the contributor doc has one, matches the code.
 - A component table cell says only what the component's name and path don't.
 - The repo has an architecture diagram → it matches the code.
-- The tracker has the `type::research` and `type::meta` labels.
+- The tracker has the `type::research`, `type::meta` and needs-brainstorm labels.
 - The project `CLAUDE.md` carries the meaning of every rule in **Project rules** below.
 - A CHANGELOG's header links the Keep a Changelog version it follows.
 
@@ -83,6 +83,7 @@ Values from GitLab's label-picker palette. Setup sets a colour only on a label i
 | `area::*` | `#428BCA` | |
 | Blocked label (`workflow::blocked` on GitLab) | `#34495E` | |
 | Waiting label (`workflow::future` on GitLab) | `#7F8C8D` | |
+| Needs-brainstorm label (`workflow::needs-brainstorm` on GitLab) | `#D1D100` | |
 
 ## Direct fixes
 
@@ -90,8 +91,8 @@ Values from GitLab's label-picker palette. Setup sets a colour only on a label i
   structure.
 - The project has neither `CLAUDE.md` nor `AGENTS.md` → create `CLAUDE.md` with the project
   rules.
-- The tracker lacks `type::research` or `type::meta` → create the label with its colour and
-  description from **Label colours**.
+- The tracker lacks `type::research`, `type::meta` or the needs-brainstorm label → create the
+  label with its colour and description from **Label colours**.
 - A milestone fails the bold-bullet check, but its description has its exit criterion, gate and
   dependencies → rewrite them as `Exit:`, `Gate:` and `Depends on:` bold bullets.
 - An issue lacks the `Blocked by #<n>` line for an open blocker → append one line per missing

@@ -6,7 +6,7 @@ flowchart TD
   xcut[/cross-cutting decision/] -.-> S0
   S0(["0 · Idea to spec"]) --> S1{{"1 · Spec to milestones"}}
   S1 --> S2["2 · Milestone to issues"]
-  bug[/outside or legacy issue/] -.->|triage-issue| S2
+  bug[/outside, legacy or<br/>needs-brainstorm issue/] -.->|triage-issue| S2
   S2 --> S3
   subgraph loop ["repeats per issue or Meta issue"]
     S3[["3 · Issue to MR"]] --> S4["4 · You read the MR"]
@@ -97,7 +97,11 @@ tracker, or any issue not in `scope-issue` form, goes through `triage-issue #N` 
 - It asks you the open design or scope choices, then rewrites the body in `scope-issue` form with
   the original report collapsed at the end.
 
-With no argument it lists the untriaged issues and the blocked ones whose reporter replied.
+On an issue with the needs-brainstorm label it runs `brainstorm`'s question rounds on the open
+items, rewrites the proposal with your answers and removes the label once no item is left open.
+
+With no argument it lists the untriaged issues, the blocked ones whose reporter replied and the
+needs-brainstorm ones.
 
 A vague idea goes through `brainstorm` first. A change you describe in chat enters here when it is
 issue-sized: it needs a decision from you, contradicts the spec, adds a component, or needs a lab
@@ -105,9 +109,10 @@ check. The agent gives its assessment and offers to file the issue instead of ed
 filing, it settles what reading the code can, grills you on an undecided hard-to-reverse choice,
 asks you any other open question, milestone included, and writes the answers into the issue. An
 issue it finds during other work, such as a build-issue run or a review, it files without asking:
-open questions go in the issue as listed items. Two or more light-tier findings from one run go in
-one bundle issue, a checklist of their edits. It posts a lab or research result for an open issue
-there as a comment, without asking. Smaller changes it makes inline.
+open questions go in the issue as listed items, and the issue gets the needs-brainstorm label.
+Two or more light-tier findings from one run go in one bundle issue, a checklist of their edits.
+It posts a lab or research result for an open issue there as a comment, without asking. Smaller
+changes it makes inline.
 
 ### 3. Issue to MR (the daily loop)
 
@@ -122,8 +127,8 @@ there as a comment, without asking. Smaller changes it makes inline.
      posted on the issue as a comment, and written into the description when it changes the work
      remaining. An answer that passes the decision-record test gets its record in its own docs
      MR; the issue branch stacks on it, and the issue MR says it depends on it. A `Blocked by`
-     line naming an open issue stops here, and an untriaged issue stops with
-     `triage-issue #N`.
+     line naming an open issue stops here, and an untriaged or needs-brainstorm issue stops
+     with `triage-issue #N`.
   3. Tier:
      - Research: answers, follow-up issues, and a findings comment on the
        research issue, which closes with no MR. Asked for a file, it writes a note in

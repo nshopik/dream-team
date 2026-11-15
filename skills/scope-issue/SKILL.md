@@ -50,6 +50,8 @@ history; a run that resumes the work reads them too.
   AskUserQuestion before writing it; write the answers into the issue.
 - Issue found during other work (build-issue, a review, a lab check) → do not prompt; list the
   open questions as open items in the proposal, or file a `Research:` issue.
+- Issue found during other work, not a `Research:` issue, open items in its proposal → add the
+  host's needs-brainstorm label (`workflow::needs-brainstorm` on GitLab).
 
 ### Decisions
 

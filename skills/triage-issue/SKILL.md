@@ -4,12 +4,13 @@ description: >-
   Triages one tracker issue before it is built: checks whether the code already does what it
   asks, reproduces a bug claim, asks the reporter for facts only they know and parks the issue
   on the blocked label, puts design and scope choices to the user, and rewrites the body in
-  scope-issue form with the original report kept at the end. With no argument, lists the
-  untriaged open issues and the blocked ones whose reporter replied. Use when the user asks to
-  triage, check or vet an issue, a legacy issue or one filed by someone outside the project —
-  e.g. "triage #42", "triage-issue", "what needs triage" — or when build-issue stops and names
-  triage-issue. Not for building the issue (use build-issue) or filing a new one (use
-  scope-issue).
+  scope-issue form with the original report kept at the end. On an issue with the
+  needs-brainstorm label, runs brainstorm's question rounds and rewrites its proposal. With no
+  argument, lists the untriaged open issues, the blocked ones whose reporter replied and the
+  needs-brainstorm ones. Use when the user asks to triage, check or vet an issue, a legacy issue
+  or one filed by someone outside the project — e.g. "triage #42", "triage-issue", "what needs
+  triage" — or when build-issue stops and names triage-issue. Not for building the issue (use
+  build-issue) or filing a new one (use scope-issue).
 argument-hint: "[<issue-number>]"
 ---
 
@@ -51,16 +52,18 @@ last body edit:
   triage notes.
 - Add the open issues with the host's blocked label (`workflow::blocked` on GitLab) whose author
   commented after the last triage notes.
+- Add the open issues with the host's needs-brainstorm label (`workflow::needs-brainstorm` on
+  GitLab).
 - Ask which one to triage, then run the steps below on it.
 
 ```
-- **#<n>** <title> — <not in scope-issue form | outside author | reporter replied>
+- **#<n>** <title> — <not in scope-issue form | outside author | reporter replied | needs brainstorm>
 ```
 
 ## 1. Read
 
 - Fetch title, body, labels and comments per `<base directory>/../build-issue/SKILL.md` step 1.
-- Triaged, with no triage notes → report it ready and stop.
+- Triaged, with no triage notes and no needs-brainstorm label → report it ready and stop.
 - Read every earlier triage notes comment and the replies after it.
 - Never re-ask a question a reply answered.
 - The reporter answered every question → remove the blocked label.
@@ -96,8 +99,10 @@ last body edit:
 ## 5. Design and scope choices
 
 - Load `scope-issue`.
-- A design or scope choice is open → settle it with the user per its Open questions,
-  as for an issue the user asked for in chat, before the rewrite.
+- No needs-brainstorm label, a design or scope choice open → settle it with the user per its
+  Open questions, as for an issue the user asked for in chat, before the rewrite.
+- The issue has the needs-brainstorm label → run `dream-team:brainstorm` on its proposal's open
+  items, skipping its path proposal and hand-off; the issue is the path.
 - The user rejects the request → close the issue with a comment giving the reason; write no repo
   file; stop.
 
@@ -107,6 +112,9 @@ last body edit:
   user's answers.
 - End the body with the reporter's text, verbatim, in a collapsed block.
 - The body already has that block → keep it as it is.
+- The issue has the needs-brainstorm label → rewrite its proposal per `scope-issue` Updates with
+  the user's answers, in place of the three bullets above.
+- No open item is left in its proposal → remove the needs-brainstorm label.
 
 ```
 <details><summary>Original report</summary>
@@ -122,8 +130,9 @@ last body edit:
 
 ```
 - **Issue:** #<n> <title>
-- **Outcome:** closed, already done | closed, rejected | waiting on the reporter | ready
+- **Outcome:** closed, already done | closed, rejected | waiting on the reporter | needs brainstorm | ready
 - **Searched:** <paths, symbols and commit ranges the already-done check read>
 - **Bug:** confirmed at <code path> | not reproduced | not enough detail
+- **Still open:** <open items left in the proposal; the needs-brainstorm label stays>
 - **Next:** `build-issue #<n>`
 ```
