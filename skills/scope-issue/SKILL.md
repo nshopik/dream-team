@@ -43,12 +43,11 @@ history; a run that resumes the work reads them too.
   the reference source → ask nothing.
 - User asked for the issue in chat, a choice that would pass the test in
   `<base directory>/../build-issue/reference/decision-record.md` once decided, its options not yet
-  known, or a `## Done when` check with no observable form → run `mattpocock-skills:grilling`
-  until the choice is decided and each check is observable (Decisions writes its record).
+  known, or a `## Done when` check with no observable form → run `dream-team:brainstorm`, skipping
+  its path proposal and hand-off, until the choice is decided and each check is observable; the
+  issue is the path (Decisions writes its record).
 - User asked for the issue in chat, any other open question, milestone included → ask it with
   AskUserQuestion before writing it; write the answers into the issue.
-- Grilling tier, `mattpocock-skills:grilling` not installed → AskUserQuestion rounds instead, one
-  question each.
 - Issue found during other work (build-issue, a review, a lab check) → do not prompt; list the
   open questions as open items in the proposal, or file a `Research:` issue.
 
