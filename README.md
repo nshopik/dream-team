@@ -55,8 +55,6 @@ walkthrough is in [`WORKFLOW.md`](skills/ask-team/WORKFLOW.md).
   `build-issue-loop` runs.
 - **[qa-review](skills/qa-review/SKILL.md)**: reviews a branch or audits a repo with parallel
   read-only lenses.
-- **[chaos-planning](skills/chaos-planning/SKILL.md)**: reviews a launch's failure-experiment plan
-  for gaps.
 - **[review-bench](skills/review-bench/SKILL.md)**: benchmarks code reviewers against qa-review on
   one pull request and prints a score table.
 
