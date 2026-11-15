@@ -38,6 +38,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `build-issue` watches an MR/PR's pipeline once the MR/PR opens, retries an infrastructure flake once, and pushes up to two fixes for a real failure before handing the MR/PR back with a comment.
 - `review-bench` weighs every minor ledger row 0.5, no longer reads a row's `nit` field, and holds every minor candidate for the next ledger bump.
 - `build-issue`'s report at workflow launch describes the change in 1-2 sentences and adds nothing before or after the layout.
+- `scope-issue` files two or more unattended, non-research issues in one milestone under one `Meta:` issue set to that milestone, or files one on request with the human-loop issues proposed for the user to confirm, and `assemble-meta` takes a Meta issue whose children are independent.
 - `scope-issue` and `build-issue` write a hard-to-reverse design decision to `docs/decisions/` in its own docs MR when it is made, `scope-spec` through `scope-issue`, and `build-issue` stacks the issue branch on that record.
 - `scope-issue` ends an issue with a `## Done when` section, one bullet per check, and `build-issue-loop` checks each bullet on its own, reading the old `Done when …` paragraph on older issues; `build-issue` hands the branch back on a check that does not hold and that no fix round resolved.
 - `build-issue` given a `Meta:` issue works its oldest open, unticked child with no open blocker, reports each child's open blockers when every one is blocked, and reports no work left when none is open.

@@ -83,8 +83,9 @@ issues join it as they are filed.
   A milestone gated on field evidence gets one `Evidence:` issue: what to deploy and where, the
   start date, and how to collect the measurement.
   Work spanning milestones, or waiting on features not built yet, gets one `Meta:` issue
-  (`meta`, no milestone): a checklist of child issues, plus plain lines naming the feature
-  a piece waits on. A child is filed only when its work can start.
+  (`meta`, no milestone; a milestone Meta, below, is set to its milestone): a checklist of child
+  issues, plus plain lines naming the feature a piece waits on. A child is filed only when its
+  work can start.
 - You: skim the titles; fix anything missing now.
 
 A bug reported from outside (the dogfood router, a user) enters here too. One the agent files
@@ -151,11 +152,17 @@ changes it makes inline.
      defects are filed as issues, never left in the MR text.
   7. Watches the MR pipeline: retries a flake once, pushes up to two folded fixes for a real
      failure, else posts a CI hand-back comment on the MR.
-- A `Meta:` issue whose children build on each other: "assemble-meta #40". The agent runs
-  `dream-team:assemble-meta`: it triages the Meta issue and every child before any code, asking all
-  open questions in one batch, builds each child up to the gate on one integration branch, oldest
-  ready child first, reviews and fixes the whole branch once, and opens one MR with one commit
-  per change. A child whose run fails is dropped with the children it blocks.
+- A `Meta:` issue: "assemble-meta #40". The agent runs `dream-team:assemble-meta`: it triages the
+  Meta issue and every child before any code, asking all open questions in one batch, builds each
+  child up to the gate on one integration branch, oldest ready child first, reviews and fixes the
+  whole branch once, and opens one MR with one commit per change. A child whose run fails is
+  dropped with the children it blocks.
+
+  Milestone Meta: two or more non-research issues filed for M4 that can run unattended go under
+  one `Meta:` issue set to M4. Asking "file M4's issues under one Meta" does the same, and the
+  agent proposes which issues stay off it for you to confirm. "assemble-meta" on it ships them as
+  one MR; the issues that need a lab run, credentials or your call run through build-issue, and
+  milestone close stays your gate before M5.
 - You: check the branch and external-reviewer lines, any assumptions at the top of the report,
   any reviewer questions under Notes, the MR, and any `**Pipeline:**` follow-up.
 
