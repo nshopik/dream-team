@@ -84,8 +84,9 @@ issues join it as they are filed.
   start date, and how to collect the measurement.
   Work spanning milestones, or waiting on features not built yet, gets one `Meta:` issue
   (`meta`, no milestone; a milestone Meta, below, is set to its milestone): a checklist of child
-  issues, plus plain lines naming the feature a piece waits on. A child is filed only when its
-  work can start.
+  issues, plus plain lines naming the feature a piece waits on, outside the Meta. A child is filed
+  when its work can start, or when it waits only on sibling children, with one `Blocked by` line
+  per sibling.
 - You: skim the titles; fix anything missing now.
 
 A bug reported from outside (the dogfood router, a user) enters here too. One the agent files
