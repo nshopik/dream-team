@@ -34,8 +34,8 @@ walkthrough is in [`WORKFLOW.md`](WORKFLOW.md).
   fork, checks the project against the flow, applies fixes that change no code after one OK,
   commits its doc edits and files one issue for the rest; in an upstream clone it only keeps
   `CLAUDE.local.md` out of git.
-- **[scope-spec](skills/scope-spec/SKILL.md)**: the project spec in `docs/specs/`, written from its
-  template.
+- **[scope-spec](skills/scope-spec/SKILL.md)**: the project spec in the repo's specs folder
+  (`docs/specs/` by default), written from its template.
 - **[cut-milestones](skills/cut-milestones/SKILL.md)**: drafts milestones from a spec, one exit gate
   each.
 - **[milestone-close](skills/milestone-close/SKILL.md)**: checks a milestone's exit criterion,

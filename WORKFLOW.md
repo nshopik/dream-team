@@ -34,14 +34,15 @@ user-approved release.
 - You: `/dream-team:scope-spec`. The agent asks what the chat left open, then writes a lean v1
   spec on a topic branch; `branch-guard` keeps design docs off `master`.
 - You: read the spec, push back until it matches your model, merge it.
-- Result: `docs/specs/NNNN-<project>-design.md`, about 1,500 words.
+- Result: a spec of about 1,500 words, `docs/specs/NNNN-<topic>-design.md` unless the repo's
+  `CLAUDE.md` or `AGENTS.md` declares another one.
 
 A spec is only for decisions wider than one issue: the v1 design, a cross-cutting change. Work
 that fits one issue gets no spec; a decision made during it is posted on the issue and rewrites
 the issue's proposal, or supersedes the issue with a new one when its title or problem no longer
 holds. A decision that is hard to reverse, surprising without context and a real trade-off (the
-decision-record test) also gets a record in `docs/decisions/`, opened as its own docs MR, which
-the issue cites.
+decision-record test) also gets a record in the repo's records folder (`docs/decisions/` by
+default), opened as its own docs MR, which the issue cites.
 
 ### 1. Spec to milestones
 

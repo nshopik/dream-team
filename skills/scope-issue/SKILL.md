@@ -56,9 +56,11 @@ history; a run that resumes the work reads them too.
 
 - Proposal carries a decided design choice that passes the test in
   `<base directory>/../build-issue/reference/decision-record.md` → before filing, write its record
-  to `docs/decisions/` in that file's format.
-- Commit the record alone on its own branch per `scope-commit`, push it and open its own docs MR
-  per `scope-mr`.
+  at the path, naming and template `<base directory>/../../references/repo-conventions.md`
+  resolves.
+- That reference resolved a non-default convention → put its `Conventions:` line in the reply.
+- Commit the record and the files `repo-conventions.md` adds with it, nothing else, on its own
+  branch per `scope-commit`, push it and open its own docs MR per `scope-mr`.
 - Cut that branch in its own worktree from the fetched tip of the remote's default branch, never
   from the current checkout: `git worktree add -b decision-<slug>
   .claude/worktrees/decision-<slug> origin/<default>`.

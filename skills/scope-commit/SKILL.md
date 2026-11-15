@@ -41,7 +41,8 @@ Subject `<scope>: <description>`. Body = the why. Most commits don't need one.
 
 ### Content
 
-- Cite, don't restate. Issues and `docs/decisions/` by number.
+- Cite, don't restate. Issues and decision records by number; records are where
+  `<base directory>/../../references/repo-conventions.md` resolves.
 - A diff that is itself prose — docs, rules, comments, config — is cited the same way,
   never re-explained.
 - No work log: verification output, test counts, sweep tables. CI's job.

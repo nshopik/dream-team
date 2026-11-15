@@ -1,7 +1,7 @@
 # Decision record format
 
-Decision records live in `docs/decisions/` and use sequential numbering: `0001-slug.md`,
-`0002-slug.md`, etc.
+For the path, file naming and numbering, and a repo template that replaces the one below, see
+[repo-conventions.md](../../../references/repo-conventions.md).
 
 ## Template
 
@@ -25,11 +25,6 @@ Only include these when they add genuine value. Most decision records won't need
 A record replaced by a later decision keeps its file and gets one line under its title:
 `Superseded by <record-file>`. The new record says why the old decision lost.
 
-## Numbering
-
-Use the next free number in `docs/decisions/` on the target branch. If the target takes that
-number before merge, rename the record to the next free one at rebase.
-
 ## When to write a decision record
 
 All three of these must be true:
@@ -42,8 +37,7 @@ All three of these must be true:
 
 A decision that fails the test keeps its rationale in the commit body.
 
-A spec in `docs/specs/` that the change supersedes gets a record only when the reason it lost
-passes the same test.
+A spec the change supersedes gets a record only when the reason it lost passes the same test.
 
 ### What qualifies
 
