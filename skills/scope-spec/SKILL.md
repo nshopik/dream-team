@@ -12,6 +12,7 @@ disable-model-invocation: true
 
 - Read [spec-template.md](spec-template.md) before writing; follow its section order.
 - Path and filename: what `<base directory>/../../references/repo-conventions.md` resolves.
+- Terms: follow `<base directory>/../../references/glossary.md`.
 - Source: the conversation so far, plus any repo files or notes it names; never re-ask what it
   settles.
 - A question the source leaves open → ask it with AskUserQuestion before writing; never guess.
