@@ -49,7 +49,7 @@ Fail *before* code is written on a guess, not after.
 
 - The issue is untriaged per `<base directory>/../triage-issue/SKILL.md` Untriaged → stop with
   "run `triage-issue #<n>` first".
-- The issue has the host's needs-brainstorm label (`workflow::needs-brainstorm` on GitLab) → stop
+- The issue has the `workflow::needs-brainstorm` label → stop
   with "run `triage-issue #<n>` first".
 
 Triage blocks on:
@@ -269,11 +269,11 @@ Adjacent defects — anything found outside the diff or returned in `preExisting
 - Filed → never leave the finding in the MR description or the chat summary.
 - Filing fails or yields no issue link → name the defect in the report as unfiled, with the reason.
 
-Every issue you open gets the milestone it belongs to, set at creation, and the host's waiting
-label when that milestone has an open dependency. Pick the milestone from the tracker's open
+Every issue you open gets the milestone it belongs to, set at creation, and `workflow::future`
+when that milestone has an open dependency. Pick the milestone from the tracker's open
 milestones and the `planned` rows of the repo's ROADMAP, found per
 `<base directory>/../../references/repo-conventions.md`. A
-`planned` row fits best → no milestone and the waiting label. None clearly fits → ask.
+`planned` row fits best → no milestone and `workflow::future`. None clearly fits → ask.
 
 ## 6. Open the MR/PR
 

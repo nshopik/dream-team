@@ -39,8 +39,8 @@ the numbers.
 - The milestone that completes the MVP carries `MVP` in its title.
 - A split takes the next free `M<n>`, never a letter.
 - Work spanning several milestones is a `Meta:` issue per `scope-issue`, not a milestone.
-- An issue in a milestone with an open dependency carries the host's waiting label
-  (`workflow::future` on GitLab); an issue in a ready milestone carries none.
+- An issue in a milestone with an open dependency carries `workflow::future`; an issue in a ready
+  milestone carries none.
 
 ## Numbers
 
@@ -63,7 +63,7 @@ the numbers.
    description is three bullets:
    `- **Exit:**`, `- **Gate:**`, `- **Depends on:**` (milestones that must close before work can
    start, or `none`).
-6. Add the waiting label to every open issue already in a milestone whose `Depends on:` has an
+6. Add `workflow::future` to every open issue already in a milestone whose `Depends on:` has an
    open milestone.
 7. Add one ROADMAP row per `M<n>` milestone, created or `planned`, in the same table as existing
    ones, when a ROADMAP exists, a row is `planned`, two or more `M<n>` milestones are open, or a

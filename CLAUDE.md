@@ -23,7 +23,7 @@
   `SKILL.md` or agent prompt.
 - Name a milestone `YY.MM`, its target month.
 - Version milestones release in flow mode.
-- From 2026-12-15 to the 26.12 due date, merge only `type::bug` issues and changes that do not
+- From 2026-12-15 to the 26.12 due date, merge only `bug` issues and changes that do not
   alter skill or agent behaviour (docs, evals, CI).
 - Run a `skills/*/evals/` runner with `--plugin-dir .`; without the flag it measures the installed
   plugin cache, not the working tree.

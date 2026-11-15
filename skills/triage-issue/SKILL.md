@@ -3,9 +3,9 @@ name: triage-issue
 description: >-
   Triages one tracker issue before it is built: checks whether the code already does what it
   asks, reproduces a bug claim, asks the reporter for facts only they know and parks the issue
-  on the blocked label, puts design and scope choices to the user, and rewrites the body in
-  scope-issue form with the original report kept at the end. On an issue with the
-  needs-brainstorm label, runs brainstorm's question rounds and rewrites its proposal. With no
+  on `workflow::blocked`, puts design and scope choices to the user, and rewrites the body in
+  scope-issue form with the original report kept at the end. On an issue with
+  `workflow::needs-brainstorm`, runs brainstorm's question rounds and rewrites its proposal. With no
   argument, lists the untriaged open issues, the blocked ones whose reporter replied and the
   needs-brainstorm ones. Use when the user asks to triage, check or vet an issue, a legacy issue
   or one filed by someone outside the project — e.g. "triage #42", "triage-issue", "what needs
@@ -48,12 +48,11 @@ last body edit:
 
 ## Queue: no argument
 
-- List the open untriaged issues, oldest first, leaving out those with the blocked label and
+- List the open untriaged issues, oldest first, leaving out those with `workflow::blocked` and
   triage notes.
-- Add the open issues with the host's blocked label (`workflow::blocked` on GitLab) whose author
-  commented after the last triage notes.
-- Add the open issues with the host's needs-brainstorm label (`workflow::needs-brainstorm` on
-  GitLab).
+- Add the open issues with `workflow::blocked` whose author commented after the last triage
+  notes.
+- Add the open issues with `workflow::needs-brainstorm`.
 - Ask which one to triage, then run the steps below on it.
 
 ```
@@ -63,10 +62,10 @@ last body edit:
 ## 1. Read
 
 - Fetch title, body, labels and comments per `<base directory>/../build-issue/SKILL.md` step 1.
-- Triaged, with no triage notes and no needs-brainstorm label → report it ready and stop.
+- Triaged, with no triage notes and no `workflow::needs-brainstorm` → report it ready and stop.
 - Read every earlier triage notes comment and the replies after it.
 - Never re-ask a question a reply answered.
-- The reporter answered every question → remove the blocked label.
+- The reporter answered every question → remove `workflow::blocked`.
 
 ## 2. Already done
 
@@ -85,7 +84,7 @@ last body edit:
 ## 4. Facts only the reporter knows
 
 - A missing step, version or environment, or a bug not reproduced → post the triage notes
-  comment, add the blocked label, leave the body unchanged, and stop.
+  comment, add `workflow::blocked`, leave the body unchanged, and stop.
 - Each question names the exact command output, version, setting or step wanted.
 
 ```
@@ -99,12 +98,12 @@ last body edit:
 ## 5. Design and scope choices
 
 - Load `scope-issue`.
-- No needs-brainstorm label, a design or scope choice open → settle it with the user per its
+- No `workflow::needs-brainstorm`, a design or scope choice open → settle it with the user per its
   Open questions, as for an issue the user asked for in chat, before the rewrite.
-- The issue has the needs-brainstorm label → run `dream-team:brainstorm` on its proposal's open
+- The issue has `workflow::needs-brainstorm` → run `dream-team:brainstorm` on its proposal's open
   items, skipping its path proposal and hand-off; the issue is the path.
-- The user rejects the request → close the issue with a comment giving the reason; write no repo
-  file; stop.
+- The user rejects the request → close the issue as not planned with a comment giving the reason,
+  add `wontfix`, write no repo file, and stop.
 
 ## 6. Rewrite
 
@@ -112,9 +111,9 @@ last body edit:
   user's answers.
 - End the body with the reporter's text, verbatim, in a collapsed block.
 - The body already has that block → keep it as it is.
-- The issue has the needs-brainstorm label → rewrite its proposal per `scope-issue` Updates with
+- The issue has `workflow::needs-brainstorm` → rewrite its proposal per `scope-issue` Updates with
   the user's answers, in place of the three bullets above.
-- No open item is left in its proposal → remove the needs-brainstorm label.
+- No open item is left in its proposal → remove `workflow::needs-brainstorm`.
 
 ```
 <details><summary>Original report</summary>
@@ -133,6 +132,6 @@ last body edit:
 - **Outcome:** closed, already done | closed, rejected | waiting on the reporter | needs brainstorm | ready
 - **Searched:** <paths, symbols and commit ranges the already-done check read>
 - **Bug:** confirmed at <code path> | not reproduced | not enough detail
-- **Still open:** <open items left in the proposal; the needs-brainstorm label stays>
+- **Still open:** <open items left in the proposal; `workflow::needs-brainstorm` stays>
 - **Next:** `build-issue #<n>`
 ```
