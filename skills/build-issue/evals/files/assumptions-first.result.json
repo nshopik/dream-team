@@ -12,7 +12,8 @@
   "fixRounds": 0,
   "assumptions": [
     "--since accepts RFC 3339 timestamps only; the issue did not say whether relative durations like 24h should work",
-    "--since is inclusive: a record stamped exactly at the boundary is exported"
+    "--since is inclusive: a record stamped exactly at the boundary is exported",
+    "export_test.go waits 50ms after the export returns before it reads the output file"
   ],
   "redEvidence": "",
   "changedFiles": [
@@ -47,7 +48,14 @@
     "disputed": [],
     "unhandled": 0
   },
-  "questions": [],
+  "questions": [
+    {
+      "severity": "question",
+      "description": "Should --since be inclusive? A record stamped exactly at the boundary is exported, while --until excludes it",
+      "file": "cmd/flowlog/export.go",
+      "gate": "dream-team:sre-engineer"
+    }
+  ],
   "preExisting": [],
   "untrackedPaths": [],
   "resolved": [],

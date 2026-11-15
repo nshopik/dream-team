@@ -11,15 +11,18 @@
         "enhancement"
       ],
       "result": "evals/files/assumptions-first.result.json",
-      "after": "You applied neither nit. Steps 6 and 7 are done: the PR is open at https://github.com/acme/flowlog/pull/61 and the merge poll is running.",
+      "after": "You applied neither nit. You checked the docs against the code: README.md's export section matches the new flag, so there is no drift. Steps 6 and 7 are done: the PR is open at https://github.com/acme/flowlog/pull/61 and the merge poll is running.",
       "expectations": [
         "The report opens with an `Assumptions:` heading and nothing above it",
-        "Both assumptions (RFC 3339 only; inclusive boundary) are listed under that heading, as their own list",
+        "Only the RFC 3339 assumption is listed under that heading, as its own list",
         "The last line is `Work on #<n> is done: <PR link>`",
         "No nit is mentioned, applied or dropped",
         "No gate command that passed is listed",
         "No summary of what the change does beyond what an assumption needs",
-        "No line about the review, since it had no blocking finding, dispute or fix round",
+        "No line about the review other than the `**Questions:**` bullet, since it had no blocking finding, dispute or fix round",
+        "No line names the 50ms test wait",
+        "No line reports the docs check or says there is no docs drift",
+        "The inclusive boundary appears once, as a sub-bullet of a `**Questions:**` bullet with its reviewer and location, never under the assumptions heading",
         "Every line other than the closing `Work on #` line and the assumption entries is a `- **Label:**` bullet, with no blank line between bullets and a `**Notes:**` line between them and any assumptions",
         "No line reports something that went smoothly: a reviewer with no findings, no dispute, no dead reviewer, no degraded type, gates that passed"
       ],
@@ -33,7 +36,9 @@
           "parseSince",
           "mixed casing",
           "go test",
-          "golangci-lint"
+          "golangci-lint",
+          "50ms",
+          "drift"
         ],
         "assumptions": true
       }
@@ -78,7 +83,7 @@
       "expectations": [
         "The PR link is present",
         "The dispute over the ignored os.Stat error is named, says it was accepted, and gives the reason (override file is optional; only not-exist is swallowed)",
-        "The nil sinks map write resolved in fix round 1 is named in one line",
+        "No line names the nil sinks map write resolved in fix round 1",
         "No gate command or change summary",
         "No claim that red evidence is missing or that nobody saw the test fail; the result carries it",
         "Every line other than the closing `Work on #` line and the assumption entries is a `- **Label:**` bullet, with no blank line between bullets and a `**Notes:**` line between them and any assumptions",
@@ -91,7 +96,8 @@
         ],
         "absent": [
           "go test",
-          "golangci-lint"
+          "golangci-lint",
+          "nil"
         ]
       },
       "branch": "issue-71-merge-sink-configs"
@@ -199,7 +205,7 @@
         "The report says the branch is handed back without a PR/MR (\"handed back\" in the closing line counts)",
         "The branch issue-73-file-rotation is named",
         "The outstanding finding is listed: the rotated file is renamed before its buffered writes are flushed",
-        "The stale-stat size check resolved in fix round 1 is named in one line",
+        "No line names the stale-stat size check resolved in fix round 1",
         "No PR/MR link or invented URL",
         "The last line is `Work on #<n> is handed back: <branch> in .claude/worktrees/issue-<n>-<slug> \u2014 <why> (<hand-back comment link>)`",
         "Every line other than the closing `Work on #` line and the assumption entries is a `- **Label:**` bullet, with no blank line between bullets and a `**Notes:**` line between them and any assumptions",
@@ -212,7 +218,8 @@
         ],
         "absent": [
           "/pull/",
-          "go test"
+          "go test",
+          "stale"
         ]
       },
       "branch": "issue-73-file-rotation"
