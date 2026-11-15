@@ -59,8 +59,10 @@ row target → no milestone and `workflow::future`), or blocks-close. The user a
 In a version milestone, an open backlog issue defaults to move, to the next version; in flow
 mode, so does an open headline.
 
-`Meta:` issues carry no milestone and stay out of the table. List each meta issue with a child in
+`Meta:` issues stay out of the table. List each meta issue with a child in
 this milestone; tick the boxes of closed children in its description.
+
+- A `Meta:` issue set to this milestone with an open child → it moves with that child.
 
 ## 4. Docs check
 

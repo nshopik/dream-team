@@ -34,6 +34,10 @@ Planning stays explicit, at issue size, because you review every plan.
 - Work spanning milestones (full RFC 8914 coverage) is a `Meta:` issue, not a milestone (one
   exit gate cannot cover it) and not a per-item table in the repo (every MR would churn it). A
   closed child shows "(closed)" beside its mention; the box is ticked at `milestone-close`.
+- A milestone's issues that can run unattended go under one `Meta:` issue set to that milestone,
+  so `assemble-meta` ships them as one MR for one review and merge; issues needing a lab run,
+  credentials or a product call run through `build-issue`, and `milestone-close` stays the human
+  gate before the next milestone.
 - A version milestone's release is scope-based by default: one headline feature plus backlog, behind
   standing release criteria in the version milestone's `Gate:` bullet. Its `YY.MM` name is the month
   it targets, not a promise about the API. A project whose `CLAUDE.md` says `Version milestones

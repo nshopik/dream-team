@@ -35,10 +35,11 @@ It changes no code; the filed issue goes through `build-issue`. It marks an own 
 - A milestone gated on field evidence has one open `Evidence:` issue.
 - Every open issue in an open milestone has exactly one kind label: `bug`, `feature`,
   `maintenance`, `performance`, `research` or `meta`.
-- The tracker has an `area::` label → every open issue in an open milestone has an `area::` label.
+- The tracker has an `area::` label → every open non-`Meta:` issue in an open milestone has an
+  `area::` label.
 - An open issue in a milestone carries `workflow::future` exactly when its milestone has an open
   dependency.
-- A `Meta:` issue has no `area::` label and no milestone.
+- A `Meta:` issue has no `area::` label, and a milestone only when every open child is in it.
 - An issue with an open blocker ends with one `Blocked by #<n>` line per blocker.
 - The specs folder holds only specs the code still follows; every other spec carries a
   `Superseded by` line.

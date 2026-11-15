@@ -91,13 +91,24 @@ history; a run that resumes the work reads them too.
 
 ### Meta
 
-- Work spans milestones, or waits on features not built yet → one meta issue tracking it.
+- Work spans milestones, waits on features not built yet, or is a milestone's unattended issues
+  (below) → one meta issue tracking it.
 - Title starts `Meta:`.
 - The checklist follows the opening paragraph, under no heading; one line per piece of work.
 - A line is a child issue link, or plain text naming the feature it waits on.
 - File a child issue only when its work can start; tick its box when it closes.
-- No milestone; each child carries its own.
+- A meta issue for work spanning milestones has no milestone; each child carries its own.
 - Closes when every line is ticked or ruled out.
+- User asks to file a milestone's issues under one meta issue → one meta issue set to that
+  milestone, its lines the milestone's issues that can run unattended.
+- A run files two or more non-`Research:` issues in one milestone that pass step 2 of
+  `<base directory>/../build-issue/SKILL.md`, carry no `workflow::needs-brainstorm` or
+  `workflow::blocked` label and need no lab work → file them under one meta issue set to that
+  milestone, without prompting, whatever their kind label.
+- A bundle issue (Bundle) counts as one issue toward that count.
+- Filing a milestone's meta issue on request → propose the issues that stay off it as
+  human-loop issues (they need a lab run, credentials, or a product or UX call) in the same
+  AskUserQuestion batch, for the user to confirm.
 
 ### Bundle
 

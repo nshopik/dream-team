@@ -7,7 +7,7 @@ description: >-
   once, and opens one MR/PR with one commit per change. Use when the user runs
   /dream-team:assemble-meta or asks to build, work or ship a Meta issue's children together, on one
   branch or as one MR/PR — e.g. "assemble-meta #40", "do Meta #40 in one MR". Not for a single
-  issue or a Meta issue whose children are independent (run build-issue per child).
+  issue (run build-issue).
 argument-hint: <meta-issue-number>
 ---
 
