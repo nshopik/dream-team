@@ -76,14 +76,14 @@ issues join it as they are filed.
 ### 2. Milestone to issues
 
 - You: "File the issues for M4."
-- Agent: writes each issue with `scope-issue` (problem, proposal, done when), sets `type::`,
-  `area::` and the milestone. When a proposal would need a guess, it files a `Research:` issue
-  (`type::research`) with questions instead, e.g. one for the canary rollback
+- Agent: writes each issue with `scope-issue` (problem, proposal, done when), sets one kind
+  label, `area::` and the milestone. When a proposal would need a guess, it files a `Research:`
+  issue (`research`) with questions instead, e.g. one for the canary rollback
   baseline. An issue that cannot start before another closes ends with a `Blocked by #<n>` line.
   A milestone gated on field evidence gets one `Evidence:` issue: what to deploy and where, the
   start date, and how to collect the measurement.
   Work spanning milestones, or waiting on features not built yet, gets one `Meta:` issue
-  (`type::meta`, no milestone): a checklist of child issues, plus plain lines naming the feature
+  (`meta`, no milestone): a checklist of child issues, plus plain lines naming the feature
   a piece waits on. A child is filed only when its work can start.
 - You: skim the titles; fix anything missing now.
 
@@ -92,12 +92,12 @@ gets one issue per `scope-issue`, in the milestone it belongs to. One the report
 tracker, or any issue not in `scope-issue` form, goes through `triage-issue #N` first:
 
 - It closes the issue when the code already does what it asks or you reject it.
-- It tries to reproduce a bug claim, and parks the issue on the blocked label with questions for
+- It tries to reproduce a bug claim, and parks the issue on `workflow::blocked` with questions for
   facts only the reporter knows.
 - It asks you the open design or scope choices, then rewrites the body in `scope-issue` form with
   the original report collapsed at the end.
 
-On an issue with the needs-brainstorm label it runs `brainstorm`'s question rounds on the open
+On an issue with `workflow::needs-brainstorm` it runs `brainstorm`'s question rounds on the open
 items, rewrites the proposal with your answers and removes the label once no item is left open.
 
 With no argument it lists the untriaged issues, the blocked ones whose reporter replied and the
@@ -109,7 +109,7 @@ check. The agent gives its assessment and offers to file the issue instead of ed
 filing, it settles what reading the code can, grills you on an undecided hard-to-reverse choice,
 asks you any other open question, milestone included, and writes the answers into the issue. An
 issue it finds during other work, such as a build-issue run or a review, it files without asking:
-open questions go in the issue as listed items, and the issue gets the needs-brainstorm label.
+open questions go in the issue as listed items, and the issue gets `workflow::needs-brainstorm`.
 Two or more light-tier findings from one run go in one bundle issue, a checklist of their edits.
 It posts a lab or research result for an open issue there as a comment, without asking. Smaller
 changes it makes inline.

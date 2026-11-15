@@ -11,7 +11,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - The `brainstorm` skill grills a vague idea in rounds of questions, at the depth a `## Expertise` section in `CLAUDE.md` sets, then states the shared understanding and proposes a path, acting on it only after the user approves it.
 - The `assemble-meta` skill takes a Meta issue's children to one MR/PR: it triages them all before any code, builds each child up to the gate on one integration branch, reviews and fixes the whole branch once, and closes the finished children.
 - The `triage-issue` skill checks a legacy or outside-filed issue against the code and rewrites it in `scope-issue` form before it is built.
-- An issue `scope-issue` files during other work with open questions gets the needs-brainstorm label, which `build-issue` stops on and `triage-issue` lists, answers with `brainstorm`'s question rounds and removes once none is left open; `setup-dream-team` creates the label.
+- An issue `scope-issue` files during other work with open questions gets the `workflow::needs-brainstorm` label, which `build-issue` stops on and `triage-issue` lists, answers with `brainstorm`'s question rounds and removes once none is left open; `setup-dream-team` creates the label.
 - `build-issue-loop` takes `stopAfterGate` to end a run after the gate and `startAtSimplify` to start one at Simplify over the diff from `base`, with `redEvidence` handing that run the failing output earlier runs saw.
 - `scope-spec` and `scope-issue` use the field-standard word or a plain phrase, ask before coining a term, and record each approved term in a root `GLOSSARY.md`, or as a proposal item when only an issue uses it; only an own clone creates the file, with a pointer line in `CLAUDE.md`, or in `AGENTS.md` when only that exists.
 - In an own clone whose `CLAUDE.md` or `AGENTS.md` declares no doc conventions, skills commit the first new decision record, spec or ROADMAP with a `docs/CONVENTIONS.md` and a pointer line in `CLAUDE.md`, or in `AGENTS.md` when only that exists.
@@ -22,7 +22,9 @@ All notable changes to this plugin are documented in this file. The format is ba
 - **Upgrade note:** Replace `dream-fixer` with `build-issue` in any `CLAUDE.md`, `CLAUDE.local.md` or `settings.json` line that names the skill or its workflow.
 - **Breaking:** `jit-context.py` adds the upstream-project rules in every git repo whose `dream-team.own` git config is not `true`, and no longer reads the `DREAM_TEAM_OWN_REMOTES` environment variable.
 - **Upgrade note:** Run `setup-dream-team` once in each clone of your own project or fork and answer that it is your own.
-- **Upgrade note:** Run `/dream-team:setup-dream-team` once in each project to create the needs-brainstorm label.
+- **Upgrade note:** Run `/dream-team:setup-dream-team` once in each project to create the `workflow::needs-brainstorm` label.
+- **Breaking:** Skills label an issue's kind with one flat tracker label, `bug`, `feature`, `maintenance`, `performance`, `research` or `meta`, in place of `type::*`, name `workflow::blocked`, `workflow::future` and `workflow::needs-brainstorm` on GitHub too, and add `wontfix` to an issue closed as not planned.
+- **Upgrade note:** Run `/dream-team:setup-dream-team` once in each project to swap each issue's `type::*` label for its flat kind, delete the `type::*` labels and create the missing ones.
 - `qa-review` tells each lens to report every defect it finds, including uncertain or low-severity ones.
 - `scope-issue` cites a doc the forge's readers can open by its URL or path, at the claim it backs.
 - `scope-issue` draws one Mermaid diagram when the defect or new design is a relationship between 3 or more named modules or paths.

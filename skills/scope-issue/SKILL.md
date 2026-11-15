@@ -36,6 +36,7 @@ history; a run that resumes the work reads them too.
 - Never end at the problem.
 - Meta issue: a paragraph on the work it tracks, then the checklist. No bolded defect, no `## Proposal`.
 - Bundle issue: a paragraph on what its items share, then `## Items`. No bolded defect, no `## Proposal`.
+- One kind label: `bug`, `feature`, `maintenance`, `performance`, `research` or `meta`.
 
 ### Open questions
 
@@ -51,7 +52,7 @@ history; a run that resumes the work reads them too.
 - Issue found during other work (build-issue, a review, a lab check) → do not prompt; list the
   open questions as open items in the proposal, or file a `Research:` issue.
 - Issue found during other work, not a `Research:` issue, open items in its proposal → add the
-  host's needs-brainstorm label (`workflow::needs-brainstorm` on GitLab).
+  `workflow::needs-brainstorm` label.
 
 ### Decisions
 
@@ -106,14 +107,14 @@ history; a run that resumes the work reads them too.
 - Items may carry different `area::` labels.
 - Title names the group.
 - `## Items`: one `- [ ]` line per item, giving its defect, the exact edit and its done-when.
-- Labels: the items' majority `area::` and their `type::`.
+- Labels: the items' majority `area::` and majority kind.
 - A lone light-tier finding → a plain issue.
 
 ### Blockers
 
 - Work cannot start until another issue closes → a `Blocked by #<n>` line, one per blocker.
 - Blocker lines end the description.
-- Filed into a milestone whose description's `Depends on:` has an open milestone → the host's waiting label (`workflow::future` on GitLab).
+- Filed into a milestone whose description's `Depends on:` has an open milestone → the `workflow::future` label.
 
 ### Title
 

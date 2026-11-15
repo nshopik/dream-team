@@ -58,7 +58,7 @@ Planning stays explicit, at issue size, because you review every plan.
   left the rest closing milestones with no release. A project rule that sets each close's
   version moves the approval to the docs MR review and the tag offer.
 - This repo pilots a bugfix-only window for 26.12, from 2026-12-15 to its due date.
-  - `type::bug` means a skill or agent did the wrong thing in a real run; a wished-for capability
+  - `bug` means a skill or agent did the wrong thing in a real run; a wished-for capability
     goes to the next milestone.
   - At window start, release `YY.MM.0` in place of the flow-mode due-date release, move open
     feature issues to the next milestone, and leave unmerged feature PRs waiting.
@@ -81,12 +81,13 @@ Planning stays explicit, at issue size, because you review every plan.
   close and fewer than 3 `M<n>` milestones are open: creating them all at cut time numbered them
   in cut order, not work order. The cap is a WIP limit that keeps the open milestone list showing
   what is being worked on (the weekly-milestone trial in #349).
-- The waiting label marks issues that cannot start yet: parked issues, and issues in a milestone
-  with an open dependency. The Board's default column is what can start now. `workflow::future`, not `workflow::blocked`: blocked means
-  an external gate someone must chase; future clears itself when the dependency closes.
-- A parked issue has no milestone and the waiting or blocked label, not a `Future` milestone: a
-  milestone with no exit gate fails the naming and exit checks while any other open milestone is
-  numbered, and `milestone-close` stops on it.
+- `workflow::future` marks issues that cannot start yet: parked issues, and issues in a milestone
+  with an open dependency. The Board's default column is what can start now. `workflow::future`,
+  not `workflow::blocked`: blocked means an external gate someone must chase; future clears itself
+  when the dependency closes.
+- A parked issue has no milestone and `workflow::future` or `workflow::blocked`, not a `Future`
+  milestone: a milestone with no exit gate fails the naming and exit checks while any other open
+  milestone is numbered, and `milestone-close` stops on it.
 - `setup-dream-team` applies the fix for a failing check after one confirm when that fix changes no
   code and the draft can state it, since a filed issue for one label cost a milestone choice and a
   `build-issue` run. It files the
@@ -152,6 +153,6 @@ eval shows. Evals run in a local harness kept out of the repo.
 
 ## Open items
 
-- `Evidence:` issues use `type::maintenance`; no `type::evidence` label exists.
+- `Evidence:` issues use `maintenance`; no `evidence` label exists.
 - Untried in practice: the light tier. Its first real use is its test; fix the skill from what
   goes wrong.

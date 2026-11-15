@@ -339,7 +339,7 @@
       "issue": 90,
       "title": "Research: does flowlog drop lines when the writer outruns the reader?",
       "labels": [
-        "type::research"
+        "research"
       ],
       "after": "The research tier ran: no workflow, no branch, no MR. You answered the questions, filed follow-ups https://github.com/acme/flowlog/issues/91 and https://github.com/acme/flowlog/issues/92 with their milestone, posted the findings comment at https://github.com/acme/flowlog/issues/90#issuecomment-1 and closed #90. The user asked for no file.",
       "expectations": [

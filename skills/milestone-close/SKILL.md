@@ -55,7 +55,7 @@ criterion is met at its due date, and an open headline is no gap.
 
 One table: issue, title, proposed action — close (done or obsolete; cite the commit or reason),
 move (target from the tracker's open milestones and the roadmap's `planned` rows; a `planned`
-row target → no milestone and the waiting label), or blocks-close. The user answers in one reply.
+row target → no milestone and `workflow::future`), or blocks-close. The user answers in one reply.
 In a version milestone, an open backlog issue defaults to move, to the next version; in flow
 mode, so does an open headline.
 
@@ -114,15 +114,14 @@ Before any other step 5 action:
   MR once its edits are committed.
 - A proposal the user rejects changes nothing; the docs-MR edits still land in the MR.
 
-The approved closes and moves, through the host's tooling skill; the `Evidence:` issue closes with
-the milestone. Step 4's docs-MR edits, the approved `Superseded by` lines, the approved `CLAUDE.md`
-cuts and promotions as one MR;
+The approved closes and moves, through the host's tooling skill; an obsolete close is not planned
+and adds `wontfix`, and the `Evidence:` issue closes with the milestone. Step 4's docs-MR edits,
+the approved `Superseded by` lines, the approved `CLAUDE.md` cuts and promotions as one MR;
 approved promotions and cuts leave `CLAUDE.local.md` directly, since it is untracked. Then close the
 milestone and set its roadmap status, if it has a row. Create each approved `planned` row's
-milestone per `cut-milestones` step 5, move its parked issues into it without the waiting label,
+milestone per `cut-milestones` step 5, move its parked issues into it without `workflow::future`,
 then set the row's `#` and its status `not started` in the docs MR. Every milestone whose
-`Depends on:` is now all closed is ready: drop the host's waiting label (`workflow::future` on
-GitLab) from its open issues.
+`Depends on:` is now all closed is ready: drop `workflow::future` from its open issues.
 
 - `docs-reviewer` fixes → dispatch `dream-team:docs-editor` in drift mode with
   `git diff <base>..<head>` from step 4 and only the pages they name; its edits go in the docs MR.
