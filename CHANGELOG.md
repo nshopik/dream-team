@@ -45,6 +45,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Removed
 
+- The `chaos-planning` skill is removed.
 - `setup-dream-team` no longer checks label colours, issues with no milestone and no parked label, or the problem, proposal shape of issues.
 - The `architect-reviewer` agent no longer checks for behaviour added to one implementation of an interface but missing from the others, a new function that duplicates an existing one, or a derived value updated by hand at each mutation site.
 
