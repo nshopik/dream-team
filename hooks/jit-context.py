@@ -80,6 +80,8 @@ adds a component, or needs a lab check.
   `scope-issue` Open questions tiers before filing; write the answers into the issue.
 - Issue found during other work (build-issue, a review, a lab check) → do not prompt; list the
   open questions as open items in the proposal, or file a `Research:` issue.
+- Issue found during other work, not a `Research:` issue, open items in its proposal → add the
+  host's needs-brainstorm label (`workflow::needs-brainstorm` on GitLab).
 - Lab or research result for an open issue → post it as a comment on that issue; do not prompt.
 - Smaller → make the change inline.
 </issue_sized>"""

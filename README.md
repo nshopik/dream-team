@@ -23,8 +23,8 @@ walkthrough is in [`WORKFLOW.md`](skills/ask-team/WORKFLOW.md).
 
 ### Skills
 
-- **[triage-issue](skills/triage-issue/SKILL.md)**: checks a legacy issue, or one filed from
-  outside the project, against the code before it is built, and rewrites it in `scope-issue`
+- **[triage-issue](skills/triage-issue/SKILL.md)**: checks a legacy, outside-filed or
+  needs-brainstorm issue against the code before it is built, and rewrites it in `scope-issue`
   form.
 - **[build-issue](skills/build-issue/SKILL.md)**: takes one tracker issue to an open MR/PR via the
   `build-issue-loop` workflow.
