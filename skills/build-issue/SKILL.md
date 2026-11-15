@@ -393,9 +393,12 @@ git worktree remove .claude/worktrees/issue-<n>-<slug> &&
 
 The report carries only what the user must know or act on.
 
-- Open with every `assumptions` entry that no written rule or instruction settles, as its own list
+- Open with each `assumptions` entry that departs from the issue's text or changes behaviour a
+  user or caller can observe, and that no written rule or instruction settles, as its own list
   under a `**Assumptions:**` heading.
 - Put nothing else under that heading.
+- An assumption that a `questions` entry also raises → show it once, under `**Questions:**`.
+- Add no line that this skill does not name.
 - Every other item is one bullet with a bold label, e.g. `**Dispute accepted:**`, `**Lab:**`.
 - Three or more numbers compared across cases (variants, runs, before/after) → one table, a row
   per case, under its bold label; never a bullet.
@@ -404,14 +407,13 @@ The report carries only what the user must know or act on.
 - End with one plain line, after a blank line: `Work on #<n> is done: <MR/PR link>`.
 - Research issue closed by its findings comment → end with `Work on #<n> is done: <comment link>`.
 - No MR/PR, and not a closed research issue → first post one comment on the issue: the branch,
-  the open blocking findings, every `assumptions` and `questions` entry, the lab numbers when lab
-  work ran, and the `<why>`.
+  the open blocking findings, the assumptions and questions the report shows, the lab numbers
+  when lab work ran, and the `<why>`.
 - Then end with `Work on #<n> is handed back: <branch> in
   .claude/worktrees/issue-<n>-<slug> — <why> (<hand-back comment link>)`.
 - Name each `degraded` roster type, and each dead reviewer the hand-back `<why>` does not name.
 - No MR/PR and `untrackedPaths` non-empty → list them under one bold label.
 - Name each dispute you settled, which way, and why.
-- Name each `resolved` entry, one line each.
 - List each `questions` entry as a sub-bullet of one `**Questions:**` bullet, with its reviewer and
   location.
 - Name each adjacent fix committed on the branch by its subject, one line each.

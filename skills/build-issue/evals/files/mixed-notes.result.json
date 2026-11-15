@@ -12,7 +12,7 @@
   "fixRounds": 0,
   "assumptions": [
     "A standalone RRSIG at the qname counts as the answer when the query type is RRSIG, following how upstream msgparse.c groups signatures; no test covers this case",
-    "The resolver_test.go minimisation case answered an AAAA query with an A record, which the stricter scrub now drops; the test was changed to answer with AAAA rather than loosening the scrub"
+    "The stricter scrub now also drops an A record answering an AAAA query, which the issue did not ask for; the resolver_test.go minimisation case relied on it and was changed to answer with AAAA rather than loosening the scrub"
   ],
   "redEvidence": "--- FAIL: TestScrubForeignRRSIG/unrelated_owner (0.00s)\n    scrub_test.go:112: kept 1 RRSIG not covering any answer RRset, want 0",
   "changedFiles": [
