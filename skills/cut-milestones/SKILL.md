@@ -15,6 +15,10 @@ argument-hint: <spec path | version>
 Drafts milestones for the user to approve. Creates nothing in the tracker until the user sets
 the numbers.
 
+- An open tracker milestone is not numbered `M<n>`, `YY.MM` or `v<major>.<minor>` (SemVer past
+  1.0) → stop before drafting and tell the user the repo may not be set up for dream-team, naming
+  `setup-dream-team`.
+
 ## Rules
 
 - Every milestone has a measurable exit criterion.

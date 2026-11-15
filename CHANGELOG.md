@@ -37,9 +37,12 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `scope-issue` asks nothing when no question is open, and runs `mattpocock-skills:grilling` on a hard-to-reverse design choice whose options are not yet known or a done-when check that is not observable.
 - `build-issue` stops on an untriaged issue and says to run `triage-issue #<n>` first.
 - Skills take the path, file naming and template of decision records, specs and the ROADMAP from the project's `CLAUDE.md` or `AGENTS.md`, else, for decision records only, from an existing records folder such as `docs/adr/`, else from the defaults `docs/decisions/`, `docs/specs/` and `ROADMAP.md`.
+- `setup-dream-team` checks milestone names, exit criteria and bold bullets, `area::` labels, the architecture diagram and the contributor doc path only in a repo that uses them, and checks `type::` and `area::` labels only on issues in an open milestone.
+- `milestone-close` and `cut-milestones` stop on a milestone not named `M<n>`, `YY.MM` or `v<major>.<minor>` (SemVer past 1.0) and point to `setup-dream-team`.
 
 ### Removed
 
+- `setup-dream-team` no longer checks label colours, issues with no milestone and no parked label, or the problem, proposal shape of issues.
 - The `architect-reviewer` agent no longer checks for behaviour added to one implementation of an interface but missing from the others, a new function that duplicates an existing one, or a derived value updated by hand at each mutation site.
 
 ### Fixed
