@@ -61,6 +61,8 @@ description: >-
 - End with one question that names the path and its action.
 
 ```
+**Shared understanding:** confirm or correct before I act.
+
 **<section>**
 - **<decision>:** <answer>
 - **<decision>:** <answer>
