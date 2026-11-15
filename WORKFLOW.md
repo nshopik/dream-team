@@ -17,6 +17,8 @@ flowchart TD
   S5 -->|gaps| S3
   S5 -->|kill-gate failed| S0
   S5 -.->|you approve| S6(["6 · Release"])
+  SI(["Brainstorm"]) --> S0
+  SI -.->|issue| S2
   classDef gate stroke:#d98a2b,stroke-width:2px
   class S1,S5 gate
   linkStyle 9,10 stroke:#d9534f,stroke-width:2px
@@ -27,12 +29,22 @@ user-approved release.
 
 ## Walkthrough
 
-### 0. Idea to spec (once per project)
+### Before 0. Brainstorm
 
 - You: "I want a Rust rewrite of a DNS resolver for large public deployments."
-- Agent: asks one question at a time (scale, what is out of scope, how parity is proven).
-- You: `/dream-team:scope-spec`. The agent asks what the chat left open, then writes a lean v1
-  spec on a topic branch; `branch-guard` keeps design docs off `master`.
+- Agent: `brainstorm` asks rounds of numbered questions, each with its recommended answer
+  (scale, what is out of scope, how parity is proven). It grills in depth the areas your
+  `CLAUDE.md` lists under `## Expertise` and states its pick in one line elsewhere; with no such
+  section it grills every branch.
+- Agent: states the shared understanding and proposes a path: spec, issue, Meta issue, research
+  issue, decision record, inline edit, or drop.
+- You: approve or change the path. The agent acts on it only then.
+
+### 0. Idea to spec (once per project)
+
+- You: `/dream-team:scope-spec`, once you approve a spec path. The agent asks what the chat left
+  open, then writes a lean v1 spec on a topic branch; `branch-guard` keeps design docs off
+  `master`.
 - You: read the spec, push back until it matches your model, merge it.
 - Result: a spec of about 1,500 words, `docs/specs/NNNN-<topic>-design.md` unless the repo's
   `CLAUDE.md` or `AGENTS.md` declares another one.
@@ -87,15 +99,15 @@ tracker, or any issue not in `scope-issue` form, goes through `triage-issue #N` 
 
 With no argument it lists the untriaged issues and the blocked ones whose reporter replied.
 
-A change you describe in chat enters here when it is issue-sized: it needs a decision from you,
-contradicts the spec, adds a component, or needs a lab check. The agent gives its assessment and
-offers to file the issue instead of editing. Before filing, it settles what reading the code
-can, grills you on an undecided hard-to-reverse choice, asks you any other open question,
-milestone included, and writes the answers into the issue. An issue it finds during other work,
-such as a build-issue run or a review, it files without asking: open questions go in the issue
-as listed items. Two or more light-tier findings from one run go in one bundle issue, a checklist
-of their edits. It posts a lab or research result for an open issue there as a comment, without
-asking. Smaller changes it makes inline.
+A vague idea goes through `brainstorm` first. A change you describe in chat enters here when it is
+issue-sized: it needs a decision from you, contradicts the spec, adds a component, or needs a lab
+check. The agent gives its assessment and offers to file the issue instead of editing. Before
+filing, it settles what reading the code can, grills you on an undecided hard-to-reverse choice,
+asks you any other open question, milestone included, and writes the answers into the issue. An
+issue it finds during other work, such as a build-issue run or a review, it files without asking:
+open questions go in the issue as listed items. Two or more light-tier findings from one run go in
+one bundle issue, a checklist of their edits. It posts a lab or research result for an open issue
+there as a comment, without asking. Smaller changes it makes inline.
 
 ### 3. Issue to MR (the daily loop)
 
@@ -194,6 +206,7 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
 
 | Step | Your decision |
 |---|---|
+| Before 0 | Answer the grilling rounds; approve the path |
 | 0 | Approve the spec |
 | 1 | Exit criteria and their numbers |
 | 2 | Is anything missing from the issue list; design and scope choices `triage-issue` asks |

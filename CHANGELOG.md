@@ -7,6 +7,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Added
 
+- The `brainstorm` skill grills a vague idea in rounds of questions, at the depth a `## Expertise` section in `CLAUDE.md` sets, then states the shared understanding and proposes a path, acting on it only after the user approves it.
 - The `assemble-meta` skill takes a Meta issue's children to one MR/PR: it triages them all before any code, builds each child up to the gate on one integration branch, reviews and fixes the whole branch once, and closes the finished children.
 - The `triage-issue` skill checks a legacy or outside-filed issue against the code and rewrites it in `scope-issue` form before it is built.
 - `build-issue-loop` takes `stopAfterGate` to end a run after the gate and `startAtSimplify` to start one at Simplify over the diff from `base`, with `redEvidence` handing that run the failing output earlier runs saw.
