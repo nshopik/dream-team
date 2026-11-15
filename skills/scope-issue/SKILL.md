@@ -59,8 +59,9 @@ history; a run that resumes the work reads them too.
   at the path, naming and template `<base directory>/../../references/repo-conventions.md`
   resolves.
 - That reference resolved a non-default convention → put its `Conventions:` line in the reply.
-- Commit the record and the files `repo-conventions.md` adds with it, nothing else, on its own
-  branch per `scope-commit`, push it and open its own docs MR per `scope-mr`.
+- Commit the record and the files `repo-conventions.md` and `references/glossary.md` add with
+  it, nothing else, on its own branch per `scope-commit`, push it and open its own docs MR per
+  `scope-mr`.
 - Cut that branch in its own worktree from the fetched tip of the remote's default branch, never
   from the current checkout: `git worktree add -b decision-<slug>
   .claude/worktrees/decision-<slug> origin/<default>`.
@@ -163,6 +164,8 @@ history; a run that resumes the work reads them too.
 ### Names
 
 - Describe behaviour in plain words; a backticked code name is the exception.
+- Terms, in the issue and its decision record: follow
+  `<base directory>/../../references/glossary.md`.
 - User-facing name (flag, config key, metric, exit code, error string) → no limit.
 - Code name (function, type, field — own code or library) → at most three backticked
   occurrences in the whole text.
