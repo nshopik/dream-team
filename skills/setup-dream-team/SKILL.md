@@ -57,7 +57,7 @@ The project `CLAUDE.md` carries these, in its own words:
 - Detail the code doesn't show goes in the commit, spec or a topic doc, never in module docs.
 - A fact the code and paths don't show has one reference doc, updated in the MR that changes it.
 - A project with a ROADMAP: its status changes only at milestone close.
-- A project with ratchet floors: they rise in the feature MR that earns them.
+- A project with floors: they rise in the feature MR that earns them.
 - A project with a CHANGELOG: each entry is one plain sentence on a notable change, with no
   rationale.
 - A CHANGELOG entry has no bold except a `**Breaking:**` or `**Upgrade note:**` prefix.

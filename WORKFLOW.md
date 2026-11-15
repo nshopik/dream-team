@@ -127,7 +127,7 @@ asking. Smaller changes it makes inline.
        bounded fix rounds that also fix the cheap nits.
   4. Lab work (perf gate, tests that need root) through `dream-team:lab-runner` on the host the
      repo's `CLAUDE.md` names.
-  5. MR: one folded commit per change, description by `scope-mr`, with any ratchet floors,
+  5. MR: one folded commit per change, description by `scope-mr`, with any floors,
      the diagram and any component table updated in the same MR. ROADMAP status waits for
      `milestone-close`.
   6. Small adjacent fixes found on the way ride in the MR as their own commits; other adjacent
