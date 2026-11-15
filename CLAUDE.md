@@ -18,7 +18,7 @@
 - Keep standing contributor facts the code and paths don't show in `MAINTAINING.md`, one home
   each.
 - Update a `MAINTAINING.md` fact in the MR that changes it.
-- Update the `WORKFLOW.md` diagram in the same MR as a change to the flow it draws.
+- Update the `skills/ask-team/WORKFLOW.md` diagram in the same MR as a change to the flow it draws.
 - Put a change's detail the code doesn't show in the commit, a spec or a topic doc, never in a
   `SKILL.md` or agent prompt.
 - Name a milestone `YY.MM`, its target month.
