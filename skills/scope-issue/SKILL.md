@@ -95,8 +95,11 @@ history; a run that resumes the work reads them too.
   (below) → one meta issue tracking it.
 - Title starts `Meta:`.
 - The checklist follows the opening paragraph, under no heading; one line per piece of work.
-- A line is a child issue link, or plain text naming the feature it waits on.
-- File a child issue only when its work can start; tick its box when it closes.
+- A line is a child issue link, or plain text naming the feature it waits on, outside the meta
+  issue.
+- File a child issue when its work can start; tick its box when it closes.
+- Every open blocker of a piece is another child of the same meta issue → file it as a child,
+  with one `Blocked by #<n>` line per sibling.
 - A meta issue for work spanning milestones has no milestone; each child carries its own.
 - Closes when every line is ticked or ruled out.
 - User asks to file a milestone's issues under one meta issue → one meta issue set to that
