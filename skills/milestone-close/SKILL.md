@@ -19,6 +19,10 @@ and filed issue.
 
 ## 1. Read the milestone
 
+- The milestone is not numbered `M<n>`, `YY.MM` or `v<major>.<minor>` (SemVer past 1.0) → stop
+  and tell the user the repo may not be set up for dream-team, naming `setup-dream-team`; check,
+  propose or preview no later step.
+
 Milestone description, and its roadmap row if it has one. No measurable exit
 criterion → stop and ask for one; a milestone without one cannot close.
 

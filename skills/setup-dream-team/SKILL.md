@@ -19,9 +19,11 @@ It changes no code; the filed issue goes through `build-issue`. It marks an own 
 
 ## Checks
 
-- Each open milestone is numbered `M<n>`, or `YY.MM` for a version milestone (`v<major>.<minor>`
-  in a SemVer repo past 1.0).
-- Each milestone has a measurable exit criterion in its tracker description.
+- At least one open milestone is numbered `M<n>`, or `YY.MM` for a version milestone
+  (`v<major>.<minor>` in a SemVer repo past 1.0) → each open milestone:
+  - is numbered in one of those forms.
+  - has a measurable exit criterion in its tracker description.
+  - lists `Exit:`, `Gate:` and `Depends on:` as bold bullets in its description.
 - The project `CLAUDE.md` says `Version milestones release in flow mode.` → a version
   milestone's `Exit:` naming its due date is its exit criterion.
 - A ROADMAP exists, two or more `M<n>` milestones are open, or a `Depends on:` names an open
@@ -31,22 +33,18 @@ It changes no code; the filed issue goes through `build-issue`. It marks an own 
 - A ROADMAP with a dependency graph or a `planned` row → the graph has one node per `M<n>` or
   `planned` row and one edge per row's `Depends on:` entry.
 - A milestone gated on field evidence has one open `Evidence:` issue.
-- Every open issue has a `type::` label and an `area::` label.
-- Every open issue has a milestone, or no milestone and the waiting or blocked label (parked).
-- Each milestone description lists `Exit:`, `Gate:` and `Depends on:` as bold bullets.
+- Every open issue in an open milestone has a `type::` label.
+- The tracker has an `area::` label → every open issue in an open milestone has an `area::` label.
 - An open issue in a milestone carries the waiting label exactly when its milestone has an open
   dependency.
-- Every open issue runs problem, proposal, per `scope-issue`, or the older context, problem,
-  proposal.
 - A `Meta:` issue has no `area::` label and no milestone.
 - An issue with an open blocker ends with one `Blocked by #<n>` line per blocker.
 - The specs folder holds only specs the code still follows; every other spec carries a
   `Superseded by` line.
 - A component table, if the contributor doc has one, matches the code.
 - A component table cell says only what the component's name and path don't.
-- The architecture diagram matches the code.
+- The repo has an architecture diagram → it matches the code.
 - The tracker has the `type::research` and `type::meta` labels.
-- Every label in **Label colours** that the tracker has carries its colour from there.
 - The project `CLAUDE.md` carries the meaning of every rule in **Project rules** below.
 - A CHANGELOG's header links the Keep a Changelog version it follows.
 
@@ -54,7 +52,8 @@ It changes no code; the filed issue goes through `build-issue`. It marks an own 
 
 The project `CLAUDE.md` carries these, in its own words:
 
-- The architecture diagram changes in the same MR as a component or pipeline change.
+- A project with an architecture diagram: it changes in the same MR as a component or pipeline
+  change.
 - Detail the code doesn't show goes in the commit, spec or a topic doc, never in module docs.
 - A fact the code and paths don't show has one reference doc, updated in the MR that changes it.
 - A project with a ROADMAP: its status changes only at milestone close.
@@ -62,16 +61,16 @@ The project `CLAUDE.md` carries these, in its own words:
 - A project with a CHANGELOG: each entry is one plain sentence on a notable change, with no
   rationale.
 - A CHANGELOG entry has no bold except a `**Breaking:**` or `**Upgrade note:**` prefix.
-- A project with open milestones: a new milestone takes only the forms the open milestones
-  use: `M<n>`, `YY.MM` for a version milestone, or `v<major>.<minor>` in a SemVer repo past 1.0.
+- A project with an open `M<n>`, `YY.MM` (version) or `v<major>.<minor>` (SemVer past 1.0)
+  milestone: a new milestone takes only one of these forms that an open milestone already uses.
 - A project with open `M<n>` milestones: a split takes the next free `M<n>`, never a letter.
 - A project whose version milestones release at their due date: the line
   `Version milestones release in flow mode.`, verbatim.
-- The contributor doc path is named.
+- A project with a contributor doc: its path is named.
 
 ## Label colours
 
-Values from GitLab's label-picker palette; one colour per `type::` value, one for every `area::`.
+Values from GitLab's label-picker palette. Setup sets a colour only on a label it creates.
 
 | Label | Colour | Description |
 |---|---|---|
@@ -93,15 +92,12 @@ Values from GitLab's label-picker palette; one colour per `type::` value, one fo
   rules.
 - The tracker lacks `type::research` or `type::meta` → create the label with its colour and
   description from **Label colours**.
-- A label in **Label colours** has another colour → set its colour from there.
-- A milestone description has its exit criterion, gate and dependencies, but not as bold bullets
-  → rewrite them as `Exit:`, `Gate:` and `Depends on:` bold bullets.
+- A milestone fails the bold-bullet check, but its description has its exit criterion, gate and
+  dependencies → rewrite them as `Exit:`, `Gate:` and `Depends on:` bold bullets.
 - An issue lacks the `Blocked by #<n>` line for an open blocker → append one line per missing
   blocker.
 - An open issue in a milestone carries the waiting label without an open milestone dependency,
   or lacks it with one → add or remove the label.
-- The check that every open issue runs problem, proposal fails → name `triage-issue #<n>` for each
-  in the step 16 report, never a rewrite.
 - Any other failing check whose fix changes no code and the draft can state, tracker edits and
   repo docs included → a direct fix, shown in the step 8 draft.
 - A failing check that needs a code change, or a decision the draft cannot state such as a missing
@@ -123,7 +119,7 @@ Values from GitLab's label-picker palette; one colour per `type::` value, one fo
 6. All checks pass → say the project is aligned and stop.
 7. No direct fix applies → go to step 13.
 8. Show one combined draft of every direct fix: the `CLAUDE.md` and repo-doc diffs, the labels to
-   create or recolour, the labels and milestone to change per issue, each milestone title,
+   create, the labels and milestone to change per issue, each milestone title,
    milestone description and issue body before and after, and any issue or milestone to create.
 9. Ask for one OK on the draft; a direct fix the user declines becomes an item in the
    maintenance issue.

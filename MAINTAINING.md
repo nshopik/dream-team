@@ -85,8 +85,8 @@ Planning stays explicit, at issue size, because you review every plan.
   with an open dependency. The Board's default column is what can start now. `workflow::future`, not `workflow::blocked`: blocked means
   an external gate someone must chase; future clears itself when the dependency closes.
 - A parked issue has no milestone and the waiting or blocked label, not a `Future` milestone: a
-  milestone with no exit gate fails the naming and exit checks and never closes. No
-  milestone and no `workflow::` label stays the unplaced state the setup check flags.
+  milestone with no exit gate fails the naming and exit checks while any other open milestone is
+  numbered, and `milestone-close` stops on it.
 - `setup-dream-team` applies the fix for a failing check after one confirm when that fix changes no
   code and the draft can state it, since a filed issue for one label cost a milestone choice and a
   `build-issue` run. It files the
