@@ -65,6 +65,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `scope-issue` files a Meta child whose only open blockers are its sibling children, with one `Blocked by` line per sibling, so `assemble-meta` takes those children too.
 - `review-bench`'s `run.sh` no longer loses a run when parallel runs add their worktrees at once, and prints each run that leaves no `stats.txt` as failed.
 - The body-cap hook sizes an MR/PR description's diff budget from the source branch the command names, so an MR opened from another checkout is no longer bounced against a 0-line diff.
+- `build-issue` and `assemble-meta` symlink each gitignored input the issue, the Meta issue's children or the project's `CLAUDE.md` or `AGENTS.md` names into the worktree, exclude it from git and name it in the workflow's `notes`, so tests that read it run instead of skipping.
 - `setup-dream-team` passes a flow-mode version milestone whose `Exit:` names only its due date, and `cut-milestones` writes a flow-mode `Exit:` with a headline only when the user names one.
 
 ## [26.11.0] - 2026-11-10
