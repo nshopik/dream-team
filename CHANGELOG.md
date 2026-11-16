@@ -55,6 +55,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - The `chaos-planning` skill is removed.
 - The `branch-guard.py` hook is removed, so a spec or design doc can be written on `main` or `master`.
+- The `body-cap.py` hook is removed; `scope-mr` runs `diff-budget.py` on the MR/PR description instead, which warns when the description is over its diff budget, and the 300-word cap, rubric-heading, `--fill` and left-out-item checks are no longer enforced.
 - `setup-dream-team` no longer checks label colours, issues with no milestone and no parked label, or the problem, proposal shape of issues.
 - The `architect-reviewer` agent no longer checks for behaviour added to one implementation of an interface but missing from the others, a new function that duplicates an existing one, or a derived value updated by hand at each mutation site.
 
@@ -69,7 +70,6 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `scope-issue` leaves out chat threads, shared docs, local paths and internal hosts the forge's readers cannot open, and the names of customers and people outside the project.
 - `scope-issue` files a Meta child whose only open blockers are its sibling children, with one `Blocked by` line per sibling, so `assemble-meta` takes those children too.
 - `review-bench`'s `run.sh` no longer loses a run when parallel runs add their worktrees at once, and prints each run that leaves no `stats.txt` as failed.
-- The body-cap hook sizes an MR/PR description's diff budget from the source branch the command names, so an MR opened from another checkout is no longer bounced against a 0-line diff.
 - `build-issue` and `assemble-meta` symlink each gitignored input the issue, the Meta issue's children or the project's `CLAUDE.md` or `AGENTS.md` names into the worktree, exclude it from git and name it in the workflow's `notes`, so tests that read it run instead of skipping.
 - `setup-dream-team` passes a flow-mode version milestone whose `Exit:` names only its due date, and `cut-milestones` writes a flow-mode `Exit:` with a headline only when the user names one.
 
