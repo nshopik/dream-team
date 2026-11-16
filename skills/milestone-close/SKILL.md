@@ -33,35 +33,39 @@ A version milestone's `Gate:` bullet holds its release criteria; check each item
 
 ## 2. Check the criterion
 
-Run or read the measurement it names: gate floors, a recorded run, a deployed host. A field-evidence
-gate reads its `Evidence:` issue for the deploy, the start date and how to collect.
+- Run or read the measurement the criterion names: gate floors, a recorded run, a deployed host.
+- A field-evidence gate → read its `Evidence:` issue for the deploy, the start date and how to
+  collect.
+- The project `CLAUDE.md` says `Version milestones release in flow mode.` → a version milestone's
+  criterion is met at its due date, and an open headline is no gap.
+- Outside flow mode, an open headline issue in a version milestone → it is its own gap; file
+  nothing for it.
+- That headline still open past the ship-by date, or a `YY.MM` milestone's due date → the user
+  picks between moving the headline to the next version and a new date.
+- A new date for a `YY.MM` milestone → rename it to the new month and move its due date to that
+  month's last day.
 
-Not met → report the gap, and propose the gap issues per `scope-issue`, light-tier ones bundled, in
-this milestone. The user approves or rejects each; file the approved ones and stop. The milestone
-stays open.
+Criterion not met:
 
-A failed kill-gate (the criterion names a redesign) gets no gap issues: report it and stop. The
-redesign goes back to the spec.
-
-Outside flow mode, an open headline issue in a version milestone is its own gap; file nothing for
-it. Past the ship-by date, or a `YY.MM` milestone's due date, the user picks between moving the
-headline to the next version and a new date. A new date for a `YY.MM` milestone renames it to the
-new month and moves its due date to that month's last day.
-
-The project `CLAUDE.md` says `Version milestones release in flow mode.` → a version milestone's
-criterion is met at its due date, and an open headline is no gap.
+- A failed kill-gate (the criterion names a redesign) → report it and stop, with no gap issues;
+  the redesign goes back to the spec.
+- Any other gap → report it and propose the gap issues per `scope-issue`, light-tier ones
+  bundled, in this milestone.
+- The user approves or rejects each; file the approved ones and stop.
+- The milestone stays open.
 
 ## 3. Triage open issues
 
-One table: issue, title, proposed action — close (done or obsolete; cite the commit or reason),
-move (target from the tracker's open milestones and the roadmap's `planned` rows; a `planned`
-row target → no milestone and `workflow::future`), or blocks-close. The user answers in one reply.
-In a version milestone, an open backlog issue defaults to move, to the next version; in flow
-mode, so does an open headline.
-
-`Meta:` issues stay out of the table. List each meta issue with a child in
-this milestone; tick the boxes of closed children in its description.
-
+- One table: issue, title, proposed action: close, move or blocks-close.
+- Close → the issue is done or obsolete; cite the commit or reason.
+- Move → the target comes from the tracker's open milestones and the roadmap's `planned` rows.
+- A `planned` row target → no milestone and `workflow::future`.
+- In a version milestone, an open backlog issue defaults to move, to the next version; in flow
+  mode, so does an open headline.
+- The user answers in one reply.
+- `Meta:` issues stay out of the table.
+- List each meta issue with a child in this milestone; tick the boxes of closed children in its
+  description.
 - A `Meta:` issue set to this milestone with an open child → it moves with that child.
 
 ## 4. Docs check
@@ -108,17 +112,23 @@ Before any other step 5 action:
   MR once its edits are committed.
 - A proposal the user rejects changes nothing; the docs-MR edits still land in the MR.
 
-The approved closes and moves, through the host's tooling skill; an obsolete close is not planned
-and adds `wontfix`, and the `Evidence:` issue closes with the milestone. Step 4's docs-MR edits,
-the approved `Superseded by` lines, the approved `CLAUDE.md` cuts and promotions as one MR;
-approved promotions and cuts leave `CLAUDE.local.md` directly, since it is untracked. Then close the
-milestone and set its roadmap status, if it has a row. Create each approved `planned` row's
-milestone per `cut-milestones` step 5, move its parked issues into it without `workflow::future`,
-then set the row's `#` and its status `not started` in the docs MR. Every milestone whose
-`Depends on:` is now all closed is ready: drop `workflow::future` from its open issues.
+Then, in order:
 
-- `docs-reviewer` fixes → dispatch `dream-team:docs-editor` in drift mode with
-  `git diff <base>..<head>` from step 4 and only the pages they name; its edits go in the docs MR.
+1. Make the approved closes and moves through the host's tooling skill.
+   - An obsolete close is not planned and adds `wontfix`.
+   - The `Evidence:` issue closes with the milestone.
+2. Put step 4's docs-MR edits, the approved `Superseded by` lines and the approved `CLAUDE.md`
+   cuts and promotions in one MR.
+   - `docs-reviewer` fixes → dispatch `dream-team:docs-editor` in drift mode with
+     `git diff <base>..<head>` from step 4 and only the pages they name; its edits go in the
+     docs MR.
+3. Apply the approved promotions and cuts to `CLAUDE.local.md` directly; it is untracked.
+4. Close the milestone and set its roadmap status, if it has a row.
+5. Each approved `planned` row → create its milestone per `cut-milestones` step 5, move its
+   parked issues into it without `workflow::future`, then set the row's `#` and its status
+   `not started` in the docs MR.
+6. Each milestone whose `Depends on:` is now all closed is ready → drop `workflow::future` from
+   its open issues.
 
 ## Report back
 
