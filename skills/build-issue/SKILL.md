@@ -171,7 +171,13 @@ remote's default branch unless the project's `CLAUDE.md` or `AGENTS.md` names an
 
 - `$(git rev-parse --git-common-dir)/info/exclude` has no `.claude/worktrees/` line → append
   `/.claude/worktrees/` before the `worktree add`.
-- `cd` into the worktree; make it the last Bash `cd` before step 4.
+- A gitignored path the issue, the Meta issue's children, `CLAUDE.md` or `AGENTS.md` names as an
+  input → after the `worktree add`, symlink it from the main checkout to the same path in the
+  worktree.
+- `$(git rev-parse --git-common-dir)/info/exclude` has no line for a linked path → append the
+  path, with no trailing slash.
+- `cd` into the worktree.
+- Run `cd <worktree's absolute path>` as the Bash call right before the Workflow call.
 - A step-2 answer passed the test in `reference/decision-record.md` → name the `worktree add`
   branch `decision-<n>-<slug>` in place of `issue-<n>-<slug>`.
 - On it, write the record at the path, naming and template
@@ -204,6 +210,7 @@ object (never a stringified one):
 
 - `notes`: decisions made in the tracker discussion, the answer the user gave at step-2 triage,
   and the lab work the implementer must leave alone. Optional.
+- Each path step 3 linked → name it in `notes` with "never commit or modify it".
 - The change carries a decision that passes the test in
   [`reference/decision-record.md`](reference/decision-record.md) and has no record yet, from step
   3 or cited by the issue → name the decision in `notes` with the absolute paths of that file and
