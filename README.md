@@ -75,7 +75,6 @@ The reviewer agents review a diff or paths, read-only.
 ### Hooks
 
 - `body-cap.py` (PreToolUse): blocks MR/PR descriptions that break `scope-mr` rules.
-- `branch-guard.py` (PreToolUse): blocks a design or spec document written on `main`/`master`.
 - `jit-context.py`: injects project conventions the first time a session touches each, and asks
   the agent to record corrections in `CLAUDE.local.md`.
 
