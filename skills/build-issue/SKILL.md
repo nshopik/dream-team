@@ -350,8 +350,7 @@ tree.
 
 Then push and open the MR/PR against the branch the project's `CLAUDE.md` or `AGENTS.md` names.
 
-Link the issue so it auto-closes (`Closes #<n>`). Write the description review-facing; a `scope-mr`
-skill, if present, is the source of truth for it.
+Link the issue so it auto-closes (`Closes #<n>`). Write the description per `scope-mr`.
 
 - A stacked branch → the description says the MR depends on the step-3 docs MR, by its link.
 
