@@ -2,12 +2,12 @@
 name: assemble-meta
 description: >-
   Takes a tracker Meta issue to one MR/PR: triages the Meta issue and every child before any
-  code, asking all open questions in one batch, builds each child up to the gate on one
-  integration branch through the assemble-meta-loop workflow, reviews and fixes the whole branch
-  once, and opens one MR/PR with one commit per change. Use when the user runs
-  /dream-team:assemble-meta or asks to build, work or ship a Meta issue's children together, on one
-  branch or as one MR/PR — e.g. "assemble-meta #40", "do Meta #40 in one MR". Not for a single
-  issue (run build-issue).
+  code, asking all open questions in one batch, builds up to two children at once up to the gate,
+  each on its own branch in its own worktree, lands them on one integration branch through the
+  assemble-meta-loop workflow, reviews and fixes the whole branch once, and opens one MR/PR with
+  one commit per change. Use when the user runs /dream-team:assemble-meta or asks to build, work
+  or ship a Meta issue's children together, on one branch or as one MR/PR — e.g.
+  "assemble-meta #40", "do Meta #40 in one MR". Not for a single issue (run build-issue).
 argument-hint: <meta-issue-number>
 ---
 
@@ -74,13 +74,15 @@ object:
 
 - **`children`** — each finished child's gated run: `assumptions`, `redEvidence`, `degraded`,
   `untrackedPaths`.
-- **`failed`** — each child whose run did not pass the gate, with its `stage` and `reason`; its
-  commits and untracked files are reset off the branch.
+- **`failed`** — each child whose run did not pass the gate, whose worktree could not be cut
+  (`stage: 'worktree'`), or that failed to land twice (`stage: 'land'`), with its `stage` and
+  `reason`; its commits never reach the integration branch.
 - **`skipped`** — children not run because a failed child blocks them.
+- A child's branch and worktree are dropped once it lands or fails, unless it has `untrackedPaths`:
+  then its `worktree` is kept with those files in it; list that path with them.
 - **`review`** — the one build-issue-loop result for the whole branch, from Simplify on, with the
   Meta issue as its issue.
-- `review` is `null` → no child passed the gate, or `stage: 'reset'` left the branch at the
-  wrong head or with files left over: hand the branch back.
+- `review` is `null` → no child passed the gate: hand the branch back.
 
 Otherwise run build-issue step 5 on `review`, its lab work once on the branch head.
 

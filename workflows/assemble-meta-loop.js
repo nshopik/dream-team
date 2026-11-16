@@ -2,7 +2,7 @@ export const meta = {
   name: 'assemble-meta-loop',
   description: 'One Meta issue on one integration branch: build-issue-loop to the gate per child, oldest ready first, then build-issue-loop once from Simplify over the whole branch',
   phases: [
-    { title: 'Children', detail: 'build-issue-loop up to the gate per child, one at a time; a child that fails is reset off the branch and its dependents skipped' },
+    { title: 'Children', detail: 'build-issue-loop up to the gate per child, two at once, each in its own worktree; a child lands by rebase, re-gate and fast-forward in finish order, reruns once when that fails, and a failed child drops its branch and skips its dependents' },
     { title: 'Review', detail: 'build-issue-loop from Simplify over the diff from the base, with the Meta issue and every finished child as the issue' },
   ],
 }
@@ -23,48 +23,107 @@ if (!META.issue || !CHILDREN.length || !BRANCH || !BASE || !GATE_COMMANDS.length
   throw new Error('assemble-meta-loop: args.meta.issue, args.children, args.branch, args.base and args.gateCommands are required')
 }
 
-const RESET_SCHEMA = {
+const WORKTREE_SCHEMA = {
   type: 'object',
-  required: ['head', 'status'],
+  required: ['path', 'head'],
   additionalProperties: false,
   properties: {
-    head: { type: 'string', description: 'the sha `git rev-parse HEAD` printed after the reset' },
-    status: { type: 'array', items: { type: 'string' }, description: 'the lines `git status --porcelain` printed after the reset; empty when clean' },
+    path: { type: 'string', description: 'the absolute path the worktree was added at' },
+    head: { type: 'string', description: 'the sha `git rev-parse HEAD` printed in the new worktree' },
   },
 }
 
+const LAND_SCHEMA = {
+  type: 'object',
+  required: ['landed', 'gated', 'head', 'reason'],
+  additionalProperties: false,
+  properties: {
+    landed: { type: 'boolean', description: 'true only when the merge fast-forwarded the integration branch' },
+    gated: { type: 'string', description: 'the sha `git rev-parse HEAD` printed in the worktree after the rebase; empty when the rebase conflicted' },
+    head: { type: 'string', description: 'the sha `git rev-parse HEAD` printed in the integration checkout after the merge; empty when not landed' },
+    reason: { type: 'string', description: 'why it did not land: the rebase conflict or the failing gate command and its key error lines; empty when landed' },
+  },
+}
+
+const LIMIT = 2
 const ids = new Set(CHILDREN.map((c) => String(c.issue)))
 const pending = [...CHILDREN].sort((a, b) => Number(a.issue) - Number(b.issue))
 const done = []
 const failed = []
 const joinNotes = (...n) => n.filter(Boolean).join('\n')
+const cheap = (label) => ({ label, phase: 'Children', model: 'sonnet', effort: 'low' })
+const INTEGRATION = 'the checkout you start in, where the integration branch is checked out'
+
+let tip = BASE
+// One landing at a time, so the tip cannot move between a child's re-gate and its fast-forward.
+let landing = Promise.resolve()
+
+async function attempt(c, tag) {
+  const issue = String(c.issue)
+  const branch = `${BRANCH}-${issue}`
+  const base = tip
+  // Under .claude/worktrees/, which build-issue already excludes; Claude Code guards writes inside .git.
+  const path = `"$(git rev-parse --path-format=absolute --git-common-dir)/../.claude/worktrees/${branch}"`
+  const wt = await agent([
+    `From ${INTEGRATION}, run \`git worktree remove --force ${path}\` and \`git worktree prune\`, ignoring their errors: an earlier run may have left that worktree.`,
+    `Then run \`git worktree add -B ${branch} ${path} ${base}\`.`,
+    `Each path git ignores that is a symlink in ${INTEGRATION} → create the same symlink in the new worktree.`,
+    'Run nothing beyond these; report the absolute worktree path as path and the sha `git rev-parse HEAD` prints in it as head.',
+  ].join('\n'), { ...cheap(`worktree:#${issue}${tag}`), schema: WORKTREE_SCHEMA })
+  if (!wt?.path || wt.head !== base) return { ok: false, issue, stage: 'worktree', reason: `worktree agent reported head ${wt?.head || 'none'}, not ${base}` }
+  const r = await workflow(LOOP, {
+    issue, title: c.title, body: c.body, notes: joinNotes(NOTES, c.notes),
+    branch, base, worktree: wt.path, gateCommands: GATE_COMMANDS, stopAfterGate: true,
+  })
+  const land = r?.ok && await (landing = landing.then(async () => {
+    const l = await agent([
+      `Land branch ${branch} on the integration branch ${BRANCH}. Start every Bash command in the worktree with \`cd ${wt.path} &&\`.`,
+      `In the worktree, run \`git rebase ${tip}\`. It conflicts → run \`git rebase --abort\`, report landed false with the conflicting paths as reason, and stop.`,
+      'Report the sha `git rev-parse HEAD` then prints in the worktree as gated.',
+      'Then run each of these gate commands in the worktree, in order; one fails → report landed false with it and its key error lines as reason, and stop:',
+      ...GATE_COMMANDS.map((g) => `  ${g}`),
+      `All pass → in ${INTEGRATION}, run \`git merge --ff-only ${branch}\` and \`git rev-parse HEAD\`, and report landed true with that sha as head.`,
+      'Do not edit, fix or commit anything.',
+    ].join('\n'), { ...cheap(`land:#${issue}${tag}`), schema: LAND_SCHEMA })
+    if (!l) return { landed: false, reason: 'land agent returned no result' }
+    // A fast-forward leaves the integration branch on the re-gated sha; anything else did not land.
+    if (l.landed && l.head !== l.gated) return { landed: false, reason: `the integration branch is at ${l.head}, not the re-gated ${l.gated}` }
+    if (l.landed) tip = l.head
+    return l
+  }))
+  // `--force` would delete the untracked files the gate reported, so their worktree stays.
+  const kept = r?.untrackedPaths?.length ? { worktree: wt.path } : {}
+  if (!kept.worktree) await agent(`From ${INTEGRATION}, run \`git worktree remove --force ${wt.path}\` and \`git branch -D ${branch}\`. Run nothing else.`, cheap(`remove:#${issue}${tag}`))
+  if (!r?.ok) return { ...r, ...kept, ok: false, issue }
+  if (!land.landed) return { ok: false, issue, stage: 'land', reason: land.reason, ...kept }
+  return { ...r, ...kept, head: land.head }
+}
+
+async function build(c) {
+  let r = await attempt(c, '')
+  if (r.stage === 'land') {
+    log(`#${c.issue}: landing failed (${r.reason}) — rerunning from ${tip}.`)
+    r = await attempt(c, ':rerun')
+  }
+  if (r.ok) {
+    done.push(r)
+    return
+  }
+  failed.push(r)
+  log(`#${c.issue}: ${r.stage || 'loop'} failed (${r.reason || 'no result'}) — its branch dropped, dependents skipped.`)
+}
 
 phase('Children')
-let tip = BASE
+const ready = (c) => (c.blockedBy || []).every((b) => !ids.has(String(b)) || done.some((d) => d.issue === String(b)))
+const running = new Set()
 for (;;) {
-  const ready = (c) => (c.blockedBy || []).every((b) => !ids.has(String(b)) || done.some((d) => d.issue === String(b)))
-  const c = pending.find(ready)
-  if (!c) break
-  pending.splice(pending.indexOf(c), 1)
-  const r = await workflow(LOOP, {
-    issue: String(c.issue), title: c.title, body: c.body, notes: joinNotes(NOTES, c.notes),
-    branch: BRANCH, base: tip, gateCommands: GATE_COMMANDS, stopAfterGate: true,
-  })
-  if (r?.ok) {
-    done.push(r)
-    tip = r.head
-    continue
+  for (let c; running.size < LIMIT && (c = pending.find(ready));) {
+    pending.splice(pending.indexOf(c), 1)
+    const p = build(c).then(() => running.delete(p))
+    running.add(p)
   }
-  failed.push({ ...r, issue: String(c.issue) })
-  log(`#${c.issue}: ${r?.stage || 'loop'} failed (${r?.reason || 'no result'}) — reset to ${tip}, dependents skipped.`)
-  // Scripts have no shell, so an agent drops the failed child's commits.
-  const reset = await agent([
-    `In the repo checkout on branch ${BRANCH}, run \`git reset --hard ${tip}\`, \`git clean -fd\`, \`git rev-parse HEAD\` and \`git status --porcelain\`.`,
-    'Run nothing else; report the sha it printed as head and the status lines as status.',
-  ].join('\n'), { label: `reset:#${c.issue}`, phase: 'Children', schema: RESET_SCHEMA, model: 'sonnet', effort: 'low' })
-  if (reset?.head !== tip || reset.status?.length) {
-    return { ok: false, stage: 'reset', reason: `reset after #${c.issue} left HEAD at ${reset?.head} (want ${tip}), status: ${(reset?.status || []).join('; ') || 'clean'}`, children: done, failed, skipped: pending.map((p) => String(p.issue)), review: null }
-  }
+  if (!running.size) break
+  await Promise.race(running)
 }
 const skipped = pending.map((p) => String(p.issue))
 

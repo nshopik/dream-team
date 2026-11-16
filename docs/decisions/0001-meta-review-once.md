@@ -11,3 +11,4 @@ written twice or a mismatched interface, which show only in the whole diff.
 - Per-child review: each child runs the full `build-issue-loop` on the integration branch. It
   pays the review and fix cost, most of a loop run's cost, once per child.
 - Parallel children: left out; they need `build-issue-loop` to run in a per-child worktree.
+  Superseded by [0007](0007-parallel-meta-children.md).

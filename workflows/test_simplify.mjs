@@ -336,71 +336,157 @@ for (const row of loopArgRows) {
   console.log(`PASS ${row.name}`)
 }
 
+{
+  const name = 'worktree arg reaches every agent prompt'
+  const wt = 'cd /wt/1 &&'
+  const every = (extra) => run(loaded([cut('stdlib')], 4), { committed: true, addressed: ['stdlib cut'], disputed: [], summary: '' }, { ...fixDiffBlocks(), gateFails: 1, extra })
+  const plain = await every({})
+  const { result, prompts } = await every({ worktree: '/wt/1' })
+  assert.equal(result.ok, true, name)
+  for (const kind of ['impl', 'gate', 'build-fix', 'simplify', 'simplify-fix', 'review', 're-review', 'fixdiff', 'fix']) {
+    assert.ok(Object.keys(prompts).some((l) => l.startsWith(`${kind}:`)), `${name}: ${kind} ran`)
+  }
+  for (const [l, p] of Object.entries(prompts)) assert.ok(p.includes(wt), `${name}: ${l}`)
+  assert.ok(!Object.values(plain.prompts).some((p) => p.includes('worktree')), `${name}: no worktree without the arg`)
+  console.log(`PASS ${name}`)
+}
+
 const metaBody = readFileSync(new URL('assemble-meta-loop.js', import.meta.url), 'utf8').replace(/^export /m, '')
-const metaArgs = { meta: { issue: '10', title: 'Meta: rotation', body: 'meta body' }, branch: 'issue-10-rotation', base: 'base0', gateCommands: ['true'] }
+const metaArgs = { meta: { issue: '10', title: 'Meta: rotation', body: 'meta body' }, branch: 'issue-10-rotation', base: 'base0', gateCommands: ['npm test --gate-x'] }
 const child = (issue, blockedBy = [], extra = {}) => ({ issue, title: `child ${issue}`, body: `body ${issue}`, blockedBy, ...extra })
 
-// fail: child issues whose loop run fails; resetHead: the head the reset agent reports, else the sha it was told.
-// resetStatus: the porcelain lines it reports; reviewFail: the review run fails; red: per child, the redEvidence its run returns; extra: more args.
-async function runMeta(children, { fail = [], resetHead, resetStatus = [], reviewFail = false, red = {}, extra = {} } = {}) {
+// fail: child issues whose loop run fails; conflicts: per child, how many of its landings conflict; slow: per child, its loop's delay in ms.
+// stale: per child, how many of its merges leave the tip behind; badWorktree: children whose worktree agent reports the wrong head.
+// untracked: per child, the untrackedPaths its run returns.
+// reviewFail: the review run fails; red: per child, the redEvidence its run returns; extra: more args.
+// events: loop starts and ends and landings in time order; ontos: each landing's rebase target, in landing order.
+async function runMeta(children, { fail = [], conflicts = {}, stale = {}, badWorktree = [], untracked = {}, slow = {}, reviewFail = false, red = {}, extra = {} } = {}) {
   const calls = []
-  const resets = []
+  const events = []
+  const ontos = []
+  const removes = []
+  const prompts = {}
+  let running = 0
+  let maxRunning = 0
+  let landing = 0
+  let maxLanding = 0
+  let tip = metaArgs.base
   async function workflow(name, a) {
     calls.push({ name, ...a })
     if (a.startAtSimplify) return reviewFail ? { ok: false, stage: 'review', issue: a.issue } : { ok: true, issue: a.issue }
-    if (fail.includes(a.issue)) return { ok: false, stage: 'gate', reason: 'red' }
-    return { ok: true, issue: a.issue, head: `head${a.issue}`, redEvidence: red[a.issue] || '' }
+    events.push(`start ${a.issue}`)
+    maxRunning = Math.max(maxRunning, ++running)
+    await new Promise((r) => setTimeout(r, slow[a.issue] || 1))
+    running--
+    events.push(`end ${a.issue}`)
+    const untrackedPaths = untracked[a.issue] || []
+    if (fail.includes(a.issue)) return { ok: false, stage: 'gate', reason: 'red', untrackedPaths }
+    return { ok: true, issue: a.issue, head: `head${a.issue}`, redEvidence: red[a.issue] || '', untrackedPaths }
   }
   async function agent(prompt, opts) {
-    const sha = prompt.match(/git reset --hard (\S+)`/)[1]
-    resets.push({ label: opts.label, sha, clean: prompt.includes('`git clean -fd`') })
-    return { head: resetHead || sha, status: resetStatus }
+    const issue = opts.label.match(/#(\d+)/)[1]
+    prompts[opts.label] = prompt
+    if (opts.label.startsWith('worktree:')) return { path: `/wt/${issue}`, head: badWorktree.includes(issue) ? 'other' : prompt.match(/git worktree add .* (\S+)`/)[1] }
+    if (opts.label.startsWith('remove:')) return removes.push(opts.label) && ''
+    maxLanding = Math.max(maxLanding, ++landing)
+    await new Promise((r) => setTimeout(r, 5))
+    landing--
+    ontos.push(prompt.match(/`git rebase (\S+)`/)[1])
+    if (conflicts[issue] > 0) {
+      conflicts[issue]--
+      return { landed: false, gated: '', head: '', reason: 'conflict in main.js' }
+    }
+    if (stale[issue] > 0) {
+      stale[issue]--
+      return { landed: true, gated: `land${issue}`, head: tip, reason: '' }
+    }
+    events.push(`land ${issue}`)
+    tip = `land${issue}`
+    return { landed: true, gated: tip, head: tip, reason: '' }
   }
   const result = await new AsyncFunction('args', 'agent', 'workflow', 'phase', 'log', metaBody)(
     { ...metaArgs, ...extra, children }, agent, workflow, () => {}, () => {})
-  return { result, calls, resets }
+  return { result, calls, events, ontos, removes, prompts, maxRunning, maxLanding }
 }
 
+const before = (events, a, b) => events.indexOf(a) >= 0 && events.indexOf(a) < events.indexOf(b)
 const metaRows = [
-  { name: 'meta: blocked child runs after its blocker, each on the tip before it', children: [child('13', ['11']), child('12', [], { notes: 'keep 5' }), child('11')],
+  { name: 'meta: blocked child starts after its blocker lands, two at once', children: [child('13', ['11']), child('12', [], { notes: 'keep 5' }), child('11')],
     opts: { extra: { externalReview: 'ext-cmd', notes: 'shared' }, red: { 11: 'FAIL a', 13: 'FAIL c' } },
-    order: ['11', '12', '13'], bases: ['base0', 'head11', 'head12'], ok: true, done: ['11', '12', '13'], failed: [], skipped: [], resets: [], reviewBody: ['#11', '#12', '#13'],
+    order: ['11', '12', '13'], bases: ['base0', 'base0', 'land11'], ontos: ['base0', 'land11', 'land12'], ok: true, done: ['11', '12', '13'], failed: [], skipped: [],
+    together: ['11', '12'], after: [['land 11', 'start 13']], reviewBody: ['#11', '#12', '#13'],
     kidNotes: { 11: 'shared', 12: 'shared\nkeep 5' }, reviewNotes: 'shared\n#12: keep 5', externalReview: 'ext-cmd', redEvidence: '#11: FAIL a\n#13: FAIL c' },
+  { name: 'meta: three independent children, no more than two at once', children: [child('11'), child('12'), child('13')],
+    order: ['11', '12', '13'], bases: ['base0', 'base0', 'land11'], ontos: ['base0', 'land11', 'land12'], ok: true, done: ['11', '12', '13'], failed: [], skipped: [],
+    together: ['11', '12'], after: [['end 11', 'start 13']], reviewBody: ['#11', '#12', '#13'] },
+  { name: 'meta: children land in finish order', children: [child('11'), child('12')], opts: { slow: { 11: 20 } },
+    order: ['11', '12'], bases: ['base0', 'base0'], ontos: ['base0', 'land12'], ok: true, done: ['12', '11'], failed: [], skipped: [],
+    together: ['11', '12'], reviewBody: ['#11', '#12'] },
   { name: 'meta: older child blocked by a newer one waits for it', children: [child('11', ['12']), child('12')],
-    order: ['12', '11'], bases: ['base0', 'head12'], ok: true, done: ['12', '11'], failed: [], skipped: [], resets: [], reviewBody: ['#11', '#12'] },
+    order: ['12', '11'], bases: ['base0', 'land12'], ontos: ['base0', 'land12'], ok: true, done: ['12', '11'], failed: [], skipped: [],
+    after: [['land 12', 'start 11']], reviewBody: ['#11', '#12'] },
   { name: 'meta: failed review fails the run', children: [child('11')], opts: { reviewFail: true },
-    order: ['11'], bases: ['base0'], ok: false, reviewStage: 'review', done: ['11'], failed: [], skipped: [], resets: [], reviewBody: ['#11'] },
-  { name: 'meta: reset that leaves untracked files stops the run', children: [child('11'), child('12')], opts: { fail: ['11'], resetStatus: ['?? new_test.py'] },
-    order: ['11'], bases: ['base0'], ok: false, stage: 'reset', done: [], failed: ['11'], skipped: ['12'], resets: [{ label: 'reset:#11', sha: 'base0', clean: true }] },
-  { name: 'meta: failed child is reset off the branch and its dependents skipped', children: [child('11'), child('12', ['11']), child('13')], opts: { fail: ['11'] },
-    order: ['11', '13'], bases: ['base0', 'base0'], ok: true, done: ['13'], failed: ['11'], skipped: ['12'], resets: [{ label: 'reset:#11', sha: 'base0', clean: true }], reviewBody: ['#13'] },
+    order: ['11'], bases: ['base0'], ontos: ['base0'], ok: false, reviewStage: 'review', done: ['11'], failed: [], skipped: [], reviewBody: ['#11'] },
+  { name: 'meta: failed child drops its branch and its dependents are skipped', children: [child('11'), child('12', ['11']), child('13')], opts: { fail: ['11'] },
+    order: ['11', '13'], bases: ['base0', 'base0'], ontos: ['base0'], ok: true, done: ['13'], failed: ['11'], skipped: ['12'], reviewBody: ['#13'] },
   { name: 'meta: blocker outside the children does not hold a child', children: [child('12', ['5'])],
-    order: ['12'], bases: ['base0'], ok: true, done: ['12'], failed: [], skipped: [], resets: [], reviewBody: ['#12'] },
+    order: ['12'], bases: ['base0'], ontos: ['base0'], ok: true, done: ['12'], failed: [], skipped: [], reviewBody: ['#12'] },
   { name: 'meta: no child passes, no review', children: [child('11'), child('12', ['11'])], opts: { fail: ['11'] },
-    order: ['11'], bases: ['base0'], ok: false, done: [], failed: ['11'], skipped: ['12'], resets: [{ label: 'reset:#11', sha: 'base0', clean: true }] },
-  { name: 'meta: reset that misses the tip stops the run', children: [child('11'), child('12')], opts: { fail: ['11'], resetHead: 'head11' },
-    order: ['11'], bases: ['base0'], ok: false, stage: 'reset', done: [], failed: ['11'], skipped: ['12'], resets: [{ label: 'reset:#11', sha: 'base0', clean: true }] },
+    order: ['11'], bases: ['base0'], ontos: [], ok: false, done: [], failed: ['11'], skipped: ['12'] },
+  { name: 'meta: landing conflict reruns the child once from the new tip', children: [child('11'), child('12')], opts: { conflicts: { 12: 1 } },
+    order: ['11', '12', '12'], bases: ['base0', 'base0', 'land11'], ontos: ['base0', 'land11', 'land11'], ok: true, done: ['11', '12'], failed: [], skipped: [],
+    reviewBody: ['#11', '#12'], removes: ['remove:#11', 'remove:#12', 'remove:#12:rerun'] },
+  { name: 'meta: second landing failure fails the child and skips its dependents', children: [child('11'), child('12'), child('13', ['12'])], opts: { conflicts: { 12: 2 } },
+    order: ['11', '12', '12'], bases: ['base0', 'base0', 'land11'], ontos: ['base0', 'land11', 'land11'], ok: true, done: ['11'], failed: ['12'], failedStage: 'land', skipped: ['13'],
+    reviewBody: ['#11'], removes: ['remove:#11', 'remove:#12', 'remove:#12:rerun'] },
+  { name: 'meta: a merge that leaves the tip behind is a failed landing', children: [child('11'), child('12')], opts: { stale: { 12: 1 } },
+    order: ['11', '12', '12'], bases: ['base0', 'base0', 'land11'], ontos: ['base0', 'land11', 'land11'], ok: true, done: ['11', '12'], failed: [], skipped: [],
+    reviewBody: ['#11', '#12'], removes: ['remove:#11', 'remove:#12', 'remove:#12:rerun'] },
+  { name: 'meta: a worktree on the wrong head fails the child before its loop', children: [child('11'), child('12', ['11'])], opts: { badWorktree: ['11'] },
+    order: [], bases: [], ontos: [], ok: false, done: [], failed: ['11'], failedStage: 'worktree', skipped: ['12'], removes: [] },
+  { name: 'meta: a child with untracked files keeps its worktree', children: [child('11'), child('12')], opts: { untracked: { 11: ['coverage.out'] }, fail: ['12'] },
+    order: ['11', '12'], bases: ['base0', 'base0'], ontos: ['base0'], ok: true, done: ['11'], failed: ['12'], skipped: [],
+    reviewBody: ['#11'], removes: ['remove:#12'], kept: { 11: '/wt/11' } },
 ]
 
 for (const row of metaRows) {
-  const { result, calls, resets } = await runMeta(row.children, row.opts)
+  const { result, calls, events, ontos, removes, prompts, maxRunning, maxLanding } = await runMeta(row.children, row.opts)
   const kids = calls.filter((c) => c.stopAfterGate)
   const reviews = calls.filter((c) => c.startAtSimplify)
-  assert.ok(calls.every((c) => c.name === 'dream-team:build-issue-loop' && c.branch === metaArgs.branch), `${row.name}: loop and branch`)
+  assert.ok(calls.every((c) => c.name === 'dream-team:build-issue-loop'), `${row.name}: loop`)
+  assert.ok(kids.every((c) => c.branch === `${metaArgs.branch}-${c.issue}` && c.worktree === `/wt/${c.issue}`), `${row.name}: child branch and worktree`)
+  assert.ok(maxRunning <= 2, `${row.name}: at most two children at once`)
+  assert.ok(maxLanding <= 1, `${row.name}: one landing at a time`)
+  for (const [l, p] of Object.entries(prompts)) {
+    const issue = l.match(/#(\d+)/)[1]
+    const kind = l.split(':')[0]
+    if (kind === 'land') assert.ok(metaArgs.gateCommands.every((g) => p.includes(g)) && p.includes(`git merge --ff-only ${metaArgs.branch}-${issue}`), `${row.name}: ${l} re-gates and fast-forwards`)
+    if (kind === 'remove') assert.ok(p.includes(`git branch -D ${metaArgs.branch}-${issue}`), `${row.name}: ${l} drops the branch`)
+  }
+  for (const [i, c] of kids.entries()) {
+    const tag = kids.slice(0, i).some((k) => k.issue === c.issue) ? ':rerun' : ''
+    assert.ok(prompts[`worktree:#${c.issue}${tag}`].includes(` ${c.base}\``), `${row.name}: #${c.issue}${tag} worktree cut from its base`)
+  }
+  for (const [id, wt] of Object.entries(row.kept || {})) assert.equal([...result.children, ...result.failed].find((c) => c.issue === id).worktree, wt, `${row.name}: #${id} worktree kept`)
+  if (row.together) assert.ok(row.together.every((a) => row.together.every((b) => before(events, `start ${a}`, `end ${b}`))), `${row.name}: ${row.together} run together`)
+  for (const [a, b] of row.after || []) assert.ok(before(events, a, b), `${row.name}: ${a} before ${b}`)
   assert.deepEqual(kids.map((c) => c.issue), row.order, `${row.name}: order`)
   assert.deepEqual(kids.map((c) => c.base), row.bases, `${row.name}: bases`)
+  assert.deepEqual(ontos, row.ontos, `${row.name}: each landing rebases onto the one before`)
+  assert.deepEqual(removes.sort(), row.removes || [...new Set(kids.map((c) => c.issue))].sort().map((i) => `remove:#${i}`), `${row.name}: worktrees removed`)
   assert.ok(kids.every((c) => !c.externalReview), `${row.name}: no externalReview per child`)
   for (const [id, notes] of Object.entries(row.kidNotes || {})) assert.equal(kids.find((c) => c.issue === id).notes, notes, `${row.name}: #${id} notes`)
   assert.equal(result.ok, row.ok, row.name)
-  if (row.stage) assert.equal(result.stage, row.stage, `${row.name}: stage`)
   assert.deepEqual(result.children.map((c) => c.issue), row.done, `${row.name}: children`)
   assert.deepEqual(result.failed.map((c) => c.issue), row.failed, `${row.name}: failed`)
+  if (row.failedStage) assert.equal(result.failed[0].stage, row.failedStage, `${row.name}: failed stage`)
   assert.deepEqual(result.skipped, row.skipped, `${row.name}: skipped`)
-  assert.deepEqual(resets, row.resets, `${row.name}: resets`)
   if (row.reviewBody) {
     assert.equal(reviews.length, 1, `${row.name}: one review`)
     assert.equal(reviews[0].issue, '10', `${row.name}: review issue`)
     assert.equal(reviews[0].base, 'base0', `${row.name}: review base`)
+    assert.equal(reviews[0].branch, metaArgs.branch, `${row.name}: review branch`)
+    assert.equal(reviews[0].worktree, undefined, `${row.name}: review in the session checkout`)
     for (const id of ['#11', '#12', '#13']) assert.equal(reviews[0].body.includes(id), row.reviewBody.includes(id), `${row.name}: review body ${id}`)
     if (row.reviewStage) assert.equal(result.review.stage, row.reviewStage, `${row.name}: review stage`)
     if (row.reviewNotes) assert.equal(reviews[0].notes, row.reviewNotes, `${row.name}: review notes`)
