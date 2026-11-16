@@ -11,8 +11,6 @@ Planning stays explicit, at issue size, because you review every plan.
 - Facts for the contributor doc are swept once per milestone by `milestone-close`. A prompt on
   every MR was rejected: it asks a question on MRs with nothing to keep.
 - A rule comes first; a hook is added only after the rule has failed once.
-- `body-cap.py` quotes a `## <id>` section of the `scope-mr` `SKILL.md` back verbatim; keep
-  those heading ids stable and sub-headings at `###`, since any `##` closes a section.
 - In the `qa-review` skill, a lens with no installed agent type fails dispatch and is listed as
   missing; it never falls back to a generic agent. `build-issue-loop` instead retries that lens
   as a generic agent and lists its type in `degraded`.

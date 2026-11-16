@@ -8,6 +8,14 @@ description: >
 
 MR description is review-facing. Different text from the commit body. Never `--fill`.
 
+## Diff budget
+
+- Before creating or editing an MR/PR description, write it to a file.
+- Run `python3 <this skill's base directory>/scripts/diff-budget.py <file> --base <target>` in
+  a checkout of the MR's source branch.
+- It prints `Over budget` → cut parts, or keep the text as a judged override.
+- Pass that file to the create or edit command.
+
 ## mr-style
 
 Reviewer has the diff open and ten minutes. They read code, not your session.
@@ -71,6 +79,7 @@ Reviewer has the diff open and ten minutes. They read code, not your session.
 - A consequence the diff cannot show: breaking change, migration, security fix, revert.
 - Data that starts or stops flowing.
 - An interaction or precedence rule between the new knob and an existing one.
+- A next step this change stops short of.
 - Existing behaviour this change does not alter → not a part; tell the user it was left out.
 - A decision worth questioning, written as behaviour — "when both set, whichever fires
   first wins", not "Decision worth challenging: ...".
@@ -91,7 +100,7 @@ Reviewer has the diff open and ten minutes. They read code, not your session.
 - Background already on the issue → link it, don't repeat it.
 - Addressing the reader.
 - Narrating your order of work.
-- What you tried first, rules you rejected, follow-up ideas → issue.
+- What you tried first, rules you rejected, follow-up ideas, off-diff audit findings → issue.
 - Risk-grading words: "riskiest", "dangerous", "be careful", "watch out".
 - Mid-sentence bold.
 - `*` bullets — use `-`.
@@ -104,24 +113,8 @@ Reviewer has the diff open and ten minutes. They read code, not your session.
 - 300 hard cap.
 - Fenced blocks and table rows do not count toward the cap.
 - Never pad a short description toward either number.
-- A small diff binds tighter than the ceiling: the budget scales with the change.
+- A small diff binds tighter than the ceiling: the diff budget scales with the change.
 - Longer than the diff → cut parts, not words.
-
-## rung-four
-
-- In-diff and fine: a knob inside the changed lines, a next step this change stops short of.
-- Off-diff and not fine: an audit finding, a rule you rejected, a follow-up idea —
-  however deliberate the omission.
-- An off-diff item reads as scope the reviewer must evaluate; it is not in front of them.
-- Fix: move it to an issue and cite the issue, or drop the line.
-
-## fill
-
-- Commit body = permanent history. Why the change exists.
-- Description = review-facing. What to look at first.
-- They coincide often enough that `--fill` looks harmless. That is how it stops the
-  question being asked.
-- Commits genuinely say everything → one line is a fine description. Write that line.
 
 ## Examples
 

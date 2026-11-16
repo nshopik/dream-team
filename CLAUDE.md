@@ -27,12 +27,10 @@
   alter skill or agent behaviour (docs, evals, CI).
 - Run a `skills/*/evals/` runner with `--plugin-dir .`; without the flag it measures the installed
   plugin cache, not the working tree.
-- In `hooks/test_body_cap.py`, match an over-cap deny on `-word ceiling`, not `ceiling`; the
-  skill text the hook quotes back contains the bare word.
 - Judge a `scope-mr` change on in-repo runs too (`REPO=<checkout>` in `run_baseline.sh`);
   diff-only runs lack the context real sessions read and hide what the skill does there.
-- Run the hook tests as `python3 <file>` each, never `python3 -m unittest`; they are plain
-  scripts and unittest exits 5 with NO TESTS RAN.
+- Run the hook and skill script tests as `python3 <file>` each, never `python3 -m unittest`;
+  they are plain scripts and unittest exits 5 with NO TESTS RAN.
 - Call a plugin workflow by its prefixed name (`dream-team:<name>`), never by `scriptPath`; skill
   text does not expand `${CLAUDE_PLUGIN_ROOT}`; a plugin agent body does.
 - Before editing `CHANGELOG.md`, read `references/changelog-style.md`.
