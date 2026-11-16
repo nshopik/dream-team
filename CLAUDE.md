@@ -1,7 +1,11 @@
 # CLAUDE.md
 
-- Write skill rules as atomic `-` bullets, one condition and one action each; never as prose
-  paragraphs.
+- Write every skill instruction as an atomic `-` bullet, one condition and one action each; a
+  step's body is instructions too.
+- Write an ordered sequence as a numbered list, one action per number.
+- A paragraph may state a section's intent or reason; it never carries a condition or an action.
+- Invariant for reviews: a diff to a `SKILL.md`, its `reference/` files or an `agents/*.md` prompt
+  holds every rule-authoring line of this file; a reviewer cites the line a change breaks.
 - Add a skill or agent rule only for a failure seen in a real run or eval; never for a
   hypothetical one.
 - Prefer editing or deleting an existing rule over adding a new one.
@@ -49,6 +53,9 @@
   build-issue's "You do not write the change" edit list) and update them in the same change.
 - A change to a `SKILL.md`, its `reference/` files or an `agents/*.md` prompt → check every
   other line of those files for a contradiction with the change.
+- A new skill, step or workflow that takes over a behaviour → grep the other skills,
+  `WORKFLOW.md` and `README.md` for that behaviour, and update or cut each line that still
+  describes it (#567: build-issue kept its Meta child pick after assemble-meta shipped).
 - Check skill triggering with `skills/scope-commit/evals/run_trigger.sh` (unnamed prompts); the
   other evals name the skill in the prompt and cannot see a description change. Keep its fixture
   repo consistent with each prompt, or the agent stops before loading any skill.
