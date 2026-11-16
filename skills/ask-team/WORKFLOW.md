@@ -143,6 +143,8 @@ changes it makes inline.
      - Full: implementer, mechanical gate, over-engineering cuts, quality reviewers, a domain
        lens that checks any claim in the diff against a reference source the project names,
        bounded fix rounds that also fix the cheap nits.
+     - Both tiers settle reviewer questions before the MR; only those nothing settles reach you,
+       in one dialog.
   4. Lab work (perf gate, tests that need root) through `dream-team:lab-runner` on the host the
      repo's `CLAUDE.md` names.
   5. MR: one folded commit per change, description by `scope-mr`, with any floors,
@@ -164,7 +166,7 @@ changes it makes inline.
   one MR; the issues that need a lab run, credentials or your call run through build-issue, and
   milestone close stays your gate before M5.
 - You: check the branch and external-reviewer lines, any assumptions at the top of the report,
-  any reviewer questions under Notes, the MR, and any `**Pipeline:**` follow-up.
+  the MR, and any `**Pipeline:**` follow-up.
 
 ### 4. You read the MR
 
@@ -224,6 +226,6 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
 | 0 | Approve the spec |
 | 1 | Exit criteria and their numbers |
 | 2 | Is anything missing from the issue list; design and scope choices `triage-issue` asks |
-| 3 | Which issue is next; triage dialogs, only when a decision is open |
+| 3 | Which issue is next; triage and reviewer-question dialogs, only when a decision is open |
 | 4 | Read the MR, note what you learned, merge |
 | 5 | Gap issues to file; close or move per leftover issue; new milestones; each cut and promotion; a first CalVer or SemVer major release |
