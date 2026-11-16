@@ -22,7 +22,7 @@ adds with it. Lab work is yours, per build-issue.
 
 ## 1. Read the Meta issue and its children
 
-- Fetch the Meta issue with build-issue step 1's fetch command; skip its Meta child pick.
+- Fetch the Meta issue with build-issue step 1's fetch command; its Meta stop does not apply.
 - Take every unticked link to an open child issue in its checklist; skip plain-text lines.
 - Fetch each child the same way, and note its `Blocked by` issues.
 - A child blocked by an open issue that is not a child → leave it and its dependents out, and

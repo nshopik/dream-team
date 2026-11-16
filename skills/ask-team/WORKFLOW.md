@@ -120,9 +120,8 @@ changes it makes inline.
   blocker and proposes one.
 - You: "work on #126."
 - Agent: `dream-team:build-issue`:
-  1. Reads the issue and the project `CLAUDE.md`. Given a `Meta:` issue, it works the oldest open
-     unticked child with no open blocker; with every one blocked, it reports each and its open
-     blockers.
+  1. Reads the issue and the project `CLAUDE.md`. Given a `Meta:` issue, it stops and names
+     `assemble-meta`.
   2. Triage: an open decision gets a dialog with 2–3 options and their costs. The answer is
      posted on the issue as a comment, and written into the description when it changes the work
      remaining. An answer that passes the decision-record test gets its record in its own docs
