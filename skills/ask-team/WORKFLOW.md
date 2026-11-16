@@ -195,25 +195,27 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
      lacks, `CLAUDE.md` and `CLAUDE.local.md` lines to cut (with the lab host or tool change that
      would fix the gotcha, where one could), and `CLAUDE.local.md` lines to promote to
      `CLAUDE.md`, and the next release (step 6). Each new milestone, cut and promotion is one
-     proposal for you to approve or reject; drift fixes, facts and ROADMAP status go straight to
-     the docs MR.
+     proposal for you to approve or reject; drift fixes, facts, ROADMAP status and the release
+     go straight to the docs MR.
   4. Applies what you approved: moves, one docs MR with `docs-editor`'s drift fixes, the facts
      and the ROADMAP update, milestone closed, the next milestones created, and the release
      (step 6). A proposal that changes `CLAUDE.md` holds the docs MR until you answer the
      proposals.
-- You: the gap issues, the triage table, the new milestones, the cuts, the promotions and the
-  release are your decisions; the docs MR review covers the rest.
+- You: the gap issues, the triage table, the new milestones, the cuts, the promotions and a
+  first CalVer or SemVer major release proposal are your decisions; the docs MR review covers the
+  rest, any other release included.
 
 ### 6. Release
 
-- Agent: at every milestone close, proposes the next version: `0.x` before the MVP, CalVer
+- Agent: at every milestone close, releases the next version: `0.x` before the MVP, CalVer
   `YY.MM.MICRO` from the MVP on (`26.11.0`, then `26.11.1`), the next minor in a SemVer repo past
   1.0. The docs MR bumps each version file and renames the CHANGELOG `[Unreleased]` section to
-  the new version, where they exist; once it merges, the agent offers a tag on its merge commit,
-  unless the project's `CLAUDE.md` forbids tagging. CI builds the release from the tag.
-- You: approve, name another version, or decline; a project rule that sets each close's version
-  skips the proposal, and you approve at the docs MR and the tag. Releases between closes, and
-  releases of a project without milestones, are yours to ask for: "cut a release" runs `ship-it`.
+  the new version, where they exist, in a commit of its own; once it merges, the agent pushes a
+  tag on its merge commit, unless the project's `CLAUDE.md` forbids tagging. CI builds the
+  release from the tag. The first CalVer release and a SemVer major milestone are proposed first.
+- You: merging the docs MR approves the release; ask on it to drop the bump to decline. Releases
+  between closes, and releases of a project without milestones, are yours to ask for: "cut a
+  release" runs `ship-it`.
 
 ## Where your time goes
 
@@ -225,4 +227,4 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
 | 2 | Is anything missing from the issue list; design and scope choices `triage-issue` asks |
 | 3 | Which issue is next; triage dialogs, only when a decision is open |
 | 4 | Read the MR, note what you learned, merge |
-| 5 | Gap issues to file; close or move per leftover issue; new milestones; each cut and promotion; the release |
+| 5 | Gap issues to file; close or move per leftover issue; new milestones; each cut and promotion; a first CalVer or SemVer major release |

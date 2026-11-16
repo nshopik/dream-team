@@ -2,8 +2,8 @@
 name: milestone-close
 description: >-
   Closes a tracker milestone: checks its exit criterion, triages its open issues, checks docs
-  against code and offers a release. Use when the user asks to close, wrap up or review a
-  milestone — "close milestone 4", "is M4 done", "wrap up the dogfood milestone".
+  against code and puts the release in its docs MR. Use when the user asks to close, wrap up or
+  review a milestone — "close milestone 4", "is M4 done", "wrap up the dogfood milestone".
 argument-hint: <milestone id or title>
 ---
 
@@ -15,7 +15,7 @@ and filed issue.
 - An edit that lands in the docs MR needs no approval: the user reviews it there, once step 5
   opens the MR.
 - Ask only for what leaves the docs MR or changes agent rules: issues, closes, moves, milestones,
-  `CLAUDE.md` and `CLAUDE.local.md` lines, and a release the project rules do not settle.
+  `CLAUDE.md` and `CLAUDE.local.md` lines, and step 4's release proposals.
 
 ## 1. Read the milestone
 
@@ -82,8 +82,9 @@ Docs-MR edits, applied in step 5 without asking:
   the criterion result. Feature MRs leave roadmap status to this step.
 - Root-cause and behaviour sections of the milestone's merged MRs → each fact a future change must
   respect that the contributor doc lacks, as one line.
-- The release, when the project's `CLAUDE.md` or `AGENTS.md` sets the version each close takes:
-  `ship-it`'s Bump step. The tag is still offered after the merge.
+- The release, outside the two release proposals below: load `ship-it`; its bump as its own
+  commit, at the version the project's `CLAUDE.md` or `AGENTS.md` sets each close, else the one
+  its Propose step computes, without asking.
 
 Proposals, each approved or rejected by the user:
 
@@ -99,12 +100,11 @@ Proposals, each approved or rejected by the user:
   change.
 - Each other `CLAUDE.local.md` line: proposed as a promotion to `CLAUDE.md` when it holds no
   hostname, IP, internal URL or lab access, otherwise left alone.
-- Every close, `M<n>` and version milestone alike, whose version no project rule sets → load
-  `ship-it`; propose a release per its Propose step.
 - A milestone with `MVP` in its title, in a repo whose last release is `0.x` or none → propose
   this month's `<YY.MM>.0`, the first CalVer release, in place of the next `0.x` minor.
-- In a SemVer repo, a `v<x.y>` milestone whose major is above the version file's → warn in the
-  release proposal that its name says a major release, naming both versions.
+- In a SemVer repo, a `v<x.y>` milestone whose major is above the version file's → propose a
+  release per `ship-it`'s Propose step, warning that its name says a major release and naming
+  both versions.
 
 ## 5. Apply
 
@@ -127,15 +127,22 @@ then set the row's `#` and its status `not started` in the docs MR. Every milest
 
 - `docs-reviewer` fixes → dispatch `dream-team:docs-editor` in drift mode with
   `git diff <base>..<head>` from step 4 and only the pages they name; its edits go in the docs MR.
-- Release set by a project rule, or approved → `ship-it` Bump and Tag steps, its bump in the docs
-  MR and its tag message naming the milestone; with nothing else in it, the release alone opens
-  the MR.
+- The release, or an approved release proposal → `ship-it` with the version as its argument: its
+  bump in the docs MR, its tag message naming the milestone; with nothing else in it, the release
+  alone opens the MR.
+- The user asks on the docs MR to drop the bump → remove its commit and push no tag.
+- A release in the docs MR → once the MR opens, start a Bash `run_in_background` poll, every 30s
+  through the host's tooling skill, that exits on `merged` or `closed`, never on "not open".
+- Send the report without waiting for the poll, and leave the poll out of it.
+- The poll exits `merged` → push the tag and report it in one line; `closed` → push no tag.
+- Before the tag: the merged docs MR lacks the bump commit or holds a request to drop it → push
+  no tag.
 
 ## Report back
 
 Criterion result, issues closed, moved and filed, milestones created, the docs MR link, each
-docs fix `docs-editor` reported as `skipped:` or under `gaps:`, the release version and
-its tag, or the tag pending the docs MR's merge, or the declined release.
+docs fix `docs-editor` reported as `skipped:` or under `gaps:`, and one `**Release:**` bullet:
+the version and its tag, or the tag pending the docs MR's merge, or the declined release.
 
 A numbered proposal that changes `CLAUDE.md` is unanswered → send only the held report: criterion
 result, step 4's docs-MR edits and the proposals below, with no docs MR link. After step 5 applies

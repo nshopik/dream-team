@@ -56,11 +56,13 @@ Planning stays explicit, at issue size, because you review every plan.
   train, and each one's `Exit:`, `Gate:` and `Depends on:` fit in its tracker description, so a
   row only copied them. The old rule, rows whenever two milestones were open, lost: a project
   planning several releases ahead keeps each one's plan in its milestone description.
-- Release stays user-approved in both styles: `milestone-close` offers the next version at
-  every close, `M<n>` and version milestone alike, and releases between closes happen through
-  `ship-it`. A milestone close is the release point for most projects; a pre-1.0 opt-in line
-  left the rest closing milestones with no release. A project rule that sets each close's
-  version moves the approval to the docs MR review and the tag offer.
+- Release stays user-approved in both styles: `milestone-close` bumps the next version in the
+  docs MR at every close, `M<n>` and version milestone alike, and releases between closes happen
+  through `ship-it`. A milestone close is the release point for most projects; a pre-1.0 opt-in
+  line left the rest closing milestones with no release. The docs MR review is the release
+  approval and `milestone-close` pushes the tag once it merges; a version proposal and a tag
+  offer asked twice for one release. The first CalVer release and a SemVer major stay proposals:
+  there the version itself is the choice.
 - This repo pilots a bugfix-only window for 26.12, from 2026-12-15 to its due date.
   - `bug` means a skill or agent did the wrong thing in a real run; a wished-for capability
     goes to the next milestone.
@@ -76,8 +78,8 @@ Planning stays explicit, at issue size, because you review every plan.
   - At 26.12 close, read the milestone comment and decide whether to keep the window, change it
     or offer it as a plugin option.
 - `milestone-close` asks only for what leaves the docs MR or changes agent rules; drift fixes,
-  ROADMAP status, facts and backed spec notes ride in the docs MR, whose review approves them. A
-  numbered approval per page edit asked twice for one decision.
+  ROADMAP status, facts, backed spec notes and the release ride in the docs MR, whose review
+  approves them. A numbered approval per page edit asked twice for one decision.
 - Milestones are `M<n>`, not a bare integer: "milestone 5" reads badly in prose and collides
   with counts ("all 5 sites"). One generic prefix beats a per-project codename; the repo name
   disambiguates the rare cross-project mention.
