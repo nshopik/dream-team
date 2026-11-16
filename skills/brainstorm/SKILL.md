@@ -2,30 +2,19 @@
 name: brainstorm
 description: >-
   Shapes a vague idea before any spec or issue exists: grills the user in rounds of numbered
-  questions, each with a recommended answer, at the depth the CLAUDE.md `## Expertise` section
-  sets, then states the shared understanding and proposes one path (spec, issue, Meta issue,
-  research issue, decision record, inline edit or drop) and acts on it only once the user
-  approves it. Use when the user voices an idea not yet worked out — "I have an idea",
-  "let's brainstorm", "thinking about", "what if we", "new feature for X", "I want X but not
-  sure how". Not for an issue number (use build-issue or triage-issue) or a routine,
-  already-described task.
+  questions, each with a recommended answer, then states the shared understanding and proposes
+  one path (spec, issue, Meta issue, research issue, decision record, inline edit or drop) and
+  acts on it only once the user approves it. Use when the user voices an idea not yet worked
+  out — "I have an idea", "let's brainstorm", "thinking about", "what if we", "new feature for
+  X", "I want X but not sure how". Not for an issue number (use build-issue or triage-issue) or
+  a routine, already-described task.
 ---
 
 # brainstorm
 
-- Terms: follow `<base directory>/../../references/glossary.md`.
-- Unclear whether to grill or edit directly → grill.
+## 1. Grill
 
-## 1. Depth
-
-- Read the `## Expertise` section of every loaded CLAUDE.md; each item names an area the user
-  wants grilled in depth.
-- A branch in a listed area → grill it fully.
-- A branch outside every listed area → pick the recommended option and state it in one line.
-- No `## Expertise` section → grill every branch at full depth.
-
-## 2. Grill
-
+- Map the idea as a design tree: each decision branches into the decisions that depend on it.
 - Ask in rounds; a round holds every decision whose prerequisites are settled.
 - A question that depends on another still open in this round → a later round.
 - Number each question and give its recommended answer, via AskUserQuestion.
@@ -35,18 +24,10 @@ description: >-
   ask the user.
 - A fact still being looked up → hold only the questions that depend on it; ask the rest now.
 - A decision → put it to the user and wait.
-- Done when you and the user reach a shared understanding: no decision is left unsettled and
-  nothing is silently assumed.
+- Done when you and the user reach a shared understanding: every branch of the tree is visited,
+  no decision is left unsettled and nothing is silently assumed.
 
-## 3. Handed-back choices
-
-- Two answers in a row hand the choice back ("you decide", "whatever you think") on questions
-  that need domain knowledge → offer, once per area, a map of that area's decisions, each with
-  its default.
-- Map declined → take its defaults and mark each `(default)` in its decision bullet.
-- A user who can weigh the options but has not decided → normal questions.
-
-## 4. Propose the path
+## 2. Propose the path
 
 - State the shared understanding in chat, then propose one path: spec, issue, Meta issue,
   research issue, decision record, inline edit, or drop.
@@ -74,7 +55,7 @@ description: >-
 <path>: <one-line reason>. <question naming the action>?
 ```
 
-## 5. Hand off
+## 3. Hand off
 
 - Wait for the user to confirm the shared understanding and approve or change the path.
 - Spec → ask the user to run `/dream-team:scope-spec`.

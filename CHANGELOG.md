@@ -8,7 +8,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 ### Added
 
 - The `ask-team` skill, run only when named, reads the open milestones, unblocked issues, open MRs/PRs and git state, then recommends the skill that fits now with a ready-to-run command and the `WORKFLOW.md` step behind it; `WORKFLOW.md` moves to `skills/ask-team/WORKFLOW.md`.
-- The `brainstorm` skill grills a vague idea in rounds of questions, at the depth a `## Expertise` section in `CLAUDE.md` sets, then states the shared understanding and proposes a path, acting on it only after the user approves it.
+- The `brainstorm` skill grills a vague idea in rounds of questions, then states the shared understanding and proposes a path, acting on it only after the user approves it.
 - The `assemble-meta` skill takes a Meta issue's children to one MR/PR: it triages them all before any code, builds each child up to the gate on one integration branch, reviews and fixes the whole branch once, and closes the finished children.
 - The `triage-issue` skill checks a legacy or outside-filed issue against the code and rewrites it in `scope-issue` form before it is built.
 - An issue `scope-issue` files during other work with open questions gets the `workflow::needs-brainstorm` label, which `build-issue` stops on and `triage-issue` lists, answers with `brainstorm`'s question rounds and removes once none is left open; `setup-dream-team` creates the label.
