@@ -21,6 +21,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - **Breaking:** The `dream-fixer` skill is renamed `build-issue` and the `dream-fixer-loop` workflow `build-issue-loop`, so the command is `/dream-team:build-issue`.
 - **Upgrade note:** Replace `dream-fixer` with `build-issue` in any `CLAUDE.md`, `CLAUDE.local.md` or `settings.json` line that names the skill or its workflow.
+- The `<project_notes>` block `jit-context.py` adds at session start asks that each new `CLAUDE.local.md` line end with the condition that retires it.
 - **Breaking:** `jit-context.py` adds the upstream-project rules in every git repo whose `dream-team.own` git config is not `true`, and no longer reads the `DREAM_TEAM_OWN_REMOTES` environment variable.
 - **Upgrade note:** Run `setup-dream-team` once in each clone of your own project or fork and answer that it is your own.
 - **Upgrade note:** Run `/dream-team:setup-dream-team` once in each project to create the `workflow::needs-brainstorm` label.
