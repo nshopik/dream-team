@@ -43,8 +43,7 @@ user-approved release.
 ### 0. Idea to spec (once per project)
 
 - You: `/dream-team:scope-spec`, once you approve a spec path. The agent asks what the chat left
-  open, then writes a lean v1 spec on a topic branch; `branch-guard` keeps design docs off
-  `master`.
+  open, then writes a lean v1 spec on a topic branch.
 - You: read the spec, push back until it matches your model, merge it.
 - Result: a spec of about 1,500 words, `docs/specs/NNNN-<topic>-design.md` unless the repo's
   `CLAUDE.md` or `AGENTS.md` declares another one.

@@ -31,12 +31,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/branch-guard.py\"",
-            "timeout": 5,
-            "statusMessage": "Checking branch"
-          },
-          {
-            "type": "command",
             "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/jit-context.py\"",
             "timeout": 5,
             "statusMessage": "Loading file conventions"
