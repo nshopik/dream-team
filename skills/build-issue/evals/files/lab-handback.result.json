@@ -40,7 +40,14 @@
     "disputed": [],
     "unhandled": 0
   },
-  "questions": [],
+  "questions": [
+    {
+      "severity": "question",
+      "description": "Should the pool shrink when idle, or keep every encoder it ever allocated?",
+      "file": "internal/encode/pool.go",
+      "gate": "dream-team:sre-engineer"
+    }
+  ],
   "preExisting": [],
   "untrackedPaths": [],
   "resolved": [],

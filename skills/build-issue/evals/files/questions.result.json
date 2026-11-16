@@ -1,0 +1,55 @@
+{
+  "ok": true,
+  "issue": 93,
+  "branch": "issue-93-export-since-flag",
+  "reviewers": [
+    "dream-team:architect-reviewer",
+    "dream-team:sre-engineer",
+    "dream-team:test-coverage-reviewer",
+    "domain"
+  ],
+  "degraded": [],
+  "fixRounds": 0,
+  "assumptions": [
+    "--since accepts RFC 3339 timestamps only; the issue did not say whether a bare date should work"
+  ],
+  "redEvidence": "",
+  "changedFiles": [
+    "cmd/flowlog/export.go",
+    "cmd/flowlog/export_test.go",
+    "README.md"
+  ],
+  "nitFindings": [],
+  "disputes": [],
+  "summaries": {
+    "dream-team:architect-reviewer": "Clean change. One question on --until, already at the base.",
+    "dream-team:sre-engineer": "Parse errors are returned to the CLI. One question on accepted formats.",
+    "dream-team:test-coverage-reviewer": "Boundary, empty and invalid inputs covered. No findings.",
+    "domain": "Filter runs before the batch encoder, matching the existing --until path. No findings."
+  },
+  "simplify": {
+    "net": 0,
+    "applied": [],
+    "disputed": [],
+    "unhandled": 0
+  },
+  "questions": [
+    {
+      "severity": "question",
+      "description": "Should --since also accept a bare date such as 2026-11-01, or only a full RFC 3339 timestamp?",
+      "file": "cmd/flowlog/export.go",
+      "gate": "dream-team:sre-engineer"
+    }
+  ],
+  "preExisting": [
+    {
+      "severity": "question",
+      "description": "Does a malformed --until value exit non-zero, or is it silently ignored?",
+      "file": "cmd/flowlog/export.go",
+      "gate": "dream-team:architect-reviewer"
+    }
+  ],
+  "untrackedPaths": [],
+  "resolved": [],
+  "nitFix": null
+}

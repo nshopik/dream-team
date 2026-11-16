@@ -113,6 +113,7 @@ Light path, no workflow:
 - A bug fix → rerun the reproduction on the branch head and see it pass.
 - Run lab work only for that rerun or a measurement the issue asks for, per step 5's lab steps.
 - Run step 5's docs drift check, unless the reviewer was `dream-team:docs-reviewer`.
+- Settle the reviewer's questions per step 5.
 - A plain issue's diff outgrows the criteria → `git reset --hard <base>` and run the full loop.
 - Open the MR per step 6.
 - Report the tier and the criterion that allowed it.
@@ -263,7 +264,26 @@ Docs drift, once the result is `ok`:
 - 🔴/🟡 findings left → after your edits, dispatch `dream-team:docs-editor` in drift mode with
   `git diff <base>..HEAD` and only the pages they name.
 - 🔵 findings → treat as nits.
+- ❓ findings → settle them with the result's questions, below.
 - The editor's edits are step-5 changes: step 6 commits and gates them.
+
+Questions — `questions`, `preExisting` entries with severity `question`, and the docs reviewer's
+❓ findings — on a result that carries on to step 6, settle each before step 6:
+
+- The code, the issue, the spec or a project rule settles it → answer it yourself and drop it.
+- Ask the rest per step 2's reading, enumerable and non-enumerable rules, in one batch: one
+  `AskUserQuestion` call, or several in the same turn past its 4-question limit.
+- A question with no enumerable options → stop before any comment or push; the user's reply
+  resumes these steps as its answer.
+- An answer that changes the code → once `dream-team:docs-editor` has returned, commit your
+  step-5 edits per step 6, then dispatch one `general-purpose` agent with the answer, the worktree
+  path and the base, told to make the change and commit only its own edit as
+  `fixup! <subject of the commit it changes>`.
+- No new `fixup!` in `git log <base>..HEAD` once it returns → hand the branch back, the question
+  open.
+- An answer that is issue-sized → file it per `scope-issue`, as below; the MR/PR goes ahead.
+- Post every question, with its answer and who gave it, in one comment on the issue.
+- A hand-back asks nothing.
 
 Adjacent defects — anything found outside the diff or returned in `preExisting`:
 
@@ -285,8 +305,9 @@ milestones and the `planned` rows of the repo's ROADMAP, found per
 ## 6. Open the MR/PR
 
 Commit anything else you changed in step 5 as `fixup! <subject of the commit it repairs>`, one
-fixup per commit an edit repairs. If you changed anything, run every `gateCommands` entry on the new
-head yourself and carry on only when all exit 0. A red run → fix it, or hand the branch back.
+fixup per commit an edit repairs. If you or step 5's agent changed anything, run every
+`gateCommands` entry on the new head yourself and carry on only when all exit 0. A red run → fix
+it, or hand the branch back.
 
 Fold the branch to one commit per change. The implementer commits once per independent change;
 the simplify cuts, build-fix and fix rounds add `fixup! <subject>` and `amend! <subject>`
@@ -404,7 +425,7 @@ The report carries only what the user must know or act on.
   user or caller can observe, and that no written rule or instruction settles, as its own list
   under a `**Assumptions:**` heading.
 - Put nothing else under that heading.
-- An assumption that a `questions` entry also raises → show it once, under `**Questions:**`.
+- An assumption a step-5 question settled → leave it out.
 - Add no line that this skill does not name.
 - Every other item is one bullet with a bold label, e.g. `**Dispute accepted:**`, `**Lab:**`.
 - Three or more numbers compared across cases (variants, runs, before/after) → one table, a row
@@ -414,15 +435,13 @@ The report carries only what the user must know or act on.
 - End with one plain line, after a blank line: `Work on #<n> is done: <MR/PR link>`.
 - Research issue closed by its findings comment → end with `Work on #<n> is done: <comment link>`.
 - No MR/PR, and not a closed research issue → first post one comment on the issue: the branch,
-  the open blocking findings, the assumptions and questions the report shows, the lab numbers
-  when lab work ran, and the `<why>`.
+  the open blocking findings, the assumptions the report shows, the open questions with their
+  reviewers and locations, the lab numbers when lab work ran, and the `<why>`.
 - Then end with `Work on #<n> is handed back: <branch> in
   .claude/worktrees/issue-<n>-<slug> — <why> (<hand-back comment link>)`.
 - Name each `degraded` roster type, and each dead reviewer the hand-back `<why>` does not name.
 - No MR/PR and `untrackedPaths` non-empty → list them under one bold label.
 - Name each dispute you settled, which way, and why.
-- List each distinct question in `questions` as one sub-bullet of one `**Questions:**` bullet,
-  naming every reviewer that asked it, and its location.
 - Name each adjacent fix committed on the branch by its subject, one line each.
 - Name each issue filed for an adjacent defect by its link, one line each, never the defect itself.
 - Name each adjacent defect that could not be filed, and why, one line each.
@@ -431,11 +450,11 @@ The report carries only what the user must know or act on.
 - Give each pipeline failure step 7 acts on one `**Pipeline:**` line in a follow-up message: the
   job, real or flake, and the fix commit.
 - Name each reviewer that could not check something, and the check you ran in its place.
-- Stopped at triage → say what is blocking and stop there.
+- Stopped at triage or on a step-5 question → say what is blocking and stop there.
 - Leave out nits, applied or dropped, and reviewer verdicts with no finding.
 - Leave out `gateCommands` entries that passed and a summary of the change: the MR carries it.
 - Leave out a present `redEvidence` and lab work that did not run.
-- A review with no blocking finding, no question, no dispute and no fix round gets no line.
+- A review with no blocking finding, no dispute and no fix round gets no line.
 - Handed back → no line saying a reviewer found nothing or that nothing was disputed.
 - The hand-back `<why>` clause names only what blocks; it never adds that other reviewers, rounds
   or disputes came back clean.
@@ -450,8 +469,6 @@ Layout, with sections that have nothing to report left out:
 - **Conventions:** <path, naming> (<source>)
 - **Dispute accepted:** <finding> — <why>
 - **Lab:** <verdict>
-- **Questions:**
-  - <question> — <reviewer>[, <reviewer>…][, <file>]
 
 **Lab, master vs branch:**
 

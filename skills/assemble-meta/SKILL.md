@@ -96,7 +96,6 @@ Per build-issue's Report back, plus these lines, which count as named there:
 
 - Each finished child's `assumptions` that build-issue's Report back would show, under
   `**Assumptions:**`, prefixed with `#<child>`.
-- `review`'s `questions` → build-issue's `**Questions:**` line.
 - Each `failed` child → one `**Failed:**` bullet: the child, its `stage` and `reason`.
 - Each `skipped` or step-1 left-out child → one `**Skipped:**` bullet: the child and its open
   blocker or `Research:` title.

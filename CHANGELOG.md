@@ -36,9 +36,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `ship-it` tags the release's merge commit without asking when the user passes the version as its argument.
 - `setup-dream-team` applies fixes that change no code after one OK, commits its `CLAUDE.md` and repo-doc edits, and files a maintenance issue only for the rest.
 - `scope-issue` and `build-issue` file two or more light-tier findings from one run as one bundle issue, and `build-issue` ships a bundle as one MR with one commit per item.
+- `build-issue` and `assemble-meta` settle reviewer questions before the MR/PR opens: the orchestrator answers those the code, the issue, the spec or a project rule settles, asks the user the rest in one dialog, has an agent commit any answer that changes the code, and posts every answer on the issue; the final report no longer has a `**Questions:**` line.
 - `build-issue` watches an MR/PR's pipeline once the MR/PR opens, retries an infrastructure flake once, and pushes up to two fixes for a real failure before handing the MR/PR back with a comment.
 - `review-bench` weighs every minor ledger row 0.5, no longer reads a row's `nit` field, and holds every minor candidate for the next ledger bump.
-- The `build-issue` and `assemble-meta` reports leave out resolved findings and any line the skill does not name, show an assumption only when it departs from the issue's text or changes observable behaviour, and show one a reviewer question also raises only under `**Questions:**`.
+- The `build-issue` and `assemble-meta` reports leave out resolved findings and any line the skill does not name, and show an assumption only when it departs from the issue's text or changes observable behaviour.
 - `build-issue`'s report at workflow launch describes the change in 1-2 sentences and adds nothing before or after the layout.
 - `scope-issue` files two or more unattended, non-research issues in one milestone under one `Meta:` issue set to that milestone, or files one on request with the human-loop issues proposed for the user to confirm, and `assemble-meta` takes a Meta issue whose children are independent.
 - `scope-issue` and `build-issue` write a hard-to-reverse design decision to `docs/decisions/` in its own docs MR when it is made, `scope-spec` through `scope-issue`, and `build-issue` stacks the issue branch on that record.
