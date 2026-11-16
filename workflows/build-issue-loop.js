@@ -25,6 +25,7 @@ const GATE_COMMANDS = Array.isArray(A.gateCommands) ? A.gateCommands.map(String)
 const EXTERNAL = String(A.externalReview || '')
 const STOP_AFTER_GATE = A.stopAfterGate === true
 const START_AT_SIMPLIFY = A.startAtSimplify === true
+const WORKTREE = String(A.worktree || '')
 const FIX_ROUNDS = 3
 const VERIFY_ROUNDS = 3
 
@@ -267,7 +268,9 @@ const CONTEXT = [
   BODY,
   ...(NOTES ? ['', 'Orchestrator notes — tracker discussion, decisions the user already made, work that is not yours:', NOTES] : []),
   '',
-  `Branch: ${BRANCH} (already created and checked out; work in the repo as it stands).`,
+  WORKTREE
+    ? `Branch: ${BRANCH}, checked out in the worktree ${WORKTREE}: start every Bash command with \`cd ${WORKTREE} &&\`, read and edit files only under it, and take it as the repo root every line below means.`
+    : `Branch: ${BRANCH} (already created and checked out; work in the repo as it stands).`,
   `Base: ${BASE}.`,
   'The repo CLAUDE.md files are already in your context — they carry this project\'s conventions and domain rules. Follow them.',
   'Never push, never open or edit an MR/PR, and never create, comment on or edit an issue, whatever the repo context says; the orchestrator does all of that after this workflow.',

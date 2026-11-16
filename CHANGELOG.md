@@ -9,12 +9,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - The `ask-team` skill, run only when named, reads the open milestones, unblocked issues, open MRs/PRs and git state, then recommends the skill that fits now with a ready-to-run command and the `WORKFLOW.md` step behind it; `WORKFLOW.md` moves to `skills/ask-team/WORKFLOW.md`.
 - The `brainstorm` skill grills a vague idea in rounds of questions, then states the shared understanding and proposes a path, acting on it only after the user approves it.
-- The `assemble-meta` skill takes a Meta issue's children to one MR/PR: it triages them all before any code, builds each child up to the gate on one integration branch, reviews and fixes the whole branch once, and closes the finished children.
+- The `assemble-meta` skill takes a Meta issue's children to one MR/PR: it triages them all before any code, builds up to two children at once up to the gate, each on its own branch in its own git worktree, lands each on one integration branch, reviews and fixes the whole branch once, and closes the finished children.
 - The `triage-issue` skill checks a legacy or outside-filed issue against the code and rewrites it in `scope-issue` form before it is built.
 - An issue `scope-issue` files during other work with open questions gets the `workflow::needs-brainstorm` label, which `build-issue` stops on and `triage-issue` lists, answers with `brainstorm`'s question rounds and removes once none is left open; `setup-dream-team` creates the label.
 - `build-issue-loop` takes `stopAfterGate` to end a run after the gate and `startAtSimplify` to start one at Simplify over the diff from `base`, with `redEvidence` handing that run the failing output earlier runs saw.
 - `scope-spec` and `scope-issue` use the field-standard word or a plain phrase, ask before coining a term, and record each approved term in a root `GLOSSARY.md`, or as a proposal item when only an issue uses it; only an own clone creates the file, with a pointer line in `CLAUDE.md`, or in `AGENTS.md` when only that exists.
 - In an own clone whose `CLAUDE.md` or `AGENTS.md` declares no doc conventions, skills commit the first new decision record, spec or ROADMAP with a `docs/CONVENTIONS.md` and a pointer line in `CLAUDE.md`, or in `AGENTS.md` when only that exists.
+- `build-issue-loop` takes `worktree`, a path every agent of the run works and commits in.
 
 ### Changed
 

@@ -154,10 +154,11 @@ changes it makes inline.
   7. Watches the MR pipeline: retries a flake once, pushes up to two folded fixes for a real
      failure, else posts a CI hand-back comment on the MR.
 - A `Meta:` issue: "assemble-meta #40". The agent runs `dream-team:assemble-meta`: it triages the
-  Meta issue and every child before any code, asking all open questions in one batch, builds each
-  child up to the gate on one integration branch, oldest ready child first, reviews and fixes the
-  whole branch once, and opens one MR with one commit per change. A child whose run fails is
-  dropped with the children it blocks.
+  Meta issue and every child before any code, asking all open questions in one batch, builds the
+  children up to the gate two at a time, oldest ready child first, each in its own worktree,
+  lands each on one integration branch in finish order, reviews and fixes the whole branch once,
+  and opens one MR with one commit per change. A child whose run fails is dropped with the
+  children it blocks.
 
   Milestone Meta: two or more non-research issues filed for M4 that can run unattended go under
   one `Meta:` issue set to M4. Asking "file M4's issues under one Meta" does the same, and the
