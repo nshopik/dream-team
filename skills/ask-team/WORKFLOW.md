@@ -33,9 +33,8 @@ release you accept.
 
 - You: "I want a Rust rewrite of a DNS resolver for large public deployments."
 - Agent: `brainstorm` asks rounds of numbered questions, each with its recommended answer
-  (scale, what is out of scope, how parity is proven). It grills in depth the areas your
-  `CLAUDE.md` lists under `## Expertise` and states its pick in one line elsewhere; with no such
-  section it grills every branch.
+  (scale, what is out of scope, how parity is proven), until every decision the idea branches
+  into is settled.
 - Agent: states the shared understanding and proposes a path: spec, issue, Meta issue, research
   issue, decision record, inline edit, or drop.
 - You: approve or change the path. The agent acts on it only then.
