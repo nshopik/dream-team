@@ -113,7 +113,7 @@ const VERDICT_SCHEMA = {
         properties: {
           severity: { type: 'string', enum: ['critical', 'important', 'nit', 'question'] },
           description: { type: 'string' },
-          file: { type: 'string' },
+          file: { type: 'string', description: 'repo-relative path, e.g. src/main.rs' },
           preExisting: { type: 'boolean', description: PRE_EXISTING },
         },
       },
@@ -156,13 +156,22 @@ const SIMPLIFY_SCHEMA = {
 }
 
 // Re-reviewers reword findings, so a resolved one is named by the reviewer,
-// not diffed out of its prior verdict.
+// by its number in the prompt, not diffed out of its prior verdict.
+const FINDING_ITEM = VERDICT_SCHEMA.properties.findings.items
 const RE_REVIEW_SCHEMA = {
   ...VERDICT_SCHEMA,
   required: [...VERDICT_SCHEMA.required, 'resolved'],
   properties: {
     ...VERDICT_SCHEMA.properties,
-    resolved: { ...VERDICT_SCHEMA.properties.findings, description: 'your prior findings the current branch now fixes' },
+    resolved: {
+      type: 'array',
+      description: 'your prior findings the current branch now fixes or answers',
+      items: {
+        ...FINDING_ITEM,
+        required: [...FINDING_ITEM.required, 'finding'],
+        properties: { ...FINDING_ITEM.properties, finding: { type: 'integer', minimum: 1, description: 'the number of the prior finding it resolves' } },
+      },
+    },
     added: { ...VERDICT_SCHEMA.properties.findings, description: 'new findings on the fix diff' },
   },
 }
@@ -279,7 +288,7 @@ const REVIEW_RULES = [
   READ_ONLY,
   `Set preExisting ${PRE_EXISTING}: such a finding keeps its severity and never blocks the MR. A defect the change introduces, newly reaches or worsens is a normal finding, rated and blocking like any other.`,
   'Rate each finding critical, important, nit or question. Critical and important block the MR. A nit is fixed only if cheap and is never re-reviewed, so do not inflate severity to force action.',
-  'Rate a genuine question, not a suggestion, as question: it goes to the user and never blocks the MR.',
+  'Rate a genuine question, not a suggestion, as question: it goes to the user unless a re-review answers it, and never blocks the MR.',
 ].join('\n')
 
 function implPrompt() {
@@ -294,6 +303,7 @@ function implPrompt() {
     GATE,
     'Get every gate command green, load the `scope-commit` skill, then commit on the branch in the repo\'s commit convention. Commit once; only when the issue holds independent changes, commit each change separately under its own subject.',
     'If the issue left something genuinely open, implement your best reading and list it in assumptions rather than stopping. A choice that a written rule or instruction settles (CLAUDE.md, a skill, a harness instruction) is not an assumption: leave it out.',
+    'An issue or note that says to stop when a check fails overrides the rule to get every gate command green, and a choice that reverses a decision an earlier commit body on the branch records is not an assumption: either way, commit nothing and return `committed: false` with the measured values or the recorded decision in your summary.',
   ].join('\n')
 }
 
@@ -403,12 +413,12 @@ function externalPrompt() {
 
 const fixDiffRule = (sha) => `Review the fix diff, \`git diff ${sha}..HEAD\`: raise a new finding only on a line it adds or changes or on a defect it newly reaches or worsens, and none elsewhere — a fresh sweep each round makes this loop never converge.`
 
-function reReviewPrompt(prev, fix, sha, round) {
+function reReviewPrompt(prior, fix, sha, round) {
   return [
     CONTEXT,
     '',
     `Fix round ${round}. You reviewed this branch and did not pass it. Your findings were:`,
-    prev.findings.filter((f) => !f.preExisting).map((f) => `- [${f.severity}] ${f.description}`).join('\n'),
+    prior.map((f, i) => `${i + 1}. [${f.severity}] ${f.description}`).join('\n'),
     '',
     'The fixer reports:',
     fix.summary,
@@ -419,7 +429,7 @@ function reReviewPrompt(prev, fix, sha, round) {
     READ_DIFF,
     'Re-review your own outstanding findings against the current branch state.',
     fixDiffRule(sha),
-    'List under resolved each of your prior findings the current branch now fixes, severity unchanged.',
+    'List under resolved each of your prior findings the current branch now fixes or answers, severity unchanged, with its number as finding.',
     'A disputed finding you now agree was wrong is not a fix: drop it, leave it out of resolved, and say so in the summary.',
     'Return under findings only your prior findings that still stand, severity unchanged, and under added any new fix-diff finding.',
   ].join('\n')
@@ -488,6 +498,8 @@ function nitFixPrompt(nits) {
 // ---------------------------------------------------------------------------
 const BLOCKING = new Set(['critical', 'important'])
 const blockingOf = (v) => v.findings.filter((f) => BLOCKING.has(f.severity) && !f.preExisting)
+// A gate's questions are numbered from `questions`, so a resolved number names the recorded entry, not a rewording.
+const priorOf = (v, key) => [...v.findings.filter((f) => !f.preExisting && f.severity !== 'question'), ...questions.filter((q) => q.gate === key)]
 // A reviewer that died has judged nothing: it is re-dispatched with its full
 // prompt, and never handed to the fixer as a finding.
 const deadReviewer = (kind) => ({ dead: true, summary: `${kind} reviewer produced no verdict`, findings: [] })
@@ -597,8 +609,8 @@ phase('Review')
 const state = new Map()
 const initial = await parallel(gates.map((g) => () =>
   agentR(g.prompt(), { label: `review:${g.key}`, phase: 'Review', schema: g.schema || VERDICT_SCHEMA, ...reviewerRoster(g.type) })))
-// Nits, questions and pre-existing findings are kept as raised: a re-review
-// verdict replaces the gate's state and lists outstanding findings, so it would drop them.
+// Nits, questions and pre-existing findings are kept as raised, a question until a re-review resolves it by number:
+// a re-review verdict replaces the gate's state and lists outstanding findings, so it would drop them.
 const nits = []
 const questions = []
 const preExisting = []
@@ -678,11 +690,12 @@ while (true) {
     verified = g.verify
   }
 
+  const priors = new Map(reReviewed.map((g) => [g.key, priorOf(state.get(g.key), g.key)]))
   const passed = fix?.committed ? gates.filter((g) => !state.get(g.key).dead && !failed.includes(g) && state.get(g.key).ran !== false) : []
   const again = await parallel([
     ...reReviewed.map((g) => () => {
       const s = state.get(g.key)
-      return agentR(reReviewPrompt(s, s.dead ? s.fix : fix, s.dead ? s.fixDiff : fixDiff, round), {
+      return agentR(reReviewPrompt(priors.get(g.key), s.dead ? s.fix : fix, s.dead ? s.fixDiff : fixDiff, round), {
         label: `re-review:${g.key}:r${round}`,
         phase: 'Fix',
         schema: RE_REVIEW_SCHEMA,
@@ -708,7 +721,14 @@ while (true) {
     if (!v) return state.set(g.key, prev.dead ? prev : { ...prev, dead: true, fix, fixDiff })
     const added = { findings: v.added || [] }
     state.set(g.key, { ...v, findings: [...v.findings, ...added.findings] })
-    resolved.push(...blockingOf({ findings: v.resolved }).map((f) => ({ ...f, gate: g.key, round })))
+    const prior = priors.get(g.key)
+    const answered = new Set()
+    for (const f of v.resolved) {
+      const i = questions.indexOf(prior[f.finding - 1])
+      if (i >= 0) { questions.splice(i, 1); answered.add(f) }
+    }
+    resolved.push(...v.resolved.filter((f) => answered.has(f) || (BLOCKING.has(f.severity) && !f.preExisting))
+      .map(({ finding, ...f }) => ({ ...f, gate: g.key, round })))
     nits.push(...ofKind(added, g, 'nit'))
     questions.push(...ofKind(added, g, 'question'))
     preExisting.push(...ofKind(v, g, 'preExisting'), ...ofKind(added, g, 'preExisting'))

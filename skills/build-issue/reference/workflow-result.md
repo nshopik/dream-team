@@ -13,7 +13,8 @@
     and is not listed. Do not open the MR; hand the branch
     back.
 - **`ok: false` otherwise** — the implement, gate, simplify or fix stage failed. Report the
-  reason; the branch and its worktree are where the agent left them.
+  reason; an `implement` stop the issue or a recorded decision asked for carries its measured
+  values in `reason`. The branch and its worktree are where the agent left them.
 - **`degraded`** — roster types whose agent call threw, after which every call of that type ran
   as a generic agent; `ponytail:ponytail-review` when that skill was missing or its review
   returned nothing and the Simplify phase was skipped, and `external` when the `externalReview` command was missing or
@@ -27,14 +28,15 @@
   the MR description. `null` → the phase was skipped.
 - **`disputes`** — the fixer refused a finding and gave evidence. Check it yourself. The fixer may
   be right; it may also be rationalizing. Apply the fix or accept the dispute.
-- **`resolved`** — blocking findings a fix round fixed, each with its reviewer (`gate`) and round.
+- **`resolved`** — blocking findings a fix round fixed and questions a re-review answered, each
+  with its reviewer (`gate`) and round.
 - **`nitFindings`** — every nit the reviewers raised. **`nitFix`** — what the fixer did with
   them, in a fix round or one pass after review, with no re-review: `addressed` it fixed,
   `disputed` it skipped with a reason.
   Apply the skipped ones worth applying, drop the rest. `null` → no nits.
-- **`questions`** — genuine questions reviewers raised, each with its reviewer (`gate`) and
-  `file`; they never block and never reach the fixer. Returned on an `ok` result, a `handBack`,
-  a `fix` stage failure, or a `gate` stage failure after a fix round.
+- **`questions`** — genuine questions reviewers raised and no re-review answered, each with its
+  reviewer (`gate`) and `file`; they never block and never reach the fixer. Returned on an `ok`
+  result, a `handBack`, a `fix` stage failure, or a `gate` stage failure after a fix round.
 - **`preExisting`** — findings on a defect already at the base ref that the change neither
   introduces, newly reaches nor worsens, each with its reviewer (`gate`) and any `file`; they never
   block and never reach the fixer. Merge entries for the same defect and skip any defect also in

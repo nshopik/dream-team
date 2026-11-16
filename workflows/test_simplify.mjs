@@ -13,7 +13,7 @@ const args = { issue: '1', branch: 'issue-1', base: 'abc1234', gateCommands: ['t
 // domainRuns: the same for the domain reviewer, fix-diff reviews included, which passes once they run out. fixes: fix-round replies, then defaults.
 // status: the gate's `git status --porcelain` lines; the nth gate run reports head gate<n>. nullOnce: labels whose next call returns null, once per listing.
 // throwFor: agent types whose dispatch throws. extra: more loop args.
-async function run(review, cuts, { aspects = ['code'], gateFails = 0, externalReview, externalRuns = [], domainRuns = [], fixes = [], redEvidence = '', status = [], nullOnce = [], throwFor = [], extra = {} } = {}) {
+async function run(review, cuts, { aspects = ['code'], gateFails = 0, externalReview, externalRuns = [], domainRuns = [], fixes = [], redEvidence = '', implement = { committed: true, summary: '' }, status = [], nullOnce = [], throwFor = [], extra = {} } = {}) {
   const labels = []
   const prompts = {}
   const types = {}
@@ -31,7 +31,7 @@ async function run(review, cuts, { aspects = ['code'], gateFails = 0, externalRe
     prompts[opts.label] = prompt
     types[opts.label] = opts.agentType
     schemas[opts.label] = opts.schema
-    if (opts.phase === 'Implement') return { committed: true, summary: '', redEvidence }
+    if (opts.phase === 'Implement') return { ...implement, redEvidence }
     if (opts.label.startsWith('build-fix:')) return { committed: true, summary: '' }
     if (opts.phase === 'Gate') return { passed: gateFails-- <= 0, summary: '', changedFiles: [], status, aspects, head: `gate${++gateRuns}` }
     if (opts.label.startsWith('simplify:')) return review
@@ -89,6 +89,8 @@ const rows = [
   { name: 'gate failure after a degraded reviewer', review: loaded([], 0),
     opts: { throwFor: ['dream-team:sre-engineer'], domainRuns: [verdict(worsened)], nullOnce: ['gate:#1:fix1', 'gate:#1:fix1'] },
     ok: false, stage: 'gate', fixRan: false, degraded: ['dream-team:sre-engineer'] },
+  { name: 'implementer stops on a failing check', review: loaded([], 0), opts: { implement: { committed: false, summary: 'test fails: p99 412ms' } },
+    ok: false, stage: 'implement', reason: 'test fails: p99 412ms', fixRan: false },
 ]
 
 for (const row of rows) {
@@ -101,6 +103,7 @@ for (const row of rows) {
     assert.deepEqual(result.simplify, row.simplify, row.name)
   } else {
     assert.equal(result.stage, row.stage, row.name)
+    if (row.reason) assert.equal(result.reason, row.reason, `${row.name}: reason`)
     if (row.preExisting) assert.deepEqual(result.preExisting, row.preExisting, `${row.name}: preExisting`)
   }
   console.log(`PASS ${row.name}`)
@@ -139,6 +142,8 @@ const fixDiffBlocks = () => ({ externalReview: cmd, externalRuns: [{ ran: true, 
 const promptRows = [
   { name: 'implementer stops at the Done-when checks', label: 'impl:#1', rule: 'stop once each of its checks holds and every gate command is green' },
   { name: 'implementer splits only independent changes', label: 'impl:#1', rule: 'commit each change separately under its own subject' },
+  { name: 'implementer stops when the issue says to', label: 'impl:#1', rule: 'overrides the rule to get every gate command green' },
+  { name: 'implementer stops before reversing a recorded decision', label: 'impl:#1', rule: 'reverses a decision an earlier commit body on the branch records is not an assumption' },
   { name: 'gate is read-only and lists its allowed commands', label: 'gate:#1', rule: 'The gate is read-only. Run only the commands written below — `git status`, the gate commands, `git diff`, `git rev-parse` and any aspects pipeline — each once, in order.' },
   { name: 'build-fix commits fixups', label: 'build-fix:#1:r1', rule: fixup, opts: { gateFails: 1 } },
   { name: 'build-fix commits a pre-existing defect plainly', label: 'build-fix:#1:r1', rule: preexisting, opts: { gateFails: 1 } },
@@ -151,7 +156,7 @@ const promptRows = [
   { name: 'domain lens checks each Done-when bullet', label: 'review:domain', rule: 'check each of its checks on its own by reading, cite what you read, and say in your summary whether each one holds' },
   { name: 'domain lens cites its source', label: 'review:domain', rule: 'cite what you read — file and line' },
   { name: 'retry after a null result checks earlier commits', label: 'impl:#1', rule: 'may already have committed part of it', opts: { nullOnce: ['impl:#1'] } },
-  { name: 'lens may rate a question', label: 'review:dream-team:architect-reviewer', rule: 'as question: it goes to the user and never blocks the MR' },
+  { name: 'lens may rate a question', label: 'review:dream-team:architect-reviewer', rule: 'as question: it goes to the user unless a re-review answers it, and never blocks the MR' },
   { name: 'lens marks only a defect the change leaves alone as pre-existing', label: 'review:dream-team:architect-reviewer', rule: 'the change neither introduces, newly reaches nor worsens it', preExistingIn: 'findings' },
   { name: 'lens rates a defect the change worsens like any other', label: 'review:dream-team:architect-reviewer', rule: 'is a normal finding, rated and blocking like any other' },
   { name: 'external reviewer may mark a finding pre-existing', label: 'review:external', rule: 'the change neither introduces, newly reaches nor worsens it', opts: extOnce(), preExistingIn: 'findings' },
@@ -164,6 +169,8 @@ const promptRows = [
   { name: 'fix round carries the nits', label: 'fix:#1:r1', rule: 'Reviewers also raised these nits', schemaNits: true, opts: { externalReview: cmd,
     externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }],
     domainRuns: [{ summary: '', findings: [{ severity: 'nit', description: 'rename n', file: 'a.js' }] }] } },
+  { name: 're-review numbers its prior findings', label: 're-review:domain:r1', rule: '2. [question] should a timeout count as a retry?', preExistingIn: 'resolved',
+    opts: { domainRuns: [verdict({ severity: 'question', description: 'should a timeout count as a retry?' }, worsened), { summary: '', findings: [], resolved: [{ ...worsened, finding: 1 }] }] } },
   { name: 're-review reads the fix diff', label: 're-review:external:r1', rule: '`git diff gate1..HEAD`', opts: extOnce() },
   { name: 'passed reviewer reviews the fix diff', label: 'fixdiff:dream-team:sre-engineer:r1', rule: '`git diff gate1..HEAD`', opts: extOnce() },
   { name: 'fix-diff nit joins the next fix round', label: 'fix:#1:r2', rule: 'rename n', opts: fixDiffBlocks() },
@@ -181,7 +188,12 @@ for (const row of promptRows) {
   assert.equal(result.ok, true, row.name)
   assert.ok(prompts[row.label].includes(row.rule), row.name)
   if ('schemaNits' in row) assert.equal('nits' in schemas[row.label].properties, row.schemaNits, `${row.name}: nits in schema`)
-  if (row.preExistingIn) assert.ok('preExisting' in schemas[row.label].properties[row.preExistingIn].items.properties, `${row.name}: preExisting in schema`)
+  if (row.preExistingIn) {
+    const item = schemas[row.label].properties[row.preExistingIn].items.properties
+    assert.ok('preExisting' in item, `${row.name}: preExisting in schema`)
+    assert.equal(item.file.description, 'repo-relative path, e.g. src/main.rs', `${row.name}: file is repo-relative`)
+    if (row.preExistingIn === 'resolved') assert.ok(schemas[row.label].properties.resolved.items.required.includes('finding'), `${row.name}: finding required`)
+  }
   console.log(`PASS ${row.name}`)
 }
 
@@ -239,6 +251,29 @@ const externalRows = [
   { name: 'prior finding a re-review re-marks pre-existing is returned, not lost',
     opts: { domainRuns: [verdict(worsened), { summary: '', findings: [pre], resolved: [] }] },
     reviewer: false, agents: 0, degraded: [], fixRounds: 1, resolved: [], prompts: [], preExisting: [{ ...pre, gate: 'domain' }] },
+  { name: 'question a re-review resolves leaves questions for resolved',
+    opts: { domainRuns: [verdict(pre, question, worsened), { summary: '', findings: [], resolved: [{ ...worsened, finding: 1 }, { ...question, finding: 2 }] }] },
+    reviewer: false, agents: 0, degraded: [], fixRounds: 1, prompts: [], preExisting: [{ ...pre, gate: 'domain' }],
+    resolved: [{ ...worsened, gate: 'domain', round: 1 }, { ...question, gate: 'domain', round: 1 }] },
+  { name: 'question reworded in round 1 and resolved in round 2 leaves questions',
+    opts: { domainRuns: [verdict(worsened, question), { summary: '', findings: [worsened, { ...question, description: 'does a timeout count as a retry?' }], resolved: [] },
+      { summary: '', findings: [], resolved: [{ ...worsened, finding: 1 }, { ...question, finding: 2 }] }] },
+    reviewer: false, agents: 0, degraded: [], fixRounds: 2, prompts: [],
+    resolved: [{ ...worsened, gate: 'domain', round: 2 }, { ...question, gate: 'domain', round: 2 }] },
+  { name: 'question added on a re-review and resolved in the next leaves questions',
+    opts: { domainRuns: [verdict(worsened), { summary: '', findings: [worsened], resolved: [], added: [question] },
+      { summary: '', findings: [], resolved: [{ ...worsened, finding: 1 }, { ...question, finding: 2 }] }] },
+    reviewer: false, agents: 0, degraded: [], fixRounds: 2, prompts: [],
+    resolved: [{ ...worsened, gate: 'domain', round: 2 }, { ...question, gate: 'domain', round: 2 }] },
+  { name: 'question one reviewer resolves stays for the other that asked it',
+    opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [question] }],
+      domainRuns: [verdict(worsened, question), { summary: '', findings: [], resolved: [{ ...worsened, finding: 1 }, { ...question, finding: 2 }] }] },
+    reviewer: true, agents: 2, degraded: [], fixRounds: 1, prompts: ['review:external'],
+    resolved: [{ ...worsened, gate: 'domain', round: 1 }, { ...question, gate: 'domain', round: 1 }], questions: [{ ...question, gate: 'external' }] },
+  { name: 'question a re-review neither resolves nor repeats stays in questions',
+    opts: { domainRuns: [verdict(worsened, question), { summary: '', findings: [], resolved: [{ ...worsened, finding: 1 }] }] },
+    reviewer: false, agents: 0, degraded: [], fixRounds: 1, prompts: [],
+    resolved: [{ ...worsened, gate: 'domain', round: 1 }], questions: [{ ...question, gate: 'domain' }] },
   { name: 'pre-existing finding from a fix-diff review is returned, not fixed', opts: { ...extOnce(), domainRuns: [verdict(), verdict(pre)] },
     reviewer: true, agents: 2, degraded: [], fixRounds: 1, resolved: [{ ...extFinding, gate: 'external', round: 1 }], prompts: ['review:external'], preExisting: [{ ...pre, gate: 'domain' }] },
 ]
