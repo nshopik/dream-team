@@ -58,6 +58,9 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Fixed
 
+- `build-issue-loop` moves a question a re-review answers from `questions` to `resolved`, and the `build-issue` and `assemble-meta` reports list each distinct question once with every reviewer that asked it.
+- `build-issue-loop`'s implementer commits nothing and returns `committed: false` when an issue or note says to stop on a failing check, or when a choice would reverse a decision an earlier commit body on the branch records.
+- `build-issue-loop` reviewers give each finding's `file` as a repo-relative path.
 - `build-issue-loop` returns `degraded` and `untrackedPaths` on every result, including an implement, gate, simplify or fix stage failure.
 - `scope-mr` allows before/after measurements in an MR/PR description, matching `build-issue`, which puts lab numbers there.
 - `scope-commit` and the git-context hook say to amend a commit only for a late change the user asks for on an open MR/PR.

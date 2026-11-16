@@ -421,8 +421,8 @@ The report carries only what the user must know or act on.
 - Name each `degraded` roster type, and each dead reviewer the hand-back `<why>` does not name.
 - No MR/PR and `untrackedPaths` non-empty → list them under one bold label.
 - Name each dispute you settled, which way, and why.
-- List each `questions` entry as a sub-bullet of one `**Questions:**` bullet, with its reviewer and
-  location.
+- List each distinct question in `questions` as one sub-bullet of one `**Questions:**` bullet,
+  naming every reviewer that asked it, and its location.
 - Name each adjacent fix committed on the branch by its subject, one line each.
 - Name each issue filed for an adjacent defect by its link, one line each, never the defect itself.
 - Name each adjacent defect that could not be filed, and why, one line each.
@@ -451,7 +451,7 @@ Layout, with sections that have nothing to report left out:
 - **Dispute accepted:** <finding> — <why>
 - **Lab:** <verdict>
 - **Questions:**
-  - <question> — <reviewer>[, <file>]
+  - <question> — <reviewer>[, <reviewer>…][, <file>]
 
 **Lab, master vs branch:**
 
