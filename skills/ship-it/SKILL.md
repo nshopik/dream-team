@@ -43,13 +43,21 @@ description: >-
 
 ## 2. Bump
 
-- One MR: bump each version file, rename the CHANGELOG `[Unreleased]` to `[<version>] - <date>`
-  and add an empty `[Unreleased]` above it.
+- One commit: bump each version file, rename the CHANGELOG `[Unreleased]` to
+  `[<version>] - <date>` and add an empty `[Unreleased]` above it.
+- Called from a `milestone-close` offer while that close's docs MR is open → push the commit to
+  that MR, then read its state again; else, or merged without the commit, open one MR with it.
 
 ## 3. Tag
 
-- `CLAUDE.md` or `AGENTS.md` forbids tagging → no tag; this wins over the two lines below.
+- `CLAUDE.md` or `AGENTS.md` forbids tagging → no tag; this wins over the lines below.
+- Called from a `milestone-close` offer → tell the user you wait for the MR to merge, then start a
+  Bash `run_in_background` poll, every 30s through the host's tooling skill, that exits on
+  `merged` or `closed`, never on "not open".
+- The poll exits `closed`, or the merged MR lacks the bump commit → push no tag and report why
+  in one line.
 - Once that MR merges and the version came as the skill argument → create and push a
-  `v<version>` tag on its merge commit without asking.
+  `v<version>` tag on its merge commit without asking; from a `milestone-close` offer, its
+  message names the milestone and you report it in one line.
 - Once that MR merges and the version came any other way → offer a `v<version>` tag on its merge
   commit.

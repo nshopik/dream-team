@@ -44,23 +44,25 @@ Planning stays explicit, at issue size, because you review every plan.
   project choice, independent of the version scheme: Kubernetes and the Linux kernel release on a
   timeline, Kubernetes under SemVer, and CalVer projects can gate on features. Continuous
   delivery, every merge a release with no version milestones, is out of scope.
-- Versions are `0.x` before the MVP and CalVer `YY.MM.MICRO` from it on: a project that ships
-  often and makes no API promise gets nothing from major and minor numbers, and a date says when
-  the release shipped. The form stays SemVer-parseable and sorts above any `0.x`. The last
-  release's version, its tag or else the version file, picks the scheme, so a SemVer repo past
-  1.0 stays SemVer until the user names a CalVer version.
+- Versions are `0.x` before the MVP and CalVer `YY.MM.MICRO` from it on, once the user names
+  `<YY.MM>.0` in reply to a release offer: a project that ships often and makes no API promise
+  gets nothing from major and minor numbers, and a date says when the release shipped. The form
+  stays SemVer-parseable and sorts above any `0.x`. The last release's version, its tag or else
+  the version file, picks the scheme, so a SemVer repo past 1.0 stays SemVer until the user names
+  a CalVer version.
 - A ROADMAP tracks only `M<n>` milestones and `planned` rows: pre-MVP milestones whose exit gates
   depend on each other. After the MVP a CalVer project runs version milestones as a release
   train, and each one's `Exit:`, `Gate:` and `Depends on:` fit in its tracker description, so a
   row only copied them. The old rule, rows whenever two milestones were open, lost: a project
   planning several releases ahead keeps each one's plan in its milestone description.
-- Release stays user-approved in both styles: `milestone-close` bumps the next version in the
-  docs MR at every close, `M<n>` and version milestone alike, and releases between closes happen
+- Release stays user-approved in both styles: the `milestone-close` report offers the next
+  version at every close, `M<n>` and version milestone alike, and releases between closes happen
   through `ship-it`. A milestone close is the release point for most projects; a pre-1.0 opt-in
-  line left the rest closing milestones with no release. The docs MR review is the release
-  approval and `milestone-close` pushes the tag once it merges; a version proposal and a tag
-  offer asked twice for one release. The first CalVer release and a SemVer major stay proposals:
-  there the version itself is the choice.
+  line left the rest closing milestones with no release. A yes or a named version runs `ship-it`
+  with it as the argument: the bump joins the docs MR while it is open and the tag is pushed once
+  the MR merges, one reply for version and tag. No reply releases nothing. The close keeps no
+  version rules of its own: its CalVer-after-MVP proposal stopped a SemVer `0.x` close; a scheme
+  change or a major release happens when the user names the version.
 - This repo pilots a bugfix-only window for 26.12, from 2026-12-15 to its due date.
   - `bug` means a skill or agent did the wrong thing in a real run; a wished-for capability
     goes to the next milestone.
@@ -76,8 +78,8 @@ Planning stays explicit, at issue size, because you review every plan.
   - At 26.12 close, read the milestone comment and decide whether to keep the window, change it
     or offer it as a plugin option.
 - `milestone-close` asks only for what leaves the docs MR or changes agent rules; drift fixes,
-  ROADMAP status, facts, backed spec notes and the release ride in the docs MR, whose review
-  approves them. A numbered approval per page edit asked twice for one decision.
+  ROADMAP status, facts and backed spec notes ride in the docs MR, whose review approves them.
+  A numbered approval per page edit asked twice for one decision.
 - Milestones are `M<n>`, not a bare integer: "milestone 5" reads badly in prose and collides
   with counts ("all 5 sites"). One generic prefix beats a per-project codename; the repo name
   disambiguates the rare cross-project mention.

@@ -16,7 +16,7 @@ flowchart TD
   S5 -->|next milestone| S2
   S5 -->|gaps| S3
   S5 -->|kill-gate failed| S0
-  S5 -.->|you approve| S6(["6 · Release"])
+  S5 -.->|you accept the offer| S6(["6 · Release"])
   SI(["Brainstorm"]) --> S0
   SI -.->|issue| S2
   classDef gate stroke:#d98a2b,stroke-width:2px
@@ -25,7 +25,7 @@ flowchart TD
 ```
 
 Amber: exit gates. Red: loop-backs from a failed gate. Dotted: side entries and the
-user-approved release.
+release you accept.
 
 ## Walkthrough
 
@@ -195,28 +195,28 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
      ready to become tracker milestones, facts from its merged MRs that `docs/development.md`
      lacks, `CLAUDE.md` and `CLAUDE.local.md` lines to cut (with the lab host or tool change that
      would fix the gotcha, where one could), and `CLAUDE.local.md` lines to promote to
-     `CLAUDE.md`, and the next release (step 6). Each new milestone, cut and promotion is one
-     proposal for you to approve or reject; drift fixes, facts, ROADMAP status and the release
-     go straight to the docs MR.
+     `CLAUDE.md`. Each new milestone, cut and promotion is one proposal for you to approve or
+     reject; drift fixes, facts and ROADMAP status go straight to the docs MR.
   4. Applies what you approved: moves, one docs MR with `docs-editor`'s drift fixes, the facts
-     and the ROADMAP update, milestone closed, the next milestones created, and the release
-     (step 6). A proposal that changes `CLAUDE.md` holds the docs MR until you answer the
-     proposals.
-- You: the gap issues, the triage table, the new milestones, the cuts, the promotions and a
-  first CalVer or SemVer major release proposal are your decisions; the docs MR review covers the
-  rest, any other release included.
+     and the ROADMAP update, milestone closed, and the next milestones created. A proposal that
+     changes `CLAUDE.md` holds the docs MR until you answer the proposals.
+  5. Ends its report with an offer of the next release (step 6).
+- You: the gap issues, the triage table, the new milestones, the cuts, the promotions and the
+  release offer are your decisions; the docs MR review covers the rest.
 
 ### 6. Release
 
-- Agent: at every milestone close, releases the next version: `0.x` before the MVP, CalVer
-  `YY.MM.MICRO` from the MVP on (`26.11.0`, then `26.11.1`), the next minor in a SemVer repo past
-  1.0. The docs MR bumps each version file and renames the CHANGELOG `[Unreleased]` section to
-  the new version, where they exist, in a commit of its own; once it merges, the agent pushes a
-  tag on its merge commit, unless the project's `CLAUDE.md` forbids tagging. CI builds the
-  release from the tag. The first CalVer release and a SemVer major milestone are proposed first.
-- You: merging the docs MR approves the release; ask on it to drop the bump to decline. Releases
-  between closes, and releases of a project without milestones, are yours to ask for: "cut a
-  release" runs `ship-it`.
+- Agent: every milestone close report offers the next version in the last release's scheme, as
+  `ship-it` computes it: `0.4.0` after `0.3.0`, `26.11.1` after `26.11.0`.
+- You: say yes, or name another version; naming one is how a scheme change or a major release
+  happens. No reply: no release.
+- Agent: runs `ship-it` with that version. It bumps each version file and renames the CHANGELOG
+  `[Unreleased]` section to the new version, where they exist, in one commit: in the docs MR
+  while it is open, else in an MR of its own. It says it waits for the merge, then pushes a tag
+  on the merge commit without asking, unless the project's `CLAUDE.md` forbids tagging. CI
+  builds the release from the tag.
+- Releases between closes, and releases of a project without milestones, are yours to ask for:
+  "cut a release" runs `ship-it`.
 
 ## Where your time goes
 
@@ -228,4 +228,4 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
 | 2 | Is anything missing from the issue list; design and scope choices `triage-issue` asks |
 | 3 | Which issue is next; triage and reviewer-question dialogs, only when a decision is open |
 | 4 | Read the MR, note what you learned, merge |
-| 5 | Gap issues to file; close or move per leftover issue; new milestones; each cut and promotion; a first CalVer or SemVer major release |
+| 5 | Gap issues to file; close or move per leftover issue; new milestones; each cut and promotion; yes or another version to the release offer |
