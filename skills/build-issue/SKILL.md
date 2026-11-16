@@ -35,13 +35,8 @@ Fetch body, title, labels and discussion — `gh issue view <n> --json title,bod
 `glab issue view <n> --comments --output json -P 100`, or whatever the host's tooling skill says to
 use instead.
 
-A `Meta:` issue is not a work item. Pick its next child:
-
-- Read only the checklist's unticked links to open child issues; skip plain-text lines.
-- Drop each child with a `Blocked by` issue still open.
-- Take the oldest (lowest-numbered) child left, say which, and run the rest of this skill on it.
-- No unticked open child → report that the Meta issue has no work left, and stop.
-- Every one blocked → report each with its open blockers, and stop.
+- A `Meta:` issue is not a work item → stop with "run `assemble-meta #<n>` for all its children,
+  or `build-issue #<child>` for one".
 
 ## 2. Triage: is this actionable without the user?
 
