@@ -49,7 +49,7 @@ async function run(review, cuts, { aspects = ['code'], gateFails = 0, externalRe
 }
 
 const cut = (tag) => ({ tag, location: 'latency.py:L3', cut: `${tag} cut`, replacement: 'statistics.median' })
-const loaded = (findings, net) => ({ skillLoaded: true, findings, net })
+const loaded = (findings, net) => ({ skillLoaded: true, craftLoaded: true, findings, net })
 const dispute = { finding: 'delete cut', reason: 'main() calls it' }
 
 const verdict = (...findings) => ({ summary: '', findings })
@@ -57,8 +57,16 @@ const leanSimplify = { net: 0, applied: [], disputed: [], unhandled: 0 }
 const pre = { severity: 'important', description: 'shutdown leaks the lock', file: 'lock.js', preExisting: true }
 const worsened = { severity: 'important', description: 'the new retry loop now reaches the unguarded close', file: 'lock.js', preExisting: false }
 const rows = [
-  { name: 'skill missing', review: { skillLoaded: false, findings: [], net: 0 },
-    ok: true, simplify: null, degraded: ['ponytail:ponytail-review'], fixRan: false },
+  { name: 'ponytail-review missing, craft-rules still judges', review: { skillLoaded: false, craftLoaded: true, findings: [cut('craft')], net: 0 },
+    cuts: { committed: true, addressed: ['craft cut'], disputed: [], summary: '' },
+    ok: true, simplify: { net: 0, applied: ['craft cut'], disputed: [], unhandled: 0 }, degraded: ['ponytail:ponytail-review'], fixRan: true },
+  { name: 'craft-rules missing', review: { skillLoaded: true, craftLoaded: false, findings: [], net: 0 },
+    ok: true, simplify: leanSimplify, degraded: ['dream-team:craft-rules'], fixRan: false },
+  { name: 'both skills missing', review: { skillLoaded: false, craftLoaded: false, findings: [], net: 0 },
+    ok: true, simplify: null, degraded: ['ponytail:ponytail-review', 'dream-team:craft-rules'], fixRan: false },
+  { name: 'craft-rules break on a lean diff', review: loaded([cut('craft')], 0),
+    cuts: { committed: true, addressed: ['craft cut'], disputed: [], summary: '' },
+    ok: true, simplify: { net: 0, applied: ['craft cut'], disputed: [], unhandled: 0 }, degraded: [], fixRan: true },
   { name: 'lean', review: loaded([], 0),
     ok: true, simplify: leanSimplify, degraded: [], fixRan: false },
   { name: 'one applied, one disputed', review: loaded([cut('stdlib'), cut('delete')], 9),
@@ -156,6 +164,14 @@ const promptRows = [
   { name: 'domain lens reads the source from CLAUDE.md or AGENTS.md', label: 'review:domain', rule: 'invariant this project\'s CLAUDE.md or AGENTS.md names' },
   { name: 'domain lens checks each Done-when bullet', label: 'review:domain', rule: 'check each of its checks on its own by reading, cite what you read, and say in your summary whether each one holds' },
   { name: 'domain lens cites its source', label: 'review:domain', rule: 'cite what you read — file and line' },
+  { name: 'implementer loads craft-rules', label: 'impl:#1', rule: 'Load the `dream-team:craft-rules` skill', absent: 'table-driven' },
+  { name: 'implementer loads scope-commit', label: 'impl:#1', rule: 'load the `scope-commit` skill' },
+  { name: 'build-fix loads craft-rules', label: 'build-fix:#1:r1', rule: 'Load the `dream-team:craft-rules` skill', opts: { gateFails: 1 } },
+  { name: 'simplify judges against craft-rules', label: 'simplify:#1', rule: 'load the `dream-team:craft-rules` skill' },
+  { name: 'simplify-fix loads craft-rules', label: 'simplify-fix:#1', rule: 'Load the `dream-team:craft-rules` skill', review: loaded([cut('stdlib')], 4),
+    cuts: { committed: true, addressed: ['stdlib cut'], disputed: [], summary: '' } },
+  { name: 'fix round loads craft-rules', label: 'fix:#1:r1', rule: 'Load the `dream-team:craft-rules` skill', opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] } },
+  { name: 'nit fixer loads craft-rules', label: 'fix:#1:nits', rule: 'Load the `dream-team:craft-rules` skill', schemaNits: false, opts: { domainRuns: [{ summary: '', findings: [{ severity: 'nit', description: 'rename n', file: 'a.js' }] }] } },
   { name: 'retry after a null result checks earlier commits', label: 'impl:#1', rule: 'may already have committed part of it', opts: { nullOnce: ['impl:#1'] } },
   { name: 'lens may rate a question', label: 'review:dream-team:architect-reviewer', rule: 'as question: it goes to the user unless a re-review answers it, and never blocks the MR' },
   { name: 'lens marks only a defect the change leaves alone as pre-existing', label: 'review:dream-team:architect-reviewer', rule: 'the change neither introduces, newly reaches nor worsens it', preExistingIn: 'findings' },
@@ -188,6 +204,7 @@ for (const row of promptRows) {
   const { result, prompts, schemas } = await run(row.review || lean, row.cuts, row.opts)
   assert.equal(result.ok, true, row.name)
   assert.ok(prompts[row.label].includes(row.rule), row.name)
+  if (row.absent) assert.ok(!prompts[row.label].includes(row.absent), `${row.name}: no ${row.absent}`)
   if ('schemaNits' in row) assert.equal('nits' in schemas[row.label].properties, row.schemaNits, `${row.name}: nits in schema`)
   if (row.preExistingIn) {
     const item = schemas[row.label].properties[row.preExistingIn].items.properties

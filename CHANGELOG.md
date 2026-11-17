@@ -9,6 +9,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - The README gains a "Start here" section with one command per situation.
 - In a clone not marked own, `scope-issue` writes issues to local `.dream-team/issues/` files, `build-issue` builds from them and `ask-team` reads them.
+- The `craft-rules` skill holds the build rules for a code change (scope, error handling, where the change goes, comments, option docs, tests); `build-issue-loop`'s implementer, build-fix, simplify-fix, review-fix and nit-fix agents load it before their first edit, and its simplify review judges the diff against it.
 
 ### Changed
 
@@ -16,6 +17,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - A decision record lands in the commit of the change it records: `scope-issue` states the decided choice in the issue and opens no docs MR, `build-issue` no longer stacks the issue branch on a `decision-` branch, and `brainstorm` no longer offers a decision-record path: a settled choice becomes an issue.
 - **Upgrade note:** an issue whose decision docs MR opened before this release is finished by hand: merge or close that docs MR and delete its `decision-` branch and worktree.
 - `qa-review`'s domain lens runs in every project with a `CLAUDE.md`, `AGENTS.md` or README, names the project's domain, checks the code in scope against what a change in that domain must get right, and raises as questions what only the owner can settle.
+- **Breaking:** `/dream-team:friction` with no argument scans only the current session, its subagents and its workflow runs, reports every hit and lists retro improvement candidates by severity; `/dream-team:friction all` runs the cached scan of every past `build-issue-loop` run, and both flag an agent that skipped a `craft-rules` or `scope-commit` load its prompt asks for.
 - `build-issue-loop` wraps the issue body and the orchestrator notes in `<issue_body>` and `<orchestrator_notes>` tags in every agent prompt, and a workflow line outside the tags wins over the tagged text.
 
 ### Removed
