@@ -11,6 +11,9 @@
 #         PHASE=generate|grade ./run_baseline.sh
 #         JOBS=3 ./run_baseline.sh
 #         OUT=runs/before PHASE=grade ./run_baseline.sh   (re-grade a run)
+#         RESULT=/abs/result.json ./run_baseline.sh clean-minimal   (another workflow result;
+#           only the layout and closing-line checks judge it: the case's issue, after, other
+#           checks and expectations still describe its own fixture)
 set -euo pipefail
 cd "$(dirname "$0")"
 HERE=$PWD
@@ -25,7 +28,7 @@ ask() {
 # One case's generate prompt, filled from evals.json and its result fixture.
 case_prompt() {
   python3 - "$1" "$HERE" <<'PY'
-import json, sys
+import json, os, sys
 slug, here = sys.argv[1:]
 top = json.load(open('evals.json'))
 e = next(e for e in top['evals'] if e['slug'] == slug)
@@ -41,7 +44,7 @@ tier alone on the first line — research, light or full — then one line namin
     sys.exit()
 kind, steps = e.get('kind'), ''
 if 'result' in e:
-    result = f"{here}/../{e['result']}"
+    result = os.environ.get('RESULT') or f"{here}/../{e['result']}"
     branch = e.get('branch') or json.load(open(result))['branch']
     done = '1-4 are done and step 5 has run up to its questions' if kind == 'steps' else '1-5 are done'
     steps = f"""Steps {done}. The branch is {branch}; gateCommands were {top['gateCommands']}.
@@ -183,7 +186,7 @@ a pass on a report that breaks a rule is worse than useless. Judge only what the
 ask; do not invent extra rules.
 
 The report: $OUT/$slug.md
-The workflow result it reports on: $HERE/files/$slug.result.json
+The workflow result it reports on: ${RESULT:-$HERE/files/$slug.result.json}
 The expectations: the \`expectations\` array of the eval with slug "$slug" in $HERE/evals.json.
 Read that eval's \`after\` too; it says what the orchestrator already did.
 

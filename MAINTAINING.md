@@ -114,6 +114,8 @@ Planning stays explicit, at issue size, because you review every plan.
   at about a fifth of the lens cost (#224). It still ships as an agent.
 - `craft-it` picks no implementer or domain reviewer: specialist implementers made no
   difference (#192), and the domain check is a `qa-review` lens (#225).
+- `craft-it`'s `reference/subagent-loop.md` restates the control flow of `craft-it-loop.js`:
+  stages, caps and branches. A change to one updates the other in the same MR.
 
 ## Building agents
 
