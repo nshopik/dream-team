@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Changed
+
+- `qa-review`'s domain lens runs in every project with a `CLAUDE.md`, `AGENTS.md` or README, names the project's domain, checks the code in scope against what a change in that domain must get right, and raises as questions what only the owner can settle.
+
 ## [26.11.1] - 2026-11-17
 
 ### Added

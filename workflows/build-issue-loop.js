@@ -215,7 +215,7 @@ const FIX_ROUND_SCHEMA = {
 // Roster
 // ---------------------------------------------------------------------------
 
-// qa-review's lenses (skills/qa-review/SKILL.md steps 2 and 4), minus its verify pass and docs-only skip; every lens runs on every review, the domain lens selecting itself in its prompt.
+// qa-review's lenses (skills/qa-review/SKILL.md steps 2 and 4), minus its verify pass, docs-only skip and domain focus; every lens runs on every review, the domain lens selecting itself in its prompt.
 const TEST_LENS = 'dream-team:test-coverage-reviewer'
 const LENSES = ['dream-team:architect-reviewer', 'dream-team:sre-engineer', TEST_LENS]
 
