@@ -1,8 +1,8 @@
 # Issue tracker: local files
 
-A clone where `git config --get dream-team.own` prints anything but `true` keeps its issues in
-local files; it files on the forge tracker only as the last section says. An own clone uses the
-forge tracker only, even when a local file exists. The two never mix.
+A clone where `git config --local --type=bool --get dream-team.own` prints anything but `true` keeps
+its issues in local files; it files on the forge tracker only as the last section says. An own clone
+uses the forge tracker only, even when a local file exists. The two never mix.
 
 ## Home
 

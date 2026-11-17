@@ -29,10 +29,11 @@ Take each of the paths, the file naming and the record template from the first t
 
 ## First writer in an own clone
 
-- Writing a new decision record, spec or ROADMAP, `git config --get dream-team.own` prints
-  `true`, and the project's `CLAUDE.md` or `AGENTS.md` declares none of these conventions → in the
-  same commit as that file, add `docs/CONVENTIONS.md` from the template below and the pointer line
-  to `CLAUDE.md` (to `AGENTS.md` when only that exists).
+- Writing a new decision record, spec or ROADMAP,
+  `git config --local --type=bool --get dream-team.own` prints `true`, and the project's `CLAUDE.md`
+  or `AGENTS.md` declares none of these conventions → in the same commit as that file, add
+  `docs/CONVENTIONS.md` from the template below and the pointer line to `CLAUDE.md` (to `AGENTS.md`
+  when only that exists).
 - `dream-team.own` prints anything else → write neither.
 - `docs/CONVENTIONS.md` records the paths, naming and template the lookup resolved; a ROADMAP row
   only when the repo has one.

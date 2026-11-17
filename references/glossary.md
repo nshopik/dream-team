@@ -14,9 +14,9 @@ The project's agreed terms, kept in a root `GLOSSARY.md`.
 ## Writing an approved term
 
 - `GLOSSARY.md` exists → add the term's entry.
-- No `GLOSSARY.md` and `git config --get dream-team.own` prints `true` → create `GLOSSARY.md` with
-  the entry, and in the same commit add the pointer line to `CLAUDE.md` (to `AGENTS.md` when only
-  that exists).
+- No `GLOSSARY.md` and `git config --local --type=bool --get dream-team.own` prints `true` → create
+  `GLOSSARY.md` with the entry, and in the same commit add the pointer line to `CLAUDE.md` (to
+  `AGENTS.md` when only that exists).
 - No `GLOSSARY.md` and `dream-team.own` prints anything else → write neither.
 - Commit the entry with the spec or decision record that first uses the term.
 - Term used in an issue body alone, and a write above applies → make that write an item of the

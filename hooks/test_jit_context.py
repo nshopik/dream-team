@@ -24,7 +24,7 @@ for upstream in [repo(), repo("false"), repo("maybe")]:
     assert "<upstream_repo>" in c and "/dream-team:setup-dream-team" in c, upstream
     for cmd in ["git commit -m x", "gh pr create -t x"]:
         assert "load scope-commit and scope-mr" in context({"command": cmd}, upstream), cmd
-for d in [repo("true"), tempfile.mkdtemp()]:
+for d in [repo("true"), repo("yes"), repo("1"), tempfile.mkdtemp()]:
     c = context({"command": "git commit -m x"}, d)
     assert "<vcs_workflow>" in c and "<upstream_repo>" not in c, d
 
