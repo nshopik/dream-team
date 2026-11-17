@@ -1,6 +1,6 @@
 export const meta = {
   name: 'craft-it-loop',
-  description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review and build-rules simplify pass, qa-review lenses plus a self-selecting domain lens, bounded fix loop',
+  description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review and build-rules simplify pass, qa-review lenses plus the domain lens, bounded fix loop',
   phases: [
     { title: 'Implement', detail: 'one agent writes the change and commits' },
     { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
@@ -218,7 +218,7 @@ const FIX_ROUND_SCHEMA = {
 // Roster
 // ---------------------------------------------------------------------------
 
-// qa-review's lenses (skills/qa-review/SKILL.md steps 2 and 4), minus its verify pass, docs-only skip and domain focus; every lens runs on every review, the domain lens selecting itself in its prompt.
+// qa-review's lenses (skills/qa-review/SKILL.md steps 2 and 4), minus its verify pass, docs-only skip and no-docs domain skip; every lens runs on every review.
 const TEST_LENS = 'dream-team:test-coverage-reviewer'
 const LENSES = ['dream-team:architect-reviewer', 'dream-team:sre-engineer', TEST_LENS]
 
@@ -406,8 +406,9 @@ function domainPrompt() {
     'Review the branch diff as the domain lens.',
     READ_DIFF,
     DONE_WHEN,
-    'Then find the reference source or invariant this project\'s CLAUDE.md or AGENTS.md names, and a claim in the diff checkable against it. Either one missing → raise no finding on it and say why in your summary.',
-    'Both present → check the claim against that source and cite what you read — file and line.',
+    'Then name this project\'s main domain in one line, as its CLAUDE.md, AGENTS.md, README and the documents they name show it, and read those documents.',
+    'Check the diff against what a change in that domain must get right that a design, reliability or test review does not cover: the reference sources, rules and outside facts those documents name. Cite file and line on both sides.',
+    'Rate as question what the repository cannot settle, such as an owner\'s decision or outside state to confirm.',
     REVIEW_RULES,
   ].join('\n')
 }

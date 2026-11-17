@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Changed
+
+- `craft-it-loop`'s domain lens takes `qa-review`'s domain wording and runs in a project that names no reference source: it names the project's domain, checks the diff against what a change in that domain must get right, and raises as questions what only the owner can settle.
+
 ## [26.11.2] - 2026-11-17
 
 ### Added
