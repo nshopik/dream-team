@@ -1,9 +1,11 @@
 # CLAUDE.md
 
-- Write every skill instruction as an atomic `-` bullet, one condition and one action each; a
-  step's body is instructions too.
+- Write every skill instruction as an atomic `-` bullet, one condition and one action each, except
+  the paragraph case below; a step's body is instructions too.
 - Write an ordered sequence as a numbered list, one action per number.
-- A paragraph may state a section's intent or reason; it never carries a condition or an action.
+- A paragraph may state a section's intent or reason.
+- A paragraph may carry an instruction on how the output reads, with its reason; never one that
+  branches on the run's state (who asked, what a step found).
 - Invariant for reviews: a diff to a `SKILL.md`, its `reference/` files or an `agents/*.md` prompt
   holds every rule-authoring line of this file; a reviewer cites the line a change breaks.
 - Add a skill or agent rule only for a failure seen in a real run or eval; never for a
