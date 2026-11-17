@@ -49,6 +49,8 @@ It changes no code; the filed issue goes through `build-issue`. It marks an own 
 - The tracker has every label in **Label colours** except `area::*`.
 - The tracker has no `type::` label.
 - The project `CLAUDE.md` carries the meaning of every rule in **Project rules** below.
+- The project `CLAUDE.md` or `AGENTS.md` names a reference source, or names rules as a review
+  invariant; a rule it only states is not one.
 - A CHANGELOG's header links the Keep a Changelog version it follows.
 
 ## Project rules
@@ -96,6 +98,13 @@ sets a colour only on a label it creates.
   structure.
 - The project has neither `CLAUDE.md` nor `AGENTS.md` → create `CLAUDE.md` with the project
   rules.
+- The project `CLAUDE.md` or `AGENTS.md` names no reference source or review invariant →
+  draft candidate lines naming, as a review invariant, each rule the file already states that a
+  diff can break, and naming each reference source the repo holds, such as a specs folder or a
+  vendored standard.
+- No such candidate exists → say in that check's step 5 line that the domain lens has
+  nothing to check in this project and that a line naming a reference source or a review
+  invariant would give it one, in place of a fix or a maintenance item.
 - The tracker lacks a label from **Label colours** → create it with its colour and description.
 - The tracker has a `type::<kind>` label, `<kind>` a kind in **Label colours** → swap it for
   `<kind>` on each issue that carries it, then delete the `type::` label.
@@ -126,7 +135,7 @@ sets a colour only on a label it creates.
 4. Run every check. Record pass or fail, with the evidence: issue numbers, file and line.
 5. Report one line per check to the user before changing or filing anything.
 6. All checks pass → say the project is aligned and stop.
-7. No direct fix applies → go to step 13.
+7. No direct fix applies → go to step 12.
 8. Show one combined draft of every direct fix: the `CLAUDE.md` and repo-doc diffs, the labels to
    create, each issue's `type::` to flat kind swap, the `type::` labels to delete, the labels and
    milestone to change per issue, each milestone title,
