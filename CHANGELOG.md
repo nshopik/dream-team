@@ -25,6 +25,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 ### Fixed
 
 - Skills read the `dream-team.own` marker from the clone's local git config as a boolean, as the `jit-context.py` hook does, so a global marker no longer counts and a local `yes` or `1` does.
+- `assemble-meta` lands each child inside the Meta issue's worktree, so a run started in the main checkout no longer fast-forwards `main`.
 
 ## [26.11.1] - 2026-11-17
 

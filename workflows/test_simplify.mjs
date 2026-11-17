@@ -353,7 +353,7 @@ for (const row of loopArgRows) {
 }
 
 const metaBody = readFileSync(new URL('assemble-meta-loop.js', import.meta.url), 'utf8').replace(/^export /m, '')
-const metaArgs = { meta: { issue: '10', title: 'Meta: rotation', body: 'meta body' }, branch: 'issue-10-rotation', base: 'base0', gateCommands: ['npm test --gate-x'] }
+const metaArgs = { meta: { issue: '10', title: 'Meta: rotation', body: 'meta body' }, branch: 'issue-10-rotation', base: 'base0', worktree: '/home/First Last/repo/.claude/worktrees/issue-10-rotation', gateCommands: ['npm test --gate-x'] }
 const child = (issue, blockedBy = [], extra = {}) => ({ issue, title: `child ${issue}`, body: `body ${issue}`, blockedBy, ...extra })
 
 // fail: child issues whose loop run fails; conflicts: per child, how many of its landings conflict; slow: per child, its loop's delay in ms.
@@ -387,7 +387,7 @@ async function runMeta(children, { fail = [], conflicts = {}, stale = {}, badWor
   async function agent(prompt, opts) {
     const issue = opts.label.match(/#(\d+)/)[1]
     prompts[opts.label] = prompt
-    if (opts.label.startsWith('worktree:')) return { path: `/wt/${issue}`, head: badWorktree.includes(issue) ? 'other' : prompt.match(/git worktree add .* (\S+)`/)[1] }
+    if (opts.label.startsWith('worktree:')) return { path: `/wt/${issue}`, head: badWorktree.includes(issue) ? 'other' : prompt.match(/worktree add .* (\S+)`/)[1] }
     if (opts.label.startsWith('remove:')) return removes.push(opts.label) && ''
     maxLanding = Math.max(maxLanding, ++landing)
     await new Promise((r) => setTimeout(r, 5))
@@ -461,8 +461,10 @@ for (const row of metaRows) {
   for (const [l, p] of Object.entries(prompts)) {
     const issue = l.match(/#(\d+)/)[1]
     const kind = l.split(':')[0]
-    if (kind === 'land') assert.ok(metaArgs.gateCommands.every((g) => p.includes(g)) && p.includes(`git merge --ff-only ${metaArgs.branch}-${issue}`), `${row.name}: ${l} re-gates and fast-forwards`)
-    if (kind === 'remove') assert.ok(p.includes(`git branch -D ${metaArgs.branch}-${issue}`), `${row.name}: ${l} drops the branch`)
+    if (kind === 'land') assert.ok(metaArgs.gateCommands.every((g) => p.includes(g)) && p.includes(`git -C "${metaArgs.worktree}" merge --ff-only ${metaArgs.branch}-${issue}`), `${row.name}: ${l} re-gates and fast-forwards the integration worktree`)
+    if (kind === 'remove') assert.ok(p.includes(`git -C "${metaArgs.worktree}" branch -D ${metaArgs.branch}-${issue}`), `${row.name}: ${l} drops the branch`)
+    assert.ok(!p.includes('the checkout you start in'), `${row.name}: ${l} names no start directory`)
+    if (kind !== 'land') assert.ok(p.includes(`git -C "${metaArgs.worktree}" worktree`), `${row.name}: ${l} runs git in the integration worktree`)
   }
   for (const [i, c] of kids.entries()) {
     const tag = kids.slice(0, i).some((k) => k.issue === c.issue) ? ':rerun' : ''
@@ -497,4 +499,9 @@ for (const row of metaRows) {
     assert.equal(reviews.length, 0, `${row.name}: no review`)
   }
   console.log(`PASS ${row.name}`)
+}
+
+for (const [name, worktree] of [['missing', ''], ['relative', 'rel/wt']]) {
+  await assert.rejects(runMeta([child('11')], { extra: { worktree } }), /args\.worktree/, `meta: ${name} worktree throws`)
+  console.log(`PASS meta: ${name} worktree throws`)
 }
