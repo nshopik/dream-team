@@ -14,7 +14,7 @@ description: >
 - Implement the smallest change that resolves the task.
 - Reuse what is already in the repo before writing anything new.
 - Add no abstraction for a hypothetical requirement.
-- Leave the code around the change as it is: no cleanup.
+- Leave the code around the change as it is: no cleanup beyond the dedup rules in Scope and Tests.
 - Change the code instead of adding a feature flag or a back-compat shim.
 - Dedup that keeps the line count roughly flat → do it; it need not shrink the diff.
 
@@ -56,6 +56,12 @@ comment on the option's own field or constant.
 
 - A bug fix gets a test that reproduces the bug.
 - New behaviour or an exported API change gets a unit or e2e test.
+- A test helper, mock, stub or fixture the change needs → reuse one in the test tree that does the
+  same job.
+- A helper the change would copy from another test file → move it to a shared test module and use
+  it from both files.
+- A path an existing test already covers at another level (unit versus e2e) → extend that test
+  instead of adding a new one.
 - Prefer a new case in an existing table-driven test over a new test function.
 - Convert an existing test to table-driven rather than duplicate it.
 - Mirror realistic data and behaviour.
