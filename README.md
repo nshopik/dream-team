@@ -19,6 +19,15 @@ walkthrough is in [`WORKFLOW.md`](skills/ask-team/WORKFLOW.md).
 4. **MR/PR:** one per issue, implemented, gated and reviewed by agents.
 5. **Milestone close:** only when the exit criterion is met.
 
+Each skill also runs on its own, in any order, without the tracked flow.
+
+## Start here
+
+- **New project:** `/dream-team:setup-dream-team`, then `/dream-team:scope-spec`
+- **Existing tracked project:** `/dream-team:build-issue <issue>`
+- **Upstream or untracked one-off:** `/dream-team:brainstorm`
+- **Not sure:** `/dream-team:ask-team`
+
 ## Contents
 
 ### Skills
@@ -34,8 +43,8 @@ walkthrough is in [`WORKFLOW.md`](skills/ask-team/WORKFLOW.md).
   fork, checks the project against the flow, applies fixes that change no code after one OK,
   commits its doc edits and files one issue for the rest; in an upstream clone it only keeps
   `CLAUDE.local.md` out of git.
-- **[ask-team](skills/ask-team/SKILL.md)**: answers which step or skill fits now, with one
-  command to run.
+- **[ask-team](skills/ask-team/SKILL.md)**: answers which skill fits now, with one command to
+  run and where it sits: its `WORKFLOW.md` step, or its group in the skill map.
 - **[brainstorm](skills/brainstorm/SKILL.md)**: grills a vague idea in rounds of questions, then
   proposes its path.
 - **[scope-spec](skills/scope-spec/SKILL.md)**: the project spec in the repo's specs folder

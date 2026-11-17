@@ -5,8 +5,13 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Added
+
+- The README gains a "Start here" section with one command per situation.
+
 ### Changed
 
+- `ask-team` picks from a skill map that puts every skill in one group (main flow, on-ramp, standalone or precondition), and its reply's `Step:` line becomes `Where:`, naming the `WORKFLOW.md` step for a main-flow skill and the map group for any other.
 - `qa-review`'s domain lens runs in every project with a `CLAUDE.md`, `AGENTS.md` or README, names the project's domain, checks the code in scope against what a change in that domain must get right, and raises as questions what only the owner can settle.
 
 ## [26.11.1] - 2026-11-17
