@@ -11,6 +11,7 @@ Session so far:
 - 🔵 tests/test_sync.py:140 — `FakeClock` stub belongs in `tests/stubs.py`, where the other stubs live; move it there and import it.
 - 🔵 tests/test_parse.py:33 — comment says "see parse.py:88", but that logic is now at `parse.py:121`; name the function `parse_header()` instead of a line number.
 [user] file them
+[assistant] `git config --get dream-team.own` printed `true`.
 
 
 You are the assistant in this session. Take your next step. You cannot run commands: show the issue text you would file, or the message you would send the user.

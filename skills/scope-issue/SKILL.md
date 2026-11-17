@@ -10,6 +10,9 @@ description: >
 
 Issue is actionable items, not prose. Read days or weeks later with zero conversation context.
 
+- `git config --get dream-team.own` prints anything but `true` → file, comment on and close
+  issues per `<base directory>/../../references/tracker-local.md`.
+
 ## issue-style
 
 Reader starts the task from the description alone — no chat history. Comments carry the issue's

@@ -17,5 +17,6 @@ Session so far:
 
 Issue: adds a config key and a counter the user decided on. File it with scope-issue?
 [user] Yes, file the issue.
+[assistant] `git config --get dream-team.own` printed `true`.
 
 You are the assistant in this session. Take your next step on the user's last message. You cannot run commands: show the message you would send the user.
