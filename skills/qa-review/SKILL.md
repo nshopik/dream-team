@@ -1,13 +1,13 @@
 ---
 name: qa-review
 description: >-
-  Reviews design, reliability, test coverage and claims against the project's reference sources
-  with parallel read-only lenses (dream-team's architect-reviewer, sre-engineer and
-  test-coverage-reviewer agents, and a generic domain lens), whose findings the main
-  session merges and deduplicates, with an opt-in verify pass that checks each finding against the
-  code. Reviews the current branch by default, or audits the whole repository, asking the user to
-  pick paths when it maps over ~10K lines of code. Use when the user runs /dream-team:qa-review or
-  asks for a qa-review, audit or verify pass.
+  Reviews design, reliability, test coverage and what the project's domain demands with
+  parallel read-only lenses (dream-team's architect-reviewer, sre-engineer and
+  test-coverage-reviewer agents, and a domain lens that raises owner questions the repository
+  cannot settle), whose findings the main session merges and deduplicates, with an opt-in verify
+  pass that checks each finding against the code. Reviews the current branch by default, or
+  audits the whole repository, asking the user to pick paths when it maps over ~10K lines of code.
+  Use when the user runs /dream-team:qa-review or asks for a qa-review, audit or verify pass.
 disable-model-invocation: true
 argument-hint: "[audit] [verify] [base-ref | path ...]"
 ---
@@ -66,8 +66,7 @@ Lenses: `dream-team:architect-reviewer`, `dream-team:sre-engineer`,
 - Every file in scope is docs or config (Markdown, plain text, YAML, TOML, JSON, INI), and none
   is CI, build, test-runner or feature-flag config or an agent or skill prompt (`SKILL.md`,
   `agents/*.md`) → skip `dream-team:test-coverage-reviewer`.
-- The project's `CLAUDE.md` or `AGENTS.md` names no reference source or invariant, or nothing in
-  scope makes a claim checkable against one → skip `domain`.
+- The project has no `CLAUDE.md`, `AGENTS.md` or README → skip `domain`.
 
 Before launching, list the lenses that run as a bullet list, one bold name per bullet; list each
 skipped lens the same way with its reason.
@@ -90,9 +89,12 @@ Launch one Agent per lens, all in one message, and wait for every report:
 A lens that errors or returns nothing goes in `missing`.
 
 Lens prompt: `<scope>`, a blank line, `Your lens: <focus>`, a blank line, then the rules block.
-Focus: the lens name after its last `:`; for `domain`, `<claim>` checked against
-`<source files>` and `<invariant>`, as the project's `CLAUDE.md` or `AGENTS.md` names
-them; cite file and line on both sides.
+Focus: the lens name after its last `:`; for `domain`, `<domain>`, the project's main domain in
+one line, as its `CLAUDE.md`, `AGENTS.md`, README and the documents they name show it, then: read
+those documents; check the code in scope against what a change in this domain must get right that a
+design, reliability or test review does not cover: the reference sources, rules and outside facts
+those documents name; raise as ❓ what the repository cannot settle, such as an owner's decision
+or outside state to confirm; cite file and line on both sides.
 
 Rules block, verbatim:
 

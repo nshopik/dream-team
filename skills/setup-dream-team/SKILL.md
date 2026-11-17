@@ -102,7 +102,7 @@ sets a colour only on a label it creates.
   draft candidate lines naming, as a review invariant, each rule the file already states that a
   diff can break, and naming each reference source the repo holds, such as a specs folder or a
   vendored standard.
-- No such candidate exists → say in that check's step 5 line that the domain lens has
+- No such candidate exists → say in that check's step 5 line that build-issue's domain lens has
   nothing to check in this project and that a line naming a reference source or a review
   invariant would give it one, in place of a fix or a maintenance item.
 - The tracker lacks a label from **Label colours** → create it with its colour and description.
