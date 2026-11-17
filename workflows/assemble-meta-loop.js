@@ -136,7 +136,7 @@ const review = await workflow(LOOP, {
   body: [META.body, ...finished.map((c) => `## #${c.issue}: ${c.title}\n\n${c.body}`)].join('\n\n'),
   notes: joinNotes(NOTES, ...finished.filter((c) => c.notes).map((c) => `#${c.issue}: ${c.notes}`)),
   redEvidence: done.filter((d) => d.redEvidence).map((d) => `#${d.issue}: ${d.redEvidence}`).join('\n'),
-  branch: BRANCH, base: BASE, gateCommands: GATE_COMMANDS, externalReview: A.externalReview, startAtSimplify: true,
+  branch: BRANCH, base: BASE, worktree: WORKTREE, gateCommands: GATE_COMMANDS, externalReview: A.externalReview, startAtSimplify: true,
 })
 
 return { ok: !!review?.ok, children: done, failed, skipped, review }

@@ -489,7 +489,7 @@ for (const row of metaRows) {
     assert.equal(reviews[0].issue, '10', `${row.name}: review issue`)
     assert.equal(reviews[0].base, 'base0', `${row.name}: review base`)
     assert.equal(reviews[0].branch, metaArgs.branch, `${row.name}: review branch`)
-    assert.equal(reviews[0].worktree, undefined, `${row.name}: review in the session checkout`)
+    assert.equal(reviews[0].worktree, metaArgs.worktree, `${row.name}: review in the integration worktree`)
     for (const id of ['#11', '#12', '#13']) assert.equal(reviews[0].body.includes(id), row.reviewBody.includes(id), `${row.name}: review body ${id}`)
     if (row.reviewStage) assert.equal(result.review.stage, row.reviewStage, `${row.name}: review stage`)
     if (row.reviewNotes) assert.equal(reviews[0].notes, row.reviewNotes, `${row.name}: review notes`)
