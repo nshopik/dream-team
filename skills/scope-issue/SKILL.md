@@ -2,10 +2,10 @@
 name: scope-issue
 description: >
   Writes issue descriptions: a problem paragraph opening with the defect, a proposal, then a
-  `## Done when` section of observable checks, and opens a docs MR with the record of a
-  hard-to-reverse design choice the proposal cites. Use when writing or editing an issue
-  (`gh issue create`, `gh api …/issues`, `glab issue create`, `-f description=`). Commit
-  messages: use `scope-commit`; MR/PR descriptions: use `scope-mr`.
+  `## Done when` section of observable checks, and states a hard-to-reverse design choice the
+  build records in the change's commit. Use when writing or editing an issue (`gh issue
+  create`, `gh api …/issues`, `glab issue create`, `-f description=`). Commit messages: use
+  `scope-commit`; MR/PR descriptions: use `scope-mr`.
 ---
 
 Issue is actionable items, not prose. Read days or weeks later with zero conversation context.
@@ -48,7 +48,7 @@ who knew may be gone.
   `<base directory>/../build-issue/reference/decision-record.md` once decided, its options not yet
   known, or a `## Done when` check with no observable form → run `dream-team:brainstorm`, skipping
   its path proposal and hand-off, until the choice is decided and each check is observable; the
-  issue is the path (Decisions writes its record).
+  issue is the path (Decisions).
 - User asked for the issue in chat, any other open question, milestone included → ask it with
   AskUserQuestion before writing it; write the answers into the issue.
 - Issue found during other work (build-issue, a review, a lab check) → do not prompt; list the
@@ -59,18 +59,9 @@ who knew may be gone.
 ### Decisions
 
 - Proposal carries a decided design choice that passes the test in
-  `<base directory>/../build-issue/reference/decision-record.md` → before filing, write its record
-  at the path, naming and template `<base directory>/../../references/repo-conventions.md`
-  resolves.
-- That reference resolved a non-default convention → put its `Conventions:` line in the reply.
-- Commit the record and the files `repo-conventions.md` and `references/glossary.md` add with
-  it, nothing else, on its own branch per `scope-commit`, push it and open its own docs MR per
-  `scope-mr`.
-- Cut that branch in its own worktree from the fetched tip of the remote's default branch, never
-  from the current checkout: `git worktree add -b decision-<slug>
-  .claude/worktrees/decision-<slug> origin/<default>`.
-- Docs MR open → `git worktree remove .claude/worktrees/decision-<slug>`.
-- The issue cites the record path and the docs MR link at the choice; the body never argues it.
+  `<base directory>/../build-issue/reference/decision-record.md` → state the choice in the
+  proposal and say it gets a decision record in the change's commit; write no record now.
+- The body never argues the choice.
 - A choice still undecided after Open questions has no record: it stays an open question.
 
 ### Research
@@ -184,8 +175,7 @@ hard-wrap: the forge renders a hard line break as a break in the text.
 ### Names
 
 - Describe behaviour in plain words; a backticked code name is the exception.
-- Terms, in the issue and its decision record: follow
-  `<base directory>/../../references/glossary.md`.
+- Terms in the issue: follow `<base directory>/../../references/glossary.md`.
 - User-facing name (flag, config key, metric, exit code, error string) → no limit.
 - Code name (function, type, field — own code or library) → at most three backticked
   occurrences in the whole text.

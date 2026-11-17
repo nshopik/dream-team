@@ -17,8 +17,7 @@ One Meta issue per invocation. Read `<base directory>/../build-issue/SKILL.md` f
 "build-issue step N" below runs as written there, with the Meta issue's number as `<n>`.
 
 You are the orchestrator, as in build-issue: **you do not write the change**. Your only edits
-are build-issue's step-5 edits and a step-3 decision record with the files `repo-conventions.md`
-adds with it. Lab work is yours, per build-issue.
+are build-issue's step-5 edits. Lab work is yours, per build-issue.
 
 ## 1. Read the Meta issue and its children
 
@@ -67,6 +66,8 @@ object:
 
 - `children`: every child step 1 kept; `blockedBy` lists only other children's numbers.
 - A child's `notes`: its tracker decisions and the step-2 answers that settle it. Optional.
+- Build-issue step 4's decision-record line → put it in the `notes` of the one child the
+  decision settles, the first child for a Meta-level decision; never in the top-level `notes`.
 - `notes`, `gateCommands` and `externalReview`: per build-issue step 4.
 - Then report per build-issue step 4.
 

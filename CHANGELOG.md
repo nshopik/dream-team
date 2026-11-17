@@ -12,6 +12,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 ### Changed
 
 - `ask-team` picks from a skill map that puts every skill in one group (main flow, on-ramp, standalone or precondition), and its reply's `Step:` line becomes `Where:`, naming the `WORKFLOW.md` step for a main-flow skill and the map group for any other.
+- A decision record lands in the commit of the change it records: `scope-issue` states the decided choice in the issue and opens no docs MR, `build-issue` no longer stacks the issue branch on a `decision-` branch, and `brainstorm` no longer offers a decision-record path: a settled choice becomes an issue.
+- **Upgrade note:** an issue whose decision docs MR opened before this release is finished by hand: merge or close that docs MR and delete its `decision-` branch and worktree.
 - `qa-review`'s domain lens runs in every project with a `CLAUDE.md`, `AGENTS.md` or README, names the project's domain, checks the code in scope against what a change in that domain must get right, and raises as questions what only the owner can settle.
 
 ## [26.11.1] - 2026-11-17

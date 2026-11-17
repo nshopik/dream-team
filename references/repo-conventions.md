@@ -15,7 +15,8 @@ Take each of the paths, the file naming and the record template from the first t
 - A convention other than a default is used → one line in the chat report, for example
   `Conventions: docs/adr/ (existing folder)` or
   `Conventions: docs/adr/, ADR-NNN-slug.md (CLAUDE.md)`.
-- The decision-record test and the record's own docs MR stay fixed, whatever the repo declares.
+- The decision-record test and the record landing in the change's commit stay fixed, whatever
+  the repo declares.
 
 ## Defaults
 
@@ -60,8 +61,8 @@ Write a record only when all three hold:
 2. Surprising without context: a future reader would ask why it was done this way.
 3. A real trade-off: there were genuine alternatives and one was picked for specific reasons.
 
-A decision that fails the test keeps its rationale in the commit body. A record goes in its own
-docs MR.
+A decision that fails the test keeps its rationale in the commit body. A record goes in the
+commit of the change it records.
 
 ```md
 # {Short title of the decision}

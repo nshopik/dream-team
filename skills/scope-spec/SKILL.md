@@ -22,7 +22,7 @@ disable-model-invocation: true
   `## Open items` entry.
 - Work that fits one issue → no spec.
 - Its decision passes the test in `<base directory>/../build-issue/reference/decision-record.md`
-  → a decision record, in its own docs MR, via `scope-issue` Decisions.
+  → write it into the issue with `scope-issue` Decisions; its record lands in the change's commit.
 - Its decision fails that test → write it into the issue with `scope-issue`.
 - The date goes in the header, never the filename.
 - Header: `**Date:**` and `**Status:**` lines. No branch name.

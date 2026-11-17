@@ -58,8 +58,7 @@ Each skill also runs on its own, in any order, without the tracked flow.
 - **[scope-commit](skills/scope-commit/SKILL.md)**: commit messages in
   [Scoped Commits](https://scopedcommits.com/) format.
 - **[scope-mr](skills/scope-mr/SKILL.md)**: MR/PR descriptions.
-- **[scope-issue](skills/scope-issue/SKILL.md)**: tracker issues (problem, proposal, done when), and
-  the docs MR for a design decision they cite.
+- **[scope-issue](skills/scope-issue/SKILL.md)**: tracker issues (problem, proposal, done when).
 - **[friction](skills/friction/SKILL.md)**: reports agent friction repeated across past
   `build-issue-loop` runs.
 - **[qa-review](skills/qa-review/SKILL.md)**: reviews a branch or audits a repo with parallel

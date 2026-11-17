@@ -2,13 +2,11 @@
 allowed_tools: [Read, Grep, Glob, Skill]
 ---
 
-Use the scope-issue skill, then answer.
+Use the build-issue skill, then answer.
 
 Session so far:
-[user] Last quarter a `terraform apply` in the staging workspace held the shared state lock for 40 minutes and blocked a prod hotfix. I want to stop sharing state between environments.
-[assistant] Two ways: keep one root module with workspaces and give each workspace its own backend through partial config (`-backend-config`), or give each environment its own root module under `envs/<env>/` with its own state file and lock. The second means moving ~120 resources with `terraform state mv` and repeating the provider and backend blocks per environment, but no apply in one environment can ever touch another's state or lock.
-[user] Own root module per environment; the isolation is worth the duplication. File the issue for the split, milestone 26.12.
-[assistant] Read the project CLAUDE.md: it says "Architecture decision records live in `docs/adr/`, named `ADR-NNN-slug.md`, in the Nygard template." The newest is `docs/adr/ADR-007-vault-secrets.md`. `git config --get dream-team.own` printed `true`.
+[user] /dream-team:build-issue 214
+[assistant] Issue #214, "CI: pin Terraform to 1.9.8". Body: "CI installs Terraform with `terraform_version: ~1.9` in `.github/workflows/terraform.yml`, so a new minor lands in CI before any laptop runs it. A newer minor upgrades the shared state file on its first apply, and laptops on 1.9.8 then refuse that state. Proposal: set `terraform_version: 1.9.8` in `.github/workflows/terraform.yml`. Decided: pin an exact version and upgrade CI and laptops together by hand, not a `~>` constraint; it gets a decision record when built. Done when: the workflow file names `1.9.8` and nothing else changes." The MR target is `main`. No `issue-214-*` branch, worktree or open PR exists. The project CLAUDE.md says "Architecture decision records live in `docs/adr/`, named `ADR-NNN-slug.md`, in the Nygard template." The newest is `docs/adr/ADR-007-vault-secrets.md`. `git config --get dream-team.own` printed `true`. CI runs `terraform fmt -check -recursive` and `terraform validate`.
 
 
-You are the assistant in this session. Take your next step on the user's last message. You cannot run commands: show the files you would write, the issue text you would file, or the message you would send the user.
+You are the assistant in this session. Take every step through the commit of the edit. You cannot run commands: show the commands you would run, the files you would write, the commit you would make, and the message you would send the user.
