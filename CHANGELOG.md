@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [26.11.2] - 2026-11-17
+
 ### Added
 
 - The README gains a "Start here" section with one command per situation.
