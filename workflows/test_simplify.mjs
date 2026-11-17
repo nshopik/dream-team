@@ -1,10 +1,10 @@
-// What build-issue-loop does with each Simplify review and externalReview arg, which lenses review, and the prompt rules agents get, and how assemble-meta-loop runs it per child, through stub agents; no claude call.
+// What craft-it-loop does with each Simplify review and externalReview arg, which lenses review, and the prompt rules agents get, and how assemble-meta-loop runs it per child, through stub agents; no claude call.
 // Usage: node test_simplify.mjs
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
-const body = readFileSync(new URL('build-issue-loop.js', import.meta.url), 'utf8').replace(/^export /m, '')
+const body = readFileSync(new URL('craft-it-loop.js', import.meta.url), 'utf8').replace(/^export /m, '')
 const args = { issue: '1', branch: 'issue-1', base: 'abc1234', gateCommands: ['true'] }
 
 // Every other reviewer passes, so the run ends after Review or its fix rounds.
@@ -57,14 +57,14 @@ const leanSimplify = { net: 0, applied: [], disputed: [], unhandled: 0 }
 const pre = { severity: 'important', description: 'shutdown leaks the lock', file: 'lock.js', preExisting: true }
 const worsened = { severity: 'important', description: 'the new retry loop now reaches the unguarded close', file: 'lock.js', preExisting: false }
 const rows = [
-  { name: 'ponytail-review missing, craft-rules still judges', review: { skillLoaded: false, craftLoaded: true, findings: [cut('craft')], net: 0 },
+  { name: 'ponytail-review missing, build-rules still judges', review: { skillLoaded: false, craftLoaded: true, findings: [cut('craft')], net: 0 },
     cuts: { committed: true, addressed: ['craft cut'], disputed: [], summary: '' },
     ok: true, simplify: { net: 0, applied: ['craft cut'], disputed: [], unhandled: 0 }, degraded: ['ponytail:ponytail-review'], fixRan: true },
-  { name: 'craft-rules missing', review: { skillLoaded: true, craftLoaded: false, findings: [], net: 0 },
-    ok: true, simplify: leanSimplify, degraded: ['dream-team:craft-rules'], fixRan: false },
+  { name: 'build-rules missing', review: { skillLoaded: true, craftLoaded: false, findings: [], net: 0 },
+    ok: true, simplify: leanSimplify, degraded: ['dream-team:build-rules'], fixRan: false },
   { name: 'both skills missing', review: { skillLoaded: false, craftLoaded: false, findings: [], net: 0 },
-    ok: true, simplify: null, degraded: ['ponytail:ponytail-review', 'dream-team:craft-rules'], fixRan: false },
-  { name: 'craft-rules break on a lean diff', review: loaded([cut('craft')], 0),
+    ok: true, simplify: null, degraded: ['ponytail:ponytail-review', 'dream-team:build-rules'], fixRan: false },
+  { name: 'build-rules break on a lean diff', review: loaded([cut('craft')], 0),
     cuts: { committed: true, addressed: ['craft cut'], disputed: [], summary: '' },
     ok: true, simplify: { net: 0, applied: ['craft cut'], disputed: [], unhandled: 0 }, degraded: [], fixRan: true },
   { name: 'lean', review: loaded([], 0),
@@ -164,14 +164,14 @@ const promptRows = [
   { name: 'domain lens reads the source from CLAUDE.md or AGENTS.md', label: 'review:domain', rule: 'invariant this project\'s CLAUDE.md or AGENTS.md names' },
   { name: 'domain lens checks each Done-when bullet', label: 'review:domain', rule: 'check each of its checks on its own by reading, cite what you read, and say in your summary whether each one holds' },
   { name: 'domain lens cites its source', label: 'review:domain', rule: 'cite what you read — file and line' },
-  { name: 'implementer loads craft-rules', label: 'impl:#1', rule: 'Load the `dream-team:craft-rules` skill', absent: 'table-driven' },
+  { name: 'implementer loads build-rules', label: 'impl:#1', rule: 'Load the `dream-team:build-rules` skill', absent: 'table-driven' },
   { name: 'implementer loads scope-commit', label: 'impl:#1', rule: 'load the `scope-commit` skill' },
-  { name: 'build-fix loads craft-rules', label: 'build-fix:#1:r1', rule: 'Load the `dream-team:craft-rules` skill', opts: { gateFails: 1 } },
-  { name: 'simplify judges against craft-rules', label: 'simplify:#1', rule: 'load the `dream-team:craft-rules` skill' },
-  { name: 'simplify-fix loads craft-rules', label: 'simplify-fix:#1', rule: 'Load the `dream-team:craft-rules` skill', review: loaded([cut('stdlib')], 4),
+  { name: 'build-fix loads build-rules', label: 'build-fix:#1:r1', rule: 'Load the `dream-team:build-rules` skill', opts: { gateFails: 1 } },
+  { name: 'simplify judges against build-rules', label: 'simplify:#1', rule: 'load the `dream-team:build-rules` skill' },
+  { name: 'simplify-fix loads build-rules', label: 'simplify-fix:#1', rule: 'Load the `dream-team:build-rules` skill', review: loaded([cut('stdlib')], 4),
     cuts: { committed: true, addressed: ['stdlib cut'], disputed: [], summary: '' } },
-  { name: 'fix round loads craft-rules', label: 'fix:#1:r1', rule: 'Load the `dream-team:craft-rules` skill', opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] } },
-  { name: 'nit fixer loads craft-rules', label: 'fix:#1:nits', rule: 'Load the `dream-team:craft-rules` skill', schemaNits: false, opts: { domainRuns: [{ summary: '', findings: [{ severity: 'nit', description: 'rename n', file: 'a.js' }] }] } },
+  { name: 'fix round loads build-rules', label: 'fix:#1:r1', rule: 'Load the `dream-team:build-rules` skill', opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] } },
+  { name: 'nit fixer loads build-rules', label: 'fix:#1:nits', rule: 'Load the `dream-team:build-rules` skill', schemaNits: false, opts: { domainRuns: [{ summary: '', findings: [{ severity: 'nit', description: 'rename n', file: 'a.js' }] }] } },
   { name: 'retry after a null result checks earlier commits', label: 'impl:#1', rule: 'may already have committed part of it', opts: { nullOnce: ['impl:#1'] } },
   { name: 'lens may rate a question', label: 'review:dream-team:architect-reviewer', rule: 'as question: it goes to the user unless a re-review answers it, and never blocks the MR' },
   { name: 'lens marks only a defect the change leaves alone as pre-existing', label: 'review:dream-team:architect-reviewer', rule: 'the change neither introduces, newly reaches nor worsens it', preExistingIn: 'findings' },
@@ -471,7 +471,7 @@ for (const row of metaRows) {
   const { result, calls, events, ontos, removes, prompts, maxRunning, maxLanding } = await runMeta(row.children, row.opts)
   const kids = calls.filter((c) => c.stopAfterGate)
   const reviews = calls.filter((c) => c.startAtSimplify)
-  assert.ok(calls.every((c) => c.name === 'dream-team:build-issue-loop'), `${row.name}: loop`)
+  assert.ok(calls.every((c) => c.name === 'dream-team:craft-it-loop'), `${row.name}: loop`)
   assert.ok(kids.every((c) => c.branch === `${metaArgs.branch}-${c.issue}` && c.worktree === `/wt/${c.issue}`), `${row.name}: child branch and worktree`)
   assert.ok(maxRunning <= 2, `${row.name}: at most two children at once`)
   assert.ok(maxLanding <= 1, `${row.name}: one landing at a time`)

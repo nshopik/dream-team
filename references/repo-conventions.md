@@ -21,7 +21,7 @@ Take each of the paths, the file naming and the record template from the first t
 ## Defaults
 
 - Decision record: `docs/decisions/NNNN-slug.md`, template in
-  [decision-record.md](../skills/build-issue/reference/decision-record.md).
+  [decision-record.md](../skills/craft-it/reference/decision-record.md).
 - Spec: `docs/specs/NNNN-<topic>-design.md`.
 - ROADMAP: `ROADMAP.md`, or `docs/ROADMAP.md` when that one exists.
 - `NNNN`: four digits, the next free number in its folder on the target branch, from `0001`.

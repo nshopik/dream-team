@@ -52,19 +52,19 @@
 - Give a small or pass-through skill or workflow phase stub-agent tests only; add a paid
   headless-claude eval runner only for a large skill or a failure seen in a real run.
 - Before changing who does a step in a skill, read the skill's top-level role rules (e.g.
-  build-issue's "You do not write the change" edit list) and update them in the same change.
+  craft-it's "You do not write the change" edit list) and update them in the same change.
 - A change to a `SKILL.md`, its `reference/` files or an `agents/*.md` prompt → check every
   other line of those files for a contradiction with the change.
 - A new skill, step or workflow that takes over a behaviour → grep the other skills,
   `WORKFLOW.md` and `README.md` for that behaviour, and update or cut each line that still
-  describes it (#567: build-issue kept its Meta child pick after assemble-meta shipped).
+  describes it (#567: craft-it kept its Meta child pick after assemble-meta shipped).
 - Check skill triggering with `skills/scope-commit/evals/run_trigger.sh` (unnamed prompts); the
   other evals name the skill in the prompt and cannot see a description change. Keep its fixture
   repo consistent with each prompt, or the agent stops before loading any skill.
 - In a headless `claude -p` run, pipe the prompt on stdin or put it before `--allowed-tools`; that
   flag is variadic and swallows a trailing prompt ("Input must be provided").
 - Keep research findings mined from local session data (workflow journals, run counts) out of the
-  repo and its issues; report them in chat only, even when build-issue's research tier says to
+  repo and its issues; report them in chat only, even when craft-it's research tier says to
   post a findings comment.
 - Delegate grading of eval reports against a ledger to a subagent (Agent tool); the main session
   only reads the scores and the marks file.

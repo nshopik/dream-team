@@ -1,6 +1,6 @@
 ---
 type: regex
-pattern: '\*\*Recommendation:\*\*[^\n]*build-issue'
+pattern: '\*\*Recommendation:\*\*[^\n]*craft-it'
 ---
 ---
 type: regex

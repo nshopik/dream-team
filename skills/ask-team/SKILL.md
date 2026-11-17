@@ -17,16 +17,16 @@ disable-model-invocation: true
 ## Skill map
 
 Each skill runs alone, in any order, without the tracked flow. A one-off feature in an upstream
-project runs `brainstorm`, `scope-issue` to a local issue file, then `build-issue <n>`, with no
+project runs `brainstorm`, `scope-issue` to a local issue file, then `craft-it <n>`, with no
 milestone.
 
 - **Main flow:** `scope-spec` ([step 0](WORKFLOW.md#0-idea-to-spec-once-per-project)),
   `cut-milestones` ([step 1](WORKFLOW.md#1-spec-to-milestones)), `scope-issue`
-  ([step 2](WORKFLOW.md#2-milestone-to-issues)), `build-issue` and `assemble-meta`
+  ([step 2](WORKFLOW.md#2-milestone-to-issues)), `craft-it` and `assemble-meta`
   ([step 3](WORKFLOW.md#3-issue-to-mr-the-daily-loop)), `milestone-close`
   ([step 5](WORKFLOW.md#5-milestone-close)), `ship-it` ([step 6](WORKFLOW.md#6-release)).
 - **On-ramps:** `brainstorm`, `triage-issue`.
-- **Standalone:** `qa-review`, `craft-rules`, `scope-commit`, `scope-mr`, `review-bench`,
+- **Standalone:** `qa-review`, `build-rules`, `scope-commit`, `scope-mr`, `review-bench`,
   `friction`, `ask-team`.
 - **Precondition:** `setup-dream-team`.
 

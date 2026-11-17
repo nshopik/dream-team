@@ -1,5 +1,5 @@
 ---
-name: craft-rules
+name: build-rules
 description: >
   Holds the build rules for a code change: smallest change and reuse first, no speculative
   abstraction or impossible-case error handling, the change placed in the layer that owns the
@@ -7,7 +7,7 @@ description: >
   implement, add, change or fix code, a feature or a bug.
 ---
 
-# craft-rules
+# build-rules
 
 ## Scope
 

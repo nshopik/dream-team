@@ -47,13 +47,13 @@ who knew may be gone.
 - User asked for the issue in chat, no open question or each one settled by reading the code or
   the reference source → ask nothing.
 - User asked for the issue in chat, a choice that would pass the test in
-  `<base directory>/../build-issue/reference/decision-record.md` once decided, its options not yet
+  `<base directory>/../craft-it/reference/decision-record.md` once decided, its options not yet
   known, or a `## Done when` check with no observable form → run `dream-team:brainstorm`, skipping
   its path proposal and hand-off, until the choice is decided and each check is observable; the
   issue is the path (Decisions).
 - User asked for the issue in chat, any other open question, milestone included → ask it with
   AskUserQuestion before writing it; write the answers into the issue.
-- Issue found during other work (build-issue, a review, a lab check) → do not prompt; list the
+- Issue found during other work (craft-it, a review, a lab check) → do not prompt; list the
   open questions as open items in the proposal, or file a `Research:` issue.
 - Issue found during other work, not a `Research:` issue, open items in its proposal → add the
   `workflow::needs-brainstorm` label.
@@ -61,7 +61,7 @@ who knew may be gone.
 ### Decisions
 
 - Proposal carries a decided design choice that passes the test in
-  `<base directory>/../build-issue/reference/decision-record.md` → state the choice in the
+  `<base directory>/../craft-it/reference/decision-record.md` → state the choice in the
   proposal and say it gets a decision record in the change's commit; write no record now.
 - The body never argues the choice.
 - A choice still undecided after Open questions has no record: it stays an open question.
@@ -99,7 +99,7 @@ who knew may be gone.
 - User asks to file a milestone's issues under one meta issue → one meta issue set to that
   milestone, its lines the milestone's issues that can run unattended.
 - A run files two or more non-`Research:` issues in one milestone that pass step 2 of
-  `<base directory>/../build-issue/SKILL.md`, carry no `workflow::needs-brainstorm` or
+  `<base directory>/../craft-it/SKILL.md`, carry no `workflow::needs-brainstorm` or
   `workflow::blocked` label and need no lab work → file them under one meta issue set to that
   milestone, without prompting, whatever their kind label.
 - Filing a milestone's meta issue on request → propose the issues that stay off it as

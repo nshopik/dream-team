@@ -1,10 +1,10 @@
 export const meta = {
-  name: 'build-issue-loop',
-  description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review and craft-rules simplify pass, qa-review lenses plus a self-selecting domain lens, bounded fix loop',
+  name: 'craft-it-loop',
+  description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review and build-rules simplify pass, qa-review lenses plus a self-selecting domain lens, bounded fix loop',
   phases: [
     { title: 'Implement', detail: 'one agent writes the change and commits' },
     { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
-    { title: 'Simplify', detail: 'ponytail-review and craft-rules cuts, applied or disputed by the implementer; skipped when the diff has no code, neither ponytail-review nor craft-rules is available, or its review returns nothing after the retry (opus)' },
+    { title: 'Simplify', detail: 'ponytail-review and build-rules cuts, applied or disputed by the implementer; skipped when the diff has no code, neither ponytail-review nor build-rules is available, or its review returns nothing after the retry (opus)' },
     { title: 'Review', detail: 'the three qa-review lenses plus a generic domain lens on every review (opus); opt-in external review command, its findings checked by one agent' },
     { title: 'Fix', detail: 'blocking findings plus cheap nits; the reviewers that failed re-review their findings, and every live reviewer reviews the fix diff the fixer committed' },
   ],
@@ -32,7 +32,7 @@ const FIX_ROUNDS = 3
 const VERIFY_ROUNDS = 3
 
 if (!ISSUE || !BRANCH || !BASE || !GATE_COMMANDS.length) {
-  throw new Error('build-issue-loop: args.issue, args.branch, args.base and args.gateCommands are required')
+  throw new Error('craft-it-loop: args.issue, args.branch, args.base and args.gateCommands are required')
 }
 
 // ---------------------------------------------------------------------------
@@ -140,7 +140,7 @@ const SIMPLIFY_SCHEMA = {
   properties: {
     friction: FRICTION,
     skillLoaded: { type: 'boolean', description: 'false when the ponytail:ponytail-review skill is not available in this session' },
-    craftLoaded: { type: 'boolean', description: 'false when the dream-team:craft-rules skill is not available in this session' },
+    craftLoaded: { type: 'boolean', description: 'false when the dream-team:build-rules skill is not available in this session' },
     findings: {
       type: 'array',
       items: {
@@ -231,10 +231,10 @@ const roster = (agentType) => (isGeneric(agentType) ? {} : { agentType })
 const reviewerRoster = (agentType) => ({ ...roster(agentType), model: 'opus' })
 const IMPLEMENTER = { model: 'opus', effort: 'high' }
 
-// Also holds a missing ponytail-review or craft-rules skill, so `degraded` reports it.
+// Also holds a missing ponytail-review or build-rules skill, so `degraded` reports it.
 const MISSING_TYPES = new Set()
 const PONYTAIL_REVIEW = 'ponytail:ponytail-review'
-const CRAFT_RULES = 'dream-team:craft-rules'
+const BUILD_RULES = 'dream-team:build-rules'
 const degrade = ({ agentType, ...o }) => o
 
 // A disabled plugin is enough to make a real type vanish, so a call with an
@@ -295,7 +295,7 @@ const READ_ONLY = 'Read-only: do not edit, stage or commit anything, and do not 
 
 const READ_DIFF = `Read the branch diff with \`git diff ${BASE}..HEAD\`.`
 
-const LOAD_CRAFT = `Load the \`${CRAFT_RULES}\` skill with the Skill tool before your first edit, and follow it. Not available in this session → say so in friction.`
+const LOAD_BUILD_RULES = `Load the \`${BUILD_RULES}\` skill with the Skill tool before your first edit, and follow it. Not available in this session → say so in friction.`
 
 const REVIEW_RULES = [
   READ_ONLY,
@@ -308,7 +308,7 @@ function implPrompt() {
   return [
     CONTEXT,
     '',
-    LOAD_CRAFT,
+    LOAD_BUILD_RULES,
     'The issue\'s `## Done when` section, or on an older issue its `Done when …` paragraph, is the finish line when present: stop once each of its checks holds and every gate command is green.',
     'For a bug fix, write the test first, run it, and keep the key lines of its failing output: return them as redEvidence. Not a bug fix: return an empty string.',
     GATE,
@@ -345,7 +345,7 @@ function buildFixPrompt(v, round) {
     `The mechanical gate failed (round ${round}). Failures:`,
     (v.failures || []).map((f) => `- ${f.command}: ${f.errorExcerpt}`).join('\n') || `- ${v.summary}`,
     '',
-    LOAD_CRAFT,
+    LOAD_BUILD_RULES,
     'Fix the cause, not the symptom. Do not weaken or delete a test to make it pass.',
     'Re-run the failing commands, then commit on the branch.',
     COMMIT_ALL,
@@ -361,7 +361,7 @@ function simplifyPrompt() {
     'Not available in this session → return skillLoaded false, none of its findings and net 0; never review for over-engineering without it.',
     'Return each line the skill writes as one finding, and the N of its `net: -<N> lines possible.` as net.',
     'The skill says `Lean already. Ship.` → return none of its lines as findings and net 0.',
-    `Then load the \`${CRAFT_RULES}\` skill with the Skill tool and judge the diff against it: return each break of one of its rules as one more finding, tag craft, with the break as cut and the change that fixes it as replacement.`,
+    `Then load the \`${BUILD_RULES}\` skill with the Skill tool and judge the diff against it: return each break of one of its rules as one more finding, tag craft, with the break as cut and the change that fixes it as replacement.`,
     'Not available in this session → return craftLoaded false and no craft findings.',
     READ_ONLY,
   ].join('\n')
@@ -371,10 +371,10 @@ function simplifyFixPrompt(findings) {
   return [
     CONTEXT,
     '',
-    'An over-engineering (ponytail-review) and craft-rules (tag craft) review of the branch diff proposes these changes:',
+    'An over-engineering (ponytail-review) and build-rules (tag craft) review of the branch diff proposes these changes:',
     findings.map((f) => `- ${f.location}: ${f.tag}: ${f.cut} → ${f.replacement}`).join('\n'),
     '',
-    LOAD_CRAFT,
+    LOAD_BUILD_RULES,
     ...APPLY_RULES,
   ].join('\n')
 }
@@ -493,7 +493,7 @@ function fixPrompt(blocking, disputes, round, nits) {
       findingLines(nits),
     ] : []),
     '',
-    LOAD_CRAFT,
+    LOAD_BUILD_RULES,
     ...APPLY_RULES,
   ].join('\n')
 }
@@ -505,7 +505,7 @@ function nitFixPrompt(nits) {
     `Reviewers raised these nits. ${NIT_RULE} Return each one you skip under disputed with the reason.`,
     findingLines(nits),
     '',
-    LOAD_CRAFT,
+    LOAD_BUILD_RULES,
     ...APPLY_RULES,
   ].join('\n')
 }
@@ -592,8 +592,8 @@ if ((first.verify.aspects || []).includes('code')) {
     log(`Simplify: ${PONYTAIL_REVIEW} ${review ? 'not available' : 'returned no result'}.`)
   }
   if (review && !review.craftLoaded) {
-    MISSING_TYPES.add(CRAFT_RULES)
-    log(`Simplify: ${CRAFT_RULES} not available.`)
+    MISSING_TYPES.add(BUILD_RULES)
+    log(`Simplify: ${BUILD_RULES} not available.`)
   }
   if (!review?.skillLoaded && !review?.craftLoaded) {
     log('Simplify: skipped.')

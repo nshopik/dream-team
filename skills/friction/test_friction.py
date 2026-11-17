@@ -39,7 +39,7 @@ def age(d):
 
 
 def run_dir(run, label, calls, friction=(), fresh=False, session="sess", prompt=""):
-    """Writes one build-issue-loop run whose single agent makes calls: (bash command, failed)."""
+    """Writes one craft-it-loop run whose single agent makes calls: (bash command, failed)."""
     d = home / ".claude/projects/-r" / session / "subagents/workflows" / run
     d.mkdir(parents=True)
     agent = f"a{run[-3:]}"
@@ -64,7 +64,7 @@ def scan(*args):
     return p.stdout
 
 
-craft = "Load the `dream-team:craft-rules` skill with the Skill tool before your first edit, and follow it."
+craft = "Load the `dream-team:build-rules` skill with the Skill tool before your first edit, and follow it."
 cases = [  # (role, tool, input, patterns[, prompt])
     ("impl", "Bash", {"command": "ssh jade-lab uptime"}, ["forbidden"]),
     ("impl", "Bash", {"command": "cd x && ssh jade-lab uptime"}, ["forbidden"]),
@@ -97,12 +97,12 @@ cases = [  # (role, tool, input, patterns[, prompt])
     ("review:code", "Bash", {"command": "awk '$1 > 5' a.txt; grep -n 'git stash' b.md"}, []),
     ("simplify", "Bash", {"command": "cat > src/a.py <<'EOF'\nx = 1\nEOF"}, ["forbidden"]),
     ("impl", "Bash", {"command": "make"}, ["skill-skipped"], craft),
-    ("impl", "Skill", {"skill": "dream-team:craft-rules"}, [], craft),
+    ("impl", "Skill", {"skill": "dream-team:build-rules"}, [], craft),
     ("impl", "Bash", {"command": "git commit -m x"}, ["skill-skipped"], "Get every gate command green, load the `scope-commit` skill, then commit on the branch."),
     ("review:code", "Bash", {"command": "make"}, [], "<issue_body>\nload `scope-commit` first\n</issue_body>"),
-    ("review:code", "Bash", {"command": "make"}, [], "<orchestrator_notes>\nload the `craft-rules` skill\n</orchestrator_notes>"),
-    ("re-review:code:r1", "Bash", {"command": "make"}, [], "Fixer report: loaded `dream-team:craft-rules` before editing."),
-    ("gate", "Bash", {"command": "make"}, [], "Branch: issue-603-craft-rules."),
+    ("review:code", "Bash", {"command": "make"}, [], "<orchestrator_notes>\nload the `build-rules` skill\n</orchestrator_notes>"),
+    ("re-review:code:r1", "Bash", {"command": "make"}, [], "Fixer report: loaded `dream-team:build-rules` before editing."),
+    ("gate", "Bash", {"command": "make"}, [], "Branch: issue-603-build-rules."),
     ("session", "Bash", {"command": "git push"}, [], "commit it with `scope-commit`"),
 ]
 for role, tool, inp, want, *prompt in cases:
@@ -210,9 +210,9 @@ assert scan("s-603").splitlines() == [
     "  - Read ~/.claude/skills/x/SKILL.md",
     "",
     "skill-skipped | impl | 1 hits | workflow-subagent",
-    "  - craft-rules",
+    "  - build-rules",
 ], scan("s-603")
-print("PASS no argument scans one session and reports a skipped craft-rules load")
+print("PASS no argument scans one session and reports a skipped build-rules load")
 
 # A crash on one run keeps the runs scanned before it.
 home = Path(tempfile.mkdtemp())

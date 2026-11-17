@@ -9,8 +9,8 @@ description: >-
   argument, lists the untriaged open issues, the blocked ones whose reporter replied and the
   needs-brainstorm ones. Use when the user asks to triage, check or vet an issue, a legacy issue
   or one filed by someone outside the project — e.g. "triage #42", "triage-issue", "what needs
-  triage" — or when build-issue stops and names triage-issue. Not for building the issue (use
-  build-issue) or filing a new one (use scope-issue).
+  triage" — or when craft-it stops and names triage-issue. Not for building the issue (use
+  craft-it) or filing a new one (use scope-issue).
 argument-hint: "[<issue-number>]"
 ---
 
@@ -61,7 +61,7 @@ last body edit:
 
 ## 1. Read
 
-- Fetch title, body, labels and comments per `<base directory>/../build-issue/SKILL.md` step 1.
+- Fetch title, body, labels and comments per `<base directory>/../craft-it/SKILL.md` step 1.
 - Triaged, with no triage notes and no `workflow::needs-brainstorm` → report it ready and stop.
 - Read every earlier triage notes comment and the replies after it.
 - Never re-ask a question a reply answered.
@@ -133,5 +133,5 @@ last body edit:
 - **Searched:** <paths, symbols and commit ranges the already-done check read>
 - **Bug:** confirmed at <code path> | not reproduced | not enough detail
 - **Still open:** <open items left in the proposal; `workflow::needs-brainstorm` stays>
-- **Next:** `build-issue #<n>`
+- **Next:** `craft-it #<n>`
 ```

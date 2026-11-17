@@ -7,21 +7,21 @@ description: >-
   assemble-meta-loop workflow, reviews and fixes the whole branch once, and opens one MR/PR with
   one commit per change. Use when the user runs /dream-team:assemble-meta or asks to build, work
   or ship a Meta issue's children together, on one branch or as one MR/PR — e.g.
-  "assemble-meta #40", "do Meta #40 in one MR". Not for a single issue (run build-issue).
+  "assemble-meta #40", "do Meta #40 in one MR". Not for a single issue (run craft-it).
 argument-hint: <meta-issue-number>
 ---
 
 # assemble-meta
 
-One Meta issue per invocation. Read `<base directory>/../build-issue/SKILL.md` first: each
-"build-issue step N" below runs as written there, with the Meta issue's number as `<n>`.
+One Meta issue per invocation. Read `<base directory>/../craft-it/SKILL.md` first: each
+"craft-it step N" below runs as written there, with the Meta issue's number as `<n>`.
 
-You are the orchestrator, as in build-issue: **you do not write the change**. Your only edits
-are build-issue's step-5 edits. Lab work is yours, per build-issue.
+You are the orchestrator, as in craft-it: **you do not write the change**. Your only edits
+are craft-it's step-5 edits. Lab work is yours, per craft-it.
 
 ## 1. Read the Meta issue and its children
 
-- Fetch the Meta issue with build-issue step 1's fetch command; its Meta stop does not apply.
+- Fetch the Meta issue with craft-it step 1's fetch command; its Meta stop does not apply.
 - Take every unticked link to an open child issue in its checklist; skip plain-text lines.
 - Fetch each child the same way, and note its `Blocked by` issues.
 - A child blocked by an open issue that is not a child → leave it and its dependents out, and
@@ -31,16 +31,16 @@ are build-issue's step-5 edits. Lab work is yours, per build-issue.
 
 ## 2. Triage everything before code
 
-- Triage the Meta issue and every child per build-issue step 2, before step 3.
+- Triage the Meta issue and every child per craft-it step 2, before step 3.
 - Collect every open question first, then ask them in one batch: one `AskUserQuestion` call, or
   several in the same turn past its 4-question limit.
 - Questions whose options are not enumerable → list them all in one report and stop.
-- Handle each answer per build-issue step 2, on the issue it settles.
-- Skip build-issue step 2a: every child runs the workflow.
+- Handle each answer per craft-it step 2, on the issue it settles.
+- Skip craft-it step 2a: every child runs the workflow.
 
 ## 3. Branch
 
-- Run build-issue step 3 for the Meta issue: its worktree branch is the integration branch.
+- Run craft-it step 3 for the Meta issue: its worktree branch is the integration branch.
 - Its recorded `HEAD` is the workflow's `base`.
 
 ## 4. Run the workflow
@@ -67,10 +67,10 @@ object:
 
 - `children`: every child step 1 kept; `blockedBy` lists only other children's numbers.
 - A child's `notes`: its tracker decisions and the step-2 answers that settle it. Optional.
-- Build-issue step 4's decision-record line → put it in the `notes` of the one child the
+- Craft-it step 4's decision-record line → put it in the `notes` of the one child the
   decision settles, the first child for a Meta-level decision; never in the top-level `notes`.
-- `notes`, `gateCommands` and `externalReview`: per build-issue step 4.
-- Then report per build-issue step 4.
+- `notes`, `gateCommands` and `externalReview`: per craft-it step 4.
+- Then report per craft-it step 4.
 
 ## 5. Judge the result
 
@@ -82,23 +82,23 @@ object:
 - **`skipped`** — children not run because a failed child blocks them.
 - A child's branch and worktree are dropped once it lands or fails, unless it has `untrackedPaths`:
   then its `worktree` is kept with those files in it; list that path with them.
-- **`review`** — the one build-issue-loop result for the whole branch, from Simplify on, with the
+- **`review`** — the one craft-it-loop result for the whole branch, from Simplify on, with the
   Meta issue as its issue.
 - `review` is `null` → no child passed the gate: hand the branch back.
 
-Otherwise run build-issue step 5 on `review`, its lab work once on the branch head.
+Otherwise run craft-it step 5 on `review`, its lab work once on the branch head.
 
 ## 6. Open the MR/PR
 
-- Run build-issue steps 6 and 7; the fold leaves one commit per change.
-- Link `Closes #<child>` for each finished child, in place of build-issue's `Closes #<n>`.
+- Run craft-it steps 6 and 7; the fold leaves one commit per change.
+- Link `Closes #<child>` for each finished child, in place of craft-it's `Closes #<n>`.
 - Link `Closes #<meta>` only when `failed` and `skipped` are empty and step 1 left no child out.
 
 ## Report back
 
-Per build-issue's Report back, plus these lines, which count as named there:
+Per craft-it's Report back, plus these lines, which count as named there:
 
-- Each finished child's `assumptions` that build-issue's Report back would show, under
+- Each finished child's `assumptions` that craft-it's Report back would show, under
   `**Assumptions:**`, prefixed with `#<child>`.
 - Each `failed` child → one `**Failed:**` bullet: the child, its `stage` and `reason`.
 - Each `skipped` or step-1 left-out child → one `**Skipped:**` bullet: the child and its open

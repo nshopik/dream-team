@@ -5,7 +5,7 @@ allowed_tools: [Read, Grep, Glob, Skill]
 Use the scope-issue skill, then answer.
 
 Session so far:
-[user] /dream-team:build-issue 530
+[user] /dream-team:craft-it 530
 [assistant] Issue #530 "Research: why does --fix leave lint errors behind?" is in milestone M4 and research tier. The tracker has no `area::` label. Answered its questions from the code and the 12 fixable zones under testdata/; the findings comment is drafted. Four gaps found, each a runtime change to `zonelint/fixer.py`, none needing a lab host or credentials:
 - `--fix` never rewrites `$INCLUDE` files: `fix_zone()` reads only the top file. Fix: call the existing `loader.resolve_includes()` and rewrite each included file in place.
 - `--fix` drops trailing comments on rewritten records. Fix: `Record.render()` appends `Record.comment`, which the parser already fills.
