@@ -10,7 +10,7 @@ Session so far:
 [user] what bugs me more: the dashboard kept showing the 23:10 fix as current until someone looked at 09:00. Nobody got alerted for ten hours.
 [assistant] The dashboard reads the last stored fix and never looks at its timestamp. The serial reader logs nothing when parse_gga returns None, so a dropped sentence is silent too. There is no alert rule on fix age.
 [user] file an issue on the public gnss-mon repo for that: the dashboard should flag a fix older than 60 s and alert after 5 min.
-[assistant] `git config --get dream-team.own` printed `true`.
+[assistant] `git config --local --type=bool --get dream-team.own` printed `true`.
 
 
 Write the issue for the public gnss-mon repo. Output only the issue title on the first line, then the description.

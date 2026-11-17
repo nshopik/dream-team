@@ -30,8 +30,8 @@ measurement or its bug reproduces there (step 2a). No lab host named → there i
 so in the workflow's `notes` so the implementer does not try, and does not report it as an
 assumption.
 
-- `git config --get dream-team.own` prints anything but `true` → read, triage, comment on, file
-  and close issues, and push and open the MR/PR, per
+- `git config --local --type=bool --get dream-team.own` prints anything but `true` → read, triage,
+  comment on, file and close issues, and push and open the MR/PR, per
   `<base directory>/../../references/tracker-local.md`.
 - `dream-team.own` prints anything but `true` → write in the workflow's `notes`: "commits cite
   no issue: no `Closes` line, no `#<n>`".
