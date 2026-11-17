@@ -35,12 +35,11 @@ who knew may be gone.
 - Evidence (a table, a fenced block) sits under the claim it backs.
 - Origin is one clause ("Found by a docs review").
 - Each fact appears once.
-- Proposal: the next step, under `## Proposal`. Always present, except a meta or bundle issue.
+- Proposal: the next step, under `## Proposal`. Always present, except a meta issue.
 - Proposal is concrete: a list of actions, a person to engage, or a research issue's questions.
-- `## Done when` follows `## Proposal`: one plain `-` bullet per observable check. No `- [ ]` boxes. Not in a meta or bundle issue.
+- `## Done when` follows `## Proposal`: one plain `-` bullet per observable check. No `- [ ]` boxes. Not in a meta issue.
 - Never end at the problem.
 - Meta issue: a paragraph on the work it tracks, then the checklist. No bolded defect, no `## Proposal`.
-- Bundle issue: a paragraph on what its items share, then `## Items`. No bolded defect, no `## Proposal`.
 - One kind label: `bug`, `feature`, `maintenance`, `performance`, `research` or `meta`.
 
 ### Open questions
@@ -73,8 +72,7 @@ who knew may be gone.
   not a guessed proposal.
 - Title starts `Research:`.
 - Proposal lists the questions to answer.
-- Deliverable: a findings comment on the issue plus follow-up issues for the gaps found
-  (Bundle). No code.
+- Deliverable: a findings comment on the issue plus follow-up issues for the gaps found. No code.
 - User asks for a file → a note in the repo's research docs; the comment carries the rest.
 - A research issue's `## Done when`: every question has an answer or an issue tracking it.
 
@@ -104,21 +102,9 @@ who knew may be gone.
   `<base directory>/../build-issue/SKILL.md`, carry no `workflow::needs-brainstorm` or
   `workflow::blocked` label and need no lab work → file them under one meta issue set to that
   milestone, without prompting, whatever their kind label.
-- A bundle issue (Bundle) counts as one issue toward that count.
 - Filing a milestone's meta issue on request → propose the issues that stay off it as
   human-loop issues (they need a lab run, credentials, or a product or UX call) in the same
   AskUserQuestion batch, for the user to confirm.
-
-### Bundle
-
-- One run files two or more findings, each light tier on its own per step 2a of
-  `<base directory>/../build-issue/SKILL.md` → one bundle issue.
-- At most ~6 items; the rest start another bundle, or a plain issue when one is left.
-- Items may carry different `area::` labels.
-- Title names the group.
-- `## Items`: one `- [ ]` line per item, giving its defect, the exact edit and its done-when.
-- Labels: the items' majority `area::` and majority kind.
-- A lone light-tier finding → a plain issue.
 
 ### Blockers
 
@@ -137,11 +123,10 @@ who knew may be gone.
 
 Write multi-part work as a `-` bullet list, each item independently completable and verifiable:
 the reader does the items one at a time and checks each without rereading the rest. Plain `-`
-bullets are the default. Keep `- [ ]` boxes only for complex multi-stage work, a meta issue's
-checklist or a bundle's items, where someone tracks progress in the issue itself. An action
-inside a paragraph gets missed, so pull it into an item and leave the paragraph only the why. Be
-terse only after the next action is stated: "Stand up the lab" is a title, not a description, and
-nobody can start from it.
+bullets are the default. Keep `- [ ]` boxes only for complex multi-stage work or a meta issue's
+checklist, where someone tracks progress in the issue itself. An action inside a paragraph gets
+missed, so pull it into an item and leave the paragraph only the why. Be terse only after the next
+action is stated: "Stand up the lab" is a title, not a description, and nobody can start from it.
 
 ### Skimming
 

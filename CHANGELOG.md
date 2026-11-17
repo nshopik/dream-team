@@ -17,6 +17,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 - **Upgrade note:** an issue whose decision docs MR opened before this release is finished by hand: merge or close that docs MR and delete its `decision-` branch and worktree.
 - `qa-review`'s domain lens runs in every project with a `CLAUDE.md`, `AGENTS.md` or README, names the project's domain, checks the code in scope against what a change in that domain must get right, and raises as questions what only the owner can settle.
 
+### Removed
+
+- `scope-issue`, `build-issue` and `milestone-close` no longer file light-tier findings as one bundle issue; each finding gets its own issue.
+- **Upgrade note:** rewrite an open bundle issue, one with an `## Items` checklist, as one plain issue per item before building it.
+
 ## [26.11.1] - 2026-11-17
 
 ### Added
