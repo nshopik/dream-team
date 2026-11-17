@@ -5,6 +5,8 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+## [26.11.1] - 2026-11-17
+
 ### Added
 
 - The `ask-team` skill, run only when named, reads the open milestones, unblocked issues, open MRs/PRs and git state, then recommends the skill that fits now with a ready-to-run command and the `WORKFLOW.md` step behind it; `WORKFLOW.md` moves to `skills/ask-team/WORKFLOW.md`.
