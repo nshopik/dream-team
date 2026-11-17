@@ -6,7 +6,7 @@ description: >-
   one path (spec, issue, Meta issue, research issue, inline edit or drop) and acts on it only
   once the user approves it. Use when the user voices an idea not yet worked
   out — "I have an idea", "let's brainstorm", "thinking about", "what if we", "new feature for
-  X", "I want X but not sure how". Not for an issue number (use build-issue or triage-issue) or
+  X", "I want X but not sure how". Not for an issue number (use craft-it or triage-issue) or
   a routine, already-described task.
 ---
 
@@ -33,7 +33,7 @@ description: >-
   research issue, inline edit, or drop.
 - Issue or inline edit: needs a user decision, contradicts the spec, adds a component, or needs a
   lab check → issue; otherwise inline edit.
-- A settled choice passes the test in `<base directory>/../build-issue/reference/decision-record.md`
+- A settled choice passes the test in `<base directory>/../craft-it/reference/decision-record.md`
   → issue; its record lands in the commit that builds it.
 - Use the layout below as the default; adjust its sections to the result.
 - Label each bullet by its decision; never repeat a label.

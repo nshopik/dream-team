@@ -5,7 +5,7 @@ description: >-
   flow, applies fixes that change no code after one OK, commits its doc edits and files one
   maintenance issue for the other failing checks; in an upstream clone it only keeps
   CLAUDE.local.md out of git. Use when the user asks to set up, audit or align a project with the
-  dream-team flow, or to mark a clone as their own. Not for working an issue (use build-issue) or
+  dream-team flow, or to mark a clone as their own. Not for working an issue (use craft-it) or
   closing a milestone (use milestone-close).
 disable-model-invocation: true
 ---
@@ -14,7 +14,7 @@ disable-model-invocation: true
 
 Bringing a project into line is a program, not a change. This skill audits, makes the
 **Direct fixes** below after one confirm, commits its doc edits and files one issue for the rest.
-It changes no code; the filed issue goes through `build-issue`. It marks an own clone with the
+It changes no code; the filed issue goes through `craft-it`. It marks an own clone with the
 `dream-team.own` key; in an upstream clone it only adds `CLAUDE.local.md` to the git exclude file.
 
 ## Checks
@@ -102,7 +102,7 @@ sets a colour only on a label it creates.
   draft candidate lines naming, as a review invariant, each rule the file already states that a
   diff can break, and naming each reference source the repo holds, such as a specs folder or a
   vendored standard.
-- No such candidate exists → say in that check's step 5 line that build-issue's domain lens has
+- No such candidate exists → say in that check's step 5 line that craft-it's domain lens has
   nothing to check in this project and that a line naming a reference source or a review
   invariant would give it one, in place of a fix or a maintenance item.
 - The tracker lacks a label from **Label colours** → create it with its colour and description.
@@ -156,4 +156,4 @@ sets a colour only on a label it creates.
 14. File one `maintenance` issue per `scope-issue`, in that milestone, with one item per
     remaining failing check.
 15. A check that fails on many items → one item listing them.
-16. Report the fixes, any commit and the filed issue. It is worked through `build-issue`.
+16. Report the fixes, any commit and the filed issue. It is worked through `craft-it`.

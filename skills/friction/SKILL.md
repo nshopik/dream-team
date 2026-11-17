@@ -2,13 +2,13 @@
 name: friction
 description: >-
   Scans the current session, its subagents and its workflow runs, or with `all` every past
-  build-issue-loop run, for agent friction (skill or tool hunting under ~/.claude, denied or
+  craft-it-loop run, for agent friction (skill or tool hunting under ~/.claude, denied or
   erroring tool calls, repeated failing commands, forbidden actions, a skill the prompt names but
   the agent skipped, self-reported friction, token and tool-call outliers) and reports each pattern
   with the deterministic check that would stop it or the prompt line it points to; on the current
   session it also lists retro improvement candidates by severity. With `all` it reports only the
   patterns seen in two or more runs. Use when the user runs /dream-team:friction or asks what went
-  wrong in this session or keeps going wrong across build-issue runs.
+  wrong in this session or keeps going wrong across craft-it runs.
 disable-model-invocation: true
 ---
 
@@ -36,14 +36,14 @@ Pattern names the script prints:
 - `forbidden`: `ssh`, `git push` or a `gh`/`glab` write by a workflow-run agent, or an edit, a
   Bash tree edit (`sed`/`perl -i`, `git checkout`/`restore`/`stash`, `tee` or a redirect to a path
   outside `/tmp/` and `/dev/`) or a commit by a read-only role.
-- `skill-skipped`: an agent whose prompt tells it to load the `craft-rules` or `scope-commit`
+- `skill-skipped`: an agent whose prompt tells it to load the `build-rules` or `scope-commit`
   skill and whose transcript has no Skill call for it.
 - `self-report`: an entry from the agent's `friction` output field.
 - `tokens-outlier`, `tools-outlier`: over 2x the role's median over earlier runs.
 
 For each printed pattern:
 
-- Find the prompt that role runs in `<base directory>/../../workflows/build-issue-loop.js`:
+- Find the prompt that role runs in `<base directory>/../../workflows/craft-it-loop.js`:
   `impl` → `implPrompt`, `gate` → `verifyPrompt`, `build-fix` → `buildFixPrompt`, `simplify` →
   `simplifyPrompt`, `simplify-fix` → `simplifyFixPrompt`, `review:domain` →
   `domainPrompt`, `review:external` → `externalPrompt`,

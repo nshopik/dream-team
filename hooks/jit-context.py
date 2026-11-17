@@ -79,7 +79,7 @@ adds a component, or needs a lab check.
 - Issue-sized → give your assessment, then offer to file it with `scope-issue`; edit nothing.
 - User asked for the issue in chat → settle its open questions, milestone included, by the
   `scope-issue` Open questions tiers before filing; write the answers into the issue.
-- Issue found during other work (build-issue, a review, a lab check) → do not prompt; list the
+- Issue found during other work (craft-it, a review, a lab check) → do not prompt; list the
   open questions as open items in the proposal, or file a `Research:` issue.
 - Issue found during other work, not a `Research:` issue, open items in its proposal → add the
   `workflow::needs-brainstorm` label.

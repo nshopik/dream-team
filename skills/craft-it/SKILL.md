@@ -1,8 +1,8 @@
 ---
-name: build-issue
+name: craft-it
 description: >-
   Takes one issue from its number to an open MR/PR: reads it from the tracker, or from a local
-  issue file in a clone not marked own, triages it, runs the build-issue-loop workflow, and opens
+  issue file in a clone not marked own, triages it, runs the craft-it-loop workflow, and opens
   the MR/PR from the result. Use when the user points at an issue by number and asks to work on,
   take, pick up, handle, do or close it — e.g. "work on #42", "do GL-88 end to end". Not for
   vague feature ideas with no issue (use brainstorm), and not for reviewing an existing PR (use
@@ -10,7 +10,7 @@ description: >-
 argument-hint: <issue-number>
 ---
 
-# build-issue
+# craft-it
 
 One issue per invocation. If the user names several, do them one at a time.
 
@@ -43,7 +43,7 @@ Fetch body, title, labels and discussion — `gh issue view <n> --json title,bod
 use instead.
 
 - A `Meta:` issue is not a work item → stop with "run `assemble-meta #<n>` for all its children,
-  or `build-issue #<child>` for one".
+  or `craft-it #<child>` for one".
 
 ## 2. Triage: is this actionable without the user?
 
@@ -175,7 +175,7 @@ remote's default branch unless the project's `CLAUDE.md` or `AGENTS.md` names an
 
 ## 4. Run the workflow
 
-Invoke the **Workflow** tool with `name: "dream-team:build-issue-loop"` and `args` as a real JSON
+Invoke the **Workflow** tool with `name: "dream-team:craft-it-loop"` and `args` as a real JSON
 object (never a stringified one):
 
 ```json

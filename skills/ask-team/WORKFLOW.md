@@ -108,7 +108,7 @@ issue-sized: it needs a decision from you, contradicts the spec, adds a componen
 check. The agent gives its assessment and offers to file the issue instead of editing. Before
 filing, it settles what reading the code can, grills you on an undecided hard-to-reverse choice,
 asks you any other open question, milestone included, and writes the answers into the issue. An
-issue it finds during other work, such as a build-issue run or a review, it files without asking:
+issue it finds during other work, such as a craft-it run or a review, it files without asking:
 open questions go in the issue as listed items, and the issue gets `workflow::needs-brainstorm`.
 It posts a lab or research result for an open issue there as a comment, without asking. Smaller
 changes it makes inline.
@@ -118,7 +118,7 @@ changes it makes inline.
 - You: "what's next in M4?" The agent lists the milestone's open issues without an open
   blocker and proposes one.
 - You: "work on #126."
-- Agent: `dream-team:build-issue`:
+- Agent: `dream-team:craft-it`:
   1. Reads the issue and the project `CLAUDE.md`. Given a `Meta:` issue, it stops and names
      `assemble-meta`.
   2. Triage: an open decision gets a dialog with 2–3 options and their costs. The answer is
@@ -133,8 +133,8 @@ changes it makes inline.
      - Light (docs, comments, help text, config, rename, or a small bug fix the agent reproduced
        first): the agent makes the edit inline, runs `gateCommands`, and dispatches one reviewer
        — `dream-team:docs-reviewer` for docs, a `general-purpose` reviewer checking the project's
-       reference sources otherwise. Full criteria: build-issue step 2a.
-     - Full: implementer, mechanical gate, over-engineering cuts and craft-rules fixes, quality
+       reference sources otherwise. Full criteria: craft-it step 2a.
+     - Full: implementer, mechanical gate, over-engineering cuts and build-rules fixes, quality
        reviewers, a domain lens that checks any claim in the diff against a reference source the
        project names, bounded fix rounds that also fix the cheap nits.
      - Both tiers settle reviewer questions before the MR; only those nothing settles reach you,
@@ -158,7 +158,7 @@ changes it makes inline.
   Milestone Meta: two or more non-research issues filed for M4 that can run unattended go under
   one `Meta:` issue set to M4. Asking "file M4's issues under one Meta" does the same, and the
   agent proposes which issues stay off it for you to confirm. "assemble-meta" on it ships them as
-  one MR; the issues that need a lab run, credentials or your call run through build-issue, and
+  one MR; the issues that need a lab run, credentials or your call run through craft-it, and
   milestone close stays your gate before M5.
 - You: check the branch and external-reviewer lines, any assumptions at the top of the report,
   the MR, and any `**Pipeline:**` follow-up.

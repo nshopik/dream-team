@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""With `all`, scans unscanned build-issue-loop workflow runs for agent friction, caches every hit,
+"""With `all`, scans unscanned craft-it-loop workflow runs for agent friction, caches every hit,
 and prints the patterns seen in two or more runs, or with --time each role's wall clock in minutes.
 With a session id, prints every hit in that session's transcript, its subagents and its workflow runs.
 """
@@ -18,7 +18,7 @@ RUNS = "projects/*/*/subagents/workflows/wf_*"
 CLAUDE_DIR = (str(HOME / ".claude"), "~/.claude", "$HOME/.claude")
 READ_ONLY = re.compile(r"^(review:|re-review:|fixdiff:|gate$|simplify$)")
 WRITES = ("Edit", "Write", "NotebookEdit", "MultiEdit")
-SKILLS = ("craft-rules", "scope-commit")
+SKILLS = ("build-rules", "scope-commit")
 TASK_TEXT = re.compile(r"<(issue_body|orchestrator_notes)>.*?</\1>", re.S)
 # ponytail: TREE_EDIT and FORBIDDEN match with quoted strings and heredoc bodies blanked, so `> "$f"`, `bash -c "git push"` and a stray apostrophe's span are missed; parse with bashlex if that matters.
 TREE_EDIT = re.compile(

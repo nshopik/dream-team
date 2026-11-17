@@ -1,9 +1,9 @@
 export const meta = {
   name: 'assemble-meta-loop',
-  description: 'One Meta issue on one integration branch: build-issue-loop to the gate per child, oldest ready first, then build-issue-loop once from Simplify over the whole branch',
+  description: 'One Meta issue on one integration branch: craft-it-loop to the gate per child, oldest ready first, then craft-it-loop once from Simplify over the whole branch',
   phases: [
-    { title: 'Children', detail: 'build-issue-loop up to the gate per child, two at once, each in its own worktree; a child lands by rebase, re-gate and fast-forward in finish order, reruns once when that fails, and a failed child drops its branch and skips its dependents' },
-    { title: 'Review', detail: 'build-issue-loop from Simplify over the diff from the base, with the Meta issue and every finished child as the issue' },
+    { title: 'Children', detail: 'craft-it-loop up to the gate per child, two at once, each in its own worktree; a child lands by rebase, re-gate and fast-forward in finish order, reruns once when that fails, and a failed child drops its branch and skips its dependents' },
+    { title: 'Review', detail: 'craft-it-loop from Simplify over the diff from the base, with the Meta issue and every finished child as the issue' },
   ],
 }
 
@@ -18,7 +18,7 @@ const BASE = String(A.base || '')
 const WORKTREE = String(A.worktree || '')
 const GATE_COMMANDS = Array.isArray(A.gateCommands) ? A.gateCommands.map(String).filter(Boolean) : []
 const NOTES = String(A.notes || '')
-const LOOP = 'dream-team:build-issue-loop'
+const LOOP = 'dream-team:craft-it-loop'
 
 if (!META.issue || !CHILDREN.length || !BRANCH || !BASE || !WORKTREE.startsWith('/') || !GATE_COMMANDS.length) {
   throw new Error('assemble-meta-loop: args.meta.issue, args.children, args.branch, args.base, args.worktree (absolute) and args.gateCommands are required')
@@ -62,7 +62,7 @@ async function attempt(c, tag) {
   const issue = String(c.issue)
   const branch = `${BRANCH}-${issue}`
   const base = tip
-  // Under .claude/worktrees/, which build-issue already excludes; Claude Code guards writes inside .git.
+  // Under .claude/worktrees/, which craft-it already excludes; Claude Code guards writes inside .git.
   const path = `"$(git -C "${WORKTREE}" rev-parse --path-format=absolute --git-common-dir)/../.claude/worktrees/${branch}"`
   const wt = await agent([
     `Run \`git -C "${WORKTREE}" worktree remove --force ${path}\` and \`git -C "${WORKTREE}" worktree prune\`, ignoring their errors: an earlier run may have left that worktree.`,

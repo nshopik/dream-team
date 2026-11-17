@@ -12,17 +12,17 @@ Planning stays explicit, at issue size, because you review every plan.
   every MR was rejected: it asks a question on MRs with nothing to keep.
 - A rule comes first; a hook is added only after the rule has failed once.
 - In the `qa-review` skill, a lens with no installed agent type fails dispatch and is listed as
-  missing; it never falls back to a generic agent. `build-issue-loop` instead retries that lens
+  missing; it never falls back to a generic agent. `craft-it-loop` instead retries that lens
   as a generic agent and lists its type in `degraded`.
 - No global "issue-sized work gets no spec" rule: it duplicates the scope rules. The unreviewed,
-  plan-like September specs came from a skill that has since been rewritten into `build-issue`.
+  plan-like September specs came from a skill that has since been rewritten into `craft-it`.
 - The upstream-repo guard lives in `jit-context.py`, not a tracker skill: that skill loads only
   before the tracker CLI and only on owned remotes, so it fires too late and on the wrong repos.
 - Run `git config --local dream-team.own true` in your clone of this repo; without it every
   session here gets the upstream-repo rules.
 - A living doc stays small by holding current state only: rationale goes in commits and MRs,
   plans in issues, component internals nowhere beyond one module-doc sentence.
-- Retired: the `dream-team` skill, `dream-team-loop` and `dream-team-run`. `build-issue`
+- Retired: the `dream-team` skill, `dream-team-loop` and `dream-team-run`. `craft-it`
   replaces them.
 - ROADMAP status moved from each feature MR to `milestone-close`: status lags until the close,
   but concurrent MRs stop conflicting on it.
@@ -34,7 +34,7 @@ Planning stays explicit, at issue size, because you review every plan.
   closed child shows "(closed)" beside its mention; the box is ticked at `milestone-close`.
 - A milestone's issues that can run unattended go under one `Meta:` issue set to that milestone,
   so `assemble-meta` ships them as one MR for one review and merge; issues needing a lab run,
-  credentials or a product call run through `build-issue`, and `milestone-close` stays the human
+  credentials or a product call run through `craft-it`, and `milestone-close` stays the human
   gate before the next milestone.
 - A version milestone's release is scope-based by default: one headline feature plus backlog, behind
   standing release criteria in the version milestone's `Gate:` bullet. Its `YY.MM` name is the month
@@ -96,9 +96,9 @@ Planning stays explicit, at issue size, because you review every plan.
   milestone is numbered, and `milestone-close` stops on it.
 - `setup-dream-team` applies the fix for a failing check after one confirm when that fix changes no
   code and the draft can state it, since a filed issue for one label cost a milestone choice and a
-  `build-issue` run. It files the
+  `craft-it` run. It files the
   remaining checks as one maintenance issue, not one issue per check: one issue each added a
-  branch, an MR and a `build-issue` run per edit.
+  branch, an MR and a `craft-it` run per edit.
 - Issues are the log, docs the reference: a fact the code and paths don't show has one reference
   doc, updated in the MR that changes it. One large spec went stale and hard to skim; a closed
   issue is not a place anyone looks things up.
@@ -108,11 +108,11 @@ Planning stays explicit, at issue size, because you review every plan.
 - The component table is optional. Where folder names already say what each component does, a
   table restating them is a pointer list and rots like one. A project that keeps one gives each
   component a row and a note only where the name and path fall short.
-- `build-issue-loop` reviews with the `qa-review` lenses, not `pr-review-toolkit`: the lenses
+- `craft-it-loop` reviews with the `qa-review` lenses, not `pr-review-toolkit`: the lenses
   scored as well at about 64% of the cost (#217, #219).
 - `performance-engineer` runs in neither lens roster: it added 0-6 points over the other lenses
   at about a fifth of the lens cost (#224). It still ships as an agent.
-- `build-issue` picks no implementer or domain reviewer: specialist implementers made no
+- `craft-it` picks no implementer or domain reviewer: specialist implementers made no
   difference (#192), and the domain check is a `qa-review` lens (#225).
 
 ## Building agents

@@ -1,4 +1,4 @@
-# build-issue-loop result fields
+# craft-it-loop result fields
 
 - **`ok: false` with `handBack: true`** — blocking findings survived. `reason` says which case:
   - *Fix rounds ran out.* Do not open an MR. Report the outstanding findings and hand the branch
@@ -17,12 +17,12 @@
   values in `reason`. The branch and its worktree are where the agent left them.
 - **`degraded`** — roster types whose agent call threw, after which every call of that type ran
   as a generic agent; `ponytail:ponytail-review` when that skill was missing or its review
-  returned nothing, `dream-team:craft-rules` when that skill was missing (Simplify is skipped
+  returned nothing, `dream-team:build-rules` when that skill was missing (Simplify is skipped
   when neither ran), and `external` when the `externalReview` command was missing or exited
   non-zero and was skipped.
 - **`untrackedPaths`** — untracked paths `git status --porcelain` listed before the latest gate run;
   they do not fail the gate.
-- **`simplify`** — the over-engineering cuts and craft-rules fixes made before review: `applied`,
+- **`simplify`** — the over-engineering cuts and build-rules fixes made before review: `applied`,
   `disputed` with the implementer's reason, and `net`, the review's estimate of lines that could go.
   Put applied cuts in the MR description, and `net` only when nothing was disputed; treat a disputed
   cut like a nit.

@@ -21,7 +21,7 @@ disable-model-invocation: true
 - A question the user cannot answer yet (needs research, a lab run, someone else) → an
   `## Open items` entry.
 - Work that fits one issue → no spec.
-- Its decision passes the test in `<base directory>/../build-issue/reference/decision-record.md`
+- Its decision passes the test in `<base directory>/../craft-it/reference/decision-record.md`
   → write it into the issue with `scope-issue` Decisions; its record lands in the change's commit.
 - Its decision fails that test → write it into the issue with `scope-issue`.
 - The date goes in the header, never the filename.

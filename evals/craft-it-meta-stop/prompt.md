@@ -2,7 +2,7 @@
 allowed_tools: [Read, Grep, Glob, Skill]
 ---
 
-Use the build-issue skill, then answer.
+Use the craft-it skill, then answer.
 
 Session so far:
 [user] work on #40.
