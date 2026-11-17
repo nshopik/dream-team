@@ -55,6 +55,8 @@ Each skill also runs on its own, in any order, without the tracked flow.
   triages its open issues, checks docs against code, and offers a release.
 - **[ship-it](skills/ship-it/SKILL.md)**: releases main, with or without a milestone: version
   bump, CHANGELOG move, then a tag, pushed when the version is the argument, else offered.
+- **[craft-rules](skills/craft-rules/SKILL.md)**: the build rules a code change follows, loaded
+  before the first edit and by `build-issue-loop`'s implementer, fixers and simplify pass.
 - **[scope-commit](skills/scope-commit/SKILL.md)**: commit messages in
   [Scoped Commits](https://scopedcommits.com/) format.
 - **[scope-mr](skills/scope-mr/SKILL.md)**: MR/PR descriptions.

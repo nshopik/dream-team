@@ -9,6 +9,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - The README gains a "Start here" section with one command per situation.
 - In a clone not marked own, `scope-issue` writes issues to local `.dream-team/issues/` files, `build-issue` builds from them and `ask-team` reads them.
+- The `craft-rules` skill holds the build rules for a code change (scope, error handling, where the change goes, comments, option docs, tests); `build-issue-loop`'s implementer, build-fix, simplify-fix, review-fix and nit-fix agents load it before their first edit, and its simplify review judges the diff against it.
 
 ### Changed
 

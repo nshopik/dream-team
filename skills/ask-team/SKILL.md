@@ -26,7 +26,8 @@ milestone.
   ([step 3](WORKFLOW.md#3-issue-to-mr-the-daily-loop)), `milestone-close`
   ([step 5](WORKFLOW.md#5-milestone-close)), `ship-it` ([step 6](WORKFLOW.md#6-release)).
 - **On-ramps:** `brainstorm`, `triage-issue`.
-- **Standalone:** `qa-review`, `scope-commit`, `scope-mr`, `review-bench`, `friction`, `ask-team`.
+- **Standalone:** `qa-review`, `craft-rules`, `scope-commit`, `scope-mr`, `review-bench`,
+  `friction`, `ask-team`.
 - **Precondition:** `setup-dream-team`.
 
 ## 1. Read where the work stands

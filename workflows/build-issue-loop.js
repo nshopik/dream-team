@@ -1,10 +1,10 @@
 export const meta = {
   name: 'build-issue-loop',
-  description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review simplify pass, qa-review lenses plus a self-selecting domain lens, bounded fix loop',
+  description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review and craft-rules simplify pass, qa-review lenses plus a self-selecting domain lens, bounded fix loop',
   phases: [
     { title: 'Implement', detail: 'one agent writes the change and commits' },
     { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
-    { title: 'Simplify', detail: 'ponytail-review cuts, applied or disputed by the implementer; skipped when the diff has no code, ponytail-review is unavailable, or its review returns nothing after the retry (opus)' },
+    { title: 'Simplify', detail: 'ponytail-review and craft-rules cuts, applied or disputed by the implementer; skipped when the diff has no code, neither ponytail-review nor craft-rules is available, or its review returns nothing after the retry (opus)' },
     { title: 'Review', detail: 'the three qa-review lenses plus a generic domain lens on every review (opus); opt-in external review command, its findings checked by one agent' },
     { title: 'Fix', detail: 'blocking findings plus cheap nits; the reviewers that failed re-review their findings, and every live reviewer reviews the fix diff the fixer committed' },
   ],
@@ -135,11 +135,12 @@ const EXTERNAL_SCHEMA = {
 
 const SIMPLIFY_SCHEMA = {
   type: 'object',
-  required: ['skillLoaded', 'findings', 'net'],
+  required: ['skillLoaded', 'craftLoaded', 'findings', 'net'],
   additionalProperties: false,
   properties: {
     friction: FRICTION,
     skillLoaded: { type: 'boolean', description: 'false when the ponytail:ponytail-review skill is not available in this session' },
+    craftLoaded: { type: 'boolean', description: 'false when the dream-team:craft-rules skill is not available in this session' },
     findings: {
       type: 'array',
       items: {
@@ -147,7 +148,7 @@ const SIMPLIFY_SCHEMA = {
         required: ['tag', 'location', 'cut', 'replacement'],
         additionalProperties: false,
         properties: {
-          tag: { type: 'string', enum: ['delete', 'stdlib', 'native', 'yagni', 'shrink'] },
+          tag: { type: 'string', enum: ['delete', 'stdlib', 'native', 'yagni', 'shrink', 'craft'] },
           location: { type: 'string', description: '<file>:L<line>' },
           cut: { type: 'string' },
           replacement: { type: 'string' },
@@ -230,9 +231,10 @@ const roster = (agentType) => (isGeneric(agentType) ? {} : { agentType })
 const reviewerRoster = (agentType) => ({ ...roster(agentType), model: 'opus' })
 const IMPLEMENTER = { model: 'opus', effort: 'high' }
 
-// Also holds a missing ponytail-review skill, so `degraded` reports it.
+// Also holds a missing ponytail-review or craft-rules skill, so `degraded` reports it.
 const MISSING_TYPES = new Set()
 const PONYTAIL_REVIEW = 'ponytail:ponytail-review'
+const CRAFT_RULES = 'dream-team:craft-rules'
 const degrade = ({ agentType, ...o }) => o
 
 // A disabled plugin is enough to make a real type vanish, so a call with an
@@ -293,6 +295,8 @@ const READ_ONLY = 'Read-only: do not edit, stage or commit anything, and do not 
 
 const READ_DIFF = `Read the branch diff with \`git diff ${BASE}..HEAD\`.`
 
+const LOAD_CRAFT = `Load the \`${CRAFT_RULES}\` skill with the Skill tool before your first edit, and follow it. Not available in this session → say so in friction.`
+
 const REVIEW_RULES = [
   READ_ONLY,
   `Set preExisting ${PRE_EXISTING}: such a finding keeps its severity and never blocks the MR. A defect the change introduces, newly reaches or worsens is a normal finding, rated and blocking like any other.`,
@@ -304,10 +308,8 @@ function implPrompt() {
   return [
     CONTEXT,
     '',
-    'Implement the smallest change that resolves this issue. Reuse what is already in the repo before writing anything new.',
+    LOAD_CRAFT,
     'The issue\'s `## Done when` section, or on an older issue its `Done when …` paragraph, is the finish line when present: stop once each of its checks holds and every gate command is green.',
-    'Build only what the issue needs: no abstractions for hypothetical requirements, no error handling for cases that cannot happen, no cleanup around the change, no feature flag or back-compat shim.',
-    'A bug fix gets a test that reproduces the bug; new behaviour gets a unit or e2e test. Prefer a new case in an existing table-driven test over a new test function.',
     'For a bug fix, write the test first, run it, and keep the key lines of its failing output: return them as redEvidence. Not a bug fix: return an empty string.',
     GATE,
     'Get every gate command green, load the `scope-commit` skill, then commit on the branch in the repo\'s commit convention. Commit once; only when the issue holds independent changes, commit each change separately under its own subject.',
@@ -343,6 +345,7 @@ function buildFixPrompt(v, round) {
     `The mechanical gate failed (round ${round}). Failures:`,
     (v.failures || []).map((f) => `- ${f.command}: ${f.errorExcerpt}`).join('\n') || `- ${v.summary}`,
     '',
+    LOAD_CRAFT,
     'Fix the cause, not the symptom. Do not weaken or delete a test to make it pass.',
     'Re-run the failing commands, then commit on the branch.',
     COMMIT_ALL,
@@ -355,9 +358,11 @@ function simplifyPrompt() {
     '',
     `Load the ${PONYTAIL_REVIEW} skill with the Skill tool and review the branch diff with it.`,
     READ_DIFF,
-    'Not available in this session → return skillLoaded false, no findings and net 0. Never review without it.',
+    'Not available in this session → return skillLoaded false, none of its findings and net 0; never review for over-engineering without it.',
     'Return each line the skill writes as one finding, and the N of its `net: -<N> lines possible.` as net.',
-    'The skill says `Lean already. Ship.` → return no findings and net 0.',
+    'The skill says `Lean already. Ship.` → return none of its lines as findings and net 0.',
+    `Then load the \`${CRAFT_RULES}\` skill with the Skill tool and judge the diff against it: return each break of one of its rules as one more finding, tag craft, with the break as cut and the change that fixes it as replacement.`,
+    'Not available in this session → return craftLoaded false and no craft findings.',
     READ_ONLY,
   ].join('\n')
 }
@@ -366,9 +371,10 @@ function simplifyFixPrompt(findings) {
   return [
     CONTEXT,
     '',
-    'An over-engineering review of the branch diff proposes these cuts:',
+    'An over-engineering (ponytail-review) and craft-rules (tag craft) review of the branch diff proposes these changes:',
     findings.map((f) => `- ${f.location}: ${f.tag}: ${f.cut} → ${f.replacement}`).join('\n'),
     '',
+    LOAD_CRAFT,
     ...APPLY_RULES,
   ].join('\n')
 }
@@ -487,6 +493,7 @@ function fixPrompt(blocking, disputes, round, nits) {
       findingLines(nits),
     ] : []),
     '',
+    LOAD_CRAFT,
     ...APPLY_RULES,
   ].join('\n')
 }
@@ -498,6 +505,7 @@ function nitFixPrompt(nits) {
     `Reviewers raised these nits. ${NIT_RULE} Return each one you skip under disputed with the reason.`,
     findingLines(nits),
     '',
+    LOAD_CRAFT,
     ...APPLY_RULES,
   ].join('\n')
 }
@@ -581,7 +589,14 @@ if ((first.verify.aspects || []).includes('code')) {
   const review = await agentR(simplifyPrompt(), { label: `simplify:#${ISSUE}`, phase: 'Simplify', schema: SIMPLIFY_SCHEMA, model: 'opus' })
   if (!review?.skillLoaded) {
     MISSING_TYPES.add(PONYTAIL_REVIEW)
-    log(`Simplify: ${PONYTAIL_REVIEW} ${review ? 'not available' : 'returned no result'} — skipped.`)
+    log(`Simplify: ${PONYTAIL_REVIEW} ${review ? 'not available' : 'returned no result'}.`)
+  }
+  if (review && !review.craftLoaded) {
+    MISSING_TYPES.add(CRAFT_RULES)
+    log(`Simplify: ${CRAFT_RULES} not available.`)
+  }
+  if (!review?.skillLoaded && !review?.craftLoaded) {
+    log('Simplify: skipped.')
   } else if (!review.findings.length) {
     simplify = { net: 0, applied: [], disputed: [], unhandled: 0 }
   } else {

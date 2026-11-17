@@ -134,9 +134,9 @@ changes it makes inline.
        first): the agent makes the edit inline, runs `gateCommands`, and dispatches one reviewer
        — `dream-team:docs-reviewer` for docs, a `general-purpose` reviewer checking the project's
        reference sources otherwise. Full criteria: build-issue step 2a.
-     - Full: implementer, mechanical gate, over-engineering cuts, quality reviewers, a domain
-       lens that checks any claim in the diff against a reference source the project names,
-       bounded fix rounds that also fix the cheap nits.
+     - Full: implementer, mechanical gate, over-engineering cuts and craft-rules fixes, quality
+       reviewers, a domain lens that checks any claim in the diff against a reference source the
+       project names, bounded fix rounds that also fix the cheap nits.
      - Both tiers settle reviewer questions before the MR; only those nothing settles reach you,
        in one dialog.
   4. Lab work (perf gate, tests that need root) through `dream-team:lab-runner` on the host the
