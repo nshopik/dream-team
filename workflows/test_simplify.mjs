@@ -153,6 +153,7 @@ const promptRows = [
   { name: 'test lens checks red evidence', label: 'review:dream-team:test-coverage-reviewer', rule: red, opts: { redEvidence: red } },
   { name: 'startAtSimplify test lens checks the red evidence it is given', label: 'review:dream-team:test-coverage-reviewer', rule: red, opts: { extra: { startAtSimplify: true, redEvidence: red } } },
   { name: 'domain lens skips without a source', label: 'review:domain', rule: 'Either one missing → raise no finding on it and say why in your summary' },
+  { name: 'domain lens reads the source from CLAUDE.md or AGENTS.md', label: 'review:domain', rule: 'invariant this project\'s CLAUDE.md or AGENTS.md names' },
   { name: 'domain lens checks each Done-when bullet', label: 'review:domain', rule: 'check each of its checks on its own by reading, cite what you read, and say in your summary whether each one holds' },
   { name: 'domain lens cites its source', label: 'review:domain', rule: 'cite what you read — file and line' },
   { name: 'retry after a null result checks earlier commits', label: 'impl:#1', rule: 'may already have committed part of it', opts: { nullOnce: ['impl:#1'] } },

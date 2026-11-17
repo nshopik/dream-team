@@ -394,7 +394,7 @@ function domainPrompt() {
     'Review the branch diff as the domain lens.',
     READ_DIFF,
     DONE_WHEN,
-    'Then find the reference source or invariant this project\'s CLAUDE.md names, and a claim in the diff checkable against it. Either one missing → raise no finding on it and say why in your summary.',
+    'Then find the reference source or invariant this project\'s CLAUDE.md or AGENTS.md names, and a claim in the diff checkable against it. Either one missing → raise no finding on it and say why in your summary.',
     'Both present → check the claim against that source and cite what you read — file and line.',
     REVIEW_RULES,
   ].join('\n')
