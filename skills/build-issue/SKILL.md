@@ -1,11 +1,12 @@
 ---
 name: build-issue
 description: >-
-  Takes one tracker issue from its number to an open MR/PR: reads and triages it, runs the
-  build-issue-loop workflow, and opens the MR/PR from the result. Use when the user points at an
-  issue by number and asks to work on, take, pick up, handle, do or close it — e.g. "work on
-  #42", "do GL-88 end to end". Not for vague feature ideas with no issue (use brainstorm),
-  and not for reviewing an existing PR (use qa-review).
+  Takes one issue from its number to an open MR/PR: reads it from the tracker, or from a local
+  issue file in a clone not marked own, triages it, runs the build-issue-loop workflow, and opens
+  the MR/PR from the result. Use when the user points at an issue by number and asks to work on,
+  take, pick up, handle, do or close it — e.g. "work on #42", "do GL-88 end to end". Not for
+  vague feature ideas with no issue (use brainstorm), and not for reviewing an existing PR (use
+  qa-review).
 argument-hint: <issue-number>
 ---
 
@@ -28,6 +29,12 @@ through `dream-team:lab-runner`. A light-tier issue has lab work only when it as
 measurement or its bug reproduces there (step 2a). No lab host named → there is no lab work. Say
 so in the workflow's `notes` so the implementer does not try, and does not report it as an
 assumption.
+
+- `git config --get dream-team.own` prints anything but `true` → read, triage, comment on, file
+  and close issues, and push and open the MR/PR, per
+  `<base directory>/../../references/tracker-local.md`.
+- `dream-team.own` prints anything but `true` → write in the workflow's `notes`: "commits cite
+  no issue: no `Closes` line, no `#<n>`".
 
 ## 1. Read the issue
 

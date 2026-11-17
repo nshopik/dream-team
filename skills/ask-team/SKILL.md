@@ -16,8 +16,8 @@ disable-model-invocation: true
 ## Skill map
 
 Each skill runs alone, in any order, without the tracked flow. A one-off feature in an upstream
-project runs `brainstorm`, an inline edit, then `qa-review`, `scope-commit` and `scope-mr`,
-with no milestone or issue.
+project runs `brainstorm`, `scope-issue` to a local issue file, then `build-issue <n>`, with no
+milestone.
 
 - **Main flow:** `scope-spec` ([step 0](WORKFLOW.md#0-idea-to-spec-once-per-project)),
   `cut-milestones` ([step 1](WORKFLOW.md#1-spec-to-milestones)), `scope-issue`

@@ -35,8 +35,8 @@ Each skill also runs on its own, in any order, without the tracked flow.
 - **[triage-issue](skills/triage-issue/SKILL.md)**: checks a legacy, outside-filed or
   needs-brainstorm issue against the code before it is built, and rewrites it in `scope-issue`
   form.
-- **[build-issue](skills/build-issue/SKILL.md)**: takes one tracker issue to an open MR/PR via the
-  `build-issue-loop` workflow.
+- **[build-issue](skills/build-issue/SKILL.md)**: takes one issue, from the tracker or, in an
+  upstream clone, a local issue file, to an open MR/PR via the `build-issue-loop` workflow.
 - **[assemble-meta](skills/assemble-meta/SKILL.md)**: takes a Meta issue's children to one MR/PR on
   one integration branch via the `assemble-meta-loop` workflow.
 - **[setup-dream-team](skills/setup-dream-team/SKILL.md)**: marks a clone of your own project or
@@ -58,7 +58,8 @@ Each skill also runs on its own, in any order, without the tracked flow.
 - **[scope-commit](skills/scope-commit/SKILL.md)**: commit messages in
   [Scoped Commits](https://scopedcommits.com/) format.
 - **[scope-mr](skills/scope-mr/SKILL.md)**: MR/PR descriptions.
-- **[scope-issue](skills/scope-issue/SKILL.md)**: tracker issues (problem, proposal, done when).
+- **[scope-issue](skills/scope-issue/SKILL.md)**: tracker issues, or local issue files in an
+  upstream clone (problem, proposal, done when).
 - **[friction](skills/friction/SKILL.md)**: reports agent friction repeated across past
   `build-issue-loop` runs.
 - **[qa-review](skills/qa-review/SKILL.md)**: reviews a branch or audits a repo with parallel

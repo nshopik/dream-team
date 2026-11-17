@@ -113,7 +113,8 @@ to mark it.
 - Still load scope-commit and scope-mr; apply each rule upstream does not set.
 - Agent notes go in untracked `CLAUDE.local.md` only; never add or edit a
   checked-in `CLAUDE.md`.
-- Add no docs, issues, milestones or labels unasked.
+- Add no docs to the repo, or issues, milestones or labels on its forge,
+  unasked.
 - Ask before opening an MR/PR, issue or comment on its forge.
 </upstream_repo>"""
 
