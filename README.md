@@ -62,8 +62,8 @@ Each skill also runs on its own, in any order, without the tracked flow.
 - **[scope-mr](skills/scope-mr/SKILL.md)**: MR/PR descriptions.
 - **[scope-issue](skills/scope-issue/SKILL.md)**: tracker issues, or local issue files in an
   upstream clone (problem, proposal, done when).
-- **[friction](skills/friction/SKILL.md)**: reports agent friction repeated across past
-  `build-issue-loop` runs.
+- **[friction](skills/friction/SKILL.md)**: reports agent friction in the current session with
+  retro candidates, or with `all` the friction repeated across past `build-issue-loop` runs.
 - **[qa-review](skills/qa-review/SKILL.md)**: reviews a branch or audits a repo with parallel
   read-only lenses.
 - **[review-bench](skills/review-bench/SKILL.md)**: benchmarks code reviewers against qa-review on

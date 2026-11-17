@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Scans unscanned build-issue-loop workflow runs for agent friction, caches every hit, and
-prints the patterns seen in two or more runs, or with --time each role's wall clock in minutes.
+"""With `all`, scans unscanned build-issue-loop workflow runs for agent friction, caches every hit,
+and prints the patterns seen in two or more runs, or with --time each role's wall clock in minutes.
+With a session id, prints every hit in that session's transcript, its subagents and its workflow runs.
 """
 import json
 import re
@@ -17,6 +18,8 @@ RUNS = "projects/*/*/subagents/workflows/wf_*"
 CLAUDE_DIR = (str(HOME / ".claude"), "~/.claude", "$HOME/.claude")
 READ_ONLY = re.compile(r"^(review:|re-review:|fixdiff:|gate$|simplify$)")
 WRITES = ("Edit", "Write", "NotebookEdit", "MultiEdit")
+SKILLS = ("craft-rules", "scope-commit")
+TASK_TEXT = re.compile(r"<(issue_body|orchestrator_notes)>.*?</\1>", re.S)
 # ponytail: TREE_EDIT and FORBIDDEN match with quoted strings and heredoc bodies blanked, so `> "$f"`, `bash -c "git push"` and a stray apostrophe's span are missed; parse with bashlex if that matters.
 TREE_EDIT = re.compile(
     r"\bgit(\s+-[Cc]\s+\S+)*\s+(commit|checkout|restore|stash(?!\s+(list|show)\b))\b|\b(sed|perl)\b[^|;&\n]*\s-(\w*i\b|-in-place)"
@@ -55,12 +58,14 @@ def minutes(start, end):
 
 def scan_agent(path, role):
     """Returns (hits, tokens, tool calls, (first, last) timestamp or None) for one agent transcript."""
-    hits, uses, usage, failed, stamps = [], {}, {}, defaultdict(int), []
+    hits, uses, usage, failed, stamps, prompt, loaded = [], {}, {}, defaultdict(int), [], "", set()
     for e in read_jsonl(path):
         if "timestamp" in e:
             stamps.append(datetime.fromisoformat(e["timestamp"]))
         msg = e.get("message") or {}
         content = msg.get("content")
+        if e.get("type") == "user" and isinstance(content, str) and role != "session":  # a user's message is no role prompt
+            prompt += TASK_TEXT.sub("", content)
         if not isinstance(content, list):
             continue
         if e.get("type") == "assistant":
@@ -71,12 +76,14 @@ def scan_agent(path, role):
                 name, inp = b["name"], b.get("input") or {}
                 cmd = inp.get("command", "") if name == "Bash" else ""
                 target = " ".join(str(inp.get(k, "")) for k in ("file_path", "path", "pattern"))
+                if name == "Skill":
+                    loaded.add(str(inp.get("skill", "")).split(":")[-1])
                 if name in ("Read", "Glob", "Grep") and any(d in target for d in CLAUDE_DIR):
                     hits.append(("claude-dir", f"{name} {target.strip()}"))
                 if re.search(r"\b(find|ls|cat)\b", cmd) and any(d in cmd for d in CLAUDE_DIR):
                     hits.append(("claude-dir", cmd))
                 bare = QUOTED.sub("''", HEREDOC.sub(r"\2", cmd))
-                if FORBIDDEN.search(bare):
+                if FORBIDDEN.search(bare) and not role.startswith("session"):
                     hits.append(("forbidden", cmd))
                 if READ_ONLY.match(role) and (name in WRITES or TREE_EDIT.search(bare)):
                     hits.append(("forbidden", f"{name} {inp.get('file_path') or cmd}"))
@@ -93,12 +100,18 @@ def scan_agent(path, role):
                 # A plain non-zero exit is ordinary work; only a repeat of it is friction.
                 if not str(body).startswith("Exit code"):
                     hits.append(("tool-error", f"{use.get('name', '?')}: {body}"))
+    hits += [("skill-skipped", s) for s in SKILLS if re.search(rf"(?i)\bload the `(dream-team:)?{s}` skill", prompt) and s not in loaded]
     tokens = sum(
         u.get(k, 0) or 0
         for u in usage.values()
         for k in ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens", "output_tokens")
     )
     return hits, tokens, len(uses), (min(stamps), max(stamps)) if stamps else None
+
+
+def hit_records(hits, run, date, role, agent_type):
+    return [{"type": "hit", "run": run, "date": date, "pattern": p, "role": role, "agentType": agent_type,
+             "evidence": " ".join(str(ev).split())[:160]} for p, ev in hits]
 
 
 def scan_run(run_dir, date, stats):
@@ -133,8 +146,7 @@ def scan_run(run_dir, date, stats):
         if span:
             records[-1]["minutes"] = minutes(*span)
             spans.append(span)
-        records += [{"type": "hit", "run": run, "date": date, "pattern": p, "role": role,
-                     "agentType": agent_type, "evidence": " ".join(str(ev).split())[:160]} for p, ev in hits]
+        records += hit_records(hits, run, date, role, agent_type)
     for role, row in new_stats:
         stats[role].append(row)
     if spans:
@@ -159,13 +171,44 @@ def print_times(records):
         print(f"| {role} | {runs} | {agents} | " + " | ".join(f"{v:.1f}" for v in values) + " |")
 
 
+def scan_session(sid, stats):
+    """Prints every hit in one session's transcript, its subagents and the workflow runs it started."""
+    tops = list((HOME / ".claude").glob(f"projects/*/{sid}.jsonl"))
+    if not tops:
+        sys.exit(f"no transcript for session {sid}")
+    hits = []
+    for top in tops:
+        hits += hit_records(scan_agent(top, "session")[0], sid, "", "session", "")
+        for path in top.with_suffix("").glob("subagents/agent-*.jsonl"):
+            meta = path.with_suffix(".meta.json")
+            agent_type = json.loads(meta.read_text()).get("agentType", "") if meta.exists() else ""
+            hits += hit_records(scan_agent(path, f"session:{agent_type}")[0], sid, "", f"session:{agent_type}", agent_type)
+        for run_dir in sorted(top.with_suffix("").glob("subagents/workflows/wf_*")):
+            if (run_dir / "journal.jsonl").exists():
+                hits += [r for r in scan_run(run_dir, "", stats) if r["type"] == "hit"]
+    print(f"scanned session {sid}")
+    groups = defaultdict(list)
+    for h in hits:
+        groups[(h["pattern"], h["role"])].append(h)
+    for (pattern, role), hs in groups.items():
+        types = ", ".join(sorted({h["agentType"] for h in hs if h["agentType"]}))
+        print(f"\n{pattern} | {role} | {len(hs)} hits | {types}")
+        for ev in dict.fromkeys(h["evidence"] for h in hs):
+            print(f"  - {ev}")
+
+
 def main():
+    args = sys.argv[1:]
+    if not args:
+        sys.exit("usage: friction.py all [--time] | friction.py <session id>")
     cache = read_jsonl(CACHE) if CACHE.exists() else []
-    seen = {r["run"] for r in cache if r["type"] == "run"}
     stats = defaultdict(list)
     for r in cache:
         if r["type"] == "stats":
             stats[r["role"]].append((r["run"], r["tokens"], r["tools"]))
+    if args[0] != "all":
+        return scan_session(args[0], stats)
+    seen = {r["run"] for r in cache if r["type"] == "run"}
     unseen = [p for p in (HOME / ".claude").glob(RUNS) if p.name not in seen and (p / "journal.jsonl").exists()]
     active = [p for p in unseen if max(f.stat().st_mtime for f in [p, *p.iterdir()]) > time.time() - ACTIVE_SECONDS]
     runs = sorted((p.stat().st_mtime, p) for p in unseen if p not in active)
@@ -181,7 +224,7 @@ def main():
         new += records
 
     print(f"scanned {len(runs)} new runs; skipped {len(active)} in progress; cache {CACHE}")
-    if "--time" in sys.argv[1:]:
+    if "--time" in args:
         print_times(cache + new)
         return
     groups = defaultdict(list)

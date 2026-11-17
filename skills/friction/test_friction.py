@@ -19,9 +19,9 @@ home = Path(tempfile.mkdtemp())
 aged = [time.time() - 86400]
 
 
-def transcript(path, calls, start=0):
-    """Writes an agent transcript making calls: (tool name, input, failed), one entry a minute from 13:start."""
-    lines = []
+def transcript(path, calls, start=0, prompt=""):
+    """Writes an agent transcript given prompt, making calls: (tool name, input, failed), one entry a minute from 13:start."""
+    lines = [{"type": "user", "message": {"role": "user", "content": prompt}}] if prompt else []
     for i, (name, inp, failed) in enumerate(calls):
         lines.append({"type": "assistant", "timestamp": f"2026-10-25T13:{start + 2 * i:02}:00.000Z", "message": {"id": f"m{i}", "role": "assistant", "usage": {"input_tokens": 10, "output_tokens": 5},
                       "content": [{"type": "tool_use", "id": f"t{i}", "name": name, "input": inp}]}})
@@ -38,9 +38,9 @@ def age(d):
         os.utime(f, (aged[0], aged[0]))
 
 
-def run_dir(run, label, calls, friction=(), fresh=False):
+def run_dir(run, label, calls, friction=(), fresh=False, session="sess", prompt=""):
     """Writes one build-issue-loop run whose single agent makes calls: (bash command, failed)."""
-    d = home / ".claude/projects/-r/sess/subagents/workflows" / run
+    d = home / ".claude/projects/-r" / session / "subagents/workflows" / run
     d.mkdir(parents=True)
     agent = f"a{run[-3:]}"
     (d / "journal.jsonl").write_text("\n".join(json.dumps(e) for e in [
@@ -52,7 +52,7 @@ def run_dir(run, label, calls, friction=(), fresh=False):
         {"type": "result", "key": "k", "agentId": agent, "result": {"committed": True, "summary": "", "friction": list(friction)}},
     ]) + "\n")
     (d / f"agent-{agent}.meta.json").write_text(json.dumps({"agentType": "workflow-subagent", "description": label}))
-    transcript(d / f"agent-{agent}.jsonl", [("Bash", {"command": cmd}, failed) for cmd, failed in calls])
+    transcript(d / f"agent-{agent}.jsonl", [("Bash", {"command": cmd}, failed) for cmd, failed in calls], prompt=prompt)
     if not fresh:
         age(d)
     return d
@@ -64,7 +64,8 @@ def scan(*args):
     return p.stdout
 
 
-cases = [  # (role, tool, input, patterns)
+craft = "Load the `dream-team:craft-rules` skill with the Skill tool before your first edit, and follow it."
+cases = [  # (role, tool, input, patterns[, prompt])
     ("impl", "Bash", {"command": "ssh jade-lab uptime"}, ["forbidden"]),
     ("impl", "Bash", {"command": "cd x && ssh jade-lab uptime"}, ["forbidden"]),
     ("impl", "Bash", {"command": 'git commit -m "ssh docs"'}, []),
@@ -95,13 +96,21 @@ cases = [  # (role, tool, input, patterns)
     ("review:code", "Bash", {"command": "make test 2>&1 | tee /tmp/out >&2; ls x 2>/dev/null > /tmp/ls"}, []),
     ("review:code", "Bash", {"command": "awk '$1 > 5' a.txt; grep -n 'git stash' b.md"}, []),
     ("simplify", "Bash", {"command": "cat > src/a.py <<'EOF'\nx = 1\nEOF"}, ["forbidden"]),
+    ("impl", "Bash", {"command": "make"}, ["skill-skipped"], craft),
+    ("impl", "Skill", {"skill": "dream-team:craft-rules"}, [], craft),
+    ("impl", "Bash", {"command": "git commit -m x"}, ["skill-skipped"], "Get every gate command green, load the `scope-commit` skill, then commit on the branch."),
+    ("review:code", "Bash", {"command": "make"}, [], "<issue_body>\nload `scope-commit` first\n</issue_body>"),
+    ("review:code", "Bash", {"command": "make"}, [], "<orchestrator_notes>\nload the `craft-rules` skill\n</orchestrator_notes>"),
+    ("re-review:code:r1", "Bash", {"command": "make"}, [], "Fixer report: loaded `dream-team:craft-rules` before editing."),
+    ("gate", "Bash", {"command": "make"}, [], "Branch: issue-603-craft-rules."),
+    ("session", "Bash", {"command": "git push"}, [], "commit it with `scope-commit`"),
 ]
-for role, tool, inp, want in cases:
+for role, tool, inp, want, *prompt in cases:
     path = home / "case.jsonl"
-    transcript(path, [(tool, inp, False)])
+    transcript(path, [(tool, inp, False)], prompt="".join(prompt))
     got = [p for p, _ in friction.scan_agent(path, role)[0]]
     assert got == want, (role, tool, inp, got)
-print("PASS forbidden actions")
+print("PASS forbidden actions and skipped skills")
 
 transcript(path, [("Bash", {"command": "git push"}, False)] * 2)
 lines = path.read_text().splitlines()
@@ -129,16 +138,16 @@ steps = [  # (name, runs, first line, printed); a run is (id, label, calls, fric
 for name, runs, first, printed in steps:
     for run, label, calls, said in runs:
         run_dir(run, label, calls, said)
-    out = scan()
+    out = scan("all")
     assert out.startswith(first + "; skipped 0 in progress") and out.splitlines()[1:] == printed, f"{name}:\n{out}"
     print(f"PASS {name}")
 
 live = run_dir("wf_h-008", "impl:#10", [("make", False)], fresh=True)
 with open(live / "agent-a008.jsonl", "a") as f:
     f.write('{"type": "assis')
-assert scan().startswith("scanned 0 new runs; skipped 1 in progress"), "a fresh run is skipped"
+assert scan("all").startswith("scanned 0 new runs; skipped 1 in progress"), "a fresh run is skipped"
 age(live)
-assert scan().startswith("scanned 1 new runs; skipped 0 in progress"), "it is scanned once it goes quiet"
+assert scan("all").startswith("scanned 1 new runs; skipped 0 in progress"), "it is scanned once it goes quiet"
 print("PASS a run still going is scanned later")
 
 cache = [json.loads(line) for line in (home / ".claude/dream-team/friction.jsonl").read_text().splitlines()]
@@ -154,15 +163,15 @@ cache_path = home / ".claude/dream-team/friction.jsonl"
 lines = cache_path.read_text().splitlines()
 i = next(i for i, line in enumerate(lines) if i and '"stats"' in line)
 cache_path.write_text("\n".join([*lines[:i], '{"type": "ru' + lines[i], *lines[i + 1:]]) + "\n")
-out = scan()
+out = scan("all")
 assert out.startswith("scanned 0 new runs; skipped 0 in progress") and out.splitlines()[1:] == repeated, out
 print("PASS a bad cache line is skipped")
 
 # A killed append leaves the tail unterminated; the next run's records must not join it.
 cache_path.write_text(cache_path.read_text() + '{"type": "hi')
 run_dir("wf_i-009", "impl:#11", [("make", False)])
-assert scan().startswith("scanned 1 new runs"), "the new run is scanned"
-assert scan().startswith("scanned 0 new runs"), "and not again"
+assert scan("all").startswith("scanned 1 new runs"), "the new run is scanned"
+assert scan("all").startswith("scanned 0 new runs"), "and not again"
 assert any(r["type"] == "stats" and r["run"] == "wf_i-009" for r in friction.read_jsonl(cache_path)), "its first record is kept"
 print("PASS a torn cache tail does not eat the next run")
 
@@ -176,7 +185,7 @@ with open(late / "journal.jsonl", "a") as f:
     f.write(json.dumps({"type": "started", "agentId": "a-late", "label": "re-review:code:r1"}) + "\n")
 transcript(late / "agent-a-late.jsonl", [("Bash", {"command": "make"}, False)], start=10)
 age(late)
-assert scan("--time").splitlines()[1:] == [
+assert scan("all", "--time").splitlines()[1:] == [
     "",
     "| role | runs | agents | min | P10 | Q1 | median | Q3 | P90 | max |",
     "|---|---|---|---|---|---|---|---|---|---|",
@@ -184,8 +193,26 @@ assert scan("--time").splitlines()[1:] == [
     "| impl | 5 | 5 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 |",  # wf_b-002 lost its stats to the bad line
     "| whole run | 10 | 10 | 1.0 | 1.0 | 1.0 | 1.0 | 5.0 | 5.6 | 11.0 |",  # wf_l-012 spans 13:00 to 13:11
     "| re-review:code | 1 | 1 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 |",
-], scan("--time")
+], scan("all", "--time")
 print("PASS --time tables minutes per role and per run")
+
+# Session mode: every hit in the session, its subagents and its runs, none in other sessions.
+session = home / ".claude/projects/-r/s-603"
+transcript(session.with_suffix(".jsonl"), [("Bash", {"command": "git push"}, False)], prompt="commit it with scope-commit")
+(session / "subagents").mkdir(parents=True)
+transcript(session / "subagents/agent-x.jsonl", [("Read", {"file_path": "~/.claude/skills/x/SKILL.md"}, False)])
+(session / "subagents/agent-x.meta.json").write_text(json.dumps({"agentType": "Explore"}))
+run_dir("wf_m-013", "impl:#14", [("make", False)], session="s-603", prompt=craft)
+assert scan("s-603").splitlines() == [
+    "scanned session s-603",
+    "",
+    "claude-dir | session:Explore | 1 hits | Explore",
+    "  - Read ~/.claude/skills/x/SKILL.md",
+    "",
+    "skill-skipped | impl | 1 hits | workflow-subagent",
+    "  - craft-rules",
+], scan("s-603")
+print("PASS no argument scans one session and reports a skipped craft-rules load")
 
 # A crash on one run keeps the runs scanned before it.
 home = Path(tempfile.mkdtemp())
@@ -199,6 +226,7 @@ def crash_second(*args):
         raise RuntimeError("killed")
     return scan_run(*args)
 friction.scan_run = crash_second
+sys.argv = [str(SCRIPT), "all"]
 try:
     friction.main()
 except RuntimeError:
