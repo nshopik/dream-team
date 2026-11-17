@@ -91,8 +91,8 @@ The answer:
 
 A tier the project's `CLAUDE.md` or `AGENTS.md` sets for the issue overrides the criteria below.
 
-Research tier when the title starts `Research:` (below). Otherwise light tier when all hold,
-for a bundle issue on each item; otherwise full (step 3 on):
+Research tier when the title starts `Research:` (below). Otherwise light tier when all hold;
+otherwise full (step 3 on):
 
 - No runtime behaviour change: docs, comments, help or usage text, CI config, test fixtures, or a
   rename. Or a bug fix you reproduced yourself before the edit: a lab probe or a test seen failing.
@@ -117,20 +117,9 @@ Light path, no workflow:
 - Run lab work only for that rerun or a measurement the issue asks for, per step 5's lab steps.
 - Run step 5's docs drift check, unless the reviewer was `dream-team:docs-reviewer`.
 - Settle the reviewer's questions per step 5.
-- A plain issue's diff outgrows the criteria → `git reset --hard <base>` and run the full loop.
+- The diff outgrows the criteria → `git reset --hard <base>` and run the full loop.
 - Open the MR per step 6.
 - Report the tier and the criterion that allowed it.
-
-Bundle issue (an `## Items` checklist, `scope-issue` Bundle) on the light path:
-
-- The bundle may span modules, and its diff may pass ~50 lines.
-- Commit each item on its own; a fix to one is a `fixup!` of its commit.
-- An item stops being light tier, or a blocking finding stops it → drop its commit and its
-  `fixup!` commits: note `HEAD`, `git reset --hard <base>`, then `git cherry-pick` every other
-  commit of `git log --reverse --format=%h <base>..<noted HEAD>`.
-- A dropped item → file it as its own issue (step 5).
-- A dropped item → link its issue from its line in the bundle, box unticked.
-- Ship the remaining items as one MR with one `Closes #<n>`.
 
 Light-path reviewer type:
 
@@ -141,8 +130,7 @@ Light-path reviewer type:
 
 Research tier: no workflow, no code. Answer the proposal's questions yourself, then:
 
-- File the gaps per `scope-issue`, light-tier ones bundled, each issue with its milestone
-  (step 5).
+- File the gaps per `scope-issue`, each issue with its milestone (step 5).
 - The user asks for a file → write the findings as a note in the format below, commit it on the
   step-3 branch, and open the MR per step 6 with `Closes #<n>`.
 - Post every finding not in a note as one comment on the research issue, in the format below, the
@@ -285,7 +273,7 @@ Adjacent defects — anything found outside the diff or returned in `preExisting
   string, under ~50 lines) → commit it on the branch as its own change, never a `fixup!`.
 - Any other research finding, review-panel survivor outside the diff or in `preExisting`, bug hit
   running evals or `gateCommands`, or spec consequence nobody owns → file it per `scope-issue`
-  before the session ends, light-tier ones bundled, and per the repo's own rules.
+  before the session ends, and per the repo's own rules.
 - The finding is a nit → file nothing.
 - Filed → never leave the finding in the MR description or the chat summary.
 - Filing fails or yields no issue link → name the defect in the report as unfiled, with the reason.

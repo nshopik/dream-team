@@ -49,8 +49,7 @@ Criterion not met:
 
 - A failed kill-gate (the criterion names a redesign) → report it and stop, with no gap issues;
   the redesign goes back to the spec.
-- Any other gap → report it and propose the gap issues per `scope-issue`, light-tier ones
-  bundled, in this milestone.
+- Any other gap → report it and propose the gap issues per `scope-issue`, in this milestone.
 - The user approves or rejects each; file the approved ones and stop.
 - The milestone stays open.
 

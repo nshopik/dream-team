@@ -110,7 +110,6 @@ filing, it settles what reading the code can, grills you on an undecided hard-to
 asks you any other open question, milestone included, and writes the answers into the issue. An
 issue it finds during other work, such as a build-issue run or a review, it files without asking:
 open questions go in the issue as listed items, and the issue gets `workflow::needs-brainstorm`.
-Two or more light-tier findings from one run go in one bundle issue, a checklist of their edits.
 It posts a lab or research result for an open issue there as a comment, without asking. Smaller
 changes it makes inline.
 
@@ -134,9 +133,7 @@ changes it makes inline.
      - Light (docs, comments, help text, config, rename, or a small bug fix the agent reproduced
        first): the agent makes the edit inline, runs `gateCommands`, and dispatches one reviewer
        — `dream-team:docs-reviewer` for docs, a `general-purpose` reviewer checking the project's
-       reference sources otherwise. A bundle issue ships as one MR with one commit per item; an
-       item that stops being light tier, or that review blocks, moves to its own issue.
-       Full criteria: build-issue step 2a.
+       reference sources otherwise. Full criteria: build-issue step 2a.
      - Full: implementer, mechanical gate, over-engineering cuts, quality reviewers, a domain
        lens that checks any claim in the diff against a reference source the project names,
        bounded fix rounds that also fix the cheap nits.
@@ -183,8 +180,8 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
 - Agent: `milestone-close`:
   1. Checks the exit criterion against evidence (14 days in the field, SERVFAIL ratio from
      `/metrics`), reading the `Evidence:` issue for a field gate. Not met: proposes the gap issues,
-     light-tier ones bundled, files the ones you approve, and stops. A failed kill-gate proposes no
-     issues: the redesign goes back to step 0.
+     files the ones you approve, and stops. A failed kill-gate proposes no issues: the redesign
+     goes back to step 0.
   2. Triage table of open issues: close, move, or blocks-close. You answer in one reply.
      `Meta:` issues stay out of the table; the agent ticks their closed children.
   3. Docs check: the diagram and any component table against the code, specs that need a
