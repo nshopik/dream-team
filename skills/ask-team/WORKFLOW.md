@@ -36,7 +36,7 @@ release you accept.
   (scale, what is out of scope, how parity is proven), until every decision the idea branches
   into is settled.
 - Agent: states the shared understanding and proposes a path: spec, issue, Meta issue, research
-  issue, decision record, inline edit, or drop.
+  issue, inline edit, or drop.
 - You: approve or change the path. The agent acts on it only then.
 
 ### 0. Idea to spec (once per project)
@@ -52,7 +52,7 @@ that fits one issue gets no spec; a decision made during it is posted on the iss
 the issue's proposal, or supersedes the issue with a new one when its title or problem no longer
 holds. A decision that is hard to reverse, surprising without context and a real trade-off (the
 decision-record test) also gets a record in the repo's records folder (`docs/decisions/` by
-default), opened as its own docs MR, which the issue cites.
+default), in the same commit as the change it records.
 
 ### 1. Spec to milestones
 
@@ -124,10 +124,9 @@ changes it makes inline.
      `assemble-meta`.
   2. Triage: an open decision gets a dialog with 2–3 options and their costs. The answer is
      posted on the issue as a comment, and written into the description when it changes the work
-     remaining. An answer that passes the decision-record test gets its record in its own docs
-     MR; the issue branch stacks on it, and the issue MR says it depends on it. A `Blocked by`
-     line naming an open issue stops here, and an untriaged or needs-brainstorm issue stops
-     with `triage-issue #N`.
+     remaining. An answer that passes the decision-record test gets its record in the change's
+     commit. A `Blocked by` line naming an open issue stops here, and an untriaged or
+     needs-brainstorm issue stops with `triage-issue #N`.
   3. Tier:
      - Research: answers, follow-up issues, and a findings comment on the
        research issue, which closes with no MR. Asked for a file, it writes a note in

@@ -18,8 +18,8 @@ Spell `<scratchpad>` as your scratchpad directory's literal path.
 You are the orchestrator. You read, triage, branch and ship. **You do not write the change** — the
 workflow's implementer does. Everything between the issue branch and the MR happens in dispatched
 agents. Your only edits are step 5's settled disputes, nits and small adjacent fixes, which step 6
-reruns `gateCommands` on, a light-tier issue's edit, a research note the user asks for
-(step 2a), and a step-3 decision record with the files `repo-conventions.md` adds with it.
+reruns `gateCommands` on, a light-tier issue's edit with its decision record, and a research
+note the user asks for (step 2a).
 
 **Lab work is yours, not the workflow's.** Workflow agents never ssh to a lab host. Anything the
 issue or the repo's `CLAUDE.md` or `AGENTS.md` needs run on a lab host — a measurement the issue
@@ -76,8 +76,6 @@ Never open a dialog whose options you had to invent to fill the slots.
 The answer:
 
 - Post it as a comment on the issue.
-- Passes the test in [`reference/decision-record.md`](reference/decision-record.md) → step 3 also
-  writes its record in its own docs MR.
 - Changes the work remaining → write it into the proposal and its `## Done when` section, or
   into a new issue that supersedes this one when the title or problem no longer holds
   (`scope-issue` Updates).
@@ -101,6 +99,9 @@ Light path, no workflow:
 
 - Branch per step 3.
 - Make the edit inline.
+- A decision that passes the test in `reference/decision-record.md` has no record yet → write
+  its record per that file and `<base directory>/../../references/repo-conventions.md`, in the
+  edit's commit.
 - Run every `gateCommands` entry.
 - Dispatch one reviewer with the issue and the base, told to read the diff with `git diff <base>`,
   its type picked below.
@@ -157,7 +158,7 @@ prints; `cd` there first.
 
 Stop and ask whether to continue that work or start over when any holds:
 
-- A branch `issue-<n>-*` or `decision-<n>-*` exists locally or on the remote.
+- A branch `issue-<n>-*` exists locally or on the remote.
 - A path `.claude/worktrees/issue-<n>-*` exists.
 - An open MR/PR references the issue.
 
@@ -174,17 +175,8 @@ remote's default branch unless the project's `CLAUDE.md` or `AGENTS.md` names an
   path, with no trailing slash.
 - `cd` into the worktree.
 - Run `cd <worktree's absolute path>` as the Bash call right before the Workflow call.
-- A step-2 answer passed the test in `reference/decision-record.md` → name the `worktree add`
-  branch `decision-<n>-<slug>` in place of `issue-<n>-<slug>`.
-- On it, write the record at the path, naming and template
-  `<base directory>/../../references/repo-conventions.md` resolves, commit it with the files that
-  reference adds per `scope-commit`, push it and open its docs MR against `<target>` per
-  `scope-mr`.
-- Comment that docs MR's link on the issue.
-- Then `git checkout -b issue-<n>-<slug>`: the issue branch stacks on the record commit.
 - Never work on `master`/`main`.
-- Record `git rev-parse HEAD` in the worktree — it is the workflow's `base`; on a stacked branch
-  it is the record commit, so step 6's fold leaves the record out.
+- Record `git rev-parse HEAD` in the worktree — it is the workflow's `base`.
 
 ## 4. Run the workflow
 
@@ -208,8 +200,8 @@ object (never a stringified one):
   and the lab work the implementer must leave alone. Optional.
 - Each path step 3 linked → name it in `notes` with "never commit or modify it".
 - The change carries a decision that passes the test in
-  [`reference/decision-record.md`](reference/decision-record.md) and has no record yet, from step
-  3 or cited by the issue → name the decision in `notes` with the absolute paths of that file and
+  [`reference/decision-record.md`](reference/decision-record.md) and has no record yet, from a
+  step-2 answer or the issue → name the decision in `notes` with the absolute paths of that file and
   `<base directory>/../../references/repo-conventions.md`, and tell the implementer to add its
   record per both, in the same commit as the change.
 - `gateCommands`: the build, test and lint commands the repo's CI config runs that also run in this
@@ -352,8 +344,6 @@ Then push and open the MR/PR against the branch the project's `CLAUDE.md` or `AG
 
 Link the issue so it auto-closes (`Closes #<n>`). Write the description per `scope-mr`.
 
-- A stacked branch → the description says the MR depends on the step-3 docs MR, by its link.
-
 ## 7. Watch the MR/PR
 
 Once the MR/PR is open, start a Bash `run_in_background` poll that exits on a final state,
@@ -401,7 +391,6 @@ exits:
   closed. Report one line: new `<target>` head, worktree and branch deleted, issue state.
 - The main checkout is not on `<target>`, or its `git status --porcelain` prints anything → run
   `git fetch` in place of `git pull --ff-only`, and say so in the report.
-- A stacked branch → also run `git branch -d decision-<n>-<slug>` after the block.
 - The block fails → report the git error; leave the worktree and the branch.
 - **Closed unmerged** → `cd` to the main checkout, `git worktree remove
   .claude/worktrees/issue-<n>-<slug>`, report it; leave the branch.
@@ -439,6 +428,9 @@ The report carries only what the user must know or act on.
 - Name each adjacent fix committed on the branch by its subject, one line each.
 - Name each issue filed for an adjacent defect by its link, one line each, never the defect itself.
 - Name each adjacent defect that could not be filed, and why, one line each.
+- A decision record the branch adds at a path or naming other than `repo-conventions.md`'s
+  defaults → one `**Conventions:**` bullet: the path, naming and the source the lookup took them
+  from.
 - Say so when `redEvidence` is empty on a bug fix.
 - Give a lab step one line: its verdict, or its numbers when there are fewer than three.
 - Give each pipeline failure step 7 acts on one `**Pipeline:**` line in a follow-up message: the

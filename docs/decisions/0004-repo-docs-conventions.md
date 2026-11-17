@@ -7,4 +7,4 @@ project's `CLAUDE.md` or `AGENTS.md` declares, else from an existing records fol
 `docs/CONVENTIONS.md` and a `CLAUDE.md` pointer line, so dream-team works in repos with older or
 upstream layouts and agents without dream-team find the layout. Copying templates into the repo,
 as setup-matt-pocock-skills does, was rejected: the copy freezes at setup time and drifts from the
-plugin. The decision test and the record's own docs MR stay fixed.
+plugin. The decision test and the record landing in the change's commit stay fixed.

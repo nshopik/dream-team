@@ -3,8 +3,8 @@ name: brainstorm
 description: >-
   Shapes a vague idea before any spec or issue exists: grills the user in rounds of numbered
   questions, each with a recommended answer, then states the shared understanding and proposes
-  one path (spec, issue, Meta issue, research issue, decision record, inline edit or drop) and
-  acts on it only once the user approves it. Use when the user voices an idea not yet worked
+  one path (spec, issue, Meta issue, research issue, inline edit or drop) and acts on it only
+  once the user approves it. Use when the user voices an idea not yet worked
   out — "I have an idea", "let's brainstorm", "thinking about", "what if we", "new feature for
   X", "I want X but not sure how". Not for an issue number (use build-issue or triage-issue) or
   a routine, already-described task.
@@ -30,9 +30,11 @@ description: >-
 ## 2. Propose the path
 
 - State the shared understanding in chat, then propose one path: spec, issue, Meta issue,
-  research issue, decision record, inline edit, or drop.
+  research issue, inline edit, or drop.
 - Issue or inline edit: needs a user decision, contradicts the spec, adds a component, or needs a
   lab check → issue; otherwise inline edit.
+- A settled choice passes the test in `<base directory>/../build-issue/reference/decision-record.md`
+  → issue; its record lands in the commit that builds it.
 - Use the layout below as the default; adjust its sections to the result.
 - Label each bullet by its decision; never repeat a label.
 - Decisions span several aspects or artifacts → group them under bold section lines; else one
@@ -60,7 +62,5 @@ description: >-
 - Wait for the user to confirm the shared understanding and approve or change the path.
 - Spec → ask the user to run `/dream-team:scope-spec`.
 - Issue, Meta issue or research issue → load `scope-issue`.
-- Decision record → load `scope-issue` and follow its Decisions with no issue; skip the line
-  that has an issue cite the record.
 - Inline edit → make the edit.
 - Drop → nothing.
