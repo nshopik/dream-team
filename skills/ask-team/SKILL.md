@@ -1,8 +1,9 @@
 ---
 name: ask-team
 description: >-
-  Answers which Dream Team skill fits the user's situation now: reads the open milestones, their
-  issues without an open blocker, open MRs/PRs, the current branch and uncommitted changes, then
+  Answers which Dream Team skill fits the user's situation now: reads the open milestones and
+  their issues without an open blocker, or the local `.dream-team/issues/` files in a clone not
+  marked own, open MRs/PRs, the current branch and uncommitted changes, then
   recommends one skill from its skill map with why it fits, a ready-to-run command and where it
   sits (the WORKFLOW.md step for a main-flow skill, else its map group: on-ramp, standalone or
   precondition), and starts that skill when the user says to go ahead or asked for the work
@@ -30,8 +31,10 @@ milestone.
 
 ## 1. Read where the work stands
 
-- Read the open milestones and their open issues; keep those whose `Blocked by` lines name no open
-  issue.
+- `git config --local --type=bool --get dream-team.own` prints `true` → read the open milestones
+  and their open issues; keep those whose `Blocked by` lines name no open issue.
+- `dream-team.own` prints anything else → read the open issues in `.dream-team/issues/` per
+  `<base directory>/../../references/tracker-local.md`.
 - Read the open MRs/PRs, the current branch and its uncommitted changes.
 
 ## 2. Pick the skill

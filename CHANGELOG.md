@@ -8,7 +8,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 ### Added
 
 - The README gains a "Start here" section with one command per situation.
-- In a clone not marked own, `scope-issue` writes issues to local `.dream-team/issues/` files and `build-issue` builds from them.
+- In a clone not marked own, `scope-issue` writes issues to local `.dream-team/issues/` files, `build-issue` builds from them and `ask-team` reads them.
 
 ### Changed
 
