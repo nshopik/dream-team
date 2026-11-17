@@ -15,12 +15,13 @@ const META = A.meta || {}
 const CHILDREN = Array.isArray(A.children) ? A.children : []
 const BRANCH = String(A.branch || '')
 const BASE = String(A.base || '')
+const WORKTREE = String(A.worktree || '')
 const GATE_COMMANDS = Array.isArray(A.gateCommands) ? A.gateCommands.map(String).filter(Boolean) : []
 const NOTES = String(A.notes || '')
 const LOOP = 'dream-team:build-issue-loop'
 
-if (!META.issue || !CHILDREN.length || !BRANCH || !BASE || !GATE_COMMANDS.length) {
-  throw new Error('assemble-meta-loop: args.meta.issue, args.children, args.branch, args.base and args.gateCommands are required')
+if (!META.issue || !CHILDREN.length || !BRANCH || !BASE || !WORKTREE.startsWith('/') || !GATE_COMMANDS.length) {
+  throw new Error('assemble-meta-loop: args.meta.issue, args.children, args.branch, args.base, args.worktree (absolute) and args.gateCommands are required')
 }
 
 const WORKTREE_SCHEMA = {
@@ -40,7 +41,7 @@ const LAND_SCHEMA = {
   properties: {
     landed: { type: 'boolean', description: 'true only when the merge fast-forwarded the integration branch' },
     gated: { type: 'string', description: 'the sha `git rev-parse HEAD` printed in the worktree after the rebase; empty when the rebase conflicted' },
-    head: { type: 'string', description: 'the sha `git rev-parse HEAD` printed in the integration checkout after the merge; empty when not landed' },
+    head: { type: 'string', description: 'the sha `git rev-parse HEAD` printed in the integration worktree after the merge; empty when not landed' },
     reason: { type: 'string', description: 'why it did not land: the rebase conflict or the failing gate command and its key error lines; empty when landed' },
   },
 }
@@ -52,7 +53,6 @@ const done = []
 const failed = []
 const joinNotes = (...n) => n.filter(Boolean).join('\n')
 const cheap = (label) => ({ label, phase: 'Children', model: 'sonnet', effort: 'low' })
-const INTEGRATION = 'the checkout you start in, where the integration branch is checked out'
 
 let tip = BASE
 // One landing at a time, so the tip cannot move between a child's re-gate and its fast-forward.
@@ -63,11 +63,11 @@ async function attempt(c, tag) {
   const branch = `${BRANCH}-${issue}`
   const base = tip
   // Under .claude/worktrees/, which build-issue already excludes; Claude Code guards writes inside .git.
-  const path = `"$(git rev-parse --path-format=absolute --git-common-dir)/../.claude/worktrees/${branch}"`
+  const path = `"$(git -C "${WORKTREE}" rev-parse --path-format=absolute --git-common-dir)/../.claude/worktrees/${branch}"`
   const wt = await agent([
-    `From ${INTEGRATION}, run \`git worktree remove --force ${path}\` and \`git worktree prune\`, ignoring their errors: an earlier run may have left that worktree.`,
-    `Then run \`git worktree add -B ${branch} ${path} ${base}\`.`,
-    `Each path git ignores that is a symlink in ${INTEGRATION} → create the same symlink in the new worktree.`,
+    `Run \`git -C "${WORKTREE}" worktree remove --force ${path}\` and \`git -C "${WORKTREE}" worktree prune\`, ignoring their errors: an earlier run may have left that worktree.`,
+    `Then run \`git -C "${WORKTREE}" worktree add -B ${branch} ${path} ${base}\`.`,
+    `Each path git ignores that is a symlink in ${WORKTREE} → create the same symlink in the new worktree.`,
     'Run nothing beyond these; report the absolute worktree path as path and the sha `git rev-parse HEAD` prints in it as head.',
   ].join('\n'), { ...cheap(`worktree:#${issue}${tag}`), schema: WORKTREE_SCHEMA })
   if (!wt?.path || wt.head !== base) return { ok: false, issue, stage: 'worktree', reason: `worktree agent reported head ${wt?.head || 'none'}, not ${base}` }
@@ -82,7 +82,7 @@ async function attempt(c, tag) {
       'Report the sha `git rev-parse HEAD` then prints in the worktree as gated.',
       'Then run each of these gate commands in the worktree, in order; one fails → report landed false with it and its key error lines as reason, and stop:',
       ...GATE_COMMANDS.map((g) => `  ${g}`),
-      `All pass → in ${INTEGRATION}, run \`git merge --ff-only ${branch}\` and \`git rev-parse HEAD\`, and report landed true with that sha as head.`,
+      `All pass → run \`git -C "${WORKTREE}" merge --ff-only ${branch}\` and \`git -C "${WORKTREE}" rev-parse HEAD\`, and report landed true with that sha as head.`,
       'Do not edit, fix or commit anything.',
     ].join('\n'), { ...cheap(`land:#${issue}${tag}`), schema: LAND_SCHEMA })
     if (!l) return { landed: false, reason: 'land agent returned no result' }
@@ -93,7 +93,7 @@ async function attempt(c, tag) {
   }))
   // `--force` would delete the untracked files the gate reported, so their worktree stays.
   const kept = r?.untrackedPaths?.length ? { worktree: wt.path } : {}
-  if (!kept.worktree) await agent(`From ${INTEGRATION}, run \`git worktree remove --force ${wt.path}\` and \`git branch -D ${branch}\`. Run nothing else.`, cheap(`remove:#${issue}${tag}`))
+  if (!kept.worktree) await agent(`Run \`git -C "${WORKTREE}" worktree remove --force "${wt.path}"\` and \`git -C "${WORKTREE}" branch -D ${branch}\`. Run nothing else.`, cheap(`remove:#${issue}${tag}`))
   if (!r?.ok) return { ...r, ...kept, ok: false, issue }
   if (!land.landed) return { ok: false, issue, stage: 'land', reason: land.reason, ...kept }
   return { ...r, ...kept, head: land.head }
@@ -136,7 +136,7 @@ const review = await workflow(LOOP, {
   body: [META.body, ...finished.map((c) => `## #${c.issue}: ${c.title}\n\n${c.body}`)].join('\n\n'),
   notes: joinNotes(NOTES, ...finished.filter((c) => c.notes).map((c) => `#${c.issue}: ${c.notes}`)),
   redEvidence: done.filter((d) => d.redEvidence).map((d) => `#${d.issue}: ${d.redEvidence}`).join('\n'),
-  branch: BRANCH, base: BASE, gateCommands: GATE_COMMANDS, externalReview: A.externalReview, startAtSimplify: true,
+  branch: BRANCH, base: BASE, worktree: WORKTREE, gateCommands: GATE_COMMANDS, externalReview: A.externalReview, startAtSimplify: true,
 })
 
 return { ok: !!review?.ok, children: done, failed, skipped, review }

@@ -59,6 +59,7 @@ object:
   "notes": "<what applies to every child>",
   "branch": "issue-40-slug",
   "base": "<sha from step 3>",
+  "worktree": "<absolute path of the step-3 worktree>",
   "gateCommands": ["cargo test --workspace"],
   "externalReview": "<command, or leave out>"
 }
