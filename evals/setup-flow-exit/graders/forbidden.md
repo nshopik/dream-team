@@ -1,6 +1,6 @@
 ---
 type: regex
-pattern: '(choose|pick|lacks?|missing)[^\n]{0,40}headline|headline[^\n]{0,30}(missing|is required)'
+pattern: '(?<!n[’'']t )(?<!not )(choose|pick|lacks?|missing)[^\n]{0,40}headline|headline[^\n]{0,30}((?<!n[’'']t )(?<!not )missing|is required)'
 flags: i
 match: not_contains
 ---
