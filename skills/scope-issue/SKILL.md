@@ -17,8 +17,10 @@ history; a run that resumes the work reads them too.
 
 ### Goal
 
-- Every issue answers: what do I do next.
-- Every issue answers: how do I know it's done.
+The reader opens the issue days or weeks later, with none of this conversation, and starts the
+work from the description alone. So every issue answers two questions: what do I do next, and how
+do I know it's done. An issue that leaves one out sends the reader back to ask, and the person
+who knew may be gone.
 
 ### Shape
 
@@ -139,29 +141,31 @@ history; a run that resumes the work reads them too.
 
 ### Items
 
-- Multi-part work → `-` bullet list.
-- Each item independently completable and verifiable.
-- Default: plain `-` bullets.
-- `- [ ]` boxes only for complex multi-stage work, a meta issue's checklist, or a bundle's items.
-- A paragraph contains an action → pull the action into an item; the paragraph keeps only the why.
-- Terse only after the next action is stated. "Stand up the lab" is a title, not a description.
+Write multi-part work as a `-` bullet list, each item independently completable and verifiable:
+the reader does the items one at a time and checks each without rereading the rest. Plain `-`
+bullets are the default. Keep `- [ ]` boxes only for complex multi-stage work, a meta issue's
+checklist or a bundle's items, where someone tracks progress in the issue itself. An action
+inside a paragraph gets missed, so pull it into an item and leave the paragraph only the why. Be
+terse only after the next action is stated: "Stand up the lab" is a title, not a description, and
+nobody can start from it.
 
 ### Skimming
 
-- Problem holds only what's needed to act. The reader already works on the project.
-- Cite a brief or doc the target forge's readers can open by URL or path, at the claim it backs;
-  don't repeat it.
-- Problem carries the substance. Longest part.
-- Proposal and `## Done when` are the outro.
+The reader already works on the project, so the problem holds only what they need to act. It
+carries the substance and is the longest part, because the reader decides there whether and how
+to do the work; the proposal and `## Done when` are the outro. Cite a brief or doc the target
+forge's readers can open by URL or path, at the claim it backs, and don't repeat it: a copy goes
+stale and the link does not.
 
 ### Format
 
-- Bold the claim a skimmer must land on, not a keyword.
-- One bolded phrase per paragraph at most.
-- Inline code for identifiers only: file, path, command, config key, label, version, symbol.
-- No inline code for emphasis or ordinary nouns.
-- Two or more commands or snippets → one fenced block, a `#` comment per case; never inline code in bullets.
-- One line per paragraph or list item; never hard-wrap.
+A skimmer reads the bold text first, so bold the claim they must land on, not a keyword, and at
+most one phrase per paragraph: two bolded phrases compete and neither lands. Inline code tells
+the reader the text is literal and searchable, so use it for identifiers only (file, path,
+command, config key, label, version, symbol), never for emphasis or ordinary nouns. Two or more
+commands or snippets go in one fenced block with a `#` comment per case, never as inline code in
+bullets, so the reader can copy them whole. Write one line per paragraph or list item and never
+hard-wrap: the forge renders a hard line break as a break in the text.
 
 ### Diagram
 
@@ -205,8 +209,9 @@ history; a run that resumes the work reads them too.
 
 ### Length
 
-- ~250 words the shape. 500 hard cap, except the two cases below.
-- Fenced blocks are evidence or a diagram, not prose; they don't count toward the cap.
-- Background overgrows first. Cut it first.
+Aim for about 250 words; 500 is the hard cap, except the two cases below. A longer issue gets
+skimmed and the reader misses the action. Fenced blocks are evidence or a diagram, not prose, so
+they don't count toward the cap. Background overgrows first; cut it first.
+
 - Still over 500 with every fact one the next run needs, user asked for the issue in chat → before filing, give the word count and ask: split into a meta issue with children, or file over the cap.
 - Still over 500 with every fact one the next run needs, issue found during other work → file it over the cap; name the issue and its word count in the run's report.
