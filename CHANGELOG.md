@@ -5,6 +5,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ## [Unreleased]
 
+### Added
+
+- `craft-it` runs on Claude Code without the Workflow tool: the main session dispatches the `craft-it-loop` stages as subagents, runs every `gateCommands` entry itself after each writing agent, and returns the same result.
+
 ### Changed
 
 - `craft-it-loop`'s domain lens takes `qa-review`'s domain wording and runs in a project that names no reference source: it names the project's domain, checks the diff against what a change in that domain must get right, and raises as questions what only the owner can settle.

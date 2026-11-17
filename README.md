@@ -95,7 +95,7 @@ The reviewer agents review a diff or paths, read-only.
 /plugin install dream-team@dream-team
 ```
 
-Requires `python3` on `PATH` and the Workflow tool.
+Requires `python3` on `PATH`; `assemble-meta` also needs the Workflow tool.
 
 For the [pi](https://github.com/earendil-works/pi) harness:
 

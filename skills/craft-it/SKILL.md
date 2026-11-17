@@ -18,14 +18,15 @@ Spell `<scratchpad>` as your scratchpad directory's literal path.
 
 You are the orchestrator. You read, triage, branch and ship. **You do not write the change** — the
 workflow's implementer does. Everything between the issue branch and the MR happens in dispatched
-agents. Your only edits are step 5's settled disputes, nits and small adjacent fixes, which step 6
-reruns `gateCommands` on, a light-tier issue's edit with its decision record, and a research
-note the user asks for (step 2a).
+agents, except the subagent loop's gate runs, which are yours. Your only edits are step 5's
+settled disputes, nits and small adjacent fixes, which step 6 reruns `gateCommands` on, a
+light-tier issue's edit with its decision record, and a research note the user asks for (step
+2a).
 
-**Lab work is yours, not the workflow's.** Workflow agents never ssh to a lab host. Anything the
-issue or the repo's `CLAUDE.md` or `AGENTS.md` needs run on a lab host — a measurement the issue
-asks for, a test that needs root, a perf gate — you dispatch after the workflow returns (step 5),
-through `dream-team:lab-runner`. A light-tier issue has lab work only when it asks for a
+**Lab work is yours, not the workflow's.** Loop agents, from the workflow or the subagent loop,
+never ssh to a lab host. Anything the issue or the repo's `CLAUDE.md` or `AGENTS.md` needs run on
+a lab host — a measurement the issue asks for, a test that needs root, a perf gate — you dispatch
+after the workflow returns (step 5), through `dream-team:lab-runner`. A light-tier issue has lab work only when it asks for a
 measurement or its bug reproduces there (step 2a). No lab host named → there is no lab work. Say
 so in the workflow's `notes` so the implementer does not try, and does not report it as an
 assumption.
@@ -169,14 +170,17 @@ remote's default branch unless the project's `CLAUDE.md` or `AGENTS.md` names an
 - `$(git rev-parse --git-common-dir)/info/exclude` has no line for a linked path → append the
   path, with no trailing slash.
 - `cd` into the worktree.
-- Run `cd <worktree's absolute path>` as the Bash call right before the Workflow call.
+- Run `cd <worktree's absolute path>` as the Bash call right before the Workflow call or
+  subagent-loop stage 1.
 - Never work on `master`/`main`.
 - Record `git rev-parse HEAD` in the worktree — it is the workflow's `base`.
 
 ## 4. Run the workflow
 
-Invoke the **Workflow** tool with `name: "dream-team:craft-it-loop"` and `args` as a real JSON
-object (never a stringified one):
+- **Workflow** tool in this session → invoke it with `name: "dream-team:craft-it-loop"` and `args`
+  as a real JSON object (never a stringified one).
+- No Workflow tool → run the loop yourself with the same `args`, per
+  [`reference/subagent-loop.md`](reference/subagent-loop.md).
 
 ```json
 {
@@ -209,7 +213,7 @@ object (never a stringified one):
 - The project's line and the global one disagree → the project's wins, including a project line
   that turns it off.
 
-Then report, before the workflow returns:
+Then report, before the workflow returns or subagent-loop stage 1 starts:
 
 - Two bullets, the label in bold: the branch, and whether `externalReview` is set.
 - After them, 1-2 sentences on what the change builds, from the issue.
@@ -226,7 +230,8 @@ Layout:
 
 ## 5. Judge the result
 
-The workflow returns structured, not final. Once it returns, read
+The loop's result, the Workflow return or `<scratchpad>/craft-it-result.json`, is structured,
+not final. Once you have it, read
 [`reference/workflow-result.md`](reference/workflow-result.md): what each result field means and
 what to do with it.
 
