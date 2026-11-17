@@ -16,6 +16,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `scope-spec` and `scope-issue` use the field-standard word or a plain phrase, ask before coining a term, and record each approved term in a root `GLOSSARY.md`, or as a proposal item when only an issue uses it; only an own clone creates the file, with a pointer line in `CLAUDE.md`, or in `AGENTS.md` when only that exists.
 - In an own clone whose `CLAUDE.md` or `AGENTS.md` declares no doc conventions, skills commit the first new decision record, spec or ROADMAP with a `docs/CONVENTIONS.md` and a pointer line in `CLAUDE.md`, or in `AGENTS.md` when only that exists.
 - `build-issue-loop` takes `worktree`, a path every agent of the run works and commits in.
+- `setup-dream-team` checks that the project `CLAUDE.md` or `AGENTS.md` names a reference source or review invariant for the domain lens, drafts candidate lines for approval when it names none, and reports when the repo offers no candidate.
 
 ### Changed
 
