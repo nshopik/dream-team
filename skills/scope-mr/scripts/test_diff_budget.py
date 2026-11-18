@@ -4,11 +4,11 @@ SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "diff-budget.p
 tmp = tempfile.mkdtemp()
 
 
-def run(body, cwd, *args):
+def run(body, cwd, *args, stdin=False):
     path = os.path.join(tmp, "body.md")
     open(path, "w").write(body)
-    p = subprocess.run([sys.executable, SCRIPT, path, *args], cwd=cwd,
-                       capture_output=True, text=True)
+    p = subprocess.run([sys.executable, SCRIPT, "-" if stdin else path, *args], cwd=cwd,
+                       input=body if stdin else None, capture_output=True, text=True)
     assert p.returncode == 0, p.stderr
     return p.stdout
 
@@ -46,6 +46,7 @@ for name, body, cwd, args, want, over in [
 ]:
     out = run(body, cwd, *args)
     assert want in out and ("Over budget" in out) == over, (name, out)
+    assert run(body, cwd, *args, stdin=True) == out, (name, "stdin differs")
     print(f"{name:24} OK")
 
 # Uncommitted work counts: 20 more lines -> 39 lines, budget 195.
