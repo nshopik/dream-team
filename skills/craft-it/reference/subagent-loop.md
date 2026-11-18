@@ -16,7 +16,7 @@ as it reads a workflow return.
   JSON Schema:" and the stage's schema from `<loop>`, as JSON.
 - Set each Agent call's `description` to the label `<loop>` gives that call, e.g. `impl:#42`,
   `fix:#42:r1`.
-- A writing agent (implementer, build fixer, fixer, nit fixer) → a `general-purpose` agent with
+- A writing agent (implementer, build fixer, fixer) → a `general-purpose` agent with
   `model: opus`, in the foreground, one at a time.
 - A reviewer → `model: opus`; a lens gets its `dream-team:` type as `subagent_type`, the
   domain and external reviewers `general-purpose`.
@@ -56,8 +56,7 @@ as it reads a workflow return.
    `redEvidence`, the domain lens with `domainPrompt`, and with `externalReview` set the
    external reviewer with `externalPrompt` and `EXTERNAL_SCHEMA`; `VERDICT_SCHEMA` otherwise.
 4. Fix rounds, below.
-5. Nit fix, only when nits no fixer was given remain: `nitFixPrompt`, `FIX_SCHEMA`; Gate.
-6. Write the result `<loop>`'s last `return` builds to `<scratchpad>/craft-it-result.json`.
+5. Write the result `<loop>`'s last `return` builds to `<scratchpad>/craft-it-result.json`.
 
 - Set each stage's outcomes (stops, `degraded` entries, nits, questions, `preExisting`,
   `doneWhen`) as `<loop>` sets them after that stage's call.
@@ -74,10 +73,10 @@ Each round, numbered from 1:
 2. 3 rounds already ran → hand back: "<n> blocking finding(s) and <m> dead reviewer(s)
    outstanding after 3 fix rounds".
 3. No live reviewer holds a blocking finding → go to 8.
-4. Dispatch the fixer: `fixPrompt` with the live reviewers' blocking findings, the dispute list
-   and the nits no fixer has had, `FIX_ROUND_SCHEMA`.
+4. Dispatch the fixer: `fixPrompt` with the live reviewers' blocking findings and the dispute
+   list, `FIX_SCHEMA`.
 5. No result, or nothing committed, addressed or disputed → stop with a `fix` failure.
-6. Add its `disputed` entries to the dispute list with the round, and its `nits` to `nitFix`.
+6. Add its `disputed` entries to the dispute list with the round.
 7. Gate.
 8. Re-review in one message:
    - Each reviewer holding blocking findings → `reReviewPrompt` with its numbered prior findings

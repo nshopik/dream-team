@@ -5,7 +5,7 @@ export const meta = {
     { title: 'Implement', detail: 'one agent writes the change and commits' },
     { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
     { title: 'Review', detail: 'the three qa-review lenses plus a generic domain lens on every review (opus); opt-in external review command, its findings checked by one agent' },
-    { title: 'Fix', detail: 'blocking findings plus cheap nits; the reviewers that failed re-review their findings, and every live reviewer reviews the fix diff the fixer committed' },
+    { title: 'Fix', detail: 'blocking findings only; the reviewers that failed re-review their findings, and every live reviewer reviews the fix diff the fixer committed' },
   ],
 }
 
@@ -170,14 +170,6 @@ const FIX_SCHEMA = {
     summary: { type: 'string' },
   },
 }
-const FIX_ROUND_SCHEMA = {
-  ...FIX_SCHEMA,
-  properties: {
-    ...FIX_SCHEMA.properties,
-    nits: { type: 'object', required: ['addressed', 'disputed'], additionalProperties: false,
-      properties: { addressed: FIX_SCHEMA.properties.addressed, disputed: FIX_SCHEMA.properties.disputed } },
-  },
-}
 
 // ---------------------------------------------------------------------------
 // Roster
@@ -262,7 +254,7 @@ const LOAD_BUILD_RULES = `Load the \`dream-team:build-rules\` skill with the Ski
 const REVIEW_RULES = [
   READ_ONLY,
   `Set preExisting ${PRE_EXISTING}: such a finding keeps its severity and never blocks the MR. A defect the change introduces, newly reaches or worsens is a normal finding, rated and blocking like any other.`,
-  'Rate each finding critical, important, nit or question. Critical and important block the MR. A nit is fixed only if cheap and is never re-reviewed, so do not inflate severity to force action.',
+  'Rate each finding critical, important, nit or question. Critical and important block the MR. A nit is reported, never fixed or re-reviewed, so do not inflate severity to force action.',
   'Rate a genuine question, not a suggestion, as question: it goes to the user unless a re-review answers it, and never blocks the MR.',
 ].join('\n')
 
@@ -406,9 +398,7 @@ const APPLY_RULES = [
 
 const findingLines = (fs) => fs.map((f) => `- [${f.severity}] (${f.gate}) ${f.description}${f.file ? ` — ${f.file}` : ''}`).join('\n')
 
-const NIT_RULE = 'No reviewer re-reviews them. Fix each one that is cheap: a few lines, no design change.'
-
-function fixPrompt(blocking, disputes, round, nits) {
+function fixPrompt(blocking, disputes, round) {
   return [
     CONTEXT,
     '',
@@ -419,23 +409,6 @@ function fixPrompt(blocking, disputes, round, nits) {
       'Disputes from earlier rounds. The reviewer read each one; a finding still listed above is one the reviewer held:',
       disputes.map((d) => `- (round ${d.round}) ${d.finding} — ${d.reason}`).join('\n'),
     ] : []),
-    ...(nits.length ? [
-      '',
-      `Reviewers also raised these nits. ${NIT_RULE} Report them only under nits: addressed the ones you fix, disputed the ones you skip with the reason.`,
-      findingLines(nits),
-    ] : []),
-    '',
-    LOAD_BUILD_RULES,
-    ...APPLY_RULES,
-  ].join('\n')
-}
-
-function nitFixPrompt(nits) {
-  return [
-    CONTEXT,
-    '',
-    `Reviewers raised these nits. ${NIT_RULE} Return each one you skip under disputed with the reason.`,
-    findingLines(nits),
     '',
     LOAD_BUILD_RULES,
     ...APPLY_RULES,
@@ -570,8 +543,6 @@ const handBack = (reason) => result({
 })
 
 let round = 0
-let nitsGiven = 0
-const nitFix = { addressed: [], disputed: [] }
 while (true) {
   const blocking = outstanding()
   const dead = deadGates()
@@ -590,11 +561,10 @@ while (true) {
   const fixDiff = verified.head
   let fix = null
   if (given.length) {
-    const nitsNow = nits.slice(nitsGiven)
-    fix = await agentR(fixPrompt(given, disputes, round, nitsNow), {
+    fix = await agentR(fixPrompt(given, disputes, round), {
       label: `fix:#${ISSUE}:r${round}`,
       phase: 'Fix',
-      schema: FIX_ROUND_SCHEMA,
+      schema: FIX_SCHEMA,
       ...IMPLEMENTER,
     })
     if (!fix) return result({ ok: false, stage: 'fix', reason: 'fixer returned no result', blocking, ...carried })
@@ -602,8 +572,6 @@ while (true) {
       return result({ ok: false, stage: 'fix', reason: `fixer changed nothing and disputed nothing: ${fix.summary}`, blocking, ...carried })
     }
     disputes.push(...fix.disputed.map((d) => ({ ...d, round })))
-    nitsGiven += nitsNow.length
-    if (fix.nits) { nitFix.addressed.push(...fix.nits.addressed); nitFix.disputed.push(...fix.nits.disputed) }
     const g = await gate(`review-fix round ${round}`, `fix${round}`)
     if (!g.ok) return result({ ...gateFail(g), blocking, ...carried })
     verified = g.verify
@@ -668,20 +636,6 @@ while (true) {
   }
 }
 
-const nitsLeft = nits.slice(nitsGiven)
-if (nitsLeft.length) {
-  phase('Fix')
-  const fix = await agentR(nitFixPrompt(nitsLeft), { label: `fix:#${ISSUE}:nits`, phase: 'Fix', schema: FIX_SCHEMA, ...IMPLEMENTER })
-  if (!fix) return result({ ok: false, stage: 'fix', reason: 'fixer returned no result on the nits', ...carried })
-  if (fix.committed) {
-    const g = await gate('the nit fixes', 'nits')
-    if (!g.ok) return result({ ...gateFail(g), ...carried })
-    verified = g.verify
-  }
-  nitFix.addressed.push(...fix.addressed)
-  nitFix.disputed.push(...fix.disputed)
-}
-
 return result({
   ok: true,
   issue: ISSUE,
@@ -692,7 +646,6 @@ return result({
   redEvidence: impl.redEvidence,
   changedFiles: verified.changedFiles,
   nitFindings: nits,
-  nitFix: nits.length ? nitFix : null,
   ...carried,
   summaries: Object.fromEntries(gates.map((g) => [g.key, state.get(g.key).summary])),
   doneWhen,

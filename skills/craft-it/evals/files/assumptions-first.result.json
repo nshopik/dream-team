@@ -52,18 +52,5 @@
   ],
   "preExisting": [],
   "untrackedPaths": [],
-  "resolved": [],
-  "nitFix": {
-    "addressed": [],
-    "disputed": [
-      {
-        "finding": "parseSince error message could quote the accepted format",
-        "reason": "Cosmetic; no reader or test depends on it."
-      },
-      {
-        "finding": "table test case names use mixed casing",
-        "reason": "Cosmetic; no reader or test depends on it."
-      }
-    ]
-  }
+  "resolved": []
 }
