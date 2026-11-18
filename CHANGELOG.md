@@ -11,6 +11,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Changed
 
+- `setup-dream-team` writes a `docs/CONVENTIONS.md` and a `## Doc conventions` block in an own clone's `CLAUDE.md`, replacing its `Repo layout:` line or the layout lines it declares; a skill writing the first record, spec or ROADMAP adds the block in place of the pointer line.
 - `craft-it-loop`'s domain lens takes `qa-review`'s domain wording and runs in a project that names no reference source: it names the project's domain, checks the diff against what a change in that domain must get right, and raises as questions what only the owner can settle.
 - `build-rules` has a change reuse an existing test helper, mock, stub or fixture, move one it would copy from another test file into a shared test module, and extend an existing test of a path instead of testing it again at another level.
 

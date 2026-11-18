@@ -52,6 +52,8 @@ It changes no code; the filed issue goes through `craft-it`. It marks an own clo
 - The project `CLAUDE.md` or `AGENTS.md` names a reference source, or names rules as a review
   invariant; a rule it only states is not one.
 - A CHANGELOG's header links the Keep a Changelog version it follows.
+- `docs/CONVENTIONS.md` exists, and the project `CLAUDE.md` or `AGENTS.md` carries the
+  `## Doc conventions` block `<base directory>/../../references/repo-conventions.md` gives.
 
 ## Project rules
 
@@ -105,6 +107,11 @@ sets a colour only on a label it creates.
 - No such candidate exists → say in that check's step 5 line that a line naming a reference
   source or a review invariant would give craft-it's domain lens a named source to cite, in place
   of a fix or a maintenance item.
+- `docs/CONVENTIONS.md` is missing → write it per `repo-conventions.md`, taking the values from
+  any layout the project `CLAUDE.md` or `AGENTS.md` declares in its own lines.
+- The `## Doc conventions` block is missing → write it per `repo-conventions.md`, in place of the
+  project `CLAUDE.md` or `AGENTS.md`'s `Repo layout:` line or the lines that declare the layout, if
+  it has them.
 - The tracker lacks a label from **Label colours** → create it with its colour and description.
 - The tracker has a `type::<kind>` label, `<kind>` a kind in **Label colours** → swap it for
   `<kind>` on each issue that carries it, then delete the `type::` label.
