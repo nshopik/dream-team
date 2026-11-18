@@ -35,7 +35,7 @@ milestone.
 - `git config --local --type=bool --get dream-team.own` prints `true` → read the open milestones
   and their open issues; keep those whose `Blocked by` lines name no open issue.
 - `dream-team.own` prints anything else → read the open issues in `.dream-team/issues/` per
-  `<base directory>/../../references/tracker-local.md`.
+  `<base directory>/../setup-dream-team/tracker-local.md`.
 - Read the open MRs/PRs, the current branch and its uncommitted changes.
 
 ## 2. Pick the skill

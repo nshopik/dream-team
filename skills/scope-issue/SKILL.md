@@ -11,7 +11,7 @@ description: >
 Issue is actionable items, not prose. Read days or weeks later with zero conversation context.
 
 - `git config --local --type=bool --get dream-team.own` prints anything but `true` → file, comment
-  on and close issues per `<base directory>/../../references/tracker-local.md`.
+  on and close issues per `<base directory>/../setup-dream-team/tracker-local.md`.
 
 ## issue-style
 
@@ -163,7 +163,7 @@ hard-wrap: the forge renders a hard line break as a break in the text.
 ### Names
 
 - Describe behaviour in plain words; a backticked code name is the exception.
-- Terms in the issue: follow `<base directory>/../../references/glossary.md`.
+- Terms in the issue: follow `./glossary.md`.
 - User-facing name (flag, config key, metric, exit code, error string) → no limit.
 - Code name (function, type, field — own code or library) → at most three backticked
   occurrences in the whole text.

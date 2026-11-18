@@ -27,7 +27,7 @@ Milestone description, and its roadmap row if it has one. No measurable exit
 criterion → stop and ask for one; a milestone without one cannot close.
 
 The ROADMAP and specs folder are at the paths
-`<base directory>/../../references/repo-conventions.md` resolves.
+`<base directory>/../setup-dream-team/repo-conventions.md` resolves.
 
 A version milestone's `Gate:` bullet holds its release criteria; check each item there too.
 

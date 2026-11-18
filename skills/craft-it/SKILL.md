@@ -33,7 +33,7 @@ assumption.
 
 - `git config --local --type=bool --get dream-team.own` prints anything but `true` → read, triage,
   comment on, file and close issues, and push and open the MR/PR, per
-  `<base directory>/../../references/tracker-local.md`.
+  `<base directory>/../setup-dream-team/tracker-local.md`.
 - `dream-team.own` prints anything but `true` → write in the workflow's `notes`: "commits cite
   no issue: no `Closes` line, no `#<n>`".
 
@@ -108,7 +108,7 @@ Light path, no workflow:
 - Branch per step 3.
 - Make the edit inline.
 - A decision that passes the test in `reference/decision-record.md` has no record yet → write
-  its record per that file and `<base directory>/../../references/repo-conventions.md`, in the
+  its record per that file and `<base directory>/../setup-dream-team/repo-conventions.md`, in the
   edit's commit.
 - Run every `gateCommands` entry.
 - Dispatch one reviewer with the issue and the base, told to read the diff with `git diff <base>`,
@@ -201,7 +201,7 @@ remote's default branch unless the project's `CLAUDE.md` or `AGENTS.md` names an
 - The change carries a decision that passes the test in
   [`reference/decision-record.md`](reference/decision-record.md) and has no record yet, from a
   step-2 answer or the issue → name the decision in `notes` with the absolute paths of that file and
-  `<base directory>/../../references/repo-conventions.md`, and tell the implementer to add its
+  `<base directory>/../setup-dream-team/repo-conventions.md`, and tell the implementer to add its
   record per both, in the same commit as the change.
 - `gateCommands`: the build, test and lint commands the repo's CI config runs that also run in this
   checkout — CI config first, `CLAUDE.md`, `AGENTS.md` and README second. The mechanical gate
@@ -286,7 +286,7 @@ Adjacent defects — anything found outside the diff or returned in `preExisting
 Every issue you open gets the milestone it belongs to, set at creation, and `workflow::future`
 when that milestone has an open dependency. Pick the milestone from the tracker's open
 milestones and the `planned` rows of the repo's ROADMAP, found per
-`<base directory>/../../references/repo-conventions.md`. A
+`<base directory>/../setup-dream-team/repo-conventions.md`. A
 `planned` row fits best → no milestone and `workflow::future`. None clearly fits → ask.
 
 ## 6. Open the MR/PR
