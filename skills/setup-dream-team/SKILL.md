@@ -53,7 +53,7 @@ It changes no code; the filed issue goes through `craft-it`. It marks an own clo
   invariant; a rule it only states is not one.
 - A CHANGELOG's header links the Keep a Changelog version it follows.
 - `docs/CONVENTIONS.md` exists, and the project `CLAUDE.md` or `AGENTS.md` carries the
-  `## Doc conventions` block `<base directory>/../../references/repo-conventions.md` gives.
+  `## Doc conventions` block `./repo-conventions.md` gives.
 
 ## Project rules
 
@@ -136,7 +136,7 @@ sets a colour only on a label it creates.
      exclude file, and stop; change nothing else in the repo or its tracker.
    - Own → run `git config --local dream-team.own true`, then go on to step 2.
 2. Read the project `CLAUDE.md` or `AGENTS.md`, the contributor doc, the ROADMAP and the specs
-   folder, at the paths `<base directory>/../../references/repo-conventions.md` resolves.
+   folder, at the paths `./repo-conventions.md` resolves.
 3. Read the tracker's milestones, labels, open issues and every issue with a `type::` label
    through the host's tooling skill.
 4. Run every check. Record pass or fail, with the evidence: issue numbers, file and line.

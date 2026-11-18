@@ -1,7 +1,7 @@
 # Decision record format
 
 For the path, file naming and numbering, and a repo template that replaces the one below, see
-[repo-conventions.md](../../../references/repo-conventions.md).
+[repo-conventions.md](../../setup-dream-team/repo-conventions.md).
 
 ## Template
 
