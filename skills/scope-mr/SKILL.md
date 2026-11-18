@@ -10,11 +10,11 @@ MR description is review-facing. Different text from the commit body. Never `--f
 
 ## Diff budget
 
-- Before creating or editing an MR/PR description, write it to a file.
-- Run `python3 <this skill's base directory>/scripts/diff-budget.py <file> --base <target>` in
+- Before creating or editing an MR/PR description, pipe it in a heredoc to
+  `python3 <this skill's base directory>/scripts/diff-budget.py - --base <target> <<'EOF'` in
   a checkout of the MR's source branch.
 - It prints `Over budget` → cut parts, or keep the text as a judged override.
-- Pass that file to the create or edit command.
+- Pass the same text to the create or edit command.
 
 ## mr-style
 

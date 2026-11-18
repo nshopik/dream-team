@@ -3,6 +3,7 @@
 import argparse
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 DIFF_FACTOR = 5
@@ -55,10 +56,12 @@ def diff_lines(base=None):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('body_file')
+    ap.add_argument('body_file', help="description file, or '-' for stdin")
     ap.add_argument('--base')
     a = ap.parse_args()
-    n = count(Path(a.body_file).read_text(encoding='utf-8'))
+    text = (sys.stdin.read() if a.body_file == '-'
+            else Path(a.body_file).read_text(encoding='utf-8'))
+    n = count(text)
     lines = diff_lines(a.base)
     if not lines:
         print(f'Description: {n} words; diff unmeasurable, no budget.')
