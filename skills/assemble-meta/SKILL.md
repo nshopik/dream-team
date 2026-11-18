@@ -82,7 +82,7 @@ object:
 - **`skipped`** — children not run because a failed child blocks them.
 - A child's branch and worktree are dropped once it lands or fails, unless it has `untrackedPaths`:
   then its `worktree` is kept with those files in it; list that path with them.
-- **`review`** — the one craft-it-loop result for the whole branch, from Simplify on, with the
+- **`review`** — the one craft-it-loop result for the whole branch, from Review on, with the
   Meta issue as its issue.
 - `review` is `null` → no child passed the gate: hand the branch back.
 

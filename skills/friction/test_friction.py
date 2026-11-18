@@ -95,7 +95,7 @@ cases = [  # (role, tool, input, patterns[, prompt])
     ("impl", "Bash", {"command": "sed -i 's/a/b/' src/a.py && git checkout src/b.py"}, []),
     ("review:code", "Bash", {"command": "make test 2>&1 | tee /tmp/out >&2; ls x 2>/dev/null > /tmp/ls"}, []),
     ("review:code", "Bash", {"command": "awk '$1 > 5' a.txt; grep -n 'git stash' b.md"}, []),
-    ("simplify", "Bash", {"command": "cat > src/a.py <<'EOF'\nx = 1\nEOF"}, ["forbidden"]),
+    ("review:code", "Bash", {"command": "cat > src/a.py <<'EOF'\nx = 1\nEOF"}, ["forbidden"]),
     ("impl", "Bash", {"command": "make"}, ["skill-skipped"], craft),
     ("impl", "Skill", {"skill": "dream-team:build-rules"}, [], craft),
     ("impl", "Bash", {"command": "git commit -m x"}, ["skill-skipped"], "Get every gate command green, load the `scope-commit` skill, then commit on the branch."),

@@ -44,9 +44,8 @@ Pattern names the script prints:
 For each printed pattern:
 
 - Find the prompt that role runs in `<base directory>/../../workflows/craft-it-loop.js`:
-  `impl` → `implPrompt`, `gate` → `verifyPrompt`, `build-fix` → `buildFixPrompt`, `simplify` →
-  `simplifyPrompt`, `simplify-fix` → `simplifyFixPrompt`, `review:domain` →
-  `domainPrompt`, `review:external` → `externalPrompt`,
+  `impl` → `implPrompt`, `gate` → `verifyPrompt`, `build-fix` → `buildFixPrompt`,
+  `review:domain` → `domainPrompt`, `review:external` → `externalPrompt`,
   other `review:` → `lensPrompt`, `re-review:` → `reReviewPrompt`, `fixdiff:` →
   `fixDiffPrompt`, `fix` → `fixPrompt` or `nitFixPrompt`.
 - `session` or `session:<agent type>` → the skill or agent prompt this session or its subagent ran.

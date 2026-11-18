@@ -28,11 +28,6 @@
     "dream-team:test-coverage-reviewer": "Red evidence matches the bug; new table rows cover owner and type mismatch. No findings.",
     "domain": "Matches upstream iter_scrub.c behaviour. Read upstream from the ~/upstream working tree, not the pinned commit a7fc80d8c: this reviewer type has no shell to check it out. No findings."
   },
-  "simplify": {
-    "applied": [],
-    "disputed": [],
-    "unhandled": 0
-  },
   "questions": [],
   "preExisting": [],
   "untrackedPaths": [],

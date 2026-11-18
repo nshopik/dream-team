@@ -1,10 +1,9 @@
 export const meta = {
   name: 'craft-it-loop',
-  description: 'One issue end to end: implement, mechanical gate after every write, build-rules simplify pass, qa-review lenses plus the domain lens, bounded fix loop',
+  description: 'One issue end to end: implement, mechanical gate after every write, qa-review lenses plus the domain lens, bounded fix loop',
   phases: [
     { title: 'Implement', detail: 'one agent writes the change and commits' },
     { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
-    { title: 'Simplify', detail: 'build-rules cuts, applied or disputed by the implementer; skipped when the diff has no code, build-rules is not available, or its review returns nothing after the retry (opus)' },
     { title: 'Review', detail: 'the three qa-review lenses plus a generic domain lens on every review (opus); opt-in external review command, its findings checked by one agent' },
     { title: 'Fix', detail: 'blocking findings plus cheap nits; the reviewers that failed re-review their findings, and every live reviewer reviews the fix diff the fixer committed' },
   ],
@@ -26,7 +25,7 @@ const BASE = String(A.base || '')
 const GATE_COMMANDS = Array.isArray(A.gateCommands) ? A.gateCommands.map(String).filter(Boolean) : []
 const EXTERNAL = String(A.externalReview || '')
 const STOP_AFTER_GATE = A.stopAfterGate === true
-const START_AT_SIMPLIFY = A.startAtSimplify === true
+const START_AT_REVIEW = A.startAtReview === true
 const WORKTREE = String(A.worktree || '')
 const FIX_ROUNDS = 3
 const VERIFY_ROUNDS = 3
@@ -54,9 +53,6 @@ const IMPL_SCHEMA = {
   },
 }
 
-// The verify agent is the neutral party that already runs git, so it also
-// reports whether the diff touches code. Asking the implementer would be
-// self-assessment, and a second agent for a `git diff --name-only` is waste.
 const VERIFY_SCHEMA = {
   type: 'object',
   required: ['passed', 'summary', 'changedFiles', 'status', 'head'],
@@ -68,11 +64,6 @@ const VERIFY_SCHEMA = {
     changedFiles: { type: 'array', items: { type: 'string' } },
     head: { type: 'string', description: 'the sha `git rev-parse HEAD` printed' },
     status: { type: 'array', items: { type: 'string' }, description: 'the lines `git status --porcelain` printed before the gate ran, verbatim' },
-    aspects: {
-      type: 'array',
-      description: 'whether this diff touches code; only when the prompt asks for it',
-      items: { type: 'string', enum: ['code'] },
-    },
     failures: {
       type: 'array',
       items: {
@@ -130,30 +121,6 @@ const EXTERNAL_SCHEMA = {
   properties: {
     ...VERDICT_SCHEMA.properties,
     ran: { type: 'boolean', description: 'false when the command is not found or exits non-zero' },
-  },
-}
-
-const SIMPLIFY_SCHEMA = {
-  type: 'object',
-  required: ['craftLoaded', 'findings'],
-  additionalProperties: false,
-  properties: {
-    friction: FRICTION,
-    craftLoaded: { type: 'boolean', description: 'false when the dream-team:build-rules skill is not available in this session' },
-    findings: {
-      type: 'array',
-      items: {
-        type: 'object',
-        required: ['tag', 'location', 'cut', 'replacement'],
-        additionalProperties: false,
-        properties: {
-          tag: { type: 'string', enum: ['craft'] },
-          location: { type: 'string', description: '<file>:L<line>' },
-          cut: { type: 'string' },
-          replacement: { type: 'string' },
-        },
-      },
-    },
   },
 }
 
@@ -229,9 +196,7 @@ const roster = (agentType) => (isGeneric(agentType) ? {} : { agentType })
 const reviewerRoster = (agentType) => ({ ...roster(agentType), model: 'opus' })
 const IMPLEMENTER = { model: 'opus', effort: 'high' }
 
-// Also holds a missing build-rules skill or the `simplify` no-result marker, so `degraded` reports them.
 const MISSING_TYPES = new Set()
-const BUILD_RULES = 'dream-team:build-rules'
 const degrade = ({ agentType, ...o }) => o
 
 // A disabled plugin is enough to make a real type vanish, so a call with an
@@ -292,7 +257,7 @@ const READ_ONLY = 'Read-only: do not edit, stage or commit anything, and do not 
 
 const READ_DIFF = `Read the branch diff with \`git diff ${BASE}..HEAD\`.`
 
-const LOAD_BUILD_RULES = `Load the \`${BUILD_RULES}\` skill with the Skill tool before your first edit, and follow it. Not available in this session → say so in friction.`
+const LOAD_BUILD_RULES = `Load the \`dream-team:build-rules\` skill with the Skill tool before your first edit, and follow it. Not available in this session → say so in friction.`
 
 const REVIEW_RULES = [
   READ_ONLY,
@@ -315,12 +280,12 @@ function implPrompt() {
   ].join('\n')
 }
 
-function verifyPrompt(after, withAspects) {
+function verifyPrompt(after) {
   return [
     CONTEXT,
     '',
     after ? `Re-run the mechanical gate after ${after}.` : 'Run the mechanical gate on the current branch state.',
-    'The gate is read-only. Run only the commands written below — `git status`, the gate commands, `git diff`, `git rev-parse` and any aspects pipeline — each once, in order.',
+    'The gate is read-only. Run only the commands written below — `git status`, the gate commands, `git diff`, `git rev-parse` — each once, in order.',
     'On a failure you may also read a log file the failing command names, with `cat`, `tail` or `grep`, to quote its failing lines in the summary.',
     'Do not edit or revert any file, rerun a command with changes, read source to diagnose a failure, or search outside the repo: diagnosis belongs to the build-fix stage.',
     'Before any gate command, run `git status --porcelain` and report every line it prints, verbatim, as status; do not stage, commit or clean anything.',
@@ -328,10 +293,6 @@ function verifyPrompt(after, withAspects) {
     'Report pass only if every command exited 0.',
     'Do not review style or design — that is a later stage. Report what the tooling says.',
     `Report changedFiles from \`git diff --name-only ${BASE}..HEAD\`, and head from \`git rev-parse HEAD\`.`,
-    ...(withAspects ? [
-      'Return the aspects field: ["code"] when this command produces output, [] when it does not (adapt the extensions to this repo\'s language, keep it mechanical):',
-      `  \`git diff --name-only ${BASE}..HEAD | grep -Ei '\\.(c|cc|cpp|cs|css|ex|exs|go|h|hpp|html|java|js|jsx|kt|lua|mjs|cjs|php|py|rb|rs|scala|sh|svelte|swift|ts|tsx|vue|zig)$'\``,
-    ] : []),
   ].join('\n')
 }
 
@@ -346,29 +307,6 @@ function buildFixPrompt(v, round) {
     'Fix the cause, not the symptom. Do not weaken or delete a test to make it pass.',
     'Re-run the failing commands, then commit on the branch.',
     COMMIT_ALL,
-  ].join('\n')
-}
-
-function simplifyPrompt() {
-  return [
-    CONTEXT,
-    '',
-    `Load the \`${BUILD_RULES}\` skill with the Skill tool and judge the branch diff against it: return each break of one of its rules as one finding, tag craft, with the break as cut and the change that fixes it as replacement.`,
-    READ_DIFF,
-    'Not available in this session → return craftLoaded false and no findings.',
-    READ_ONLY,
-  ].join('\n')
-}
-
-function simplifyFixPrompt(findings) {
-  return [
-    CONTEXT,
-    '',
-    'A build-rules (tag craft) review of the branch diff proposes these changes:',
-    findings.map((f) => `- ${f.location}: ${f.tag}: ${f.cut} → ${f.replacement}`).join('\n'),
-    '',
-    LOAD_BUILD_RULES,
-    ...APPLY_RULES,
   ].join('\n')
 }
 
@@ -522,9 +460,9 @@ const gateFail = (g) => ({ ok: false, stage: 'gate', reason: g.reason, verify: g
 const result = (r) => ({ ...r, degraded: [...MISSING_TYPES], untrackedPaths: [...UNTRACKED] })
 
 // The run continues past a writing agent only through this gate, so the head that ships is a gated one.
-async function gate(after, tag, withAspects) {
+async function gate(after, tag) {
   for (let round = 0; ; round++) {
-    const verify = await agentR(verifyPrompt(round ? `build-fix round ${round}` : after, withAspects), {
+    const verify = await agentR(verifyPrompt(round ? `build-fix round ${round}` : after), {
       label: `gate:#${ISSUE}${tag ? `:${tag}` : ''}${round ? `:r${round}` : ''}`,
       phase: 'Gate',
       schema: VERIFY_SCHEMA,
@@ -552,9 +490,9 @@ async function gate(after, tag, withAspects) {
   }
 }
 
-// startAtSimplify: redEvidence is the failing output the earlier runs observed.
+// startAtReview: redEvidence is the failing output the earlier runs observed.
 let impl = { redEvidence: String(A.redEvidence || ''), assumptions: [] }
-if (!START_AT_SIMPLIFY) {
+if (!START_AT_REVIEW) {
   phase('Implement')
   impl = await agentR(implPrompt(), {
     label: `impl:#${ISSUE}`,
@@ -566,43 +504,14 @@ if (!START_AT_SIMPLIFY) {
   if (!impl.committed) return result({ ok: false, stage: 'implement', reason: impl.summary || 'implementer committed nothing' })
 }
 
-// With startAtSimplify the gate still runs first: Simplify needs its head and aspects.
+// With startAtReview the gate still runs first: Review needs its head.
 phase('Gate')
-const first = await gate('', '', true)
+const first = await gate()
 if (!first.ok) return result(gateFail(first))
 let verified = first.verify
 if (STOP_AFTER_GATE) {
   return result({ ok: true, issue: ISSUE, branch: BRANCH, head: verified.head, assumptions: impl.assumptions || [],
     redEvidence: impl.redEvidence, changedFiles: verified.changedFiles })
-}
-
-// Must precede Review: a cut made after it ships unreviewed.
-let simplify = null
-if ((first.verify.aspects || []).includes('code')) {
-  phase('Simplify')
-  const review = await agentR(simplifyPrompt(), { label: `simplify:#${ISSUE}`, phase: 'Simplify', schema: SIMPLIFY_SCHEMA, model: 'opus' })
-  if (!review?.craftLoaded) {
-    MISSING_TYPES.add(review ? BUILD_RULES : 'simplify')
-    log(`Simplify: ${review ? `${BUILD_RULES} not available` : 'review returned no result'}; skipped.`)
-  } else if (!review.findings.length) {
-    simplify = { applied: [], disputed: [], unhandled: 0 }
-  } else {
-    const cuts = await agentR(simplifyFixPrompt(review.findings), {
-      label: `simplify-fix:#${ISSUE}`,
-      phase: 'Simplify',
-      schema: FIX_SCHEMA,
-      ...IMPLEMENTER,
-    })
-    if (!cuts) return result({ ok: false, stage: 'simplify', reason: 'implementer returned no result on the simplify cuts' })
-    if (cuts.addressed.length ? !cuts.committed : !cuts.disputed.length) {
-      return result({ ok: false, stage: 'simplify', reason: `simplify implementer applied nothing it committed and disputed nothing: ${cuts.summary}` })
-    }
-    const g = await gate('the simplify cuts', 'simplify', false)
-    if (!g.ok) return result(gateFail(g))
-    verified = g.verify
-    const unhandled = Math.max(0, review.findings.length - cuts.addressed.length - cuts.disputed.length)
-    simplify = { applied: cuts.addressed, disputed: cuts.disputed, unhandled }
-  }
 }
 
 // Gates are keyed so a fix round re-reviews the ones that failed and the rest
@@ -656,7 +565,6 @@ const handBack = (reason) => result({
   blocking: outstanding(),
   deadReviewers: deadGates().map((g) => g.key),
   redEvidence: impl.redEvidence,
-  simplify,
   ...carried,
   verdicts: Object.fromEntries(state),
 })
@@ -696,7 +604,7 @@ while (true) {
     disputes.push(...fix.disputed.map((d) => ({ ...d, round })))
     nitsGiven += nitsNow.length
     if (fix.nits) { nitFix.addressed.push(...fix.nits.addressed); nitFix.disputed.push(...fix.nits.disputed) }
-    const g = await gate(`review-fix round ${round}`, `fix${round}`, false)
+    const g = await gate(`review-fix round ${round}`, `fix${round}`)
     if (!g.ok) return result({ ...gateFail(g), blocking, ...carried })
     verified = g.verify
   }
@@ -766,7 +674,7 @@ if (nitsLeft.length) {
   const fix = await agentR(nitFixPrompt(nitsLeft), { label: `fix:#${ISSUE}:nits`, phase: 'Fix', schema: FIX_SCHEMA, ...IMPLEMENTER })
   if (!fix) return result({ ok: false, stage: 'fix', reason: 'fixer returned no result on the nits', ...carried })
   if (fix.committed) {
-    const g = await gate('the nit fixes', 'nits', false)
+    const g = await gate('the nit fixes', 'nits')
     if (!g.ok) return result({ ...gateFail(g), ...carried })
     verified = g.verify
   }
@@ -785,7 +693,6 @@ return result({
   changedFiles: verified.changedFiles,
   nitFindings: nits,
   nitFix: nits.length ? nitFix : null,
-  simplify,
   ...carried,
   summaries: Object.fromEntries(gates.map((g) => [g.key, state.get(g.key).summary])),
   doneWhen,

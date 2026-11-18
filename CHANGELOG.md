@@ -11,9 +11,12 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Changed
 
-- `craft-it-loop`'s Simplify phase no longer runs `ponytail:ponytail-review`: `build-rules` alone proposes the simplify cuts, the result's `simplify` drops `net`, and a Simplify review that returns nothing lists `simplify` in `degraded`.
 - `craft-it-loop`'s domain lens takes `qa-review`'s domain wording and runs in a project that names no reference source: it names the project's domain, checks the diff against what a change in that domain must get right, and raises as questions what only the owner can settle.
 - `build-rules` has a change reuse an existing test helper, mock, stub or fixture, move one it would copy from another test file into a shared test module, and extend an existing test of a path instead of testing it again at another level.
+
+### Removed
+
+- **Breaking:** `craft-it-loop` drops its Simplify phase and the `simplify` result field, going from the gate straight to review, and its `startAtSimplify` argument is renamed `startAtReview`.
 
 ## [26.11.2] - 2026-11-17
 
