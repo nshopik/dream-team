@@ -1,5 +1,5 @@
 ---
 type: regex
-pattern: 'Repo layout: `docs/CONVENTIONS\.md`; read the decision records touching your area first'
+pattern: '## Doc conventions(?:[\s+>]|\\n)+Decision records, specs, ROADMAP: `docs/CONVENTIONS\.md`\. Read the records touching your area first'
 flags: i
 ---

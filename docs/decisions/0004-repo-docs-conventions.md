@@ -1,5 +1,7 @@
 # A repo's doc conventions live in the repo; skills follow them over their own defaults
 
+Superseded by 0008-setup-writes-conventions-doc.md
+
 Skills fixed the paths for decision records, specs and ROADMAP (`docs/decisions/`,
 `docs/specs/`); they now take those paths, file naming and record template from what the
 project's `CLAUDE.md` or `AGENTS.md` declares, else from an existing records folder (`docs/adr/`,

@@ -1,6 +1,6 @@
 ---
 type: regex
-pattern: 'Repo layout:|^#+ *Doc conventions|Decision records *\|'
+pattern: 'Decision records, specs, ROADMAP:|^#+ *Doc conventions|Decision records *\|'
 flags: im
 match: not_contains
 ---

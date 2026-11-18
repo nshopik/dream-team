@@ -27,21 +27,25 @@ Take each of the paths, the file naming and the record template from the first t
 - `NNNN`: four digits, the next free number in its folder on the target branch, from `0001`.
 - The target takes that number before merge → rename the file to the next free one at rebase.
 
-## First writer in an own clone
+## Conventions doc in an own clone
 
+- `docs/CONVENTIONS.md` records the paths, naming and template the lookup resolved; a ROADMAP row
+  only when the repo has one.
+- The block for the project `CLAUDE.md` (`AGENTS.md` when only that exists), verbatim:
+
+```md
+## Doc conventions
+
+Decision records, specs, ROADMAP: `docs/CONVENTIONS.md`. Read the records touching your area first.
+```
+
+- `setup-dream-team` writes both in an own clone, the block in place of any layout the file
+  declares.
 - Writing a new decision record, spec or ROADMAP,
   `git config --local --type=bool --get dream-team.own` prints `true`, and the project's `CLAUDE.md`
   or `AGENTS.md` declares none of these conventions → in the same commit as that file, add
-  `docs/CONVENTIONS.md` from the template below and the pointer line to `CLAUDE.md` (to `AGENTS.md`
-  when only that exists).
+  `docs/CONVENTIONS.md` from the template below and the block.
 - `dream-team.own` prints anything else → write neither.
-- `docs/CONVENTIONS.md` records the paths, naming and template the lookup resolved; a ROADMAP row
-  only when the repo has one.
-- Pointer line, verbatim:
-
-```md
-Repo layout: `docs/CONVENTIONS.md`; read the decision records touching your area first.
-```
 
 ## docs/CONVENTIONS.md template
 
