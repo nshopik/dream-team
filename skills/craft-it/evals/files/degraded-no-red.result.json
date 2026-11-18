@@ -27,7 +27,6 @@
     "domain": "Context now cancels the pending lookup on timeout. No findings."
   },
   "simplify": {
-    "net": 0,
     "applied": [],
     "disputed": [],
     "unhandled": 0

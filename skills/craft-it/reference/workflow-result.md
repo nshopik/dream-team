@@ -15,17 +15,15 @@
 - **`ok: false` otherwise** — the implement, gate, simplify or fix stage failed. Report the
   reason; an `implement` stop the issue or a recorded decision asked for carries its measured
   values in `reason`. The branch and its worktree are where the agent left them.
-- **`degraded`** — roster types whose agent call threw, after which every call of that type ran
-  as a generic agent; `ponytail:ponytail-review` when that skill was missing or its review
-  returned nothing, `dream-team:build-rules` when that skill was missing (Simplify is skipped
-  when neither ran), and `external` when the `externalReview` command was missing or exited
-  non-zero and was skipped.
+- **`degraded`** — what ran with less than planned:
+  - A roster type: its agent call threw, and every later call of that type ran as a generic agent.
+  - `dream-team:build-rules`: that skill was missing, so Simplify was skipped.
+  - `simplify`: the Simplify review returned nothing, so Simplify was skipped.
+  - `external`: the `externalReview` command was missing or exited non-zero, and was skipped.
 - **`untrackedPaths`** — untracked paths `git status --porcelain` listed before the latest gate run;
   they do not fail the gate.
-- **`simplify`** — the over-engineering cuts and build-rules fixes made before review: `applied`,
-  `disputed` with the implementer's reason, and `net`, the review's estimate of lines that could go.
-  Put applied cuts in the MR description, and `net` only when nothing was disputed; treat a disputed
-  cut like a nit.
+- **`simplify`** — the build-rules cuts made before review: `applied`, and `disputed` with the
+  implementer's reason. Put applied cuts in the MR description; treat a disputed cut like a nit.
   `unhandled` counts cuts the implementer neither applied nor disputed; above 0 → say so in
   the MR description. `null` → the phase was skipped.
 - **`disputes`** — the fixer refused a finding and gave evidence. Check it yourself. The fixer may

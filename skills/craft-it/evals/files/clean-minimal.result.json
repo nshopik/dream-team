@@ -32,7 +32,6 @@
     "domain": "Retention count now matches the documented --keep semantics. No findings."
   },
   "simplify": {
-    "net": 0,
     "applied": [],
     "disputed": [],
     "unhandled": 0

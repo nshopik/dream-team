@@ -1,10 +1,10 @@
 export const meta = {
   name: 'craft-it-loop',
-  description: 'One issue end to end: implement, mechanical gate after every write, ponytail-review and build-rules simplify pass, qa-review lenses plus the domain lens, bounded fix loop',
+  description: 'One issue end to end: implement, mechanical gate after every write, build-rules simplify pass, qa-review lenses plus the domain lens, bounded fix loop',
   phases: [
     { title: 'Implement', detail: 'one agent writes the change and commits' },
     { title: 'Gate', detail: 'the orchestrator-supplied gate commands with a build-fix loop (sonnet, low); re-runs after every fix agent' },
-    { title: 'Simplify', detail: 'ponytail-review and build-rules cuts, applied or disputed by the implementer; skipped when the diff has no code, neither ponytail-review nor build-rules is available, or its review returns nothing after the retry (opus)' },
+    { title: 'Simplify', detail: 'build-rules cuts, applied or disputed by the implementer; skipped when the diff has no code, build-rules is not available, or its review returns nothing after the retry (opus)' },
     { title: 'Review', detail: 'the three qa-review lenses plus a generic domain lens on every review (opus); opt-in external review command, its findings checked by one agent' },
     { title: 'Fix', detail: 'blocking findings plus cheap nits; the reviewers that failed re-review their findings, and every live reviewer reviews the fix diff the fixer committed' },
   ],
@@ -135,11 +135,10 @@ const EXTERNAL_SCHEMA = {
 
 const SIMPLIFY_SCHEMA = {
   type: 'object',
-  required: ['skillLoaded', 'craftLoaded', 'findings', 'net'],
+  required: ['craftLoaded', 'findings'],
   additionalProperties: false,
   properties: {
     friction: FRICTION,
-    skillLoaded: { type: 'boolean', description: 'false when the ponytail:ponytail-review skill is not available in this session' },
     craftLoaded: { type: 'boolean', description: 'false when the dream-team:build-rules skill is not available in this session' },
     findings: {
       type: 'array',
@@ -148,14 +147,13 @@ const SIMPLIFY_SCHEMA = {
         required: ['tag', 'location', 'cut', 'replacement'],
         additionalProperties: false,
         properties: {
-          tag: { type: 'string', enum: ['delete', 'stdlib', 'native', 'yagni', 'shrink', 'craft'] },
+          tag: { type: 'string', enum: ['craft'] },
           location: { type: 'string', description: '<file>:L<line>' },
           cut: { type: 'string' },
           replacement: { type: 'string' },
         },
       },
     },
-    net: { type: 'integer', minimum: 0, description: 'the N of the skill\'s `net: -<N> lines possible.`; 0 on `Lean already. Ship.`' },
   },
 }
 
@@ -231,9 +229,8 @@ const roster = (agentType) => (isGeneric(agentType) ? {} : { agentType })
 const reviewerRoster = (agentType) => ({ ...roster(agentType), model: 'opus' })
 const IMPLEMENTER = { model: 'opus', effort: 'high' }
 
-// Also holds a missing ponytail-review or build-rules skill, so `degraded` reports it.
+// Also holds a missing build-rules skill or the `simplify` no-result marker, so `degraded` reports them.
 const MISSING_TYPES = new Set()
-const PONYTAIL_REVIEW = 'ponytail:ponytail-review'
 const BUILD_RULES = 'dream-team:build-rules'
 const degrade = ({ agentType, ...o }) => o
 
@@ -356,13 +353,9 @@ function simplifyPrompt() {
   return [
     CONTEXT,
     '',
-    `Load the ${PONYTAIL_REVIEW} skill with the Skill tool and review the branch diff with it.`,
+    `Load the \`${BUILD_RULES}\` skill with the Skill tool and judge the branch diff against it: return each break of one of its rules as one finding, tag craft, with the break as cut and the change that fixes it as replacement.`,
     READ_DIFF,
-    'Not available in this session → return skillLoaded false, none of its findings and net 0; never review for over-engineering without it.',
-    'Return each line the skill writes as one finding, and the N of its `net: -<N> lines possible.` as net.',
-    'The skill says `Lean already. Ship.` → return none of its lines as findings and net 0.',
-    `Then load the \`${BUILD_RULES}\` skill with the Skill tool and judge the diff against it: return each break of one of its rules as one more finding, tag craft, with the break as cut and the change that fixes it as replacement.`,
-    'Not available in this session → return craftLoaded false and no craft findings.',
+    'Not available in this session → return craftLoaded false and no findings.',
     READ_ONLY,
   ].join('\n')
 }
@@ -371,7 +364,7 @@ function simplifyFixPrompt(findings) {
   return [
     CONTEXT,
     '',
-    'An over-engineering (ponytail-review) and build-rules (tag craft) review of the branch diff proposes these changes:',
+    'A build-rules (tag craft) review of the branch diff proposes these changes:',
     findings.map((f) => `- ${f.location}: ${f.tag}: ${f.cut} → ${f.replacement}`).join('\n'),
     '',
     LOAD_BUILD_RULES,
@@ -588,18 +581,11 @@ let simplify = null
 if ((first.verify.aspects || []).includes('code')) {
   phase('Simplify')
   const review = await agentR(simplifyPrompt(), { label: `simplify:#${ISSUE}`, phase: 'Simplify', schema: SIMPLIFY_SCHEMA, model: 'opus' })
-  if (!review?.skillLoaded) {
-    MISSING_TYPES.add(PONYTAIL_REVIEW)
-    log(`Simplify: ${PONYTAIL_REVIEW} ${review ? 'not available' : 'returned no result'}.`)
-  }
-  if (review && !review.craftLoaded) {
-    MISSING_TYPES.add(BUILD_RULES)
-    log(`Simplify: ${BUILD_RULES} not available.`)
-  }
-  if (!review?.skillLoaded && !review?.craftLoaded) {
-    log('Simplify: skipped.')
+  if (!review?.craftLoaded) {
+    MISSING_TYPES.add(review ? BUILD_RULES : 'simplify')
+    log(`Simplify: ${review ? `${BUILD_RULES} not available` : 'review returned no result'}; skipped.`)
   } else if (!review.findings.length) {
-    simplify = { net: 0, applied: [], disputed: [], unhandled: 0 }
+    simplify = { applied: [], disputed: [], unhandled: 0 }
   } else {
     const cuts = await agentR(simplifyFixPrompt(review.findings), {
       label: `simplify-fix:#${ISSUE}`,
@@ -615,7 +601,7 @@ if ((first.verify.aspects || []).includes('code')) {
     if (!g.ok) return result(gateFail(g))
     verified = g.verify
     const unhandled = Math.max(0, review.findings.length - cuts.addressed.length - cuts.disputed.length)
-    simplify = { net: review.net, applied: cuts.addressed, disputed: cuts.disputed, unhandled }
+    simplify = { applied: cuts.addressed, disputed: cuts.disputed, unhandled }
   }
 }
 
