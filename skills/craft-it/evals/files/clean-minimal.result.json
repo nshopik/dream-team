@@ -31,11 +31,6 @@
     "dream-team:test-coverage-reviewer": "Red evidence matches the bug; test pins the boundary.",
     "domain": "Retention count now matches the documented --keep semantics. No findings."
   },
-  "simplify": {
-    "applied": [],
-    "disputed": [],
-    "unhandled": 0
-  },
   "questions": [],
   "preExisting": [],
   "untrackedPaths": [],

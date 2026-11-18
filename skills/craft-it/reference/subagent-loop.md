@@ -16,10 +16,10 @@ as it reads a workflow return.
   JSON Schema:" and the stage's schema from `<loop>`, as JSON.
 - Set each Agent call's `description` to the label `<loop>` gives that call, e.g. `impl:#42`,
   `fix:#42:r1`.
-- A writing agent (implementer, build fixer, simplify fixer, fixer, nit fixer) → a
-  `general-purpose` agent with `model: opus`, in the foreground, one at a time.
+- A writing agent (implementer, build fixer, fixer, nit fixer) → a `general-purpose` agent with
+  `model: opus`, in the foreground, one at a time.
 - A reviewer → `model: opus`; a lens gets its `dream-team:` type as `subagent_type`, the
-  simplify, domain and external reviewers `general-purpose`.
+  domain and external reviewers `general-purpose`.
 - Several reviewers in one stage → one message with one Agent call each, all at once.
 - A reply with no fenced block, or a block missing a required field → redispatch it once with
   `agentR`'s retry sentence appended.
@@ -51,18 +51,16 @@ as it reads a workflow return.
 ## Stages
 
 1. Implement: `implPrompt`, `IMPL_SCHEMA`.
-2. Gate, then run `verifyPrompt`'s aspects command: any output means the diff has code.
-3. Simplify, only when the diff has code: `simplifyPrompt`, `SIMPLIFY_SCHEMA`.
-4. Simplify fix, only when Simplify returned findings: `simplifyFixPrompt`, `FIX_SCHEMA`; Gate.
-5. Review, every reviewer at once: the three `LENSES` with `lensPrompt` and stage 1's
+2. Gate.
+3. Review, every reviewer at once: the three `LENSES` with `lensPrompt` and stage 1's
    `redEvidence`, the domain lens with `domainPrompt`, and with `externalReview` set the
    external reviewer with `externalPrompt` and `EXTERNAL_SCHEMA`; `VERDICT_SCHEMA` otherwise.
-6. Fix rounds, below.
-7. Nit fix, only when nits no fixer was given remain: `nitFixPrompt`, `FIX_SCHEMA`; Gate.
-8. Write the result `<loop>`'s last `return` builds to `<scratchpad>/craft-it-result.json`.
+4. Fix rounds, below.
+5. Nit fix, only when nits no fixer was given remain: `nitFixPrompt`, `FIX_SCHEMA`; Gate.
+6. Write the result `<loop>`'s last `return` builds to `<scratchpad>/craft-it-result.json`.
 
-- Set each stage's outcomes (stops, `degraded` entries, `simplify`, nits, questions,
-  `preExisting`, `doneWhen`) as `<loop>` sets them after that stage's call.
+- Set each stage's outcomes (stops, `degraded` entries, nits, questions, `preExisting`,
+  `doneWhen`) as `<loop>` sets them after that stage's call.
 - A stop → write the failure result `<loop>` returns there, then go on to step 5 with it.
 
 ## Fix rounds

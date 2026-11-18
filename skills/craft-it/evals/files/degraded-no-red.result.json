@@ -26,11 +26,6 @@
     "dream-team:test-coverage-reviewer": "No findings.",
     "domain": "Context now cancels the pending lookup on timeout. No findings."
   },
-  "simplify": {
-    "applied": [],
-    "disputed": [],
-    "unhandled": 0
-  },
   "questions": [],
   "preExisting": [],
   "untrackedPaths": [],

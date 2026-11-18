@@ -297,8 +297,8 @@ fixup per commit an edit repairs. If you or step 5's agent changed anything, run
 it, or hand the branch back.
 
 Fold the branch to one commit per change. The implementer commits once per independent change;
-the simplify cuts, build-fix and fix rounds add `fixup! <subject>` and `amend! <subject>`
-commits, and a plain commit for a defect already on the base commit. Count the changes:
+build-fix and fix rounds add `fixup! <subject>` and `amend! <subject>` commits, and a plain
+commit for a defect already on the base commit. Count the changes:
 
 ```sh
 git log --format=%s <base>..HEAD | grep -Evc '^(fixup|amend)! '

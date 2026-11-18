@@ -78,7 +78,7 @@ def verdict(i):
         return {}
 
 
-writers = [i for i in agents if re.match(r'(impl|build-fix|simplify-fix|fix):', label(i))]
+writers = [i for i in agents if re.match(r'(impl|build-fix|fix):', label(i))]
 res = [('Workflow tool never called', not any(c['name'] == 'Workflow' for c in calls)),
        (f'writing agents dispatched ({len(writers)})', bool(writers))]
 for i in writers:
@@ -111,7 +111,7 @@ res.append(('fix-diff-only re-review after the last fix round', bool(fixes)
 res.append(('fix loop ended', (r.get('ok') is True and r.get('fixRounds', 0) >= 1)
             or r.get('handBack') is True if seeded and r else None))
 if r:
-    common = ['redEvidence', 'simplify', 'disputes', 'resolved', 'questions', 'preExisting']
+    common = ['redEvidence', 'disputes', 'resolved', 'questions', 'preExisting']
     keys = ['ok', 'degraded', 'untrackedPaths'] + (
         common + ['issue', 'branch', 'reviewers', 'fixRounds', 'assumptions', 'changedFiles',
                   'nitFindings', 'nitFix', 'summaries', 'doneWhen'] if r.get('ok')

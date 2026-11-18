@@ -1,9 +1,9 @@
 export const meta = {
   name: 'assemble-meta-loop',
-  description: 'One Meta issue on one integration branch: craft-it-loop to the gate per child, oldest ready first, then craft-it-loop once from Simplify over the whole branch',
+  description: 'One Meta issue on one integration branch: craft-it-loop to the gate per child, oldest ready first, then craft-it-loop once from Review over the whole branch',
   phases: [
     { title: 'Children', detail: 'craft-it-loop up to the gate per child, two at once, each in its own worktree; a child lands by rebase, re-gate and fast-forward in finish order, reruns once when that fails, and a failed child drops its branch and skips its dependents' },
-    { title: 'Review', detail: 'craft-it-loop from Simplify over the diff from the base, with the Meta issue and every finished child as the issue' },
+    { title: 'Review', detail: 'craft-it-loop from Review over the diff from the base, with the Meta issue and every finished child as the issue' },
   ],
 }
 
@@ -136,7 +136,7 @@ const review = await workflow(LOOP, {
   body: [META.body, ...finished.map((c) => `## #${c.issue}: ${c.title}\n\n${c.body}`)].join('\n\n'),
   notes: joinNotes(NOTES, ...finished.filter((c) => c.notes).map((c) => `#${c.issue}: ${c.notes}`)),
   redEvidence: done.filter((d) => d.redEvidence).map((d) => `#${d.issue}: ${d.redEvidence}`).join('\n'),
-  branch: BRANCH, base: BASE, worktree: WORKTREE, gateCommands: GATE_COMMANDS, externalReview: A.externalReview, startAtSimplify: true,
+  branch: BRANCH, base: BASE, worktree: WORKTREE, gateCommands: GATE_COMMANDS, externalReview: A.externalReview, startAtReview: true,
 })
 
 return { ok: !!review?.ok, children: done, failed, skipped, review }

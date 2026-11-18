@@ -10,22 +10,15 @@
     otherwise hand the branch back.
   - `deadReviewers` non-empty → those reviewers returned nothing on their last try; one that died
     on a re-review keeps its earlier findings in `blocking`; a dead fix-diff review keeps its pass
-    and is not listed. Do not open the MR; hand the branch
-    back.
-- **`ok: false` otherwise** — the implement, gate, simplify or fix stage failed. Report the
-  reason; an `implement` stop the issue or a recorded decision asked for carries its measured
-  values in `reason`. The branch and its worktree are where the agent left them.
+    and is not listed. Do not open the MR; hand the branch back.
+- **`ok: false` otherwise** — the implement, gate or fix stage failed. Report the reason; an
+  `implement` stop the issue or a recorded decision asked for carries its measured values in
+  `reason`. The branch and its worktree are where the agent left them.
 - **`degraded`** — what ran with less than planned:
   - A roster type: its agent call threw, and every later call of that type ran as a generic agent.
-  - `dream-team:build-rules`: that skill was missing, so Simplify was skipped.
-  - `simplify`: the Simplify review returned nothing, so Simplify was skipped.
   - `external`: the `externalReview` command was missing or exited non-zero, and was skipped.
 - **`untrackedPaths`** — untracked paths `git status --porcelain` listed before the latest gate run;
   they do not fail the gate.
-- **`simplify`** — the build-rules cuts made before review: `applied`, and `disputed` with the
-  implementer's reason. Put applied cuts in the MR description; treat a disputed cut like a nit.
-  `unhandled` counts cuts the implementer neither applied nor disputed; above 0 → say so in
-  the MR description. `null` → the phase was skipped.
 - **`disputes`** — the fixer refused a finding and gave evidence. Check it yourself. The fixer may
   be right; it may also be rationalizing. Apply the fix or accept the dispute.
 - **`resolved`** — blocking findings a fix round fixed and questions a re-review answered, each
