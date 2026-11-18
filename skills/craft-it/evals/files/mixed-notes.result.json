@@ -29,7 +29,6 @@
     "domain": "Matches upstream iter_scrub.c behaviour. Read upstream from the ~/upstream working tree, not the pinned commit a7fc80d8c: this reviewer type has no shell to check it out. No findings."
   },
   "simplify": {
-    "net": 0,
     "applied": [],
     "disputed": [],
     "unhandled": 0

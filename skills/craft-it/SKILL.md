@@ -422,7 +422,7 @@ The report carries only what the user must know or act on.
   reviewers and locations, the lab numbers when lab work ran, and the `<why>`.
 - Then end with `Work on #<n> is handed back: <branch> in
   .claude/worktrees/issue-<n>-<slug> — <why> (<hand-back comment link>)`.
-- Name each `degraded` roster type, and each dead reviewer the hand-back `<why>` does not name.
+- Name each `degraded` entry, and each dead reviewer the hand-back `<why>` does not name.
 - No MR/PR and `untrackedPaths` non-empty → list them under one bold label.
 - Name each dispute you settled, which way, and why.
 - Name each adjacent fix committed on the branch by its subject, one line each.

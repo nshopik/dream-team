@@ -28,7 +28,6 @@
     "domain": "Filter runs before the batch encoder, matching the existing --until path. No findings."
   },
   "simplify": {
-    "net": 0,
     "applied": [],
     "disputed": [],
     "unhandled": 0

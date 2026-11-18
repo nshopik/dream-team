@@ -68,7 +68,6 @@
     }
   },
   "simplify": {
-    "net": 0,
     "applied": [],
     "disputed": [],
     "unhandled": 0

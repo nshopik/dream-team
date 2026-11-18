@@ -25,7 +25,6 @@
     "domain": "Numeric fields now unquoted per RFC 4180 usage in docs/export.md. No findings."
   },
   "simplify": {
-    "net": 0,
     "applied": [],
     "disputed": [],
     "unhandled": 0
