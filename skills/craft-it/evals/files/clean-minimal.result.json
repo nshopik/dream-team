@@ -34,14 +34,5 @@
   "questions": [],
   "preExisting": [],
   "untrackedPaths": [],
-  "resolved": [],
-  "nitFix": {
-    "addressed": [],
-    "disputed": [
-      {
-        "finding": "keep variable could be named keepN for symmetry with maxN",
-        "reason": "Cosmetic; no reader or test depends on it."
-      }
-    ]
-  }
+  "resolved": []
 }

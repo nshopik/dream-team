@@ -44,14 +44,5 @@
   ],
   "preExisting": [],
   "untrackedPaths": [],
-  "resolved": [],
-  "nitFix": {
-    "addressed": [],
-    "disputed": [
-      {
-        "finding": "pool_test.go could use t.Parallel",
-        "reason": "Cosmetic; no reader or test depends on it."
-      }
-    ]
-  }
+  "resolved": []
 }

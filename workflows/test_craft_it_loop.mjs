@@ -130,9 +130,9 @@ const promptRows = [
   { name: 'implementer loads scope-commit', label: 'impl:#1', rule: 'load the `scope-commit` skill' },
   { name: 'build-fix loads build-rules', label: 'build-fix:#1:r1', rule: 'Load the `dream-team:build-rules` skill', opts: { gateFails: 1 } },
   { name: 'fix round loads build-rules', label: 'fix:#1:r1', rule: 'Load the `dream-team:build-rules` skill', opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] } },
-  { name: 'nit fixer loads build-rules', label: 'fix:#1:nits', rule: 'Load the `dream-team:build-rules` skill', schemaNits: false, opts: { domainRuns: [{ summary: '', findings: [{ severity: 'nit', description: 'rename n', file: 'a.js' }] }] } },
   { name: 'retry after a null result checks earlier commits', label: 'impl:#1', rule: 'may already have committed part of it', opts: { nullOnce: ['impl:#1'] } },
   { name: 'lens may rate a question', label: 'review:dream-team:architect-reviewer', rule: 'as question: it goes to the user unless a re-review answers it, and never blocks the MR' },
+  { name: 'lens reports nits, never fixes them', label: 'review:dream-team:architect-reviewer', rule: 'A nit is reported, never fixed or re-reviewed' },
   { name: 'lens marks only a defect the change leaves alone as pre-existing', label: 'review:dream-team:architect-reviewer', rule: 'the change neither introduces, newly reaches nor worsens it', preExistingIn: 'findings' },
   { name: 'lens rates a defect the change worsens like any other', label: 'review:dream-team:architect-reviewer', rule: 'is a normal finding, rated and blocking like any other' },
   { name: 'external reviewer may mark a finding pre-existing', label: 'review:external', rule: 'the change neither introduces, newly reaches nor worsens it', opts: extOnce(), preExistingIn: 'findings' },
@@ -141,22 +141,18 @@ const promptRows = [
   { name: 'lens reads the diff through git', label: 'review:dream-team:sre-engineer', rule: '`git diff abc1234..HEAD`' },
   { name: 'domain lens reads the diff through git', label: 'review:domain', rule: '`git diff abc1234..HEAD`' },
   { name: 'dead re-review is retried against the fix it missed', label: 're-review:external:r2', rule: `Disputed: ${dispute.finding}`, opts: deadDispute() },
-  { name: 'nit fixer fixes only cheap nits', label: 'fix:#1:nits', rule: 'Fix each one that is cheap', schemaNits: false, opts: { domainRuns: [{ summary: '', findings: [{ severity: 'nit', description: 'rename n', file: 'a.js' }] }] } },
-  { name: 'fix round carries the nits', label: 'fix:#1:r1', rule: 'Reviewers also raised these nits', schemaNits: true, opts: { externalReview: cmd,
+  { name: 'fix round lists no nits', label: 'fix:#1:r1', rule: 'Fix round 1', absent: 'rename n', schemaNits: false, opts: { externalReview: cmd,
     externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }],
     domainRuns: [{ summary: '', findings: [{ severity: 'nit', description: 'rename n', file: 'a.js' }] }] } },
   { name: 're-review numbers its prior findings', label: 're-review:domain:r1', rule: '2. [question] should a timeout count as a retry?', preExistingIn: 'resolved',
     opts: { domainRuns: [verdict({ severity: 'question', description: 'should a timeout count as a retry?' }, worsened), { summary: '', findings: [], resolved: [{ ...worsened, finding: 1 }] }] } },
   { name: 're-review reads the fix diff', label: 're-review:external:r1', rule: '`git diff gate1..HEAD`', opts: extOnce() },
   { name: 'passed reviewer reviews the fix diff', label: 'fixdiff:dream-team:sre-engineer:r1', rule: '`git diff gate1..HEAD`', opts: extOnce() },
-  { name: 'fix-diff nit joins the next fix round', label: 'fix:#1:r2', rule: 'rename n', opts: fixDiffBlocks() },
+  { name: 'fix-diff nit stays out of the next fix round', label: 'fix:#1:r2', rule: 'Fix round 2', absent: 'rename n', opts: fixDiffBlocks() },
   { name: 're-review reads the diff through git', label: 're-review:external:r1', rule: '`git diff abc1234..HEAD`', opts: extOnce() },
   { name: 'round-2 fix diff starts at the round-1 fix', label: 'fixdiff:external:r2', rule: '`git diff gate2..HEAD`', opts: fixDiffBlocks() },
   { name: 'round-2 re-review reads the round-2 fix diff', label: 're-review:domain:r2', rule: '`git diff gate2..HEAD`', opts: fixDiffBlocks() },
   { name: 'dead re-review reads the fix it missed', label: 're-review:external:r2', rule: '`git diff gate1..HEAD`', opts: deadDispute() },
-  { name: 're-review\'s fix-diff nit joins the nit pass', label: 'fix:#1:nits', rule: 'rename n', opts: {
-    domainRuns: [{ summary: '', findings: [{ ...extFinding, file: 'main.js' }] },
-      { summary: '', findings: [], resolved: [{ ...extFinding, file: 'main.js' }], added: [{ severity: 'nit', description: 'rename n', file: 'main.js' }] }] } },
 ]
 
 for (const row of promptRows) {
@@ -176,7 +172,6 @@ for (const row of promptRows) {
 
 const question = { severity: 'question', description: 'should a timeout count as a retry?', file: 'retry.js' }
 const nit = { severity: 'nit', description: 'rename n to retries', file: 'retry.js' }
-const nitFixed = { committed: true, addressed: [nit.description], disputed: [], summary: '' }
 const externalRows = [
   { name: 'external review unset', opts: {},
     reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [] },
@@ -195,24 +190,27 @@ const externalRows = [
     reviewer: true, agents: 4, degraded: [], fixRounds: 2, resolved: [], prompts: ['review:external'] },
   { name: 'reviewer question returned, not fixed', opts: { domainRuns: [verdict(question)] },
     reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [], questions: [{ ...question, gate: 'domain' }] },
-  { name: 'nit fixed once after review, not re-reviewed', opts: { domainRuns: [{ summary: '', findings: [nit] }], fixes: [nitFixed] },
-    reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [], nitFix: { addressed: [nit.description], disputed: [] },
-    labels: ['fix:#1:nits', 'gate:#1:nits'] },
-  { name: 'nit rides along with the first fix round, no separate pass',
-    opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }],
-      domainRuns: [{ summary: '', findings: [nit] }], fixes: [{ ...nitFixed, addressed: ['external'], nits: { addressed: [nit.description], disputed: [] } }] },
+  { name: 'nit only: reported, no fix agent and no extra gate run', opts: { domainRuns: [verdict(nit)] },
+    reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [], nitFindings: [{ ...nit, gate: 'domain' }],
+    fixGate: ['gate:#1'] },
+  { name: 'nit beside a blocking finding is reported, not fixed',
+    opts: { ...extOnce(), domainRuns: [verdict(nit)] },
     reviewer: true, agents: 2, degraded: [], fixRounds: 1, resolved: [{ ...extFinding, gate: 'external', round: 1 }], prompts: ['review:external'],
-    nitFix: { addressed: [nit.description], disputed: [] } },
+    nitFindings: [{ ...nit, gate: 'domain' }], fixGate: ['gate:#1', 'fix:#1:r1', 'gate:#1:fix1'] },
+  { name: 'nit added on a re-review is reported, not fixed',
+    opts: { domainRuns: [verdict(worsened), { summary: '', findings: [], resolved: [worsened], added: [nit] }] },
+    reviewer: false, agents: 0, degraded: [], fixRounds: 1, resolved: [{ ...worsened, gate: 'domain', round: 1 }], prompts: [],
+    nitFindings: [{ ...nit, gate: 'domain' }] },
   { name: 'passed reviewer\'s fix-diff finding blocks the next round',
     opts: fixDiffBlocks(),
     reviewer: true, agents: 3, degraded: [], fixRounds: 2, prompts: ['review:external'],
     resolved: [{ ...extFinding, gate: 'external', round: 1 }, { ...extFinding, file: 'main.js', gate: 'domain', round: 2 }],
-    nitFix: { addressed: [], disputed: [] }, fixdiff: ['fixdiff:domain:r1', 'fixdiff:external:r2'] },
+    nitFindings: [{ severity: 'nit', description: 'rename n', file: 'main.js', gate: 'domain' }], fixdiff: ['fixdiff:domain:r1', 'fixdiff:external:r2'] },
   { name: 'dead fix-diff review keeps the gate\'s pass', opts: { ...extOnce(), nullOnce: ['fixdiff:domain:r1'] },
     reviewer: true, agents: 2, degraded: [], fixRounds: 1, resolved: [{ ...extFinding, gate: 'external', round: 1 }], prompts: ['review:external'] },
   { name: 'pre-existing finding returned without a fix round', opts: { domainRuns: [verdict(pre)] },
     reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [], preExisting: [{ ...pre, gate: 'domain' }] },
-  { name: 'pre-existing nit and question reach neither the nit fixer nor questions',
+  { name: 'pre-existing nit and question reach neither nitFindings nor questions',
     opts: { domainRuns: [verdict({ ...nit, preExisting: true }, { ...question, preExisting: true })] },
     reviewer: false, agents: 0, degraded: [], fixRounds: 0, resolved: [], prompts: [],
     preExisting: [{ ...nit, preExisting: true, gate: 'domain' }, { ...question, preExisting: true, gate: 'domain' }] },
@@ -267,9 +265,10 @@ for (const row of externalRows) {
   assert.deepEqual(result.questions, row.questions || [], `${row.name}: questions`)
   assert.deepEqual(result.preExisting, row.preExisting || [], `${row.name}: preExisting`)
   for (const f of row.preExisting || []) assert.ok(!Object.keys(prompts).some((l) => /^(fix|re-review):/.test(l) && prompts[l].includes(f.description)), `${row.name}: pre-existing finding kept out of the fix loop`)
-  assert.deepEqual(result.nitFix, row.nitFix || null, `${row.name}: nitFix`)
+  assert.ok(!('nitFix' in result), `${row.name}: no nitFix`)
+  assert.deepEqual(result.nitFindings, row.nitFindings || [], `${row.name}: nitFindings`)
   assert.equal(result.doneWhen, row.doneWhen || '', `${row.name}: doneWhen`)
-  assert.deepEqual(labels.filter((l) => l.endsWith(':nits')), row.labels || [], `${row.name}: nit pass`)
+  if (row.fixGate) assert.deepEqual(labels.filter((l) => /^(fix|gate):/.test(l)), row.fixGate, `${row.name}: fix and gate runs`)
   assert.ok(!labels.some((l) => l.startsWith('re-review:')) || row.fixRounds, `${row.name}: no re-review`)
   if (row.fixdiff) assert.deepEqual(labels.filter((l) => /^fixdiff:(domain|external)/.test(l)), row.fixdiff, `${row.name}: fix-diff reviews`)
   console.log(`PASS ${row.name}`)

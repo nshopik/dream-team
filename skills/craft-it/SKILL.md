@@ -19,7 +19,7 @@ Spell `<scratchpad>` as your scratchpad directory's literal path.
 You are the orchestrator. You read, triage, branch and ship. **You do not write the change** — the
 workflow's implementer does. Everything between the issue branch and the MR happens in dispatched
 agents, except the subagent loop's gate runs, which are yours. Your only edits are step 5's
-settled disputes, nits and small adjacent fixes, which step 6 reruns `gateCommands` on, a
+settled disputes and small adjacent fixes, which step 6 reruns `gateCommands` on, a
 light-tier issue's edit with its decision record, and a research note the user asks for (step
 2a).
 
@@ -250,7 +250,7 @@ Docs drift, once the result is `ok`:
 - A 🔴/🟡 finding you judge wrong → drop it, as a settled dispute.
 - 🔴/🟡 findings left → after your edits, dispatch `dream-team:docs-editor` in drift mode with
   `git diff <base>..HEAD` and only the pages they name.
-- 🔵 findings → treat as nits.
+- 🔵 findings → take no action.
 - ❓ findings → settle them with the result's questions, below.
 - The editor's edits are step-5 changes: step 6 commits and gates them.
 
@@ -437,7 +437,7 @@ The report carries only what the user must know or act on.
   job, real or flake, and the fix commit.
 - Name each reviewer that could not check something, and the check you ran in its place.
 - Stopped at triage or on a step-5 question → say what is blocking and stop there.
-- Leave out nits, applied or dropped, and reviewer verdicts with no finding.
+- Leave out nits and reviewer verdicts with no finding.
 - Leave out `gateCommands` entries that passed and a summary of the change: the MR carries it.
 - Leave out a present `redEvidence` and lab work that did not run.
 - A review with no blocking finding, no dispute and no fix round gets no line.

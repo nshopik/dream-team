@@ -135,8 +135,8 @@ changes it makes inline.
        — `dream-team:docs-reviewer` for docs, a `general-purpose` reviewer checking the project's
        reference sources otherwise. Full criteria: craft-it step 2a.
      - Full: implementer, mechanical gate, quality reviewers, a domain lens that checks the diff
-       against what a change in the project's domain must get right, bounded fix rounds that also
-       fix the cheap nits.
+       against what a change in the project's domain must get right, bounded fix rounds on the
+       blocking findings.
      - Both tiers settle reviewer questions before the MR; only those nothing settles reach you,
        in one dialog.
   4. Lab work (perf gate, tests that need root) through `dream-team:lab-runner` on the host the

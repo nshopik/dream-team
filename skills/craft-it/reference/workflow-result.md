@@ -23,10 +23,8 @@
   be right; it may also be rationalizing. Apply the fix or accept the dispute.
 - **`resolved`** — blocking findings a fix round fixed and questions a re-review answered, each
   with its reviewer (`gate`) and round.
-- **`nitFindings`** — every nit the reviewers raised. **`nitFix`** — what the fixer did with
-  them, in a fix round or one pass after review, with no re-review: `addressed` it fixed,
-  `disputed` it skipped with a reason.
-  Apply the skipped ones worth applying, drop the rest. `null` → no nits.
+- **`nitFindings`** — every nit the reviewers raised; no agent fixes them.
+- Take no action on `nitFindings` in step 5.
 - **`questions`** — genuine questions reviewers raised and no re-review answered, each with its
   reviewer (`gate`) and `file`; they never block and never reach the fixer. Step 5 settles them
   before the MR/PR opens. Returned on an `ok` result, a `handBack`, a `fix` stage failure, or a

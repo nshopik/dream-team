@@ -114,7 +114,7 @@ if r:
     common = ['redEvidence', 'disputes', 'resolved', 'questions', 'preExisting']
     keys = ['ok', 'degraded', 'untrackedPaths'] + (
         common + ['issue', 'branch', 'reviewers', 'fixRounds', 'assumptions', 'changedFiles',
-                  'nitFindings', 'nitFix', 'summaries', 'doneWhen'] if r.get('ok')
+                  'nitFindings', 'summaries', 'doneWhen'] if r.get('ok')
         else ['stage', 'reason'] + (common + ['handBack', 'blocking', 'deadReviewers', 'verdicts']
                                     if r.get('handBack') else []))
     missing = [k for k in keys if k not in r]
