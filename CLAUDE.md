@@ -76,3 +76,7 @@
   Edit here prompts even in accept-edits mode. Keep the flag for headless evals.
 - Give a headless `pi -p` run without piped input `< /dev/null`; under a Claude Bash call it
   waits forever on the harness stdin socket, 0% CPU, empty output.
+
+## Doc conventions
+
+Decision records, specs, ROADMAP: `docs/CONVENTIONS.md`. Read the records touching your area first.
