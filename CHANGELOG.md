@@ -27,6 +27,10 @@ All notable changes to this plugin are documented in this file. The format is ba
 - **Breaking:** `craft-it-loop` drops its Simplify phase and the `simplify` result field, going from the gate straight to review, and its `startAtSimplify` argument is renamed `startAtReview`.
 - **Breaking:** `craft-it-loop` no longer fixes nits, in a fix round or a pass after review, and drops the `nitFix` result field; it still returns every nit in `nitFindings`, and `craft-it` applies none.
 
+### Fixed
+
+- `scope-issue` reads its glossary rules before it writes an issue, and a reply that proposes a new term holds only the question until the user's OK.
+
 ## [26.11.2] - 2026-11-17
 
 ### Added
