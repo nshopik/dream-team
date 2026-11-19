@@ -21,6 +21,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 - In a clone not marked own, `craft-it`, `scope-spec`, `cut-milestones` and `milestone-close` take doc paths from the upstream's `CLAUDE.md`, `AGENTS.md` or existing records or specs folder, and write no record, spec or ROADMAP when none names one.
 - The `docs/CONVENTIONS.md` template `setup-dream-team` writes adds the glossary path, the `NNNN` numbering rule and the record's optional sections and drops the decision-record test, which `scope-issue` alone applies; `craft-it` writes a record only for a decision its issue says gets one.
 - `scope-spec` uses `GLOSSARY.md` terms and coins none; `scope-issue` keeps the glossary rules.
+- `scope-issue` holds findings on a `Research:` issue while probe rounds still run, then posts one comment with the current state instead of a comment per finding.
 
 ### Removed
 
