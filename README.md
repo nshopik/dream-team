@@ -60,7 +60,7 @@ walkthrough is in [`WORKFLOW.md`](skills/ask-team/WORKFLOW.md).
 - **[ask-team](skills/ask-team/SKILL.md)**: answers which skill fits now, with one command to
   run and where it sits: its `WORKFLOW.md` step, or its group in the skill map.
 - **[brainstorm](skills/brainstorm/SKILL.md)**: grills a vague idea in rounds of questions, then
-  proposes its path.
+  states the shared understanding and names the next skill.
 - **[scope-spec](skills/scope-spec/SKILL.md)**: the project spec in the repo's specs folder,
   written from its template.
 - **[cut-milestones](skills/cut-milestones/SKILL.md)**: drafts milestones from a spec, one exit gate

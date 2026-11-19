@@ -35,14 +35,14 @@ release you accept.
 - Agent: `brainstorm` asks rounds of numbered questions, each with its recommended answer
   (scale, what is out of scope, how parity is proven), until every decision the idea branches
   into is settled.
-- Agent: states the shared understanding and proposes a path: spec, issue, Meta issue, research
-  issue, inline edit, or drop.
-- You: approve or change the path. The agent acts on it only then.
+- Agent: states the shared understanding and names the next skill: `scope-spec`, `scope-issue`,
+  or none.
+- You: confirm or correct the shared understanding, then run or ask for the next step.
 
 ### 0. Idea to spec (once per project)
 
 - You: run `/dream-team:setup-dream-team` once in the clone.
-- You: `/dream-team:scope-spec`, once you approve a spec path. The agent asks what the chat left
+- You: `/dream-team:scope-spec`, once brainstorm names it. The agent asks what the chat left
   open, then writes a lean v1 spec on a topic branch.
 - You: read the spec, push back until it matches your model, merge it.
 - Result: a spec of about 1,500 words, at the specs path the repo's `docs/CONVENTIONS.md` names
@@ -218,7 +218,7 @@ Steps 3 and 4 repeat per issue. Bugs found on the way become issues in the right
 
 | Step | Your decision |
 |---|---|
-| Before 0 | Answer the grilling rounds; approve the path |
+| Before 0 | Answer the grilling rounds; confirm the shared understanding |
 | 0 | Approve the spec |
 | 1 | Exit criteria and their numbers |
 | 2 | Is anything missing from the issue list; design and scope choices `triage-issue` asks |

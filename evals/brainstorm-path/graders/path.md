@@ -1,5 +1,5 @@
 ---
 type: regex
-pattern: '(spec|issue|inline edit|research|drop)[^\n]*\?'
+pattern: 'Next:[^\n]*scope-issue'
 flags: i
 ---
