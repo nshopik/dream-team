@@ -1,33 +1,6 @@
-# Decision record format
+# Decision-record test
 
-For the path, file naming and numbering, and a repo template that replaces the one below, see
-[repo-conventions.md](../../setup-dream-team/repo-conventions.md).
-
-## Template
-
-```md
-# {Short title of the decision}
-
-{1-3 sentences: what's the context, what did we decide, and why.}
-```
-
-## Optional sections
-
-Only include these when they add genuine value. Most decision records won't need them.
-
-- **Considered Options**: only when the rejected alternatives are worth remembering
-- **Consequences**: only when non-obvious downstream effects need to be called out
-- **Diagram**: only when the decision relates 3 or more named parts; one fenced `mermaid` block
-  of at most 12 nodes, no styling, replacing the prose it shows
-
-## Superseding
-
-A record replaced by a later decision keeps its file and gets one line under its title:
-`Superseded by <record-file>`. The new record says why the old decision lost.
-
-## When to write a decision record
-
-All three of these must be true:
+A decision gets a decision record only when all three hold:
 
 1. **Hard to reverse**: the cost of changing your mind later is meaningful
 2. **Surprising without context**: a future reader will look at the code and wonder "why on earth
@@ -39,7 +12,7 @@ A decision that fails the test keeps its rationale in the commit body.
 
 A spec the change supersedes gets a record only when the reason it lost passes the same test.
 
-### What qualifies
+## What qualifies
 
 - **Architectural shape.** "The write model is event-sourced; the read model is projected into
   Postgres." "Each environment is its own Terraform root module with its own state file, not one

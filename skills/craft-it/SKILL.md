@@ -32,10 +32,18 @@ so in the workflow's `notes` so the implementer does not try, and does not repor
 assumption.
 
 - `git config --local --type=bool --get dream-team.own` prints anything but `true` → read, triage,
-  comment on, file and close issues, and push and open the MR/PR, per
-  `<base directory>/../setup-dream-team/tracker-local.md`.
+  comment on, file and close issues, and push and open the MR/PR, per `.dream-team/TRACKER.md` in
+  the main checkout (step 3).
+- `dream-team.own` prints anything but `true` and that file does not exist → stop with "run
+  `setup-dream-team` first".
 - `dream-team.own` prints anything but `true` → write in the workflow's `notes`: "commits cite
   no issue: no `Closes` line, no `#<n>`".
+- `dream-team.own` prints `true` → take the decision-record and ROADMAP paths, their naming and
+  the record template from `docs/CONVENTIONS.md`.
+- `dream-team.own` prints anything but `true` → take them from the upstream's `CLAUDE.md`,
+  `AGENTS.md` or existing records folder.
+- `dream-team.own` prints anything but `true` and none of those names a records path → write no
+  record.
 
 ## 1. Read the issue
 
@@ -50,10 +58,14 @@ use instead.
 
 Fail *before* code is written on a guess, not after.
 
-- The issue is untriaged per `<base directory>/../triage-issue/SKILL.md` Untriaged → stop with
-  "run `triage-issue #<n>` first".
+- `dream-team.own` prints `true` → call the Skill tool with `dream-team:triage-issue`; read it as
+  a reference, do not run it.
+- `dream-team.own` prints `true` and the issue is untriaged per the `untriaged.md` file in
+  triage-issue's base directory → stop with "run `triage-issue #<n>` first".
 - The issue has the `workflow::needs-brainstorm` label → stop
   with "run `triage-issue #<n>` first".
+- The issue says a decision gets a decision record, `dream-team.own` prints `true` and
+  `docs/CONVENTIONS.md` does not exist → stop with "run `setup-dream-team` first".
 
 Triage blocks on:
 
@@ -86,7 +98,7 @@ The answer:
 - Post it as a comment on the issue.
 - Changes the work remaining → write it into the proposal and its `## Done when` section, or
   into a new issue that supersedes this one when the title or problem no longer holds
-  (`scope-issue` Updates).
+  (`scope-issue` Updates and Decisions).
 
 ## 2a. Tier
 
@@ -107,9 +119,8 @@ Light path, no workflow:
 
 - Branch per step 3.
 - Make the edit inline.
-- A decision that passes the test in `reference/decision-record.md` has no record yet → write
-  its record per that file and `<base directory>/../setup-dream-team/repo-conventions.md`, in the
-  edit's commit.
+- The issue says a decision gets a decision record, it has none yet and the top of this skill
+  gives a record path → write the record at that path, in that template, in the edit's commit.
 - Run every `gateCommands` entry.
 - Dispatch one reviewer with the issue and the base, told to read the diff with `git diff <base>`,
   its type picked below.
@@ -180,7 +191,7 @@ remote's default branch unless the project's `CLAUDE.md` or `AGENTS.md` names an
 - **Workflow** tool in this session → invoke it with `name: "dream-team:craft-it-loop"` and `args`
   as a real JSON object (never a stringified one).
 - No Workflow tool → run the loop yourself with the same `args`, per
-  [`reference/subagent-loop.md`](reference/subagent-loop.md).
+  [`subagent-loop.md`](subagent-loop.md).
 
 ```json
 {
@@ -198,11 +209,10 @@ remote's default branch unless the project's `CLAUDE.md` or `AGENTS.md` names an
 - `notes`: decisions made in the tracker discussion, the answer the user gave at step-2 triage,
   and the lab work the implementer must leave alone. Optional.
 - Each path step 3 linked → name it in `notes` with "never commit or modify it".
-- The change carries a decision that passes the test in
-  [`reference/decision-record.md`](reference/decision-record.md) and has no record yet, from a
-  step-2 answer or the issue → name the decision in `notes` with the absolute paths of that file and
-  `<base directory>/../setup-dream-team/repo-conventions.md`, and tell the implementer to add its
-  record per both, in the same commit as the change.
+- The issue, or a step-2 answer written into it, says a decision gets a decision record, it has
+  none yet and the top of this skill gives a record path → name the decision in `notes` with the
+  absolute path of `docs/CONVENTIONS.md`, or of the upstream file or folder the path came from,
+  and tell the implementer to add its record per that source, in the same commit as the change.
 - `gateCommands`: the build, test and lint commands the repo's CI config runs that also run in this
   checkout — CI config first, `CLAUDE.md`, `AGENTS.md` and README second. The mechanical gate
   runs exactly these after the implementation and after every fix commit. Leave out lab work.
@@ -232,7 +242,7 @@ Layout:
 
 The loop's result, the Workflow return or `<scratchpad>/craft-it-result.json`, is structured,
 not final. Once you have it, read
-[`reference/workflow-result.md`](reference/workflow-result.md): what each result field means and
+[`workflow-result.md`](workflow-result.md): what each result field means and
 what to do with it.
 
 - **Lab steps** — once the result is `ok`, run the lab work on the branch head. Treat a lab failure
@@ -285,9 +295,10 @@ Adjacent defects — anything found outside the diff or returned in `preExisting
 
 Every issue you open gets the milestone it belongs to, set at creation, and `workflow::future`
 when that milestone has an open dependency. Pick the milestone from the tracker's open
-milestones and the `planned` rows of the repo's ROADMAP, found per
-`<base directory>/../setup-dream-team/repo-conventions.md`. A
-`planned` row fits best → no milestone and `workflow::future`. None clearly fits → ask.
+milestones and the `planned` rows of the repo's ROADMAP, at the path the top of this skill gives.
+A `planned` row fits best → no milestone and `workflow::future`. None clearly fits → ask.
+
+- The top of this skill gives no ROADMAP path → pick from the tracker's open milestones only.
 
 ## 6. Open the MR/PR
 
@@ -428,9 +439,8 @@ The report carries only what the user must know or act on.
 - Name each adjacent fix committed on the branch by its subject, one line each.
 - Name each issue filed for an adjacent defect by its link, one line each, never the defect itself.
 - Name each adjacent defect that could not be filed, and why, one line each.
-- A decision record the branch adds at a path or naming other than `repo-conventions.md`'s
-  defaults → one `**Conventions:**` bullet: the path, naming and the source the lookup took them
-  from.
+- A decision record the branch adds in a clone not marked own → one `**Conventions:**` bullet:
+  the path, naming and the upstream file or folder they came from.
 - Say so when `redEvidence` is empty on a bug fix.
 - Give a lab step one line: its verdict, or its numbers when there are fewer than three.
 - Give each pipeline failure step 7 acts on one `**Pipeline:**` line in a follow-up message: the

@@ -26,8 +26,14 @@ and filed issue.
 Milestone description, and its roadmap row if it has one. No measurable exit
 criterion → stop and ask for one; a milestone without one cannot close.
 
-The ROADMAP and specs folder are at the paths
-`<base directory>/../setup-dream-team/repo-conventions.md` resolves.
+- `git config --local --type=bool --get dream-team.own` prints `true` → the ROADMAP and specs
+  folder are at the paths `docs/CONVENTIONS.md` names.
+- `dream-team.own` prints `true` and `docs/CONVENTIONS.md` does not exist → stop with "run
+  `setup-dream-team` first".
+- `dream-team.own` prints anything but `true` → take those paths from the upstream's
+  `CLAUDE.md`, `AGENTS.md` or existing records folder.
+- `dream-team.own` prints anything but `true` and none of those names a ROADMAP path → write no
+  ROADMAP.
 
 A version milestone's `Gate:` bullet holds its release criteria; check each item there too.
 

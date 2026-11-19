@@ -11,8 +11,15 @@ disable-model-invocation: true
 ## spec-style
 
 - Read [spec-template.md](spec-template.md) before writing; follow its section order.
-- Path and filename: what `<base directory>/../setup-dream-team/repo-conventions.md` resolves.
-- Terms: follow `<base directory>/../scope-issue/glossary.md`.
+- `git config --local --type=bool --get dream-team.own` prints `true` → path and filename: what
+  `docs/CONVENTIONS.md` names.
+- `dream-team.own` prints `true` and `docs/CONVENTIONS.md` does not exist → stop with "run
+  `setup-dream-team` first".
+- `dream-team.own` prints anything but `true` → path and filename from the upstream's `CLAUDE.md`,
+  `AGENTS.md` or existing specs folder.
+- `dream-team.own` prints anything but `true` and none of those names a specs path → write no
+  spec.
+- Terms: use `GLOSSARY.md` terms; coin none.
 - Source: the conversation so far, plus any repo files or notes it names; never re-ask what it
   settles.
 - A question the source leaves open → ask it with AskUserQuestion before writing; never guess.
@@ -20,10 +27,7 @@ disable-model-invocation: true
 - A Decision or Design point settled in an issue, MR or comment → end it with a link to it.
 - A question the user cannot answer yet (needs research, a lab run, someone else) → an
   `## Open items` entry.
-- Work that fits one issue → no spec.
-- Its decision passes the test in `<base directory>/../craft-it/reference/decision-record.md`
-  → write it into the issue with `scope-issue` Decisions; its record lands in the change's commit.
-- Its decision fails that test → write it into the issue with `scope-issue`.
+- Work that fits one issue → no spec; write its decision into the issue with `scope-issue`.
 - The date goes in the header, never the filename.
 - Header: `**Date:**` and `**Status:**` lines. No branch name.
 - Status: `Draft`, then `Accepted`, which is terminal; or `Superseded by <spec-file>`.

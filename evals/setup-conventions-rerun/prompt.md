@@ -30,17 +30,12 @@ There is no AGENTS.md. docs/decisions/ holds ten records, `0001-vault-for-secret
 |---|---|
 | Decision records | `docs/decisions/NNNN-slug.md` |
 | Specs | `docs/specs/NNNN-<topic>-design.md` |
+| Glossary | `GLOSSARY.md` |
+
+`NNNN` is four digits, the next free number in its folder on the target branch, from `0001`. The
+target takes that number before merge → rename the file to the next free one at rebase.
 
 ## Decision records
-
-Write a record only when all three hold:
-
-1. Hard to reverse: changing your mind later costs something real.
-2. Surprising without context: a future reader would ask why it was done this way.
-3. A real trade-off: there were genuine alternatives and one was picked for specific reasons.
-
-A decision that fails the test keeps its rationale in the commit body. A record goes in the
-commit of the change it records.
 
 ```md
 # {Short title of the decision}
@@ -48,8 +43,15 @@ commit of the change it records.
 {1-3 sentences: the context, what was decided, and why.}
 ```
 
+Add these sections only when they add real value; most records need none:
+
+- **Considered Options**: only when the rejected alternatives are worth remembering.
+- **Consequences**: only when non-obvious downstream effects need to be called out.
+- **Diagram**: only when the decision relates 3 or more named parts; one fenced `mermaid` block
+  of at most 12 nodes, no styling, replacing the prose it shows.
+
 A record replaced by a later decision keeps its file and gets `Superseded by <record-file>` under
-its title.
+its title. The new record says why the old decision lost.
 ````
 The repo has no contributor doc, no ROADMAP, no docs/specs/, no CHANGELOG and no architecture diagram. The tracker has one open milestone, M1, its description `- **Exit:** every router in inventory/prod converges with no changes on a second run`, `- **Gate:** ansible-lint`, `- **Depends on:** none`. Every label in Label colours exists with its colour; there is no `area::` label and no `type::` label. Open issues #2 and #4 are in M1, each with one kind label and a problem, proposal body, and neither has a blocker.
 

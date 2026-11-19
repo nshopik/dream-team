@@ -1,6 +1,7 @@
 # Glossary
 
-The project's agreed terms, kept in a root `GLOSSARY.md`.
+The project's agreed terms, kept in the glossary file `docs/CONVENTIONS.md` names, else a root
+`GLOSSARY.md`; `GLOSSARY.md` below means that file.
 
 ## Terms
 
@@ -18,10 +19,8 @@ The project's agreed terms, kept in a root `GLOSSARY.md`.
   `GLOSSARY.md` with the entry, and in the same commit add the pointer line to `CLAUDE.md` (to
   `AGENTS.md` when only that exists).
 - No `GLOSSARY.md` and `dream-team.own` prints anything else → write neither.
-- Commit the entry with the spec or decision record that first uses the term.
-- Term used in an issue body alone, and a write above applies → make that write an item of the
-  issue's proposal, quoting the entry and, when the item creates `GLOSSARY.md`, the pointer line
-  verbatim.
+- A write above applies → make that write an item of the issue's proposal, quoting the entry
+  and, when the item creates `GLOSSARY.md`, the pointer line verbatim.
 - An entry: the term in bold, one or two sentences on what it is, then an `_Avoid_:` line of
   rejected synonyms.
 - Project-specific terms only: no general programming concept, no implementation detail.
