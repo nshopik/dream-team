@@ -1,5 +1,5 @@
 ---
 type: regex
-pattern: '"notes"(?=[^}]*decision-record\.md)(?=[^}]*(root module|envs/))[^}]*repo-conventions\.md'
+pattern: '"notes"(?=[^}]*doc-conventions)[^}]*(root module|envs/)'
 flags: i
 ---

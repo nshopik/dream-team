@@ -53,7 +53,7 @@ It changes no code; the filed issue goes through `craft-it`. It marks an own clo
   invariant; a rule it only states is not one.
 - A CHANGELOG's header links the Keep a Changelog version it follows.
 - `docs/CONVENTIONS.md` exists, and the project `CLAUDE.md` or `AGENTS.md` carries the
-  `## Doc conventions` block `./repo-conventions.md` gives.
+  `## Doc conventions` block the `dream-team:doc-conventions` skill gives.
 
 ## Project rules
 
@@ -107,11 +107,11 @@ sets a colour only on a label it creates.
 - No such candidate exists → say in that check's step 5 line that a line naming a reference
   source or a review invariant would give craft-it's domain lens a named source to cite, in place
   of a fix or a maintenance item.
-- `docs/CONVENTIONS.md` is missing → write it per `repo-conventions.md`, taking the values from
-  any layout the project `CLAUDE.md` or `AGENTS.md` declares in its own lines.
-- The `## Doc conventions` block is missing → write it per `repo-conventions.md`, in place of the
-  project `CLAUDE.md` or `AGENTS.md`'s `Repo layout:` line or the lines that declare the layout, if
-  it has them.
+- `docs/CONVENTIONS.md` is missing → write it per `dream-team:doc-conventions`, taking the values
+  from any layout the project `CLAUDE.md` or `AGENTS.md` declares in its own lines.
+- The `## Doc conventions` block is missing → write it per `dream-team:doc-conventions`, in place
+  of the project `CLAUDE.md` or `AGENTS.md`'s `Repo layout:` line or the lines that declare the
+  layout, if it has them.
 - The tracker lacks a label from **Label colours** → create it with its colour and description.
 - The tracker has a `type::<kind>` label, `<kind>` a kind in **Label colours** → swap it for
   `<kind>` on each issue that carries it, then delete the `type::` label.
@@ -136,7 +136,7 @@ sets a colour only on a label it creates.
      exclude file, and stop; change nothing else in the repo or its tracker.
    - Own → run `git config --local dream-team.own true`, then go on to step 2.
 2. Read the project `CLAUDE.md` or `AGENTS.md`, the contributor doc, the ROADMAP and the specs
-   folder, at the paths `./repo-conventions.md` resolves.
+   folder, at the paths `dream-team:doc-conventions` resolves.
 3. Read the tracker's milestones, labels, open issues and every issue with a `type::` label
    through the host's tooling skill.
 4. Run every check. Record pass or fail, with the evidence: issue numbers, file and line.

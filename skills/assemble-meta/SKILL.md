@@ -13,8 +13,11 @@ argument-hint: <meta-issue-number>
 
 # assemble-meta
 
-One Meta issue per invocation. Read `<base directory>/../craft-it/SKILL.md` first: each
-"craft-it step N" below runs as written there, with the Meta issue's number as `<n>`.
+One Meta issue per invocation.
+
+- Before step 1, call the Skill tool with `dream-team:craft-it`; read it as a reference, do not
+  run it.
+- Each "craft-it step N" below runs as written there, with the Meta issue's number as `<n>`.
 
 You are the orchestrator, as in craft-it: **you do not write the change**. Your only edits
 are craft-it's step-5 edits. Lab work is yours, per craft-it.

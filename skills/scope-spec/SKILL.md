@@ -11,8 +11,9 @@ disable-model-invocation: true
 ## spec-style
 
 - Read [spec-template.md](spec-template.md) before writing; follow its section order.
-- Path and filename: what `<base directory>/../setup-dream-team/repo-conventions.md` resolves.
-- Terms: follow `<base directory>/../scope-issue/glossary.md`.
+- Path and filename: what the `dream-team:doc-conventions` skill resolves.
+- Terms: load `dream-team:scope-issue` as a reference and follow the `glossary.md` in its base
+  directory.
 - Source: the conversation so far, plus any repo files or notes it names; never re-ask what it
   settles.
 - A question the source leaves open → ask it with AskUserQuestion before writing; never guess.
@@ -21,8 +22,8 @@ disable-model-invocation: true
 - A question the user cannot answer yet (needs research, a lab run, someone else) → an
   `## Open items` entry.
 - Work that fits one issue → no spec.
-- Its decision passes the test in `<base directory>/../craft-it/reference/decision-record.md`
-  → write it into the issue with `scope-issue` Decisions; its record lands in the change's commit.
+- Its decision passes the decision-record test in the `dream-team:doc-conventions` skill → write
+  it into the issue with `scope-issue` Decisions; its record lands in the change's commit.
 - Its decision fails that test → write it into the issue with `scope-issue`.
 - The date goes in the header, never the filename.
 - Header: `**Date:**` and `**Status:**` lines. No branch name.

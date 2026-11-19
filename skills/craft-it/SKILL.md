@@ -33,7 +33,7 @@ assumption.
 
 - `git config --local --type=bool --get dream-team.own` prints anything but `true` → read, triage,
   comment on, file and close issues, and push and open the MR/PR, per
-  `<base directory>/../setup-dream-team/tracker-local.md`.
+  the `dream-team:local-tracker` skill.
 - `dream-team.own` prints anything but `true` → write in the workflow's `notes`: "commits cite
   no issue: no `Closes` line, no `#<n>`".
 
@@ -50,8 +50,8 @@ use instead.
 
 Fail *before* code is written on a guess, not after.
 
-- The issue is untriaged per `<base directory>/../triage-issue/SKILL.md` Untriaged → stop with
-  "run `triage-issue #<n>` first".
+- The issue is untriaged per `dream-team:triage-issue` Untriaged (load it as a reference) → stop
+  with "run `triage-issue #<n>` first".
 - The issue has the `workflow::needs-brainstorm` label → stop
   with "run `triage-issue #<n>` first".
 
@@ -107,9 +107,8 @@ Light path, no workflow:
 
 - Branch per step 3.
 - Make the edit inline.
-- A decision that passes the test in `reference/decision-record.md` has no record yet → write
-  its record per that file and `<base directory>/../setup-dream-team/repo-conventions.md`, in the
-  edit's commit.
+- A decision that passes the decision-record test in the `dream-team:doc-conventions` skill has
+  no record yet → write its record per that skill, in the edit's commit.
 - Run every `gateCommands` entry.
 - Dispatch one reviewer with the issue and the base, told to read the diff with `git diff <base>`,
   its type picked below.
@@ -198,11 +197,11 @@ remote's default branch unless the project's `CLAUDE.md` or `AGENTS.md` names an
 - `notes`: decisions made in the tracker discussion, the answer the user gave at step-2 triage,
   and the lab work the implementer must leave alone. Optional.
 - Each path step 3 linked → name it in `notes` with "never commit or modify it".
-- The change carries a decision that passes the test in
-  [`reference/decision-record.md`](reference/decision-record.md) and has no record yet, from a
-  step-2 answer or the issue → name the decision in `notes` with the absolute paths of that file and
-  `<base directory>/../setup-dream-team/repo-conventions.md`, and tell the implementer to add its
-  record per both, in the same commit as the change.
+- The change carries a decision that passes the decision-record test in the
+  `dream-team:doc-conventions` skill and has no record yet, from a step-2 answer or the issue →
+  name the decision in `notes` and tell the implementer to load `dream-team:doc-conventions` and
+  add its record per it, in the same commit as the change, or say so in friction when that skill
+  does not load.
 - `gateCommands`: the build, test and lint commands the repo's CI config runs that also run in this
   checkout — CI config first, `CLAUDE.md`, `AGENTS.md` and README second. The mechanical gate
   runs exactly these after the implementation and after every fix commit. Leave out lab work.
@@ -285,9 +284,9 @@ Adjacent defects — anything found outside the diff or returned in `preExisting
 
 Every issue you open gets the milestone it belongs to, set at creation, and `workflow::future`
 when that milestone has an open dependency. Pick the milestone from the tracker's open
-milestones and the `planned` rows of the repo's ROADMAP, found per
-`<base directory>/../setup-dream-team/repo-conventions.md`. A
-`planned` row fits best → no milestone and `workflow::future`. None clearly fits → ask.
+milestones and the `planned` rows of the repo's ROADMAP, found per the
+`dream-team:doc-conventions` skill. A `planned` row fits best → no milestone and
+`workflow::future`. None clearly fits → ask.
 
 ## 6. Open the MR/PR
 
@@ -428,7 +427,7 @@ The report carries only what the user must know or act on.
 - Name each adjacent fix committed on the branch by its subject, one line each.
 - Name each issue filed for an adjacent defect by its link, one line each, never the defect itself.
 - Name each adjacent defect that could not be filed, and why, one line each.
-- A decision record the branch adds at a path or naming other than `repo-conventions.md`'s
+- A decision record the branch adds at a path or naming other than the `dream-team:doc-conventions`
   defaults → one `**Conventions:**` bullet: the path, naming and the source the lookup took them
   from.
 - Say so when `redEvidence` is empty on a bug fix.

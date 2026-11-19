@@ -33,8 +33,8 @@ description: >-
   research issue, inline edit, or drop.
 - Issue or inline edit: needs a user decision, contradicts the spec, adds a component, or needs a
   lab check → issue; otherwise inline edit.
-- A settled choice passes the test in `<base directory>/../craft-it/reference/decision-record.md`
-  → issue; its record lands in the commit that builds it.
+- A settled choice passes the decision-record test in the `dream-team:doc-conventions`
+  skill → issue; its record lands in the commit that builds it.
 - Use the layout below as the default; adjust its sections to the result.
 - Label each bullet by its decision; never repeat a label.
 - Decisions span several aspects or artifacts → group them under bold section lines; else one

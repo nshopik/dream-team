@@ -1,3 +1,13 @@
+---
+name: local-tracker
+description: >
+  Holds the local issue tracker of a clone not marked own: where its issue files live, how to
+  file, read, comment on and close one, and what reaches the upstream forge. Use when a skill
+  files, reads, triages, comments on or closes an issue, or opens an MR/PR, and
+  `git config --local --type=bool --get dream-team.own` prints anything but `true`.
+user-invocable: false
+---
+
 # Issue tracker: local files
 
 A clone where `git config --local --type=bool --get dream-team.own` prints anything but `true` keeps

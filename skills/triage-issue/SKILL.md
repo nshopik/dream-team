@@ -61,7 +61,9 @@ last body edit:
 
 ## 1. Read
 
-- Fetch title, body, labels and comments per `<base directory>/../craft-it/SKILL.md` step 1.
+- Fetch title, body, labels and comments — `gh issue view <n> --json title,body,labels,comments`,
+  `glab issue view <n> --comments --output json -P 100`, or whatever the host's tooling skill says
+  to use instead.
 - Triaged, with no triage notes and no `workflow::needs-brainstorm` → report it ready and stop.
 - Read every earlier triage notes comment and the replies after it.
 - Never re-ask a question a reply answered.

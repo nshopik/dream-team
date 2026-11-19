@@ -11,7 +11,7 @@ description: >
 Issue is actionable items, not prose. Read days or weeks later with zero conversation context.
 
 - `git config --local --type=bool --get dream-team.own` prints anything but `true` → file, comment
-  on and close issues per `<base directory>/../setup-dream-team/tracker-local.md`.
+  on and close issues per the `dream-team:local-tracker` skill.
 
 ## issue-style
 
@@ -46,8 +46,8 @@ who knew may be gone.
 
 - User asked for the issue in chat, no open question or each one settled by reading the code or
   the reference source → ask nothing.
-- User asked for the issue in chat, a choice that would pass the test in
-  `<base directory>/../craft-it/reference/decision-record.md` once decided, its options not yet
+- User asked for the issue in chat, a choice that would pass the decision-record test in
+  the `dream-team:doc-conventions` skill once decided, its options not yet
   known, or a `## Done when` check with no observable form → run `dream-team:brainstorm`, skipping
   its path proposal and hand-off, until the choice is decided and each check is observable; the
   issue is the path (Decisions).
@@ -60,8 +60,8 @@ who knew may be gone.
 
 ### Decisions
 
-- Proposal carries a decided design choice that passes the test in
-  `<base directory>/../craft-it/reference/decision-record.md` → state the choice in the
+- Proposal carries a decided design choice that passes the decision-record test in
+  the `dream-team:doc-conventions` skill → state the choice in the
   proposal and say it gets a decision record in the change's commit; write no record now.
 - The body never argues the choice.
 - A choice still undecided after Open questions has no record: it stays an open question.
@@ -98,8 +98,8 @@ who knew may be gone.
 - Closes when every line is ticked or ruled out.
 - User asks to file a milestone's issues under one meta issue → one meta issue set to that
   milestone, its lines the milestone's issues that can run unattended.
-- A run files two or more non-`Research:` issues in one milestone that pass step 2 of
-  `<base directory>/../craft-it/SKILL.md`, carry no `workflow::needs-brainstorm` or
+- A run files two or more non-`Research:` issues in one milestone that pass `dream-team:craft-it`
+  step 2 (load it as a reference), carry no `workflow::needs-brainstorm` or
   `workflow::blocked` label and need no lab work → file them under one meta issue set to that
   milestone, without prompting, whatever their kind label.
 - Filing a milestone's meta issue on request → propose the issues that stay off it as

@@ -70,6 +70,10 @@ walkthrough is in [`WORKFLOW.md`](skills/ask-team/WORKFLOW.md).
   bump, CHANGELOG move, then a tag, pushed when the version is the argument, else offered.
 - **[build-rules](skills/build-rules/SKILL.md)**: the build rules a code change follows, loaded
   before the first edit and by `craft-it-loop`'s implementer and fixers.
+- **[doc-conventions](skills/doc-conventions/SKILL.md)**: where a repo keeps its decision records,
+  specs and ROADMAP, the decision-record test and the record template; loaded by other skills.
+- **[local-tracker](skills/local-tracker/SKILL.md)**: the local issue files a clone not marked own
+  uses in place of the forge tracker; loaded by other skills.
 - **[scope-commit](skills/scope-commit/SKILL.md)**: commit messages in
   [Scoped Commits](https://scopedcommits.com/) format.
 - **[scope-mr](skills/scope-mr/SKILL.md)**: MR/PR descriptions.
