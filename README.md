@@ -1,15 +1,32 @@
 # dream-team
 
-Every developer has wished for a dream team: everyone sharp, nobody dropping the ball, and the
-impossible task still getting done. Before LLMs, putting one together was about as likely as
-winning the lottery.
+A small crew of agents that plans, builds, reviews and ships your project with you, from spec to
+release.
 
-This plugin is that team, for Claude Code: agents that turn your spec into milestones, split the
-milestones into issues small enough to finish, take each issue to a reviewed MR/PR, and stay
-with you through release. Bring them your biggest task.
+## Install
 
-It works on GitHub and GitLab, for application code and infrastructure-as-code. The full
-walkthrough is in [`WORKFLOW.md`](skills/ask-team/WORKFLOW.md).
+```
+/plugin marketplace add nshopik/dream-team
+/plugin install dream-team@dream-team
+```
+
+On [pi](https://github.com/earendil-works/pi) (hooks and workflows are Claude Code only):
+
+```
+pi install git:github.com/nshopik/dream-team
+pi install npm:pi-sub-agent
+```
+
+## Start here
+
+- **New project:** `/dream-team:setup-dream-team`, then `/dream-team:scope-spec`
+- **Existing tracked project:** `/dream-team:craft-it <issue>`
+- **Upstream or untracked one-off:** `/dream-team:brainstorm`
+- **Not sure:** `/dream-team:ask-team`
+
+Run `setup-dream-team` once in each clone of your own project or fork; it marks the clone with
+`git config --local dream-team.own true`. A git repo without that key gets the upstream-project
+rules.
 
 ## How it works
 
@@ -21,12 +38,8 @@ walkthrough is in [`WORKFLOW.md`](skills/ask-team/WORKFLOW.md).
 
 Each skill also runs on its own, in any order, without the tracked flow.
 
-## Start here
-
-- **New project:** `/dream-team:setup-dream-team`, then `/dream-team:scope-spec`
-- **Existing tracked project:** `/dream-team:craft-it <issue>`
-- **Upstream or untracked one-off:** `/dream-team:brainstorm`
-- **Not sure:** `/dream-team:ask-team`
+It works on GitHub and GitLab, for application code and infrastructure-as-code. The full
+walkthrough is in [`WORKFLOW.md`](skills/ask-team/WORKFLOW.md).
 
 ## Contents
 
@@ -87,40 +100,6 @@ The reviewer agents review a diff or paths, read-only.
 
 - `jit-context.py`: injects project conventions the first time a session touches each, and asks
   the agent to record corrections in `CLAUDE.local.md`.
-
-## Install
-
-```
-/plugin marketplace add nshopik/dream-team
-/plugin install dream-team@dream-team
-```
-
-Requires `python3` on `PATH`; `assemble-meta` also needs the Workflow tool.
-
-For the [pi](https://github.com/earendil-works/pi) harness:
-
-```
-pi install git:github.com/nshopik/dream-team
-```
-
-pi loads the skills; the hooks and the `craft-it-loop` and `assemble-meta-loop` workflows are
-Claude Code only.
-
-`qa-review` runs its lenses through the `pi-sub-agent` extension:
-
-```
-pi install npm:pi-sub-agent
-```
-
-On pi the agents get pi's default tools, `write` and `edit` included.
-
-`review-bench` needs `git`, `gh` and the `claude` CLI on `PATH`.
-
-## Configuration
-
-Run `setup-dream-team` once in each clone of your own project or fork; it marks the clone with
-`git config --local dream-team.own true`. A git repo without that key gets the upstream-project
-rules.
 
 ## License
 
