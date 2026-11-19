@@ -2,9 +2,8 @@
 name: brainstorm
 description: >-
   Shapes a vague idea before any spec or issue exists: grills the user in rounds of numbered
-  questions, each with a recommended answer, then states the shared understanding and proposes
-  one path (spec, issue, Meta issue, research issue, inline edit or drop) and acts on it only
-  once the user approves it. Use when the user voices an idea not yet worked
+  questions, each with a recommended answer, then states the shared understanding, names the
+  next skill in one line and waits for the user. Use when the user voices an idea not yet worked
   out — "I have an idea", "let's brainstorm", "thinking about", "what if we", "new feature for
   X", "I want X but not sure how". Not for an issue number (use craft-it or triage-issue) or
   a routine, already-described task.
@@ -27,21 +26,18 @@ description: >-
 - Done when you and the user reach a shared understanding: every branch of the tree is visited,
   no decision is left unsettled and nothing is silently assumed.
 
-## 2. Propose the path
+## 2. Close
 
-- State the shared understanding in chat, then propose one path: spec, issue, Meta issue,
-  research issue, inline edit, or drop.
-- Issue or inline edit: needs a user decision, contradicts the spec, adds a component, or needs a
-  lab check → issue; otherwise inline edit.
-- A settled design choice → issue, never an inline edit; `scope-issue` decides whether it gets
-  a decision record.
+- State the shared understanding in chat.
 - Use the layout below as the default; adjust its sections to the result.
 - Label each bullet by its decision; never repeat a label.
 - Decisions span several aspects or artifacts → group them under bold section lines; else one
   flat list.
 - A decision with parts (files, steps, checks) → sub-bullets under it.
 - A fact that bears on the decision → one note paragraph of 1-2 sentences after the bullets.
-- End with one question that names the path and its action.
+- End with one line naming the next skill: `scope-spec`, `scope-issue`, or none.
+- Wait for the user to confirm the shared understanding.
+- The user asks for the issue → load `scope-issue` before any further question.
 
 ```
 **Shared understanding:** confirm or correct before I act.
@@ -54,13 +50,5 @@ description: >-
 
 <note>
 
-<path>: <one-line reason>. <question naming the action>?
+Next: `/dream-team:<skill>` | none
 ```
-
-## 3. Hand off
-
-- Wait for the user to confirm the shared understanding and approve or change the path.
-- Spec → ask the user to run `/dream-team:scope-spec`.
-- Issue, Meta issue or research issue → load `scope-issue`.
-- Inline edit → make the edit.
-- Drop → nothing.

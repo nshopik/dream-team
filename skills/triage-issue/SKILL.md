@@ -81,7 +81,7 @@ One issue per invocation.
 - No `workflow::needs-brainstorm`, a design or scope choice open → settle it with the user per its
   Open questions, as for an issue the user asked for in chat, before the rewrite.
 - The issue has `workflow::needs-brainstorm` → run `dream-team:brainstorm` on its proposal's open
-  items, skipping its path proposal and hand-off; the issue is the path.
+  items, skipping its Close step.
 - The user rejects the request → close the issue as not planned with a comment giving the reason,
   add `wontfix`, write no repo file, and stop.
 

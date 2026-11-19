@@ -15,7 +15,7 @@ Session so far:
 - **Config:** one on/off key, default on
 - **Metrics:** `any_minimized_total` counter in `src/metrics.rs`
 
-Issue: adds a config key and a counter the user decided on. File it with scope-issue?
+Next: `/dream-team:scope-issue`
 [user] Yes, file the issue.
 [assistant] `git config --local --type=bool --get dream-team.own` printed `true`.
 
