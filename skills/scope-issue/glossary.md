@@ -9,6 +9,7 @@ The project's agreed terms, kept in the glossary file `docs/CONVENTIONS.md` name
 - A thing with no glossary term → the field-standard word, or a plain phrase.
 - No field word or plain phrase fits → propose a term and its definition with AskUserQuestion, and
   use it only after the user's OK.
+- A proposed term awaits the user's OK → show no issue text and no glossary entry in that reply.
 - A term the user coined or OK'd in the conversation → approved; do not re-ask.
 - A run that must not prompt (an issue found during other work) → never coin; use the plain phrase.
 

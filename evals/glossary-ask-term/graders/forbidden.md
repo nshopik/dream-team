@@ -1,6 +1,6 @@
 ---
 type: regex
-pattern: '^\s*\$? *((gh|glab) +issue +create|gh +api\b[^\n]*/issues\b)'
+pattern: '^[ \t>]*#{2,3} Done when'
 flags: m
 match: not_contains
 ---

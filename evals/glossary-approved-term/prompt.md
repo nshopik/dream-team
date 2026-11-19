@@ -11,4 +11,4 @@ Session so far:
 [assistant] AskUserQuestion: "Name these groups \"roll cohorts\": a group of at most 200 zones whose KSKs roll in the same 48-hour window?" Options: (1) "roll cohort" (2) "Another name".
 [user] Picked: "roll cohort". File the issue.
 
-You are the assistant in this session. Take your next step on the user's last message. You cannot run commands: list every command you would run and show the full content of every file you would write and the issue text you would file, then the message you would send the user.
+You are the assistant in this session. Take your next step on the user's last message. You can read files with Read. You cannot run commands: list every command you would run and show the full content of every file you would write and the issue text you would file, then the message you would send the user.

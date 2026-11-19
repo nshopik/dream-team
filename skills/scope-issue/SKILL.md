@@ -10,6 +10,7 @@ description: >
 
 Issue is actionable items, not prose. Read days or weeks later with zero conversation context.
 
+- Before writing the issue → read the glossary rules in [glossary.md](glossary.md).
 - `git config --local --type=bool --get dream-team.own` prints anything but `true` → file, comment
   on and close issues per `.dream-team/TRACKER.md` in the main checkout, the first `worktree` path
   `git worktree list --porcelain` prints.
@@ -166,7 +167,6 @@ hard-wrap: the forge renders a hard line break as a break in the text.
 ### Names
 
 - Describe behaviour in plain words; a backticked code name is the exception.
-- Terms in the issue: follow `./glossary.md`.
 - User-facing name (flag, config key, metric, exit code, error string) → no limit.
 - Code name (function, type, field — own code or library) → at most three backticked
   occurrences in the whole text.
