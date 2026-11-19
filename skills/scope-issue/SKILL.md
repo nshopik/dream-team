@@ -181,6 +181,9 @@ hard-wrap: the forge renders a hard line break as a break in the text.
 - Repo docs hold only facts that outlive the issue.
 - Small amendment that leaves the work remaining unchanged → a new comment; leave the
   description as written.
+- Finding on a `Research:` issue while this session still runs probe rounds → hold it until no
+  check can run right now, then post one comment carrying the current state, not the rounds that
+  led to it, instead of a comment per finding.
 - Finding with no decision on direction yet → a new comment; leave the description as written.
 - Direction decided, title and problem paragraph still hold → rewrite the proposal and
   its `## Done when` section, then comment why it changed with the replaced proposal quoted.
