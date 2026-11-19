@@ -1,0 +1,29 @@
+name: test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Plain scripts, never `python3 -m unittest`: unittest finds no tests in them.
+      - run: |
+          for t in \
+            test_frontmatter.py \
+            hooks/test_jit_context.py \
+            skills/craft-it/test_fold.py \
+            skills/friction/test_friction.py \
+            skills/scope-mr/scripts/test_diff_budget.py \
+            skills/review-bench/test_extract.py \
+            skills/review-bench/test_run.py \
+            skills/review-bench/test_score.py; do
+            echo "::group::$t"; python3 "$t"; echo "::endgroup::"
+          done
+          node workflows/test_craft_it_loop.mjs
