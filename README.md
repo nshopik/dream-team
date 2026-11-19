@@ -24,9 +24,10 @@ pi install npm:pi-sub-agent
 - **Upstream or untracked one-off:** `/dream-team:brainstorm`
 - **Not sure:** `/dream-team:ask-team`
 
-Run `setup-dream-team` once in each clone of your own project or fork; it marks the clone with
-`git config --local dream-team.own true`. A git repo without that key gets the upstream-project
-rules.
+Run `setup-dream-team` in each clone, and again after an upgrade note asks for it. In your own
+project or fork it marks the clone with `git config --local dream-team.own true` and writes
+`docs/CONVENTIONS.md`; in an upstream clone it writes the local tracker rules to
+`.dream-team/TRACKER.md`. A git repo without that key gets the upstream-project rules.
 
 ## How it works
 
@@ -54,14 +55,14 @@ walkthrough is in [`WORKFLOW.md`](skills/ask-team/WORKFLOW.md).
   one integration branch via the `assemble-meta-loop` workflow.
 - **[setup-dream-team](skills/setup-dream-team/SKILL.md)**: marks a clone of your own project or
   fork, checks the project against the flow, applies fixes that change no code after one OK,
-  commits its doc edits and files one issue for the rest; in an upstream clone it only keeps
-  `CLAUDE.local.md` out of git.
+  commits its doc edits and files one issue for the rest; in an upstream clone it only writes
+  `.dream-team/TRACKER.md` and keeps `.dream-team/` and `CLAUDE.local.md` out of git.
 - **[ask-team](skills/ask-team/SKILL.md)**: answers which skill fits now, with one command to
   run and where it sits: its `WORKFLOW.md` step, or its group in the skill map.
 - **[brainstorm](skills/brainstorm/SKILL.md)**: grills a vague idea in rounds of questions, then
   proposes its path.
-- **[scope-spec](skills/scope-spec/SKILL.md)**: the project spec in the repo's specs folder
-  (`docs/specs/` by default), written from its template.
+- **[scope-spec](skills/scope-spec/SKILL.md)**: the project spec in the repo's specs folder,
+  written from its template.
 - **[cut-milestones](skills/cut-milestones/SKILL.md)**: drafts milestones from a spec, one exit gate
   each.
 - **[milestone-close](skills/milestone-close/SKILL.md)**: checks a milestone's exit criterion,

@@ -11,10 +11,16 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 ### Changed
 
-- `setup-dream-team` writes a `docs/CONVENTIONS.md` and a `## Doc conventions` block in an own clone's `CLAUDE.md`, replacing its `Repo layout:` line or the layout lines it declares; a skill writing the first record, spec or ROADMAP adds the block in place of the pointer line.
+- `setup-dream-team` writes a `docs/CONVENTIONS.md` and a `## Doc conventions` block in an own clone's `CLAUDE.md`, replacing its `Repo layout:` line or the layout lines it declares.
 - `craft-it-loop`'s domain lens takes `qa-review`'s domain wording and runs in a project that names no reference source: it names the project's domain, checks the diff against what a change in that domain must get right, and raises as questions what only the owner can settle.
 - `build-rules` has a change reuse an existing test helper, mock, stub or fixture, move one it would copy from another test file into a shared test module, and extend an existing test of a path instead of testing it again at another level.
 - `scope-mr` pipes the MR/PR description to `diff-budget.py` on stdin (`-` as the file argument) instead of writing it to a temp file first.
+- **Breaking:** In an own clone, `craft-it`, `scope-spec`, `cut-milestones` and `milestone-close` take doc paths, naming and the decision-record template from `docs/CONVENTIONS.md` instead of using plugin defaults or writing the file themselves; when it is missing, `scope-spec`, `cut-milestones` and `milestone-close` stop with "run `setup-dream-team` first", and `craft-it` stops only when its issue asks for a decision record and otherwise picks milestones from the tracker only.
+- **Breaking:** `setup-dream-team` writes the local tracker rules to `.dream-team/TRACKER.md` in an upstream clone, and `craft-it`, `scope-issue` and `ask-team` read them there, stopping with "run `setup-dream-team` first" when the file is missing, `ask-team` only when `.dream-team/issues/` holds a file.
+- **Upgrade note:** Run `setup-dream-team` in each upstream clone that keeps local issues so it writes `.dream-team/TRACKER.md`, and in each own clone, so it writes or updates `docs/CONVENTIONS.md`.
+- In a clone not marked own, `craft-it`, `scope-spec`, `cut-milestones` and `milestone-close` take doc paths from the upstream's `CLAUDE.md`, `AGENTS.md` or existing records or specs folder, and write no record, spec or ROADMAP when none names one.
+- The `docs/CONVENTIONS.md` template `setup-dream-team` writes adds the glossary path, the `NNNN` numbering rule and the record's optional sections and drops the decision-record test, which `scope-issue` alone applies; `craft-it` writes a record only for a decision its issue says gets one.
+- `scope-spec` uses `GLOSSARY.md` terms and coins none; `scope-issue` keeps the glossary rules.
 
 ### Removed
 

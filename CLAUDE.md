@@ -6,7 +6,7 @@
 - A paragraph may state a section's intent or reason.
 - A paragraph may carry an instruction on how the output reads, with its reason; never one that
   branches on the run's state (who asked, what a step found).
-- Invariant for reviews: a diff to a `SKILL.md`, its `reference/` files or an `agents/*.md` prompt
+- Invariant for reviews: a diff to a `SKILL.md`, its reference files or an `agents/*.md` prompt
   holds every rule-authoring line of this file; a reviewer cites the line a change breaks.
 - Add a skill or agent rule only for a failure seen in a real run or eval; never for a
   hypothetical one.
@@ -53,7 +53,7 @@
   headless-claude eval runner only for a large skill or a failure seen in a real run.
 - Before changing who does a step in a skill, read the skill's top-level role rules (e.g.
   craft-it's "You do not write the change" edit list) and update them in the same change.
-- A change to a `SKILL.md`, its `reference/` files or an `agents/*.md` prompt → check every
+- A change to a `SKILL.md`, its reference files or an `agents/*.md` prompt → check every
   other line of those files for a contradiction with the change.
 - A new skill, step or workflow that takes over a behaviour → grep the other skills,
   `WORKFLOW.md` and `README.md` for that behaviour, and update or cut each line that still

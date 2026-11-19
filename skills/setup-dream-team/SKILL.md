@@ -3,10 +3,11 @@ name: setup-dream-team
 description: >-
   Marks the user's own clone with a git config key, checks the project against the dream-team
   flow, applies fixes that change no code after one OK, commits its doc edits and files one
-  maintenance issue for the other failing checks; in an upstream clone it only keeps
-  CLAUDE.local.md out of git. Use when the user asks to set up, audit or align a project with the
-  dream-team flow, or to mark a clone as their own. Not for working an issue (use craft-it) or
-  closing a milestone (use milestone-close).
+  maintenance issue for the other failing checks; in an upstream clone it writes the local
+  tracker rules to .dream-team/TRACKER.md and keeps that folder and CLAUDE.local.md out of git.
+  Use when the user asks to set up, audit or align a project with the dream-team flow, or to
+  mark a clone as their own. Not for working an issue (use craft-it) or closing a milestone (use
+  milestone-close).
 disable-model-invocation: true
 ---
 
@@ -15,7 +16,8 @@ disable-model-invocation: true
 Bringing a project into line is a program, not a change. This skill audits, makes the
 **Direct fixes** below after one confirm, commits its doc edits and files one issue for the rest.
 It changes no code; the filed issue goes through `craft-it`. It marks an own clone with the
-`dream-team.own` key; in an upstream clone it only adds `CLAUDE.local.md` to the git exclude file.
+`dream-team.own` key; in an upstream clone it only writes `.dream-team/TRACKER.md` and adds
+`.dream-team/` and `CLAUDE.local.md` to the git exclude file.
 
 ## Checks
 
@@ -54,6 +56,9 @@ It changes no code; the filed issue goes through `craft-it`. It marks an own clo
 - A CHANGELOG's header links the Keep a Changelog version it follows.
 - `docs/CONVENTIONS.md` exists, and the project `CLAUDE.md` or `AGENTS.md` carries the
   `## Doc conventions` block `./repo-conventions.md` gives.
+- `docs/CONVENTIONS.md` has a row for each doc in the `./repo-conventions.md` template's table
+  (ROADMAP only when the repo has one), a numbering line and a record template, and holds no
+  decision-record test.
 
 ## Project rules
 
@@ -109,6 +114,9 @@ sets a colour only on a label it creates.
   of a fix or a maintenance item.
 - `docs/CONVENTIONS.md` is missing → write it per `repo-conventions.md`, taking the values from
   any layout the project `CLAUDE.md` or `AGENTS.md` declares in its own lines.
+- `docs/CONVENTIONS.md` exists but fails its template check → rewrite it per
+  `repo-conventions.md`, keeping its paths, naming, record template and every other section it
+  gives except its decision-record test.
 - The `## Doc conventions` block is missing → write it per `repo-conventions.md`, in place of the
   project `CLAUDE.md` or `AGENTS.md`'s `Repo layout:` line or the lines that declare the layout, if
   it has them.
@@ -132,8 +140,13 @@ sets a colour only on a label it creates.
 1. Ask whether the repo is the user's own project or an upstream project; a fork counts as own.
    - Upstream and `git check-ignore CLAUDE.local.md` prints nothing → add `CLAUDE.local.md` to
      the file `git rev-parse --git-path info/exclude` prints.
-   - Upstream → write no marker, report whether `CLAUDE.local.md` was added to or already in the
-     exclude file, and stop; change nothing else in the repo or its tracker.
+   - Upstream and `git check-ignore .dream-team/TRACKER.md` prints nothing → add `/.dream-team/`
+     to that exclude file.
+   - Upstream → write `./tracker-local.md`, verbatim, to `.dream-team/TRACKER.md` in the main
+     checkout, the first `worktree` path `git worktree list --porcelain` prints.
+   - Upstream → write no marker and no `docs/CONVENTIONS.md`, report each exclude line as added
+     or already there and `.dream-team/TRACKER.md` as written, and stop; change nothing else in
+     the repo or its tracker.
    - Own → run `git config --local dream-team.own true`, then go on to step 2.
 2. Read the project `CLAUDE.md` or `AGENTS.md`, the contributor doc, the ROADMAP and the specs
    folder, at the paths `./repo-conventions.md` resolves.

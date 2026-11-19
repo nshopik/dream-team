@@ -41,18 +41,19 @@ release you accept.
 
 ### 0. Idea to spec (once per project)
 
+- You: run `/dream-team:setup-dream-team` once in the clone.
 - You: `/dream-team:scope-spec`, once you approve a spec path. The agent asks what the chat left
   open, then writes a lean v1 spec on a topic branch.
 - You: read the spec, push back until it matches your model, merge it.
-- Result: a spec of about 1,500 words, `docs/specs/NNNN-<topic>-design.md` unless the repo's
-  `CLAUDE.md` or `AGENTS.md` declares another one.
+- Result: a spec of about 1,500 words, at the specs path the repo's `docs/CONVENTIONS.md` names
+  in your own clone.
 
 A spec is only for decisions wider than one issue: the v1 design, a cross-cutting change. Work
 that fits one issue gets no spec; a decision made during it is posted on the issue and rewrites
 the issue's proposal, or supersedes the issue with a new one when its title or problem no longer
 holds. A decision that is hard to reverse, surprising without context and a real trade-off (the
-decision-record test) also gets a record in the repo's records folder (`docs/decisions/` by
-default), in the same commit as the change it records.
+decision-record test, which `scope-issue` applies) also gets a record in the records folder
+`docs/CONVENTIONS.md` names in your own clone, in the same commit as the change it records.
 
 ### 1. Spec to milestones
 

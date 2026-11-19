@@ -50,7 +50,13 @@ the numbers.
 ## Steps
 
 1. Read the spec, the existing ROADMAP and the tracker milestones; the ROADMAP's path is what
-   `<base directory>/../setup-dream-team/repo-conventions.md` resolves.
+   `docs/CONVENTIONS.md` names.
+   - `git config --local --type=bool --get dream-team.own` prints `true` and
+     `docs/CONVENTIONS.md` does not exist → stop with "run `setup-dream-team` first".
+   - `dream-team.own` prints anything but `true` → take the ROADMAP path from the upstream's
+     `CLAUDE.md`, `AGENTS.md` or existing records folder.
+   - `dream-team.own` prints anything but `true` and none of those names a ROADMAP path → write
+     no ROADMAP.
 2. Draft each milestone: title, exit criterion, gate type, what it depends on, and for each to be
    created now a `<due date>` placeholder, 2–4 weeks out (the appetite). A
    dependency that gates only the exit measurement goes in the exit criterion, as "on a commit

@@ -1,6 +1,6 @@
 ---
 type: regex
-pattern: 'docs/decisions/|^\+?#+ *Doc conventions|Decision records, specs, ROADMAP:|Decision records *\|'
+pattern: 'docs/decisions/|git (-C [^ ]+ )?add[^\n]*(CONVENTIONS|CLAUDE)\.md'
 flags: im
 match: not_contains
 ---

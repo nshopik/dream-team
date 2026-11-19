@@ -1,7 +1,7 @@
 # Repo doc conventions
 
-Where a repo keeps its decision records, specs and ROADMAP, how it names them, and the record
-template.
+What `setup-dream-team` writes to an own clone's `docs/CONVENTIONS.md`: where the repo keeps its
+decision records, specs, ROADMAP and glossary, how it names them, and the record template.
 
 ## Lookup
 
@@ -12,22 +12,14 @@ Take each of the paths, the file naming and the record template from the first t
    files give the naming and the template.
 3. The defaults below.
 
-- A convention other than a default is used → one line in the chat report, for example
-  `Conventions: docs/adr/ (existing folder)` or
-  `Conventions: docs/adr/, ADR-NNN-slug.md (CLAUDE.md)`.
-- The decision-record test and the record landing in the change's commit stay fixed, whatever
-  the repo declares.
-
 ## Defaults
 
-- Decision record: `docs/decisions/NNNN-slug.md`, template in
-  [decision-record.md](../craft-it/reference/decision-record.md).
+- Decision record: `docs/decisions/NNNN-slug.md`, the record template below.
 - Spec: `docs/specs/NNNN-<topic>-design.md`.
 - ROADMAP: `ROADMAP.md`, or `docs/ROADMAP.md` when that one exists.
-- `NNNN`: four digits, the next free number in its folder on the target branch, from `0001`.
-- The target takes that number before merge → rename the file to the next free one at rebase.
+- Glossary: `GLOSSARY.md`.
 
-## Conventions doc in an own clone
+## Conventions doc
 
 - `docs/CONVENTIONS.md` records the paths, naming and template the lookup resolved; a ROADMAP row
   only when the repo has one.
@@ -39,13 +31,7 @@ Take each of the paths, the file naming and the record template from the first t
 Decision records, specs, ROADMAP: `docs/CONVENTIONS.md`. Read the records touching your area first.
 ```
 
-- `setup-dream-team` writes both in an own clone, the block in place of any layout the file
-  declares.
-- Writing a new decision record, spec or ROADMAP,
-  `git config --local --type=bool --get dream-team.own` prints `true`, and the project's `CLAUDE.md`
-  or `AGENTS.md` declares none of these conventions → in the same commit as that file, add
-  `docs/CONVENTIONS.md` from the template below and the block.
-- `dream-team.own` prints anything else → write neither.
+- `setup-dream-team` writes both, the block in place of any layout the file declares.
 
 ## docs/CONVENTIONS.md template
 
@@ -57,17 +43,12 @@ Decision records, specs, ROADMAP: `docs/CONVENTIONS.md`. Read the records touchi
 | Decision records | `docs/decisions/NNNN-slug.md` |
 | Specs | `docs/specs/NNNN-<topic>-design.md` |
 | ROADMAP | `ROADMAP.md` |
+| Glossary | `GLOSSARY.md` |
+
+`NNNN` is four digits, the next free number in its folder on the target branch, from `0001`. The
+target takes that number before merge → rename the file to the next free one at rebase.
 
 ## Decision records
-
-Write a record only when all three hold:
-
-1. Hard to reverse: changing your mind later costs something real.
-2. Surprising without context: a future reader would ask why it was done this way.
-3. A real trade-off: there were genuine alternatives and one was picked for specific reasons.
-
-A decision that fails the test keeps its rationale in the commit body. A record goes in the
-commit of the change it records.
 
 ```md
 # {Short title of the decision}
@@ -75,6 +56,13 @@ commit of the change it records.
 {1-3 sentences: the context, what was decided, and why.}
 ```
 
+Add these sections only when they add real value; most records need none:
+
+- **Considered Options**: only when the rejected alternatives are worth remembering.
+- **Consequences**: only when non-obvious downstream effects need to be called out.
+- **Diagram**: only when the decision relates 3 or more named parts; one fenced `mermaid` block
+  of at most 12 nodes, no styling, replacing the prose it shows.
+
 A record replaced by a later decision keeps its file and gets `Superseded by <record-file>` under
-its title.
+its title. The new record says why the old decision lost.
 ````

@@ -114,8 +114,16 @@ Planning stays explicit, at issue size, because you review every plan.
   at about a fifth of the lens cost (#224). It still ships as an agent.
 - `craft-it` picks no implementer or domain reviewer: specialist implementers made no
   difference (#192), and the domain check is a `qa-review` lens (#225).
-- `craft-it`'s `reference/subagent-loop.md` restates the control flow of `craft-it-loop.js`:
+- `craft-it`'s `subagent-loop.md` restates the control flow of `craft-it-loop.js`:
   stages, caps and branches. A change to one updates the other in the same MR.
+- No skill reaches another skill's files by a `<base directory>/../` path (decision record
+  0009); it loads that skill with the Skill tool first. Repo data lives in the repo, in the
+  `docs/CONVENTIONS.md` or `.dream-team/TRACKER.md` that `setup-dream-team` writes.
+  `test_skill_links.py` fails on a cross-skill path. Reference files sit flat beside their
+  `SKILL.md`.
+- `.dream-team/TRACKER.md` and `docs/CONVENTIONS.md` are copies of `setup-dream-team`'s
+  `tracker-local.md` and `repo-conventions.md` template; a clone keeps its copy until setup runs
+  again, so a change to either file gets a CHANGELOG `**Upgrade note:**` to re-run setup.
 
 ## Building agents
 

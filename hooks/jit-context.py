@@ -106,8 +106,8 @@ Editing a CLAUDE.md or CLAUDE.local.md.
 
 UPSTREAM = """<upstream_repo>
 This clone is not marked own (`dream-team.own` is not `true`): it is an upstream
-project, not mine. If it is mine, ask me to run `/dream-team:setup-dream-team`
-to mark it.
+project, not mine. Ask me to run `/dream-team:setup-dream-team` once here: it
+writes the local tracker rules, or marks the clone own if it is mine.
 - Its CONTRIBUTING, commit style, changelog and tracker conventions win where they
   conflict with mine (scope-commit, scope-mr, vcs workflow).
 - Still load scope-commit and scope-mr; apply each rule upstream does not set.

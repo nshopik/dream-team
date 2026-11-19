@@ -19,13 +19,13 @@ Session so far:
 - Run `ansible-lint` before every commit.
 - Repo layout: docs/CONVENTIONS.md; read the decision records touching your area first.
 ```
-There is no AGENTS.md. docs/decisions/ holds ten records, `0001-vault-for-secrets.md` through `0010-bgp-timers.md`, each a title line and one paragraph. docs/CONVENTIONS.md, in full:
+There is no AGENTS.md. docs/adr/ holds ten records, `0001-vault-for-secrets.md` through `0010-bgp-timers.md`, each a title line and one paragraph. docs/CONVENTIONS.md, in full:
 ````
 # Doc conventions
 
 | Doc | Path |
 |---|---|
-| Decision records | `docs/decisions/NNNN-slug.md` |
+| Decision records | `docs/adr/NNNN-slug.md` |
 | Specs | `docs/specs/NNNN-<topic>-design.md` |
 
 ## Decision records
@@ -41,6 +41,8 @@ commit of the change it records.
 
 ```md
 # {Short title of the decision}
+
+Date: {YYYY-MM-DD}
 
 {1-3 sentences: the context, what was decided, and why.}
 ```
