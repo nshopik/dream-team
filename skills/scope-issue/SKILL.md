@@ -52,8 +52,9 @@ who knew may be gone.
   the reference source → ask nothing.
 - User asked for the issue in chat, a choice that would pass the test in
   [decision-record.md](decision-record.md) once decided, its options not yet
-  known, or a `## Done when` check with no observable form → run `dream-team:brainstorm`, skipping
-  its Close step, until the choice is decided and each check is observable.
+  known, or a `## Done when` check with no observable form → before asking anything, call the
+  Skill tool with `dream-team:brainstorm`; run it, skipping its Close step, until the choice is
+  decided and each check is observable.
 - User asked for the issue in chat, any other open question, milestone included → ask it with
   AskUserQuestion before writing it; write the answers into the issue.
 - Issue found during other work (craft-it, a review, a lab check) → do not prompt; list the
