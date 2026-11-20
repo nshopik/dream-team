@@ -48,7 +48,8 @@
   `runs/` are ignored.
 - Commit top-level `evals/` except `evals/results/`.
 - Run the top-level `evals/` cases with
-  `claude plugin eval . --trust-plugin --model opus --threshold 0.6`.
+  `claude plugin eval . --trust-plugin --model opus --threshold 0.8 --ablation none`.
+- In a top-level `evals/` case with five or more graders, give the key grader `weight: 2`.
 - Give a small or pass-through skill or workflow phase stub-agent tests only; add a paid
   headless-claude eval runner only for a large skill or a failure seen in a real run.
 - Before changing who does a step in a skill, read the skill's top-level role rules (e.g.

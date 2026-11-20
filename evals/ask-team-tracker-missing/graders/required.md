@@ -1,5 +1,5 @@
 ---
 type: regex
-pattern: 'run\W{1,4}(/?dream-team:)?setup-dream-team\W{1,4}first'
+pattern: 'setup-dream-team\W{1,4}(first|before)|(precondition|prerequisite|requires?|needs?|run)\b[^\n]{0,40}setup-dream-team'
 flags: i
 ---
