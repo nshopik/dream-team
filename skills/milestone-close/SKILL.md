@@ -15,7 +15,9 @@ and filed issue.
 - An edit that lands in the docs MR needs no approval: the user reviews it there, once step 5
   opens the MR.
 - Ask only for what leaves the docs MR or changes agent rules: issues, closes, moves, milestones,
-  `CLAUDE.md` and `CLAUDE.local.md` lines, and the release offer.
+  `AGENTS.md` or `CLAUDE.md` and corresponding local notes, and the release offer.
+
+- On Codex, map `dream-team:<role>` to `dream-team-<role>` and dispatch with `spawn_agent`.
 
 ## 1. Read the milestone
 
@@ -42,7 +44,7 @@ A version milestone's `Gate:` bullet holds its release criteria; check each item
 - Run or read the measurement the criterion names: gate floors, a recorded run, a deployed host.
 - A field-evidence gate → read its `Evidence:` issue for the deploy, the start date and how to
   collect.
-- The project `CLAUDE.md` says `Version milestones release in flow mode.` → a version milestone's
+- The project `AGENTS.md` or `CLAUDE.md` says `Version milestones release in flow mode.` → a version milestone's
   criterion is met at its due date, and an open headline is no gap.
 - Outside flow mode, an open headline issue in a version milestone → it is its own gap; file
   nothing for it.
@@ -99,19 +101,19 @@ Proposals, each approved or rejected by the user:
   next free `M<n>`, with a `<due date>` and the parked issues that belong to it, in ROADMAP order
   until 3 `M<n>` milestones would be open, this one not counted; it is approved only once the user
   sets its `<due date>`.
-- Each project `CLAUDE.md` and `CLAUDE.local.md` line, proposed as a cut when the path or tool it
+- Each project `AGENTS.md`, `CLAUDE.md`, `AGENTS.local.md`, or `CLAUDE.local.md` line, proposed as a cut when the path or tool it
   names is gone, its only content is one closed issue's artifacts rather than a gotcha, a hook or
   CI enforces it now, a global rule already says it, or a change outside the repo could fix the
   gotcha it works around (a lab host's config, a missing tool, a plugin bug), recommending that
   change.
-- Each other `CLAUDE.local.md` line: proposed as a promotion to `CLAUDE.md` when it holds no
+- Each other `AGENTS.local.md` or `CLAUDE.local.md` line: proposed as a promotion to its matching `AGENTS.md` or `CLAUDE.md` when it holds no
   hostname, IP, internal URL or lab access, otherwise left alone.
 
 ## 5. Apply
 
 Before any other step 5 action:
 
-- At least one numbered proposal changes `CLAUDE.md` (a cut from it or a promotion) → send the
+- At least one numbered proposal changes `AGENTS.md` or `CLAUDE.md` (a cut from it or a promotion) → send the
   held report per Report back, and wait for the user's one reply.
 - No such proposal → do not wait for answers; carry on with the rest of step 5 and open the docs
   MR once its edits are committed.
@@ -122,12 +124,12 @@ Then, in order:
 1. Make the approved closes and moves through the host's tooling skill.
    - An obsolete close is not planned and adds `wontfix`.
    - The `Evidence:` issue closes with the milestone.
-2. Put step 4's docs-MR edits, the approved `Superseded by` lines and the approved `CLAUDE.md`
+2. Put step 4's docs-MR edits, the approved `Superseded by` lines and the approved `AGENTS.md` or `CLAUDE.md`
    cuts and promotions in one MR.
    - `docs-reviewer` fixes → dispatch `dream-team:docs-editor` in drift mode with
      `git diff <base>..<head>` from step 4 and only the pages they name; its edits go in the
      docs MR.
-3. Apply the approved promotions and cuts to `CLAUDE.local.md` directly; it is untracked.
+3. Apply the approved promotions and cuts to the corresponding ignored `AGENTS.local.md` or `CLAUDE.local.md` directly.
 4. Close the milestone and set its roadmap status, if it has a row.
 5. Each approved `planned` row → create its milestone per `cut-milestones` step 5, move its
    parked issues into it without `workflow::future`, then set the row's `#` and its status
@@ -146,7 +148,7 @@ version.
   milestone's offer.
 - No reply → no release; nothing waits.
 
-A numbered proposal that changes `CLAUDE.md` is unanswered → send only the held report: criterion
+A numbered proposal that changes `AGENTS.md` or `CLAUDE.md` is unanswered → send only the held report: criterion
 result, step 4's docs-MR edits and the proposals below, with no docs MR link. After step 5 applies
 the user's reply, send the full report above, with the link.
 
@@ -159,4 +161,4 @@ Proposals from step 2 or 4:
 - A cut that waits on a fix outside the repo → one unnumbered **Outside the repo:** line naming
   the fix; propose the cut once the user reports the fix made.
 - Under each, name what approving it does: an issue filed, a milestone created, a line added,
-  removed or moved to `CLAUDE.md`, or a `Superseded by` line in the docs MR.
+  removed or moved to `AGENTS.md` or `CLAUDE.md`, or a `Superseded by` line in the docs MR.

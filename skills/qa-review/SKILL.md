@@ -25,15 +25,23 @@ On pi, read every Agent launch below this way:
 - Drop the `dream-team:` prefix from a lens name.
 - Pass no `model` or `effort`.
 
+On Codex:
+
+- Every agent launch below → use `spawn_agent` with the same prompt.
+- A named Dream Team lens → use `dream-team-<role>`.
+- Explore or general-purpose → use a generic subagent.
+- Multiple launches in one step → launch them concurrently and wait for all replies.
+- Use Claude model and effort fields only for Claude Agent calls.
+
 ## 1. Pick the mode and scope
 
-- `$ARGUMENTS` contains `audit` or `full`, or the user asked for an audit → **audit**: scope is the
+- the invocation arguments contains `audit` or `full`, or the user asked for an audit → **audit**: scope is the
   whole repository, or on a large repository the paths the user picks from the audit map below.
 - Otherwise → **review**: changes from `git merge-base HEAD origin/<default-branch>` to the working
   tree, or from the base ref the user named. Empty diff → say so and stop.
-  - A SHA or ref in `$ARGUMENTS` is that base ref, never a commit to review on its own.
-- Paths in `$ARGUMENTS` narrow either mode to those paths.
-- Audit with no paths in `$ARGUMENTS` → build the audit map below before writing `scope`.
+  - A SHA or ref in the invocation arguments is that base ref, never a commit to review on its own.
+- Paths in the invocation arguments narrow either mode to those paths.
+- Audit with no paths in the invocation arguments → build the audit map below before writing `scope`.
 
 Write `scope` as 2–4 sentences: repo path, what the project is (one line from its `CLAUDE.md`,
 `AGENTS.md` or README), the mode, and for review the base ref, `git diff --stat` output and the
@@ -146,7 +154,7 @@ comma-separated if several), `status` (verified or suspected), `disputed`, `lens
 
 ## 6. Verify (opt-in)
 
-Run only when `$ARGUMENTS` contains `verify` or the user accepts the offer. Default set: every 🔴
+Run only when the invocation arguments contains `verify` or the user accepts the offer. Default set: every 🔴
 and 🟡 item, plus each 🔵 item with `disputed` set; the user may name ids instead. Split the set
 into batches of six items, each item with every step-4 field.
 

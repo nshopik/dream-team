@@ -17,6 +17,18 @@ pi install git:github.com/nshopik/dream-team
 pi install npm:pi-sub-agent
 ```
 
+For a local Codex CLI install, run this from a stable checkout using Python 3.11 or newer:
+
+```sh
+python3 scripts/bootstrap-codex.py
+```
+
+Start a new Codex session and select `$ask-team`, `$setup-dream-team`, or `$craft-it`
+from `/skills`. Append arguments after the skill mention. The bootstrap copies the skills and installs
+named agent roles. Codex uses the subagent loop for `craft-it` and native subagents for reviews.
+`assemble-meta`, `friction`, and `review-bench` are outside this local bootstrap.
+Open `/hooks` in Codex to review and trust the Dream Team convention hooks.
+
 ## Start here
 
 - **New project:** `/dream-team:setup-dream-team`, then `/dream-team:scope-spec`

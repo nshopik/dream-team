@@ -8,6 +8,9 @@ description: >
 disable-model-invocation: true
 ---
 
+- On Codex, handle each AskUserQuestion step with the host's user-input tool when available.
+- On Codex without that tool, ask the same questions in chat and wait for the reply before taking the gated action.
+
 ## spec-style
 
 - Read [spec-template.md](spec-template.md) before writing; follow its section order.

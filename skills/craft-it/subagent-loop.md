@@ -1,10 +1,11 @@
 # craft-it-loop without the Workflow tool
 
-You run the `craft-it-loop` stages yourself: each agent through the Agent tool, the gate in your
+You run the `craft-it-loop` stages yourself: each stage through the host’s subagent tool, the gate in your
 own shell. You end with the result object `workflow-result.md` documents, so step 5 on reads it
 as it reads a workflow return.
 
-- `<loop>` is `<base directory>/../../workflows/craft-it-loop.js`.
+- `<loop>` is `<base directory>/craft-it-loop.js` in a local Codex install, or
+  `<base directory>/../../workflows/craft-it-loop.js` in the source checkout.
 - Before stage 1, read `<loop>` once as reference: it holds every prompt function, schema, label
   and result shape named below.
 
@@ -21,6 +22,7 @@ as it reads a workflow return.
 - A reviewer → `model: opus`; a lens gets its `dream-team:` type as `subagent_type`, the
   domain and external reviewers `general-purpose`.
 - Several reviewers in one stage → one message with one Agent call each, all at once.
+- On Codex, use the parent skill’s dispatch rules for every stage.
 - A reply with no fenced block, or a block missing a required field → redispatch it once with
   `agentR`'s retry sentence appended.
 - Still no block → that call has no result; take the stage's no-result branch from `<loop>`.

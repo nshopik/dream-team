@@ -11,6 +11,9 @@ description: >-
 
 # brainstorm
 
+- On Codex, handle each AskUserQuestion step with the host's user-input tool when available.
+- On Codex without that tool, ask the same questions in chat and wait for the reply before taking the gated action.
+
 ## 1. Grill
 
 - Map the idea as a design tree: each decision branches into the decisions that depend on it.

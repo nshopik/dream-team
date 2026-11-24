@@ -23,7 +23,7 @@ Take each of the paths, the file naming and the record template from the first t
 
 - `docs/CONVENTIONS.md` records the paths, naming and template the lookup resolved; a ROADMAP row
   only when the repo has one.
-- The block for the project `CLAUDE.md` (`AGENTS.md` when only that exists), verbatim:
+- The block for the project’s selected `AGENTS.md` or `CLAUDE.md`, verbatim:
 
 ```md
 ## Doc conventions

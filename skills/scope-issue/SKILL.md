@@ -17,6 +17,9 @@ Issue is actionable items, not prose. Read days or weeks later with zero convers
 - `dream-team.own` prints anything but `true` and that file does not exist → stop with "run
   `setup-dream-team` first".
 
+- On Codex, handle each AskUserQuestion step with the host's user-input tool when available.
+- On Codex without that tool, ask the same questions in chat and wait for the reply before taking the gated action.
+
 ## issue-style
 
 Reader starts the task from the description alone — no chat history. Comments carry the issue's

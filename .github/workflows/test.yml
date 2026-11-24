@@ -19,6 +19,7 @@ jobs:
             test_frontmatter.py \
             test_skill_links.py \
             hooks/test_jit_context.py \
+            scripts/test_bootstrap_codex.py \
             skills/craft-it/test_fold.py \
             skills/friction/test_friction.py \
             skills/scope-mr/scripts/test_diff_budget.py \

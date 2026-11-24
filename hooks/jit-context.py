@@ -14,7 +14,9 @@ import re
 import subprocess
 import sys
 
-STATE = '/tmp/claude-jit-context'
+CODEX = sys.argv[1:] == ['--codex']
+STATE = '/tmp/codex-jit-context' if CODEX else '/tmp/claude-jit-context'
+GUIDANCE = r'(?:AGENTS|CLAUDE)(?:\.local)?\.md'
 
 
 VCS = """<vcs_workflow>
@@ -66,7 +68,10 @@ If not, it is decoration. Cut it.
 NOTES = """<project_notes>
 You make a mistake or get corrected, and a later session in this repo would repeat it
 (a wrong command, a path or environment trap, a tool quirk) → add one imperative line
-to its `CLAUDE.local.md` and name the line in your summary. End the line with the condition
+to the ignored `AGENTS.local.md` or `CLAUDE.local.md` matching the project’s
+`AGENTS.md` or `CLAUDE.md`, and name the line in your summary. Before writing,
+use `git check-ignore` on the selected file and add its root-relative path to
+the file named by `git rev-parse --git-path info/exclude` if needed. End the line with the condition
 that retires it: a tool or plugin version, a fix, a closed issue. Read the file first; a line
 that already covers it gets sharpened, not repeated. A per-task artifact location
 (harness copy, scratch directory, built binary, results file) never gets a line. A fact
@@ -88,20 +93,19 @@ adds a component, or needs a lab check.
 </issue_sized>"""
 
 CLAUDE_MD = """<claude_md>
-Editing a CLAUDE.md or CLAUDE.local.md.
-- A correction or gotcha goes in the untracked `CLAUDE.local.md`, one imperative
-  line. The user promotes lines to the tracked `CLAUDE.md`; never add one there unasked.
-- Keep a line specific to this repo; general advice belongs in the user's global
-  CLAUDE.md.
-- A fix that is a workflow, not a rule → a skill in `.claude/skills/`, linked from
-  `CLAUDE.local.md`.
-- `git check-ignore CLAUDE.local.md` prints nothing → add it to `.git/info/exclude`
-  before writing.
-- Hostnames, IPs, internal URLs and lab access go in `CLAUDE.local.md` only, never in
-  a tracked file.
+Editing AGENTS.md, CLAUDE.md, or their local notes.
+- Put a correction or gotcha in the matching untracked `AGENTS.local.md` or
+  `CLAUDE.local.md`, one imperative line. The user promotes it to the matching
+  tracked file. Wait for the user before adding a line to the tracked file.
+- Keep the line specific to this repo. General advice belongs in the user’s
+  global `AGENTS.md` or `CLAUDE.md`.
+- A fix that is a workflow goes in a skill in the host’s skill directory.
+- Use `git check-ignore` before writing local notes. Add the notes file’s
+  root-relative path to `git rev-parse --git-path info/exclude` if needed.
+- Keep hostnames, IPs, internal URLs and lab access in ignored local notes.
 - One fact per bullet.
-- Keep each file under 8 KB; move an outgrown section to a subdirectory `CLAUDE.md`
-  or a skill.
+- Keep each file under 8 KB. Move an outgrown section to a subdirectory
+  `AGENTS.md`, `CLAUDE.md`, or a skill.
 </claude_md>"""
 
 UPSTREAM = """<upstream_repo>
@@ -111,15 +115,17 @@ writes the local tracker rules, or marks the clone own if it is mine.
 - Its CONTRIBUTING, commit style, changelog and tracker conventions win where they
   conflict with mine (scope-commit, scope-mr, vcs workflow).
 - Still load scope-commit and scope-mr; apply each rule upstream does not set.
-- Agent notes go in untracked `CLAUDE.local.md` only; never add or edit a
-  checked-in `CLAUDE.md`.
+- Agent notes go in ignored `AGENTS.local.md` or `CLAUDE.local.md`. Ask before
+  adding or editing a checked-in `AGENTS.md` or `CLAUDE.md`.
 - Add no docs to the repo, or issues, milestones or labels on its forge,
   unasked.
 - Ask before opening an MR/PR, issue or comment on its forge.
 </upstream_repo>"""
 
 def is_upstream(payload):
-    d = os.path.dirname(payload['tool_input'].get('file_path') or '') or payload.get('cwd') or '.'
+    cwd = payload.get('cwd') or '.'
+    path = payload['tool_input'].get('file_path') or ''
+    d = os.path.dirname(os.path.join(cwd, path)) if path else cwd
     while d and not os.path.isdir(d):           # Write may target a dir not made yet
         d = os.path.dirname(d)
     try:
@@ -143,8 +149,8 @@ RULES = [
     ('upstream',  'command',   PUBLISH_CMD,                       UPSTREAM, is_upstream),
     # Paired file_path/command rows share a name: the sentinel dedupes, so a heredoc/sed
     # write (no file_path field) still gets the block exactly once.
-    ('claude_md', 'file_path', r'(^|/)CLAUDE(\.local)?\.md$',       CLAUDE_MD),
-    ('claude_md', 'command',   r'CLAUDE(\.local)?\.md',             CLAUDE_MD),
+    ('claude_md', 'file_path', rf'(^|/){GUIDANCE}$',       CLAUDE_MD),
+    ('claude_md', 'command',   GUIDANCE,             CLAUDE_MD),
     # First: on `glab`/`gh` this fires once, then falls through to `forge` on the
     # next call — main() skips a rule that already fired this session.
     ('vcs',       'command',   PUBLISH_CMD,                       VCS),
@@ -170,6 +176,9 @@ def fired(session, name):
 
 
 def emit(event, text):
+    if CODEX:
+        text = (text.replace('/dream-team:setup-dream-team', '$setup-dream-team')
+                .replace('dream-team:lab-runner', 'dream-team-lab-runner'))
     print(json.dumps({"hookSpecificOutput": {"hookEventName": event, "additionalContext": text}}))
 
 
@@ -182,11 +191,20 @@ def main():
         emit('SessionStart', NOTES + '\n\n' + ISSUE_SIZED)
         return
     fields = payload.get('tool_input', {})
+    inputs = [fields]
+    if CODEX and payload.get('tool_name') == 'apply_patch':
+        inputs = [{'file_path': path} for path in re.findall(
+            r'^\*\*\* (?:(?:Add|Update|Delete) File|Move to): (.+)$',
+            fields.get('command', ''), re.M,
+        )]
     for name, field, pattern, text, *when in RULES:
-        hit = re.search(pattern, fields.get(field) or '', re.I)
-        if hit and all(w(payload) for w in when) and not fired(payload.get('session_id', ''), name):
-            emit('PreToolUse', text)
-            return
+        for tool_input in inputs:
+            hit = re.search(pattern, tool_input.get(field) or '', re.I)
+            if hit and all(w({**payload, 'tool_input': tool_input}) for w in when):
+                if not fired(payload.get('session_id', ''), name):
+                    emit('PreToolUse', text)
+                    return
+                break
 
 
 if __name__ == '__main__':

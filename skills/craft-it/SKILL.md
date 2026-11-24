@@ -45,6 +45,18 @@ assumption.
 - `dream-team.own` prints anything but `true` and none of those names a records path → write no
   record.
 
+On Codex:
+
+- Each agent dispatch → use the host’s subagent tool with the supplied prompt.
+- Each named `dream-team:<role>` → use `dream-team-<role>`.
+- Each generic subagent → use the session model.
+- Each workflow, reviewer or writer prompt → include the absolute worktree path.
+- Each mechanical gate command → run it with the issue worktree as its working directory.
+- Each scratchpad path → use a per-run temporary directory when the host does not supply one.
+
+- On Codex, handle each AskUserQuestion step with the host's user-input tool when available.
+- On Codex without that tool, ask the same questions in chat and wait for the reply before taking the gated action.
+
 ## 1. Read the issue
 
 Fetch body, title, labels and discussion — `gh issue view <n> --json title,body,labels,comments`,
@@ -218,8 +230,8 @@ remote's default branch unless the project's `CLAUDE.md` or `AGENTS.md` names an
   runs exactly these after the implementation and after every fix commit. Leave out lab work.
   Required.
 - `externalReview`: a shell command that reads a diff on stdin and prints findings. Default unset.
-- A `CLAUDE.md` the session loads — global, the project's, or its `CLAUDE.local.md` — opts in to an
-  external reviewer → set `externalReview` to the command it names.
+- `AGENTS.md` or `CLAUDE.md` opts in to an external reviewer → set `externalReview` to its command.
+- Include the global and project `AGENTS.md` or `CLAUDE.md` and the corresponding ignored local notes when resolving the opt-in.
 - The project's line and the global one disagree → the project's wins, including a project line
   that turns it off.
 

@@ -4,7 +4,7 @@ description: >-
   Marks the user's own clone with a git config key, checks the project against the dream-team
   flow, applies fixes that change no code after one OK, commits its doc edits and files one
   maintenance issue for the other failing checks; in an upstream clone it writes the local
-  tracker rules to .dream-team/TRACKER.md and keeps that folder and CLAUDE.local.md out of git.
+  tracker rules to .dream-team/TRACKER.md and keeps that folder and `AGENTS.local.md` and `CLAUDE.local.md` out of git.
   Use when the user asks to set up, audit or align a project with the dream-team flow, or to
   mark a clone as their own. Not for working an issue (use craft-it) or closing a milestone (use
   milestone-close).
@@ -17,7 +17,7 @@ Bringing a project into line is a program, not a change. This skill audits, make
 **Direct fixes** below after one confirm, commits its doc edits and files one issue for the rest.
 It changes no code; the filed issue goes through `craft-it`. It marks an own clone with the
 `dream-team.own` key; in an upstream clone it only writes `.dream-team/TRACKER.md` and adds
-`.dream-team/` and `CLAUDE.local.md` to the git exclude file.
+`.dream-team/` and `AGENTS.local.md` and `CLAUDE.local.md` to the git exclude file.
 
 ## Checks
 
@@ -26,7 +26,7 @@ It changes no code; the filed issue goes through `craft-it`. It marks an own clo
   - is numbered in one of those forms.
   - has a measurable exit criterion in its tracker description.
   - lists `Exit:`, `Gate:` and `Depends on:` as bold bullets in its description.
-- The project `CLAUDE.md` says `Version milestones release in flow mode.` → a version
+- The project’s `AGENTS.md` or `CLAUDE.md` says `Version milestones release in flow mode.` → a version
   milestone's `Exit:` naming its due date is its exit criterion.
 - A ROADMAP exists, two or more `M<n>` milestones are open, or a `Depends on:` names an open
   `M<n>` milestone → each open `M<n>` milestone has a matching ROADMAP row.
@@ -50,11 +50,11 @@ It changes no code; the filed issue goes through `craft-it`. It marks an own clo
 - The repo has an architecture diagram → it matches the code.
 - The tracker has every label in **Label colours** except `area::*`.
 - The tracker has no `type::` label.
-- The project `CLAUDE.md` carries the meaning of every rule in **Project rules** below.
-- The project `CLAUDE.md` or `AGENTS.md` names a reference source, or names rules as a review
+- The project’s `AGENTS.md` or `CLAUDE.md` carries the meaning of every rule in **Project rules** below.
+- The project’s `AGENTS.md` or `CLAUDE.md` names a reference source, or names rules as a review
   invariant; a rule it only states is not one.
 - A CHANGELOG's header links the Keep a Changelog version it follows.
-- `docs/CONVENTIONS.md` exists, and the project `CLAUDE.md` or `AGENTS.md` carries the
+- `docs/CONVENTIONS.md` exists, and the project’s `AGENTS.md` or `CLAUDE.md` carries the
   `## Doc conventions` block `./repo-conventions.md` gives.
 - `docs/CONVENTIONS.md` has a row for each doc in the `./repo-conventions.md` template's table
   (ROADMAP only when the repo has one), a numbering line and a record template, and holds no
@@ -62,7 +62,7 @@ It changes no code; the filed issue goes through `craft-it`. It marks an own clo
 
 ## Project rules
 
-The project `CLAUDE.md` carries these, in its own words:
+The project’s `AGENTS.md` or `CLAUDE.md` carries these, in its own words:
 
 - A project with an architecture diagram: it changes in the same MR as a component or pipeline
   change.
@@ -101,11 +101,12 @@ sets a colour only on a label it creates.
 
 ## Direct fixes
 
-- `CLAUDE.md` lacks a project rule → write it in the file's own words, merged into its existing
+- Use the project’s existing `AGENTS.md` or `CLAUDE.md` for checks, fixes, approval, and staging.
+- If neither exists → create `AGENTS.md` unless the project selects `CLAUDE.md`.
+
+- The selected `AGENTS.md` or `CLAUDE.md` lacks a project rule → write it in the file's own words, merged into its existing
   structure.
-- The project has neither `CLAUDE.md` nor `AGENTS.md` → create `CLAUDE.md` with the project
-  rules.
-- The project `CLAUDE.md` or `AGENTS.md` names no reference source or review invariant →
+- The project’s `AGENTS.md` or `CLAUDE.md` names no reference source or review invariant →
   draft candidate lines naming, as a review invariant, each rule the file already states that a
   diff can break, and naming each reference source the repo holds, such as a specs folder or a
   vendored standard.
@@ -113,12 +114,12 @@ sets a colour only on a label it creates.
   source or a review invariant would give craft-it's domain lens a named source to cite, in place
   of a fix or a maintenance item.
 - `docs/CONVENTIONS.md` is missing → write it per `repo-conventions.md`, taking the values from
-  any layout the project `CLAUDE.md` or `AGENTS.md` declares in its own lines.
+  any layout the project’s `AGENTS.md` or `CLAUDE.md` declares in its own lines.
 - `docs/CONVENTIONS.md` exists but fails its template check → rewrite it per
   `repo-conventions.md`, keeping its paths, naming, record template and every other section it
   gives except its decision-record test.
 - The `## Doc conventions` block is missing → write it per `repo-conventions.md`, in place of the
-  project `CLAUDE.md` or `AGENTS.md`'s `Repo layout:` line or the lines that declare the layout, if
+  project’s `AGENTS.md` or `CLAUDE.md` `Repo layout:` line or the lines that declare the layout, if
   it has them.
 - The tracker lacks a label from **Label colours** → create it with its colour and description.
 - The tracker has a `type::<kind>` label, `<kind>` a kind in **Label colours** → swap it for
@@ -138,7 +139,7 @@ sets a colour only on a label it creates.
 ## Steps
 
 1. Ask whether the repo is the user's own project or an upstream project; a fork counts as own.
-   - Upstream and `git check-ignore CLAUDE.local.md` prints nothing → add `CLAUDE.local.md` to
+   - Upstream → check `AGENTS.local.md` and `CLAUDE.local.md` with `git check-ignore`; add each missing filename to
      the file `git rev-parse --git-path info/exclude` prints.
    - Upstream and `git check-ignore .dream-team/TRACKER.md` prints nothing → add `/.dream-team/`
      to that exclude file.
@@ -148,7 +149,7 @@ sets a colour only on a label it creates.
      or already there and `.dream-team/TRACKER.md` as written, and stop; change nothing else in
      the repo or its tracker.
    - Own → run `git config --local dream-team.own true`, then go on to step 2.
-2. Read the project `CLAUDE.md` or `AGENTS.md`, the contributor doc, the ROADMAP and the specs
+2. Read the project’s `AGENTS.md` or `CLAUDE.md`, the contributor doc, the ROADMAP and the specs
    folder, at the paths `./repo-conventions.md` resolves.
 3. Read the tracker's milestones, labels, open issues and every issue with a `type::` label
    through the host's tooling skill.
@@ -156,13 +157,13 @@ sets a colour only on a label it creates.
 5. Report one line per check to the user before changing or filing anything.
 6. All checks pass → say the project is aligned and stop.
 7. No direct fix applies → go to step 12.
-8. Show one combined draft of every direct fix: the `CLAUDE.md` and repo-doc diffs, the labels to
+8. Show one combined draft of every direct fix: the `AGENTS.md` or `CLAUDE.md` diff and repo-doc diffs, the labels to
    create, each issue's `type::` to flat kind swap, the `type::` labels to delete, the labels and
    milestone to change per issue, each milestone title,
    milestone description and issue body before and after, and any issue or milestone to create.
 9. Ask for one OK on the draft; a direct fix the user declines becomes an item in the
    maintenance issue.
-10. Any approved `CLAUDE.md` or repo-doc edit → write them and commit only those files, in one
+10. Any approved `AGENTS.md`, `CLAUDE.md`, or repo-doc edit → write them and commit only those files, in one
     commit per `scope-commit`, on the current branch, not pushed.
     - On `main` or `master` with a spec or design doc among those edits → run
       `git checkout -b <topic>` first and name the branch in the report.
