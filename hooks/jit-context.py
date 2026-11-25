@@ -177,8 +177,11 @@ def fired(session, name):
 
 def emit(event, text):
     if CODEX:
-        text = (text.replace('/dream-team:setup-dream-team', '$setup-dream-team')
-                .replace('dream-team:lab-runner', 'dream-team-lab-runner'))
+        role = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                            '../skills/qa-review/agents/lab-runner.md')
+        role = os.path.normpath(role)
+        text = (text.replace('/dream-team:setup-dream-team', '$dream-team:setup-dream-team')
+                .replace('`dream-team:lab-runner`', f'a subagent with the prompt from `{role}`'))
     print(json.dumps({"hookSpecificOutput": {"hookEventName": event, "additionalContext": text}}))
 
 

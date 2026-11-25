@@ -5,13 +5,18 @@ ledger and, on a clean change, by false alarms.
 
 ## Runner setup
 
-`PLUGIN_DIR` selects the Claude reviewer checkout. For Codex reviewers, run
-`python3 scripts/bootstrap-codex.py` from the Dream Team checkout being benchmarked before launching
-the benchmark. Codex uses the installed skills and roles.
+`PLUGIN_DIR` selects the Claude reviewer checkout. For Codex, install the tested checkout as a
+local marketplace and install Dream Team from it:
 
-For a Codex reviewer configured with `:lenses`, use the installed Dream Team reviewer roles for
-named lenses. Name a generic domain lens `domain`. Prefix any other grading lens's task name with
-`lens-`. The extractor uses these identifiers to separate lens reports from helper output.
+```sh
+codex plugin marketplace add /absolute/path/to/dream-team
+codex plugin add dream-team@dream-team
+```
+
+For a Codex reviewer configured with `:lenses`, pass the bundled reviewer prompts to generic
+subagents when the named agents are unavailable. Name the domain lens `domain`. Prefix each
+other generic grading lens's task name with `lens_`. The extractor uses these identifiers to
+separate lens reports from helper output.
 
 ## Ledger file
 

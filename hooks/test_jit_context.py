@@ -52,11 +52,14 @@ session = uuid.uuid4().hex
 assert "Editing AGENTS.md" in context(patch, mine, session, codex=True, tool_name="apply_patch")
 assert "<prose_style>" in context(patch, mine, session, codex=True, tool_name="apply_patch")
 assert not context(patch, mine, session, codex=True, tool_name="apply_patch")
-assert "$setup-dream-team" in context(patch, repo(), codex=True, tool_name="apply_patch")
+assert "$dream-team:setup-dream-team" in context(patch, repo(), codex=True, tool_name="apply_patch")
 for codex in (False, True):
     notes = context({}, mine, codex=codex, event="SessionStart")
     assert all(term in notes for term in ("AGENTS.local.md", "CLAUDE.local.md", "git check-ignore"))
     for filename in ("AGENTS.md", "CLAUDE.md"):
         assert "<claude_md>" in context({"file_path": filename}, mine, codex=codex)
 assert "<vcs_workflow>" in context({"command": "git commit -m x"}, mine, codex=True, tool_name="Bash")
+lab = context({"command": "ssh example"}, codex=True, tool_name="Bash")
+assert "a subagent with the prompt from" in lab
+assert "skills/qa-review/agents/lab-runner.md" in lab
 print("ok")

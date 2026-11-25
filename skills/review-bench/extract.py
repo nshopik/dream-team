@@ -42,7 +42,7 @@ def codex_lenses(thread):
                 output = message["output"]
                 if tool == "spawn_agent":
                     name = args["task_name"]
-                    if args.get("agent_type") in roles or name == "domain" or name.startswith("lens-"):
+                    if args.get("agent_type") in roles or name == "domain" or name.startswith(("lens-", "lens_")):
                         # Failed spawns respond with an error instead of a task name.
                         if output.startswith("{") and (task := json.loads(output).get("task_name")):
                             pending[task] = True

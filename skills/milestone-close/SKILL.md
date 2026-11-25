@@ -17,7 +17,10 @@ and filed issue.
 - Ask only for what leaves the docs MR or changes agent rules: issues, closes, moves, milestones,
   `AGENTS.md` or `CLAUDE.md` and corresponding local notes, and the release offer.
 
-- On Codex, map `dream-team:<role>` to `dream-team-<role>` and dispatch with `spawn_agent`.
+- Without named Dream Team agents → use your host's tool reference from craft-it's
+  Harness tools section.
+- Without named Dream Team agents → use the `role-fallback.md` file in craft-it's base
+  directory.
 
 ## 1. Read the milestone
 

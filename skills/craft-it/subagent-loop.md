@@ -4,8 +4,7 @@ You run the `craft-it-loop` stages yourself: each stage through the host’s sub
 own shell. You end with the result object `workflow-result.md` documents, so step 5 on reads it
 as it reads a workflow return.
 
-- `<loop>` is `<base directory>/craft-it-loop.js` in a local Codex install, or
-  `<base directory>/../../workflows/craft-it-loop.js` in the source checkout.
+- `<loop>` is [craft-it-loop.js](craft-it-loop.js) beside this reference.
 - Before stage 1, read `<loop>` once as reference: it holds every prompt function, schema, label
   and result shape named below.
 
@@ -15,19 +14,17 @@ as it reads a workflow return.
   `worktree` set to the worktree's absolute path.
 - End each prompt with "End your reply with one fenced `json` block, an object matching this
   JSON Schema:" and the stage's schema from `<loop>`, as JSON.
-- Set each Agent call's `description` to the label `<loop>` gives that call, e.g. `impl:#42`,
-  `fix:#42:r1`.
-- A writing agent (implementer, build fixer, fixer) → a `general-purpose` agent with
-  `model: opus`, in the foreground, one at a time.
-- A reviewer → `model: opus`; a lens gets its `dream-team:` type as `subagent_type`, the
-  domain and external reviewers `general-purpose`.
-- Several reviewers in one stage → one message with one Agent call each, all at once.
-- On Codex, use the parent skill’s dispatch rules for every stage.
+- Use the label `<loop>` gives each call as its description or task name.
+- Include the issue worktree's absolute path in every agent prompt.
+- Dispatch and join each stage using the selected [harness tools](SKILL.md#harness-tools).
+- Outside Claude Code → adapt skill-loading instructions in each prompt to the host's loader.
+- Run writing agents one at a time.
+- Submit all reviewers in a stage before joining them when the harness supports parallel calls.
 - A reply with no fenced block, or a block missing a required field → redispatch it once with
   `agentR`'s retry sentence appended.
 - Still no block → that call has no result; take the stage's no-result branch from `<loop>`.
-- A lens type that fails to dispatch → dispatch it as `general-purpose` from then on and list
-  its type in `degraded`.
+- A named role that fails to dispatch → use its bundled prompt on the generic subagent.
+- A reviewer that runs without its named role or bundled prompt → list its role in `degraded`.
 - Drop `friction` from each block before using it.
 
 ## Gate

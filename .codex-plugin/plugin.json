@@ -1,0 +1,24 @@
+{
+  "name": "dream-team",
+  "description": "Takes one tracker issue to a reviewed pull request with Dream Team skills and convention hooks.",
+  "skills": [
+    "./skills/ask-team/",
+    "./skills/brainstorm/",
+    "./skills/build-rules/",
+    "./skills/craft-it/",
+    "./skills/cut-milestones/",
+    "./skills/milestone-close/",
+    "./skills/qa-review/",
+    "./skills/scope-commit/",
+    "./skills/scope-issue/",
+    "./skills/scope-mr/",
+    "./skills/scope-spec/",
+    "./skills/setup-dream-team/",
+    "./skills/ship-it/",
+    "./skills/triage-issue/"
+  ],
+  "hooks": "./hooks/codex-hooks.json",
+  "interface": {
+    "displayName": "Dream Team"
+  }
+}

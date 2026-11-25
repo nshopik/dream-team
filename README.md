@@ -10,26 +10,40 @@ release.
 /plugin install dream-team@dream-team
 ```
 
-On [pi](https://github.com/earendil-works/pi) (hooks and workflows are Claude Code only):
+For Codex CLI:
 
+```sh
+codex plugin marketplace add nshopik/dream-team
+codex plugin add dream-team@dream-team
 ```
-pi install git:github.com/nshopik/dream-team
+
+Open `/hooks` to review and trust the convention hooks. They run with Python 3. Start a new
+session and pick a Dream Team skill from `/skills`. Append arguments after the skill mention.
+
+For pi, OpenCode, and other harnesses supported by the skills CLI:
+
+```sh
+npx skills add nshopik/dream-team --global
+```
+
+Choose your harness and install the shared skills together for workflows that use more than one
+skill. For example, `craft-it`, `milestone-close`, and `triage-issue` share dispatch instructions
+and role prompts. Leave `assemble-meta`, `friction`, and `review-bench` for Claude Code.
+A skills-only install includes skill files and their resources.
+
+For workflows that dispatch subagents on pi, also install the subagent extension:
+
+```sh
 pi install npm:pi-sub-agent
 ```
 
-For a local Codex CLI install, run this from a stable checkout using Python 3.11 or newer:
-
-```sh
-python3 scripts/bootstrap-codex.py
-```
-
-Start a new Codex session and select `$ask-team`, `$setup-dream-team`, or `$craft-it`
-from `/skills`. Append arguments after the skill mention. The bootstrap copies the skills and installs
-named agent roles. Codex uses the subagent loop for `craft-it` and native subagents for reviews.
-`assemble-meta`, `friction`, and `review-bench` are outside this local bootstrap.
-Open `/hooks` in Codex to review and trust the Dream Team convention hooks.
+See the [harness tool references](skills/craft-it/SKILL.md#harness-tools) for skill lookup and
+subagent tools.
 
 ## Start here
+
+These examples use Claude Code syntax. For other hosts, see the
+[harness reference](skills/craft-it/SKILL.md#harness-tools).
 
 - **New project:** `/dream-team:setup-dream-team`, then `/dream-team:scope-spec`
 - **Existing tracked project:** `/dream-team:craft-it <issue>`
@@ -99,15 +113,17 @@ walkthrough is in [`WORKFLOW.md`](skills/ask-team/WORKFLOW.md).
 
 The reviewer agents review a diff or paths, read-only.
 
-- **[architect-reviewer](agents/architect-reviewer.md)**: design defects.
-- **[docs-editor](agents/docs-editor.md)**: fixes docs a change made stale with minimal edits to
-  the listed pages, or writes or revises one doc from a brief; never invents facts or builds.
-- **[docs-reviewer](agents/docs-reviewer.md)**: stale docs, style breaks and AI-writing patterns.
-- **[lab-runner](agents/lab-runner.md)**: does work on a lab host, running every remote command in
-  the foreground.
-- **[performance-engineer](agents/performance-engineer.md)**: performance cost.
-- **[sre-engineer](agents/sre-engineer.md)**: failure behaviour.
-- **[test-coverage-reviewer](agents/test-coverage-reviewer.md)**: test gaps.
+- **[architect-reviewer](skills/qa-review/agents/architect-reviewer.md)**: design defects.
+- **[docs-editor](skills/qa-review/agents/docs-editor.md)**: fixes docs a change made stale with
+  minimal edits to the listed pages, or writes or revises one doc from a brief. Never invents
+  facts or builds.
+- **[docs-reviewer](skills/qa-review/agents/docs-reviewer.md)**: stale docs, style breaks and
+  AI-writing patterns.
+- **[lab-runner](skills/qa-review/agents/lab-runner.md)**: does work on a lab host, running every
+  remote command in the foreground.
+- **[performance-engineer](skills/qa-review/agents/performance-engineer.md)**: performance cost.
+- **[sre-engineer](skills/qa-review/agents/sre-engineer.md)**: failure behaviour.
+- **[test-coverage-reviewer](skills/qa-review/agents/test-coverage-reviewer.md)**: test gaps.
 
 ### Hooks
 

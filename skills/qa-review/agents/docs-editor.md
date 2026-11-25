@@ -18,11 +18,13 @@ Pick the mode from the input:
 - A brief, a target file, or a doc to tighten → write or revise mode.
 
 Style guide:
-- Read `${CLAUDE_PLUGIN_ROOT}/references/google-style/contract.md` before writing or revising.
+- Before writing or revising, read
+  `${CLAUDE_PLUGIN_ROOT}/skills/qa-review/references/google-style/contract.md`.
 - For one term, Grep `^TERM` with `-i -A 6` in
-  `${CLAUDE_PLUGIN_ROOT}/references/google-style/word-list.md`; never Read it whole.
+  `${CLAUDE_PLUGIN_ROOT}/skills/qa-review/references/google-style/word-list.md`.
+- Never Read the whole word list.
 - A CHANGELOG among the pages or the target → read
-  `${CLAUDE_PLUGIN_ROOT}/references/changelog-style.md`.
+  `${CLAUDE_PLUGIN_ROOT}/skills/qa-review/references/changelog-style.md`.
 - Any `CLAUDE.md` in context (user or repo), the repo's `AGENTS.md`, or the repo's house style
   wins where it disagrees with the guide.
 

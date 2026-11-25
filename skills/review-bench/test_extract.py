@@ -135,7 +135,7 @@ ARCH = spawn("arch", "dream-team-architect-reviewer")
 SRE = spawn("sre", "dream-team-sre-engineer")
 HELPER = spawn("explore", "default")
 DOMAIN = spawn("domain", "default")
-CUSTOM = spawn("lens-custom", "default")
+CUSTOM = spawn("lens_custom", "default")
 END = {"type": "event_msg", "payload": {"type": "task_complete"}}
 ERROR = answer("sre", "Agent errored: tool failed")
 RETRY_SRE = [
@@ -151,8 +151,8 @@ for sid, rollout, names, early in [
     ("c-failed", [*SRE, ERROR, END], set(), True),
     ("c-helper", [*ARCH, *SRE, *HELPER, *DOMAIN, *CUSTOM, answer("arch", "Finding."),
                   answer("explore", "Helper output."), answer("domain", "Domain finding."),
-                  answer("lens-custom", "Custom finding."), ERROR, END],
-     {"arch.md", "domain.md", "lens-custom.md"}, False),
+                  answer("lens_custom", "Custom finding."), ERROR, END],
+     {"arch.md", "domain.md", "lens_custom.md"}, False),
     ("c-followup", [*ARCH, *SRE, answer("arch", "Finding."), ERROR, *RETRY_SRE, END],
      {"arch.md"}, True),
     ("c-incomplete", None, set(), True),

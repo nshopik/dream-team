@@ -43,7 +43,7 @@ Pattern names the script prints:
 
 For each printed pattern:
 
-- Find the prompt that role runs in `<base directory>/../../workflows/craft-it-loop.js`:
+- Find the prompt that role runs in the `craft-it-loop.js` file in craft-it's base directory:
   `impl` → `implPrompt`, `gate` → `verifyPrompt`, `build-fix` → `buildFixPrompt`,
   `review:domain` → `domainPrompt`, `review:external` → `externalPrompt`,
   other `review:` → `lensPrompt`, `re-review:` → `reReviewPrompt`, `fixdiff:` →

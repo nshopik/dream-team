@@ -15,7 +15,10 @@
   `implement` stop the issue or a recorded decision asked for carries its measured values in
   `reason`. The branch and its worktree are where the agent left them.
 - **`degraded`** — what ran with less than planned:
-  - A roster type: its agent call threw, and every later call of that type ran as a generic agent.
+  - In Workflow mode, a roster type whose agent call threw. Later calls of that type run as a
+    generic agent.
+  - In subagent mode, a reviewer role that ran without either the named agent or its bundled
+    prompt.
   - `external`: the `externalReview` command was missing or exited non-zero, and was skipped.
 - **`untrackedPaths`** — untracked paths `git status --porcelain` listed before the latest gate run;
   they do not fail the gate.
