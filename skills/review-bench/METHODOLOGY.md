@@ -3,6 +3,16 @@
 Compares code reviewers on one pull request by weighted recall against a frozen, verified findings
 ledger and, on a clean change, by false alarms.
 
+## Runner setup
+
+`PLUGIN_DIR` selects the Claude reviewer checkout. For Codex reviewers, run
+`python3 scripts/bootstrap-codex.py` from the Dream Team checkout being benchmarked before launching
+the benchmark. Codex uses the installed skills and roles.
+
+For a Codex reviewer configured with `:lenses`, use the installed Dream Team reviewer roles for
+named lenses. Name a generic domain lens `domain`. Prefix any other grading lens's task name with
+`lens-`. The extractor uses these identifiers to separate lens reports from helper output.
+
 ## Ledger file
 
 `ledger.json`:
@@ -55,6 +65,8 @@ Candidate (qa-high-r1.arch, code-review-r1): <claim>.
 - A run with no credited finding still gets a bare `<PREFIX>-r<k>` line.
 - An early-exit run (errored, empty report, or its main turn ended before its subagents) gets a
   bare line: it scores 0.
+- A Codex lens that reports a terminal error contributes no report. Completed lenses still count
+  if every grading lens finished before the main turn ended and at least one returned a report.
 - Other lines (`#` comments, `Rejected`, `Excluded`, `Candidate`) are not scored for quality.
 - A `Rejected` line counts one refuted claim for each distinct run it names; one with no run list
   counts for nothing.

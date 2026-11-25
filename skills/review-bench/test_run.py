@@ -32,6 +32,16 @@ if "--output-format" not in sys.argv:
     time.sleep(0.5)
     with log.open("a") as f:
         f.write(json.dumps({"grader": sys.argv, "prompt": prompt, "t": [t0, time.time()]}) + "\n")
+    if name == os.environ.get("STUB_FAIL_GRADE"):
+        print(f"Rejected ({name}): no scored line")
+        sys.exit()
+    if name == "qa-sol-r1":
+        lenses = Path(os.environ["STUB_OUT"]) / name / "lenses"
+        assert f"grade each file in {lenses}/" in prompt
+        assert {p.name: p.read_text() for p in lenses.glob("*.md")} == {
+            "architect.md": "Raw architect finding.\n"}
+        print(f"{name}.architect C1")
+        sys.exit()
     print(f"Graded.\n{name} C1\nRejected ({name}): b.go races (one goroutine).")
     sys.exit()
 with log.open("a") as f:
@@ -137,6 +147,92 @@ print("PASS a rerun skips finished runs; a frozen ledger grades with no ledger e
 assert overlap(regrades), regrades
 print("PASS a frozen ledger grades runs in parallel under P=2")
 
+codex = BIN / "codex"
+codex.write_text(r'''#!/usr/bin/env python3
+import json, os, sys
+from pathlib import Path
+assert sys.argv[1:] == ["-a", "never", "exec", "--json", "--sandbox", "read-only",
+                       "--model", "gpt-6.2-sol", "-c", 'model_reasoning_effort="high"', "-"]
+name = Path.cwd().name
+prompt = sys.stdin.read().strip()
+assert prompt == ("/plain-review main..feat" if name == "plain-sol-r1" else "/qa-review main..feat")
+assert Path("a.go").read_text() == "package a\n"
+thread = f"codex-{name}"
+print(json.dumps({"type": "thread.started", "thread_id": thread}))
+print(json.dumps({"type": "item.completed", "item": {"type": "agent_message", "text": "Merged."}}))
+print(json.dumps({"type": "turn.completed"}))
+if name == "plain-sol-r1":
+    sys.exit()
+transcript = Path(os.environ["CODEX_HOME"]) / "sessions/2026/11/24" / f"rollout-date-{thread}.jsonl"
+if os.environ.get("STUB_MISSING_ROLLOUT"):
+    transcript = transcript.with_suffix(".pending")
+transcript.parent.mkdir(parents=True, exist_ok=True)
+answers = [("sre", "dream-team-sre-engineer", "Agent errored: tool failed")]
+if name != "failed-sol-r1":
+    answers.append(("architect", "dream-team-architect-reviewer", "Raw architect finding."))
+with transcript.open("w") as rollout:
+    for task, role, answer in answers:
+        for event in [
+            {"type": "function_call", "namespace": "collaboration", "name": "spawn_agent",
+             "call_id": task, "arguments": json.dumps({"task_name": task, "agent_type": role})},
+            {"type": "function_call_output", "call_id": task,
+             "output": json.dumps({"task_name": f"/root/{task}"})},
+            {"type": "agent_message", "author": f"/root/{task}",
+             "content": [{"type": "input_text", "text": f"Message Type: FINAL_ANSWER\nTask name: /root\n"
+                          f"Sender: /root/{task}\nPayload:\n{answer}"}]},
+        ]:
+            print(json.dumps({"type": "response_item", "payload": event}), file=rollout)
+    print(json.dumps({"type": "event_msg", "payload": {"type": "task_complete"}}), file=rollout)
+''')
+codex.chmod(0o755)
+with (TMP / "reviewers.txt").open("a") as reviewers:
+    reviewers.write("qa-sol:lenses runner=codex model=gpt-6.2-sol effort=high /qa-review {base}..{head}\n")
+    reviewers.write("fresh-claude model=claude-opus-5 /fresh-review {base}\n")
+    reviewers.write("plain-sol runner=codex model=gpt-6.2-sol effort=high /plain-review {base}..{head}\n")
+    reviewers.write("failed-sol:lenses runner=codex model=gpt-6.2-sol effort=high /qa-review {base}..{head}\n")
+command = ["bash", HERE / "run.sh", REPO, "main", "feat", TMP / "reviewers.txt", OUT]
+codex_env = {**env, "CODEX_HOME": str(TMP / "codex"), "N": "1"}
+out = subprocess.run(command, env=codex_env, capture_output=True, text=True)
+run = OUT / "qa-sol-r1"
+assert out.returncode == 0, out.stderr
+assert (run / "report.md").read_text() == "Merged.\n", (run / "stderr").read_text()
+assert (run / "lenses/architect.md").read_text() == "Raw architect finding.\n"
+assert (run / "marks.txt").read_text() == "qa-sol-r1.architect C1\n"
+assert "cost=? report=7 lenses=1" in (run / "stats.txt").read_text()
+log = [json.loads(line) for line in (TMP / "log").read_text().splitlines()]
+assert any("/fresh-review main" in entry.get("argv", []) for entry in log)
+assert (OUT / "plain-sol-r1/marks.txt").read_text().startswith("plain-sol-r1 C1\n")
+assert (OUT / "failed-sol-r1/marks.txt").read_text() == "failed-sol-r1\n"
+assert all("The run is failed-sol-r1:" not in entry.get("prompt", "") for entry in log)
+print("PASS mixed runner defaults, raw lens grading, plain Codex grading and early exits")
+
+with (TMP / "reviewers.txt").open("a") as reviewers:
+    reviewers.write("retry-sol:lenses runner=codex model=gpt-6.2-sol effort=high /qa-review {base}..{head}\n")
+retry = OUT / "retry-sol-r1"
+combined = (OUT / "marks.txt").read_bytes()
+out = subprocess.run(command, env={**codex_env, "STUB_MISSING_ROLLOUT": "1"},
+                     capture_output=True, text=True)
+assert out.returncode != 0 and "retry-sol-r1: extraction failed" in out.stderr, out
+assert "missing Codex rollout" in (retry / "extract.err").read_text()
+assert not (retry / "stats.txt").exists() and not (retry / "marks.txt").exists()
+assert (OUT / "marks.txt").read_bytes() == combined
+pending = next((TMP / "codex/sessions").rglob("rollout-date-codex-retry-sol-r1.pending"))
+pending.rename(pending.with_suffix(".jsonl"))
+out = subprocess.run(command, env={**codex_env, "STUB_MISSING_ROLLOUT": "1"},
+                     capture_output=True, text=True)
+assert out.returncode == 0 and (retry / "marks.txt").is_file(), out.stderr
+assert not pending.exists(), "retry launched the reviewer again"
+print("PASS extraction failures leave scores intact and reuse saved reviewer output on retry")
+
+combined = (OUT / "marks.txt").read_bytes()
+(run / "marks.txt").unlink()
+out = subprocess.run(command, env={**codex_env, "STUB_FAIL_GRADE": "qa-sol-r1"},
+                     capture_output=True, text=True)
+assert out.returncode != 0 and "qa-sol-r1: grader wrote no scored line" in out.stderr, out
+assert not (run / "marks.txt").exists() and "tier " not in out.stdout
+assert (OUT / "marks.txt").read_bytes() == combined
+print("PASS grading failure cannot publish a partial score table")
+
 # A run whose worktree add fails is printed as failed.
 GITBIN = TMP / "gitbin"
 GITBIN.mkdir()
@@ -157,6 +253,7 @@ for case, lines, err in [
      "qa-high:lenses model=claude-opus-4-8 /dream-team:qa-review {base}\n"
      "qa-max:lenses effort=max /dream-team:qa-review {base}\n", "qa-max: no model= field"),
     ("a file with no reviewer lines fails", "# none\n\n", "no reviewer lines"),
+    ("an unknown runner fails", "qa-high runner=unknown model=model prompt\n", "unknown runner=unknown"),
 ]:
     (TMP / "bad.txt").write_text(lines)
     out = subprocess.run(["bash", HERE / "run.sh", REPO, "main", "feat", TMP / "bad.txt",

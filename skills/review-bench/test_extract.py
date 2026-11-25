@@ -90,3 +90,87 @@ for sid, main, lenses, result, args, want_stats, want_report, want_lenses, case 
     for name, text in want_lenses.items():
         assert text is None or got[name] == text + "\n", (case, name, got[name][:80])
     print("PASS", case)
+
+
+def spawn(name, role):
+    return [
+        {"type": "response_item", "payload": {"type": "function_call",
+            "namespace": "collaboration", "name": "spawn_agent", "call_id": name,
+            "arguments": json.dumps({"task_name": name, "agent_type": role})}},
+        {"type": "response_item", "payload": {"type": "function_call_output", "call_id": name,
+            "output": json.dumps({"task_name": f"/root/{name}"})}},
+    ]
+
+
+def answer(name, text):
+    return {"type": "response_item", "payload": {"type": "agent_message", "author": f"/root/{name}",
+        "content": [{"type": "input_text",
+                     "text": f"Message Type: FINAL_ANSWER\nTask name: /root\nPayload:\n{text}"}]}}
+
+
+def codex_extract(sid, texts, rollout, lenses=True, complete=True):
+    d = TMP / sid
+    d.mkdir()
+    events = [{"type": "thread.started", "thread_id": sid}]
+    events += [{"type": "item.completed", "item": {"type": "agent_message", "text": text}}
+               for text in texts]
+    if complete:
+        events.append({"type": "turn.completed"})
+    jsonl(d / "result.json", events)
+    if rollout is not None:
+        transcript = TMP / "codex/sessions/2026/11/24" / f"rollout-date-{sid}.jsonl"
+        if isinstance(rollout, str):
+            transcript.parent.mkdir(parents=True, exist_ok=True)
+            transcript.write_text(rollout)
+        else:
+            jsonl(transcript, rollout)
+    args = ["lenses"] if lenses else []
+    out = subprocess.run([sys.executable, HERE / "extract.py", d, *args, "codex"],
+                         capture_output=True, text=True,
+                         env={**os.environ, "CODEX_HOME": str(TMP / "codex")})
+    return d, out
+
+
+ARCH = spawn("arch", "dream-team-architect-reviewer")
+SRE = spawn("sre", "dream-team-sre-engineer")
+HELPER = spawn("explore", "default")
+DOMAIN = spawn("domain", "default")
+CUSTOM = spawn("lens-custom", "default")
+END = {"type": "event_msg", "payload": {"type": "task_complete"}}
+ERROR = answer("sre", "Agent errored: tool failed")
+RETRY_SRE = [
+    {"type": "response_item", "payload": {"type": "function_call",
+        "namespace": "collaboration", "name": "followup_task", "call_id": "retry-sre",
+        "arguments": json.dumps({"target": "sre"})}},
+    {"type": "response_item", "payload": {"type": "function_call_output", "call_id": "retry-sre",
+        "output": ""}},
+]
+for sid, rollout, names, early in [
+    ("c-early", [*ARCH, *SRE, answer("arch", "Finding."), END, answer("sre", "Late.")],
+     {"arch.md"}, True),
+    ("c-failed", [*SRE, ERROR, END], set(), True),
+    ("c-helper", [*ARCH, *SRE, *HELPER, *DOMAIN, *CUSTOM, answer("arch", "Finding."),
+                  answer("explore", "Helper output."), answer("domain", "Domain finding."),
+                  answer("lens-custom", "Custom finding."), ERROR, END],
+     {"arch.md", "domain.md", "lens-custom.md"}, False),
+    ("c-followup", [*ARCH, *SRE, answer("arch", "Finding."), ERROR, *RETRY_SRE, END],
+     {"arch.md"}, True),
+    ("c-incomplete", None, set(), True),
+]:
+    d, out = codex_extract(sid, ["Review."], rollout, complete=sid != "c-incomplete")
+    assert out.returncode == 0, (sid, out.stderr)
+    assert out.stdout.strip().endswith("early-exit") == early, (sid, out.stdout)
+    assert {p.name for p in (d / "lenses").glob("*.md")} == names, sid
+    print("PASS Codex", sid)
+
+d, out = codex_extract("c-ack", ["The substantive review report.", "Done."], None, lenses=False)
+assert out.returncode == 0 and "early-exit" not in out.stdout, out
+assert (d / "report.md").read_text() == "The substantive review report.\n\n---\n\nDone.\n"
+print("PASS a plain Codex run keeps the review when a closing acknowledgment follows it")
+
+for sid, rollout, error in [("c-missing", None, "missing Codex rollout"),
+                            ("c-malformed", "{broken\n", "Codex extraction failed"),
+                            ("c-truncated", ARCH, "incomplete Codex rollout")]:
+    _, out = codex_extract(sid, ["Review."], rollout)
+    assert out.returncode != 0 and error in out.stderr and "early-exit" not in out.stdout, out
+    print("PASS Codex", sid)
