@@ -137,9 +137,19 @@ comma-separated if several), `status` (verified or suspected), `disputed`, `lens
 
 - Top line, no heading: lenses run, each skipped lens with its reason, lenses in `missing`, and
   each `blocked` entry.
-- Render `items` in compressed form, one or two lines each: `id`, status (☑️ verified, ❔
-  suspected), claim, `location`, fix. Append `(disputed)` when `disputed` is set and `[#N]` from
-  `coveredBy`.
+- Render each item in one or two lines with its `id`, status icon, claim, `location`, and fix.
+- Put exactly one status icon immediately after the `id`: ☑️ for verified and ❔ for suspected.
+- Append `(disputed)` when `disputed` is set.
+- Append `[#N]` when `coveredBy` is set.
+
+```
+F1 ☑️ The retry loop ignores cancellation. `jobs.py:42` — Check cancellation before retrying.
+```
+
+```
+F2 ❔ The cache key may collide across users. `cache.py:18` — Include the user ID in the key.
+```
+
 - Section headings, in this order: `### 🔴 Critical`, `### 🟡 Important`, `### 🔵 Nit`,
   `### ❓ Questions`, `### 🟣 Pre-existing`. Omit an empty section.
 - Render `preExisting` items under `### 🟣 Pre-existing` only, each line led by its `severity`
