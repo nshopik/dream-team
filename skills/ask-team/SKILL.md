@@ -58,7 +58,7 @@ milestone.
 - **Where:** <WORKFLOW.md step number and title for a main-flow skill, else its map group>
 ```
 
-- On Codex → use `$<skill>` followed by its arguments.
+- On Codex → use the name advertised in `/skills`, prefixed with `$` and followed by arguments.
 - When a skill is unavailable → report the missing capability.
 - When the user requests a whole Meta issue and `assemble-meta` is unavailable → report that the Meta workflow is unavailable.
 - When the user explicitly requests one Meta child → route that child to `craft-it`.

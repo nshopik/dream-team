@@ -45,17 +45,18 @@ assumption.
 - `dream-team.own` prints anything but `true` and none of those names a records path → write no
   record.
 
-On Codex:
+- When the host supplies no scratchpad → create one temporary directory for this run.
+- For an AskUserQuestion step → use the host's user-input tool when available.
+- Without a user-input tool → ask the same questions in chat and wait for the reply.
 
-- Each agent dispatch → use the host’s subagent tool with the supplied prompt.
-- Each named `dream-team:<role>` → use `dream-team-<role>`.
-- Each generic subagent → use the session model.
-- Each workflow, reviewer or writer prompt → include the absolute worktree path.
-- Each mechanical gate command → run it with the issue worktree as its working directory.
-- Each scratchpad path → use a per-run temporary directory when the host does not supply one.
+## Harness tools
 
-- On Codex, handle each AskUserQuestion step with the host's user-input tool when available.
-- On Codex without that tool, ask the same questions in chat and wait for the reply before taking the gated action.
+- On Claude Code without Workflow → read [Claude Code tools](claude-code-tools.md).
+- On Codex CLI → read [Codex CLI tools](codex-tools.md).
+- On pi → read [pi tools](pi-tools.md).
+- On OpenCode → read [OpenCode tools](opencode-tools.md).
+- On another harness without a skill loader → read the advertised `SKILL.md` for skill lookup.
+- Without a named Dream Team role → use [bundled agent prompts](role-fallback.md).
 
 ## 1. Read the issue
 
@@ -70,8 +71,7 @@ use instead.
 
 Fail *before* code is written on a guess, not after.
 
-- `dream-team.own` prints `true` → call the Skill tool with `dream-team:triage-issue`; read it as
-  a reference, do not run it.
+- `dream-team.own` prints `true` → load `triage-issue` as a reference without running it.
 - `dream-team.own` prints `true` and the issue is untriaged per the `untriaged.md` file in
   triage-issue's base directory → stop with "run `triage-issue #<n>` first".
 - The issue has the `workflow::needs-brainstorm` label → stop

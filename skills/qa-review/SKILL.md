@@ -17,21 +17,18 @@ argument-hint: "[audit] [verify] [base-ref | path ...]"
 The main session runs one read-only agent per lens with the Agent tool, then merges and
 deduplicates their reports itself (step 4).
 
-On pi, read every Agent launch below this way:
-
-- The Agent tool is `subagent`; launch every agent of one step in one call, one `tasks` entry
-  `{agent, task}` each, `task` the prompt.
-- `subagent_type` `Explore` is agent `scout`; `general-purpose` is `worker`.
-- Drop the `dream-team:` prefix from a lens name.
-- Pass no `model` or `effort`.
-
-On Codex:
-
-- Every agent launch below → use `spawn_agent` with the same prompt.
-- A named Dream Team lens → use `dream-team-<role>`.
-- Explore or general-purpose → use a generic subagent.
-- Multiple launches in one step → launch them concurrently and wait for all replies.
-- Use Claude model and effort fields only for Claude Agent calls.
+- On Codex → use `spawn_agent` and join each launched task with the host's wait tool.
+- On pi → pass one `{task}` entry per reviewer to `pi-sub-agent`'s `subagent(tasks=…)`.
+- For a pi reviewer that needs `git diff` → keep Bash available and require read-only work in the
+  prompt.
+- On OpenCode → use a `general` subagent per lens and join every call.
+- On Codex → map Explore to the built-in `explorer`.
+- On OpenCode → map Explore to the built-in `explore`.
+- On Codex → name the domain task `domain`.
+- On Codex → name each other lens task `lens_<role>` with underscores in the role name.
+- Without a named Dream Team lens → attach its prompt body from the [agents directory](agents)
+  to the generic review prompt.
+- Pass Claude model and effort fields only to Claude Agent calls.
 
 ## 1. Pick the mode and scope
 
@@ -73,7 +70,7 @@ Lenses: `dream-team:architect-reviewer`, `dream-team:sre-engineer`,
 
 - Every file in scope is docs or config (Markdown, plain text, YAML, TOML, JSON, INI), and none
   is CI, build, test-runner or feature-flag config or an agent or skill prompt (`SKILL.md`,
-  `agents/*.md`) → skip `dream-team:test-coverage-reviewer`.
+  agent prompts) → skip `dream-team:test-coverage-reviewer`.
 - The project has no `CLAUDE.md`, `AGENTS.md` or README → skip `domain`.
 
 Before launching, list the lenses that run as a bullet list, one bold name per bullet; list each
@@ -87,7 +84,7 @@ skill if one is loaded. Forge unreachable → skip and say so.
 
 ## 4. Run
 
-Launch one Agent per lens, all in one message, and wait for every report:
+Launch one agent per lens concurrently where supported, and wait for every report:
 
 - `subagent_type`: the lens; `general-purpose` for `domain`.
 - `model`: the session model's tier (`opus`, `sonnet`, `haiku` or `fable`), taken from the

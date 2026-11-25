@@ -1,0 +1,39 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${PLUGIN_ROOT}/hooks/jit-context.py\" --codex",
+            "timeout": 5,
+            "statusMessage": "Loading conventions"
+          }
+        ]
+      },
+      {
+        "matcher": "^apply_patch$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${PLUGIN_ROOT}/hooks/jit-context.py\" --codex",
+            "timeout": 5,
+            "statusMessage": "Loading file conventions"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${PLUGIN_ROOT}/hooks/jit-context.py\" --codex",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

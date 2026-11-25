@@ -5,5 +5,18 @@
   "author": { "name": "Nikolay Shopik" },
   "repository": "https://github.com/nshopik/dream-team",
   "license": "MIT",
-  "keywords": ["claude-code", "agent-skills", "workflow", "issue", "merge-request", "pull-request", "code-review", "git", "commit", "gitlab", "scoped-commits"]
+  "keywords": ["claude-code", "agent-skills", "workflow", "issue", "merge-request", "pull-request", "code-review", "git", "commit", "gitlab", "scoped-commits"],
+  "agents": [
+    "./skills/qa-review/agents/architect-reviewer.md",
+    "./skills/qa-review/agents/docs-editor.md",
+    "./skills/qa-review/agents/docs-reviewer.md",
+    "./skills/qa-review/agents/lab-runner.md",
+    "./skills/qa-review/agents/performance-engineer.md",
+    "./skills/qa-review/agents/sre-engineer.md",
+    "./skills/qa-review/agents/test-coverage-reviewer.md"
+  ],
+  "workflows": [
+    "./skills/craft-it/craft-it-loop.js",
+    "./workflows/assemble-meta-loop.js"
+  ]
 }

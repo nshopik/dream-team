@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
-const body = readFileSync(new URL('craft-it-loop.js', import.meta.url), 'utf8').replace(/^export /m, '')
+const body = readFileSync(new URL('../skills/craft-it/craft-it-loop.js', import.meta.url), 'utf8').replace(/^export /m, '')
 const args = { issue: '1', branch: 'issue-1', base: 'abc1234', gateCommands: ['true'] }
 
 // Every other reviewer passes, so the run ends after Review or its fix rounds.

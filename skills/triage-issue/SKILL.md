@@ -59,6 +59,10 @@ One issue per invocation.
   locally first.
 - It needs a lab host the project's `CLAUDE.md` or `AGENTS.md` names → run it through
   `dream-team:lab-runner`.
+- Without the named lab-runner → use your host's tool reference from craft-it's
+  Harness tools section.
+- Without the named lab-runner → use the `role-fallback.md` file in craft-it's base
+  directory.
 - Record one verdict: confirmed, with the code path; not reproduced; or not enough detail.
 
 ## 4. Facts only the reporter knows
@@ -80,7 +84,7 @@ One issue per invocation.
 - Load `scope-issue`.
 - No `workflow::needs-brainstorm`, a design or scope choice open → settle it with the user per its
   Open questions, as for an issue the user asked for in chat, before the rewrite.
-- The issue has `workflow::needs-brainstorm` → run `dream-team:brainstorm` on its proposal's open
+- The issue has `workflow::needs-brainstorm` → run `brainstorm` on its proposal's open
   items, skipping its Close step.
 - The user rejects the request → close the issue as not planned with a comment giving the reason,
   add `wontfix`, write no repo file, and stop.

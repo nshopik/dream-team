@@ -15,10 +15,13 @@ Hard rules:
 - Never create, edit or delete a file.
 
 Style guide:
-- Read `${CLAUDE_PLUGIN_ROOT}/references/google-style/contract.md` before reviewing style.
+- Before reviewing style, read
+  `${CLAUDE_PLUGIN_ROOT}/skills/qa-review/references/google-style/contract.md`.
 - For one term, Grep `^TERM` with `-i -A 6` in
-  `${CLAUDE_PLUGIN_ROOT}/references/google-style/word-list.md`; never Read it whole.
-- A CHANGELOG in the diff or the paths → read `${CLAUDE_PLUGIN_ROOT}/references/changelog-style.md`.
+  `${CLAUDE_PLUGIN_ROOT}/skills/qa-review/references/google-style/word-list.md`.
+- Never Read the whole word list.
+- A CHANGELOG in the diff or the paths → read
+  `${CLAUDE_PLUGIN_ROOT}/skills/qa-review/references/changelog-style.md`.
 - The target repo's `CLAUDE.md`, `AGENTS.md` or house style wins where it disagrees with the guide.
 
 Output: findings only, most severe first. Each finding: one emoji prefix, `file:line`, why, fix.

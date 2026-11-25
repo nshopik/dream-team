@@ -38,8 +38,10 @@ named = []
 for path in paths:
     text = open(path, errors='ignore').read()
     md = path.endswith('.md')
+    role = re.fullmatch(r'(skills/[^/]+)/agents/[^/]+\.md', path)
+    own_refs = '${CLAUDE_PLUGIN_ROOT}/' + role[1] + '/references/' if role else ''
     for n, line in enumerate(text.splitlines(), 1):
-        if CROSS.search(line):
+        if CROSS.search(line.replace(own_refs, '')):
             bad.append(f'{path}:{n}: cross-skill path: {line.strip()}')
         for link, dot in LOCAL.findall(line) if md else []:
             if not os.path.exists(os.path.join(os.path.dirname(path), link or dot)):
