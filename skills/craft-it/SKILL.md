@@ -230,10 +230,17 @@ remote's default branch unless the project's `CLAUDE.md` or `AGENTS.md` names an
   runs exactly these after the implementation and after every fix commit. Leave out lab work.
   Required.
 - `externalReview`: a shell command that reads a diff on stdin and prints findings. Default unset.
-- `AGENTS.md` or `CLAUDE.md` opts in to an external reviewer → set `externalReview` to its command.
-- Include the global and project `AGENTS.md` or `CLAUDE.md` and the corresponding ignored local notes when resolving the opt-in.
+- Include the global and project `AGENTS.md` or `CLAUDE.md` and the corresponding ignored local
+  notes when resolving the opt-in.
 - The project's line and the global one disagree → the project's wins, including a project line
   that turns it off.
+- The selected opt-in reads `External reviewer: codex` → set `externalReview` to the command below.
+- The selected opt-in supplies a custom shell command → set `externalReview` to that command.
+
+```sh
+codex --ask-for-approval never exec --sandbox read-only --ephemeral \
+  'Review the diff on stdin. Report findings with file and line, or "No issues found."'
+```
 
 Then report, before the workflow returns or subagent-loop stage 1 starts:
 
