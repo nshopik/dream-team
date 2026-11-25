@@ -467,7 +467,8 @@ The report carries only what the user must know or act on.
 - The hand-back `<why>` clause names only what blocks; it never adds that other reviewers, rounds
   or disputes came back clean.
 
-Layout, with sections that have nothing to report left out:
+Use the layout below as the complete report. Omit empty sections and inapplicable bullets.
+Keep the applicable closing line even when it is the only line.
 
 ```
 **Assumptions:**
