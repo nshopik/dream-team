@@ -84,7 +84,10 @@ skill if one is loaded. Forge unreachable → skip and say so.
 
 ## 4. Run
 
-Launch one agent per lens concurrently where supported, and wait for every report:
+- The host supports parallel agent calls → launch the lens agents concurrently.
+- Wait for every report.
+
+Launch one agent per lens:
 
 - `subagent_type`: the lens; `general-purpose` for `domain`.
 - `model`: the session model's tier (`opus`, `sonnet`, `haiku` or `fable`), taken from the
