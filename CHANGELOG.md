@@ -10,10 +10,11 @@ All notable changes to this plugin are documented in this file. The format is ba
 - `craft-it` runs on Claude Code without the Workflow tool: the main session dispatches the `craft-it-loop` stages as subagents, runs every `gateCommands` entry itself after each writing agent, and returns the same result.
 - Dream Team installs as a Codex CLI plugin with `codex plugin marketplace add nshopik/dream-team` and `codex plugin add dream-team@dream-team`, with its skills and convention hooks.
 - pi, OpenCode and other harnesses the skills CLI supports install the skills with `npx skills add nshopik/dream-team --global`, and `craft-it`, `qa-review`, `milestone-close` and `triage-issue` dispatch through each host's subagent tool with the bundled role prompts.
-- `craft-it` runs Codex as an external reviewer when the project or global `CLAUDE.md` or `AGENTS.md` has the line `External reviewer: codex`.
+- `craft-it` runs Codex as an external reviewer, or Claude Code when it runs on Codex, when the project or global `CLAUDE.md` or `AGENTS.md` has the line `External reviewer: codex`.
 
 ### Changed
 
+- **Breaking:** A custom `External reviewer: <command>` must end its output with the line `VERDICT: CLEAN` or `VERDICT: FINDINGS`; `craft-it` reports a review without one as degraded and uses none of its findings.
 - `qa-review` prints each finding's status icon right after its ID.
 - `craft-it` ends with its fixed report layout and keeps the closing line when it is the whole report.
 

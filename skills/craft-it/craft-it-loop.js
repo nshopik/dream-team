@@ -120,7 +120,7 @@ const EXTERNAL_SCHEMA = {
   required: [...VERDICT_SCHEMA.required, 'ran'],
   properties: {
     ...VERDICT_SCHEMA.properties,
-    ran: { type: 'boolean', description: 'false when the command is not found or exits non-zero' },
+    ran: { type: 'boolean', description: 'false when the command is not found, exits non-zero, or ends without a `VERDICT: CLEAN` or `VERDICT: FINDINGS` line' },
   },
 }
 
@@ -344,7 +344,7 @@ function externalPrompt() {
     'Run this once, as one Bash call from the repo root:',
     `  set -o pipefail; git diff ${BASE}..HEAD | ${EXTERNAL}`,
     'The command is not found or exits non-zero → return ran false, no findings, and the exit status or error as summary.',
-    'It prints nothing, or neither findings nor a no-issues verdict → return ran false, no findings, and its output as summary.',
+    'It exits 0 but its last output line is not exactly `VERDICT: CLEAN` or `VERDICT: FINDINGS` → return ran false, no findings, and as summary `no VERDICT line, last line: ` followed by that line quoted.',
     'Otherwise return ran true. Check each finding it prints against the code: return only the ones that hold, and drop the rest with the reason in the summary.',
     REVIEW_RULES,
   ].join('\n')
