@@ -50,6 +50,10 @@ These examples use Claude Code syntax. For other hosts, see the
 - **Upstream or untracked one-off:** `/dream-team:brainstorm`
 - **Not sure:** `/dream-team:ask-team`
 
+To have `craft-it` also run an outside reviewer, add `External reviewer: codex` or
+`External reviewer: <command>` to your `CLAUDE.md` or `AGENTS.md`; the command reads the diff on
+stdin.
+
 Run `setup-dream-team` in each clone, and again after an upgrade note asks for it. In your own
 project or fork it marks the clone with `git config --local dream-team.own true` and writes
 `docs/CONVENTIONS.md`; in an upstream clone it writes the local tracker rules to
