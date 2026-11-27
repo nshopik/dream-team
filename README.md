@@ -53,7 +53,9 @@ These examples use Claude Code syntax. For other hosts, see the
 To have `craft-it` also run an outside reviewer, add `External reviewer: codex` or
 `External reviewer: <command>` to your `CLAUDE.md` or `AGENTS.md`; the command reads the diff on
 stdin and ends its output with `VERDICT: CLEAN` or `VERDICT: FINDINGS`. On Codex, `codex` runs
-Claude Code instead.
+Claude Code instead; set `network_access = true` under `[sandbox_workspace_write]` in
+`~/.codex/config.toml` so Claude Code can reach the Anthropic API from Codex's sandbox. The
+setting gives every command in that sandbox network access, not only the reviewer.
 
 Run `setup-dream-team` in each clone, and again after an upgrade note asks for it. In your own
 project or fork it marks the clone with `git config --local dream-team.own true` and writes
