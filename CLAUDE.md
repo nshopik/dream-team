@@ -6,18 +6,19 @@
 - A paragraph may state a section's intent or reason.
 - A paragraph may carry an instruction on how the output reads, with its reason; never one that
   branches on the run's state (who asked, what a step found).
-- Invariant for reviews: a diff to a `SKILL.md`, its reference files or an `agents/*.md` prompt
-  holds every rule-authoring line of this file; a reviewer cites the line a change breaks.
+- Invariant for reviews: a diff to a `SKILL.md`, its reference files or a
+  `skills/*/agents/*.md` prompt holds every rule-authoring line of this file; a reviewer cites
+  the line a change breaks.
 - Add a skill or agent rule only for a failure seen in a real run or eval; never for a
   hypothetical one.
 - Prefer editing or deleting an existing rule over adding a new one.
-- Before editing a `SKILL.md` or `agents/*.md` `description:`, apply each of these:
+- Before editing a `SKILL.md` or `skills/*/agents/*.md` `description:`, apply each of these:
   - Write it in the third person: "Writes …", not "Write …".
   - Say what it does first, then when to use it.
   - Name the key terms a request or command for it would contain.
   - Keep it to 1,024 characters, with no XML tags.
-- Before adding a skill or agent, or changing a `SKILL.md`'s other sections or files or an
-  `agents/*.md` prompt, read
+- Before adding a skill or agent, or changing a `SKILL.md`'s other sections or files or a
+  `skills/*/agents/*.md` prompt, read
   https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices.md and follow it.
 - Fix one failure with one rule; never add a rule for adjacent cases the issue did not hit.
 - Keep rules out of `README.md`; it points at the skills instead of restating them.
@@ -39,7 +40,7 @@
   they are plain scripts and unittest exits 5 with NO TESTS RAN.
 - Call a plugin workflow by its prefixed name (`dream-team:<name>`), never by `scriptPath`; skill
   text does not expand `${CLAUDE_PLUGIN_ROOT}`; a plugin agent body does.
-- Before editing `CHANGELOG.md`, read `references/changelog-style.md`.
+- Before editing `CHANGELOG.md`, read `skills/qa-review/references/changelog-style.md`.
 - Fence a chat-output layout in a skill, so the model reproduces its markdown; show example
   skill output in docs or evals as rendered markdown, where a fence hides the bold labels judged.
 - Lay out a skill's chat output for a monospace terminal: tight `- **Label:**` bullets, no blank
@@ -54,8 +55,8 @@
   headless-claude eval runner only for a large skill or a failure seen in a real run.
 - Before changing who does a step in a skill, read the skill's top-level role rules (e.g.
   craft-it's "You do not write the change" edit list) and update them in the same change.
-- A change to a `SKILL.md`, its reference files or an `agents/*.md` prompt → check every
-  other line of those files for a contradiction with the change.
+- A change to a `SKILL.md`, its reference files or a `skills/*/agents/*.md` prompt → check
+  every other line of those files for a contradiction with the change.
 - A new skill, step or workflow that takes over a behaviour → grep the other skills,
   `WORKFLOW.md` and `README.md` for that behaviour, and update or cut each line that still
   describes it (#567: craft-it kept its Meta child pick after assemble-meta shipped).
