@@ -60,6 +60,7 @@ for codex in (False, True):
         assert "<claude_md>" in context({"file_path": filename}, mine, codex=codex)
 assert "<vcs_workflow>" in context({"command": "git commit -m x"}, mine, codex=True, tool_name="Bash")
 lab = context({"command": "ssh example"}, codex=True, tool_name="Bash")
-assert "a subagent with the prompt from" in lab
-assert "skills/qa-review/agents/lab-runner.md" in lab
+assert "dream-team:lab-runner" not in lab
+role = lab.split("a subagent with the prompt from `", 1)[1].split("`", 1)[0]
+assert os.path.isabs(role) and os.path.isfile(role) and role.endswith("lab-runner.md"), role
 print("ok")
