@@ -19,7 +19,8 @@
     generic agent.
   - In subagent mode, a reviewer role that ran without either the named agent or its bundled
     prompt.
-  - `external`: the `externalReview` command was missing or exited non-zero, and was skipped.
+  - `external`: the `externalReview` command was missing, exited non-zero or printed no
+    `VERDICT:` last line, and was skipped.
 - **`untrackedPaths`** — untracked paths `git status --porcelain` listed before the latest gate run;
   they do not fail the gate.
 - **`disputes`** — the fixer refused a finding and gave evidence. Check it yourself. The fixer may

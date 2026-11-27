@@ -103,6 +103,7 @@ const extFinding = { severity: 'important', description: 'off-by-one in the retr
 const fixup = 'as `fixup! <subject of the commit it repairs>`'
 const preexisting = 'An edit that repairs a defect already present on the base commit, one no branch commit caused, is one plain commit in the repo\'s commit convention'
 const red = '--- FAIL: TestRotateKeepsN (0.00s)\n    rotate_test.go:41: kept 4 files, want 5'
+const claudeCmd = "claude -p 'Review the diff on stdin.' --disable-slash-commands --tools Read,Grep,Glob"
 const extOnce = () => ({ externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] })
 // The fixer disputes, its re-review dies once, then answers; a second fixer call changes nothing and fails the run.
 const deadDispute = () => ({ externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, undefined, undefined, { summary: '', findings: [], resolved: [] }],
@@ -135,6 +136,8 @@ const promptRows = [
   { name: 'lens reports nits, never fixes them', label: 'review:dream-team:architect-reviewer', rule: 'A nit is reported, never fixed or re-reviewed' },
   { name: 'lens marks only a defect the change leaves alone as pre-existing', label: 'review:dream-team:architect-reviewer', rule: 'the change neither introduces, newly reaches nor worsens it', preExistingIn: 'findings' },
   { name: 'lens rates a defect the change worsens like any other', label: 'review:dream-team:architect-reviewer', rule: 'is a normal finding, rated and blocking like any other' },
+  { name: 'external reply without a verdict line did not run', label: 'review:external', rule: 'its last output line is not exactly `VERDICT: CLEAN` or `VERDICT: FINDINGS` → return ran false, no findings, and as summary `no VERDICT line, last line: `', opts: extOnce() },
+  { name: 'external command is piped verbatim', label: 'review:external', rule: `| ${claudeCmd}`, opts: { ...extOnce(), externalReview: claudeCmd } },
   { name: 'external reviewer may mark a finding pre-existing', label: 'review:external', rule: 'the change neither introduces, newly reaches nor worsens it', opts: extOnce(), preExistingIn: 'findings' },
   { name: 'fix-diff review raises a defect the fix newly reaches', label: 'fixdiff:dream-team:sre-engineer:r1', rule: 'or on a defect it newly reaches or worsens', opts: extOnce(), preExistingIn: 'findings' },
   { name: 're-review raises a defect the fix newly reaches', label: 're-review:external:r1', rule: 'or on a defect it newly reaches or worsens', opts: extOnce(), preExistingIn: 'added' },
@@ -178,6 +181,9 @@ const externalRows = [
   { name: 'external blocking finding fixed in one round',
     opts: { externalReview: cmd, externalRuns: [{ ran: true, summary: '', findings: [extFinding] }, { summary: '', findings: [], resolved: [extFinding] }] },
     reviewer: true, agents: 2, degraded: [], fixRounds: 1, resolved: [{ ...extFinding, gate: 'external', round: 1 }], prompts: ['review:external'] },
+  { name: 'external reply has no verdict line',
+    opts: { externalReview: cmd, externalRuns: [{ ran: false, summary: 'no VERDICT line, last line: "off-by-one in retry.js"', findings: [] }] },
+    reviewer: true, agents: 1, degraded: ['external'], fixRounds: 0, resolved: [], prompts: ['review:external'] },
   { name: 'external command fails',
     opts: { externalReview: cmd, externalRuns: [{ ran: false, summary: 'exit 127', findings: [] }] },
     reviewer: true, agents: 1, degraded: ['external'], fixRounds: 0, resolved: [], prompts: ['review:external'] },

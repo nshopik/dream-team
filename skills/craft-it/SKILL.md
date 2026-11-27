@@ -232,18 +232,29 @@ remote's default branch unless the project's `CLAUDE.md` or `AGENTS.md` names an
   checkout — CI config first, `CLAUDE.md`, `AGENTS.md` and README second. The mechanical gate
   runs exactly these after the implementation and after every fix commit. Leave out lab work.
   Required.
-- `externalReview`: a shell command that reads a diff on stdin and prints findings. Default unset.
+- `externalReview`: a shell command that reads a diff on stdin and prints findings, then a last
+  line of `VERDICT: CLEAN` or `VERDICT: FINDINGS`. Default unset.
 - The opt-in is an `External reviewer:` line in `AGENTS.md` or `CLAUDE.md`.
 - Include the global and project `AGENTS.md` or `CLAUDE.md` and the corresponding ignored local
   notes when resolving the opt-in.
 - The project's line and the global one disagree → the project's wins, including a project line
   that turns it off.
-- The selected opt-in reads `External reviewer: codex` → set `externalReview` to the command below.
+- The selected opt-in reads `External reviewer: codex` on any host but Codex CLI → set
+  `externalReview` to the first command below.
+- The selected opt-in reads `External reviewer: codex` on Codex CLI → set `externalReview` to the
+  second command below.
 - The selected opt-in supplies a custom shell command → set `externalReview` to that command.
 
 ```sh
 codex --ask-for-approval never exec --sandbox read-only --ephemeral \
-  'Review the diff on stdin. Report findings with file and line, or "No issues found."'
+  'Review the diff on stdin. Tag each finding [critical], [important], [nit] or [question]
+  and give its file and line. End with the last line exactly VERDICT: CLEAN or VERDICT: FINDINGS.'
+```
+
+```sh
+claude -p 'Review the diff on stdin. Tag each finding [critical], [important], [nit] or [question]
+  and give its file and line. End with the last line exactly VERDICT: CLEAN or VERDICT: FINDINGS.' \
+  --strict-mcp-config --setting-sources project --disable-slash-commands --tools Read,Grep,Glob
 ```
 
 Then report, before the workflow returns or subagent-loop stage 1 starts:
