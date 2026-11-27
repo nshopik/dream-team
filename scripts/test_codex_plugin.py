@@ -6,9 +6,10 @@ def read(path):
     return json.loads(Path(path).read_text())
 
 
-marketplace = read(".agents/plugins/marketplace.json")
+repo = Path(__file__).resolve().parents[1]
+marketplace = read(repo / ".agents/plugins/marketplace.json")
 entries = {entry["name"]: entry for entry in marketplace["plugins"]}
-plugin_root = Path(entries["dream-team"]["source"]["path"])
+plugin_root = repo / entries["dream-team"]["source"]["path"]
 codex = read(plugin_root / ".codex-plugin/plugin.json")
 claude = read(plugin_root / ".claude-plugin/plugin.json")
 assert marketplace["name"] == codex["name"] == "dream-team"
@@ -36,14 +37,20 @@ for role in ("docs-editor", "docs-reviewer"):
     for ref in ("google-style/contract.md", "google-style/word-list.md", "changelog-style.md"):
         path = role_dir.parent / "references" / ref
         assert path.is_file()
-        assert str(path) in (role_dir / f"{role}.md").read_text()
+        assert str(path.relative_to(plugin_root)) in (role_dir / f"{role}.md").read_text()
 
+assert codex["version"] == claude["version"] == read(repo / "package.json")["version"]
+assert "allow_implicit_invocation: false" in (role_dir / "openai.yaml").read_text()
+
+# Codex hooks mirror the Claude hooks with Codex's root variable, flag and edit tool.
 hooks = read(plugin_root / codex["hooks"])["hooks"]
-assert set(hooks) == {"SessionStart", "PreToolUse"}
-assert [entry["matcher"] for entry in hooks["PreToolUse"]] == ["Bash", "^apply_patch$"]
-for groups in hooks.values():
+expected = read(plugin_root / "hooks/hooks.json")["hooks"]
+for groups in expected.values():
     for group in groups:
-        command = group["hooks"][0]["command"]
-        assert command == 'python3 "${PLUGIN_ROOT}/hooks/jit-context.py" --codex'
+        if group.get("matcher") == "Write|Edit":
+            group["matcher"] = "^apply_patch$"
+        for hook in group["hooks"]:
+            hook["command"] = hook["command"].replace("CLAUDE_PLUGIN_ROOT", "PLUGIN_ROOT") + " --codex"
+assert hooks == expected, "hooks/codex-hooks.json drifted from hooks/hooks.json"
 assert (plugin_root / "hooks/jit-context.py").is_file()
 print("PASS Codex plugin assets")

@@ -59,10 +59,10 @@ One issue per invocation.
   locally first.
 - It needs a lab host the project's `CLAUDE.md` or `AGENTS.md` names → run it through
   `dream-team:lab-runner`.
-- Without the named lab-runner → use your host's tool reference from craft-it's
-  Harness tools section.
-- Without the named lab-runner → use the `role-fallback.md` file in craft-it's base
-  directory.
+- Without the named lab-runner → dispatch per the host lines at the top of qa-review's
+  advertised `SKILL.md`.
+- Without the named lab-runner → use the `role-fallback.md` file in qa-review's base
+  directory, beside its advertised `SKILL.md`.
 - Record one verdict: confirmed, with the code path; not reproduced; or not enough detail.
 
 ## 4. Facts only the reporter knows

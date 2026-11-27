@@ -56,7 +56,10 @@ assumption.
 - On pi → read [pi tools](pi-tools.md).
 - On OpenCode → read [OpenCode tools](opencode-tools.md).
 - On another harness without a skill loader → read the advertised `SKILL.md` for skill lookup.
-- Without a named Dream Team role → use [bundled agent prompts](role-fallback.md).
+- Without a named Dream Team role → use the `role-fallback.md` file in qa-review's base
+  directory, beside its advertised `SKILL.md`.
+- For a reviewer outside Claude Code → dispatch per the host lines at the top of qa-review's
+  advertised `SKILL.md`.
 
 ## 1. Read the issue
 
@@ -230,6 +233,7 @@ remote's default branch unless the project's `CLAUDE.md` or `AGENTS.md` names an
   runs exactly these after the implementation and after every fix commit. Leave out lab work.
   Required.
 - `externalReview`: a shell command that reads a diff on stdin and prints findings. Default unset.
+- The opt-in is an `External reviewer:` line in `AGENTS.md` or `CLAUDE.md`.
 - Include the global and project `AGENTS.md` or `CLAUDE.md` and the corresponding ignored local
   notes when resolving the opt-in.
 - The project's line and the global one disagree → the project's wins, including a project line
@@ -474,8 +478,9 @@ The report carries only what the user must know or act on.
 - The hand-back `<why>` clause names only what blocks; it never adds that other reviewers, rounds
   or disputes came back clean.
 
-Use the layout below as the complete report. Omit empty sections and inapplicable bullets.
-Keep the applicable closing line even when it is the only line.
+- Use the layout below as the complete report.
+- Omit empty sections and inapplicable bullets.
+- Keep the applicable closing line even when it is the only line.
 
 ```
 **Assumptions:**

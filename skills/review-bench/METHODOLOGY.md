@@ -14,7 +14,7 @@ codex plugin add dream-team@dream-team
 ```
 
 For a Codex reviewer configured with `:lenses`, pass the bundled reviewer prompts to generic
-subagents when the named agents are unavailable. Name the domain lens `domain`. Prefix each
+subagents. Name the domain lens `domain`. Prefix each
 other generic grading lens's task name with `lens_`. The extractor uses these identifiers to
 separate lens reports from helper output.
 

@@ -123,8 +123,11 @@ Planning stays explicit, at issue size, because you review every plan.
   0009). Use the host's skill lookup to resolve the owning skill. If the host has no skill tool,
   read the advertised `SKILL.md` directly. Repo data lives in `docs/CONVENTIONS.md` or
   `.dream-team/TRACKER.md`, which `setup-dream-team` writes. `test_skill_links.py` fails on a
-  cross-skill path. Workflow references sit flat beside their `SKILL.md`. Bundled reviewer prompts
-  live in `qa-review/agents/`.
+  cross-skill path. Reference files sit flat beside their `SKILL.md`; the exceptions are
+  `qa-review/agents/`, which holds every bundled role prompt, reviewers, `docs-editor` and
+  `lab-runner` alike, and `qa-review/references/`, which holds the style guides those prompts
+  read. `qa-review` owns `role-fallback.md` and the per-host reviewer dispatch lines; other
+  skills point at them there.
 - `.dream-team/TRACKER.md` and `docs/CONVENTIONS.md` are copies of `setup-dream-team`'s
   `tracker-local.md` and `repo-conventions.md` template; a clone keeps its copy until setup runs
   again, so a change to either file gets a CHANGELOG `**Upgrade note:**` to re-run setup.

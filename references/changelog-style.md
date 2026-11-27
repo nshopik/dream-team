@@ -1,1 +1,0 @@
-../skills/qa-review/references/changelog-style.md

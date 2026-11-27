@@ -27,9 +27,9 @@ npx skills add nshopik/dream-team --global
 ```
 
 Choose your harness and install the shared skills together for workflows that use more than one
-skill. For example, `craft-it`, `milestone-close`, and `triage-issue` share dispatch instructions
-and role prompts. Leave `assemble-meta`, `friction`, and `review-bench` for Claude Code.
-A skills-only install includes skill files and their resources.
+skill. For example, `craft-it`, `milestone-close`, and `triage-issue` use the dispatch instructions
+and role prompts in `qa-review`. Leave `assemble-meta`, `friction`, and `review-bench` for Claude
+Code. A skills-only install includes skill files and their resources, but no hooks.
 
 For workflows that dispatch subagents on pi, also install the subagent extension:
 
@@ -49,6 +49,10 @@ These examples use Claude Code syntax. For other hosts, see the
 - **Existing tracked project:** `/dream-team:craft-it <issue>`
 - **Upstream or untracked one-off:** `/dream-team:brainstorm`
 - **Not sure:** `/dream-team:ask-team`
+
+To have `craft-it` also run an outside reviewer, add `External reviewer: codex` or
+`External reviewer: <command>` to your `CLAUDE.md` or `AGENTS.md`; the command reads the diff on
+stdin.
 
 Run `setup-dream-team` in each clone, and again after an upgrade note asks for it. In your own
 project or fork it marks the clone with `git config --local dream-team.own true` and writes

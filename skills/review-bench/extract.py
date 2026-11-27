@@ -21,9 +21,6 @@ def codex_lenses(thread):
     if transcript is None:
         raise ValueError(f"missing Codex rollout for thread {thread}")
 
-    roles = {"dream-team-architect-reviewer", "dream-team-sre-engineer",
-             "dream-team-test-coverage-reviewer", "dream-team-performance-engineer",
-             "dream-team-docs-reviewer"}
     calls, pending, reports = {}, {}, {}
     with transcript.open() as stream:
         for line in stream:
@@ -42,7 +39,7 @@ def codex_lenses(thread):
                 output = message["output"]
                 if tool == "spawn_agent":
                     name = args["task_name"]
-                    if args.get("agent_type") in roles or name == "domain" or name.startswith(("lens-", "lens_")):
+                    if name == "domain" or name.startswith("lens_"):
                         # Failed spawns respond with an error instead of a task name.
                         if output.startswith("{") and (task := json.loads(output).get("task_name")):
                             pending[task] = True

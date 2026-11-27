@@ -131,30 +131,30 @@ def codex_extract(sid, texts, rollout, lenses=True, complete=True):
     return d, out
 
 
-ARCH = spawn("arch", "dream-team-architect-reviewer")
-SRE = spawn("sre", "dream-team-sre-engineer")
+ARCH = spawn("lens_arch", "default")
+SRE = spawn("lens_sre", "default")
 HELPER = spawn("explore", "default")
 DOMAIN = spawn("domain", "default")
 CUSTOM = spawn("lens_custom", "default")
 END = {"type": "event_msg", "payload": {"type": "task_complete"}}
-ERROR = answer("sre", "Agent errored: tool failed")
+ERROR = answer("lens_sre", "Agent errored: tool failed")
 RETRY_SRE = [
     {"type": "response_item", "payload": {"type": "function_call",
         "namespace": "collaboration", "name": "followup_task", "call_id": "retry-sre",
-        "arguments": json.dumps({"target": "sre"})}},
+        "arguments": json.dumps({"target": "lens_sre"})}},
     {"type": "response_item", "payload": {"type": "function_call_output", "call_id": "retry-sre",
         "output": ""}},
 ]
 for sid, rollout, names, early in [
-    ("c-early", [*ARCH, *SRE, answer("arch", "Finding."), END, answer("sre", "Late.")],
-     {"arch.md"}, True),
+    ("c-early", [*ARCH, *SRE, answer("lens_arch", "Finding."), END, answer("lens_sre", "Late.")],
+     {"lens_arch.md"}, True),
     ("c-failed", [*SRE, ERROR, END], set(), True),
-    ("c-helper", [*ARCH, *SRE, *HELPER, *DOMAIN, *CUSTOM, answer("arch", "Finding."),
+    ("c-helper", [*ARCH, *SRE, *HELPER, *DOMAIN, *CUSTOM, answer("lens_arch", "Finding."),
                   answer("explore", "Helper output."), answer("domain", "Domain finding."),
                   answer("lens_custom", "Custom finding."), ERROR, END],
-     {"arch.md", "domain.md", "lens_custom.md"}, False),
-    ("c-followup", [*ARCH, *SRE, answer("arch", "Finding."), ERROR, *RETRY_SRE, END],
-     {"arch.md"}, True),
+     {"lens_arch.md", "domain.md", "lens_custom.md"}, False),
+    ("c-followup", [*ARCH, *SRE, answer("lens_arch", "Finding."), ERROR, *RETRY_SRE, END],
+     {"lens_arch.md"}, True),
     ("c-incomplete", None, set(), True),
 ]:
     d, out = codex_extract(sid, ["Review."], rollout, complete=sid != "c-incomplete")

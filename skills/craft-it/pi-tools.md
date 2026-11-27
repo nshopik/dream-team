@@ -8,5 +8,3 @@
 - Set the issue worktree as `cwd`.
 - When the prompt expects project rules → set `projectContext: true`.
 - When the prompt names skills → set `skills: true`.
-- For a reviewer that needs `git diff` → keep Bash available.
-- For a reviewer that needs `git diff` → require read-only work in the prompt.

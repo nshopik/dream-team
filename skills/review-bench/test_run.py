@@ -39,7 +39,7 @@ if "--output-format" not in sys.argv:
         lenses = Path(os.environ["STUB_OUT"]) / name / "lenses"
         assert f"grade each file in {lenses}/" in prompt
         assert {p.name: p.read_text() for p in lenses.glob("*.md")} == {
-            "architect.md": "Raw architect finding.\n"}
+            "lens_architect.md": "Raw architect finding.\n"}
         print(f"{name}.architect C1")
         sys.exit()
     print(f"Graded.\n{name} C1\nRejected ({name}): b.go races (one goroutine).")
@@ -167,9 +167,9 @@ transcript = Path(os.environ["CODEX_HOME"]) / "sessions/2026/11/24" / f"rollout-
 if os.environ.get("STUB_MISSING_ROLLOUT"):
     transcript = transcript.with_suffix(".pending")
 transcript.parent.mkdir(parents=True, exist_ok=True)
-answers = [("sre", "dream-team-sre-engineer", "Agent errored: tool failed")]
+answers = [("lens_sre", "default", "Agent errored: tool failed")]
 if name != "failed-sol-r1":
-    answers.append(("architect", "dream-team-architect-reviewer", "Raw architect finding."))
+    answers.append(("lens_architect", "default", "Raw architect finding."))
 with transcript.open("w") as rollout:
     for task, role, answer in answers:
         for event in [
@@ -196,7 +196,7 @@ out = subprocess.run(command, env=codex_env, capture_output=True, text=True)
 run = OUT / "qa-sol-r1"
 assert out.returncode == 0, out.stderr
 assert (run / "report.md").read_text() == "Merged.\n", (run / "stderr").read_text()
-assert (run / "lenses/architect.md").read_text() == "Raw architect finding.\n"
+assert (run / "lenses/lens_architect.md").read_text() == "Raw architect finding.\n"
 assert (run / "marks.txt").read_text() == "qa-sol-r1.architect C1\n"
 assert "cost=? report=7 lenses=1" in (run / "stats.txt").read_text()
 log = [json.loads(line) for line in (TMP / "log").read_text().splitlines()]

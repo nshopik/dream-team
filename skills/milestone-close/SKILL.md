@@ -17,10 +17,10 @@ and filed issue.
 - Ask only for what leaves the docs MR or changes agent rules: issues, closes, moves, milestones,
   `AGENTS.md` or `CLAUDE.md` and corresponding local notes, and the release offer.
 
-- Without named Dream Team agents → use your host's tool reference from craft-it's
-  Harness tools section.
-- Without named Dream Team agents → use the `role-fallback.md` file in craft-it's base
-  directory.
+- Without named Dream Team agents → dispatch per the host lines at the top of qa-review's
+  advertised `SKILL.md`.
+- Without named Dream Team agents → use the `role-fallback.md` file in qa-review's base
+  directory, beside its advertised `SKILL.md`.
 
 ## 1. Read the milestone
 
