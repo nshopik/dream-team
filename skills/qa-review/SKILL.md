@@ -17,7 +17,8 @@ argument-hint: "[audit] [verify] [base-ref | path ...]"
 The main session runs one read-only agent per lens with the Agent tool, then merges and
 deduplicates their reports itself (step 4).
 
-- On Codex → use `spawn_agent` and join each launched task with the host's wait tool.
+- On Codex → use `spawn_agent` on the built-in `default` and join each launched task with the
+  host's wait tool.
 - On pi → pass one `{task}` entry per reviewer to `pi-sub-agent`'s `subagent(tasks=…)`.
 - For a pi reviewer that needs `git diff` → keep Bash available and require read-only work in the
   prompt.
@@ -26,8 +27,7 @@ deduplicates their reports itself (step 4).
 - On OpenCode → map Explore to the built-in `explore`.
 - On Codex → name the domain task `domain`.
 - On Codex → name each other lens task `lens_<role>` with underscores in the role name.
-- Without a named Dream Team lens → attach its prompt body from the [agents directory](agents)
-  to the generic review prompt.
+- Without a named Dream Team lens → use [bundled agent prompts](role-fallback.md).
 - Pass Claude model and effort fields only to Claude Agent calls.
 
 ## 1. Pick the mode and scope

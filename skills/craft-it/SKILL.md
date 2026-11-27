@@ -56,7 +56,10 @@ assumption.
 - On pi → read [pi tools](pi-tools.md).
 - On OpenCode → read [OpenCode tools](opencode-tools.md).
 - On another harness without a skill loader → read the advertised `SKILL.md` for skill lookup.
-- Without a named Dream Team role → use [bundled agent prompts](role-fallback.md).
+- Without a named Dream Team role → use the `role-fallback.md` file in qa-review's base
+  directory, beside its advertised `SKILL.md`.
+- For a reviewer outside Claude Code → dispatch per the host lines at the top of qa-review's
+  advertised `SKILL.md`.
 
 ## 1. Read the issue
 

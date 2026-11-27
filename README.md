@@ -27,9 +27,9 @@ npx skills add nshopik/dream-team --global
 ```
 
 Choose your harness and install the shared skills together for workflows that use more than one
-skill. For example, `craft-it`, `milestone-close`, and `triage-issue` share dispatch instructions
-and role prompts. Leave `assemble-meta`, `friction`, and `review-bench` for Claude Code.
-A skills-only install includes skill files and their resources.
+skill. For example, `craft-it`, `milestone-close`, and `triage-issue` use the dispatch instructions
+and role prompts in `qa-review`. Leave `assemble-meta`, `friction`, and `review-bench` for Claude
+Code. A skills-only install includes skill files and their resources, but no hooks.
 
 For workflows that dispatch subagents on pi, also install the subagent extension:
 
