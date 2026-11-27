@@ -1,5 +1,6 @@
 {
   "name": "dream-team",
+  "version": "26.11.2",
   "description": "Takes one tracker issue to a reviewed pull request with Dream Team skills and convention hooks.",
   "skills": [
     "./skills/ask-team/",
