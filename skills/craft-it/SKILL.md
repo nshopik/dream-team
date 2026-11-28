@@ -247,13 +247,21 @@ remote's default branch unless the project's `CLAUDE.md` or `AGENTS.md` names an
 
 ```sh
 codex --ask-for-approval never exec --sandbox read-only --ephemeral \
-  'Review the diff on stdin. Tag each finding [critical], [important], [nit] or [question]
-  and give its file and line. End with the last line exactly VERDICT: CLEAN or VERDICT: FINDINGS.'
+  'Review the diff on stdin. A review panel already covered design, failure modes, tests and
+  the domain; find what it missed. Look for what breaks under stress: untrusted or malformed
+  input, partial failure and half-done setup or teardown, timeouts and deadlines, restarts,
+  concurrency, and zero, empty or maximum values. Report only what you can point to in the code.
+  Tag each finding [critical], [important], [nit] or [question] and give its file and line.
+  End with the last line exactly VERDICT: CLEAN or VERDICT: FINDINGS.'
 ```
 
 ```sh
-claude -p 'Review the diff on stdin. Tag each finding [critical], [important], [nit] or [question]
-  and give its file and line. End with the last line exactly VERDICT: CLEAN or VERDICT: FINDINGS.' \
+claude -p 'Review the diff on stdin. A review panel already covered design, failure modes, tests
+  and the domain; find what it missed. Look for what breaks under stress: untrusted or malformed
+  input, partial failure and half-done setup or teardown, timeouts and deadlines, restarts,
+  concurrency, and zero, empty or maximum values. Report only what you can point to in the code.
+  Tag each finding [critical], [important], [nit] or [question] and give its file and line.
+  End with the last line exactly VERDICT: CLEAN or VERDICT: FINDINGS.' \
   --strict-mcp-config --setting-sources project --disable-slash-commands --tools Read,Grep,Glob
 ```
 
