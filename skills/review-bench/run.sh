@@ -32,7 +32,7 @@ while read -r prefix prompt || [ -n "$prefix" ]; do
     *) echo "$4: $prefix: unknown runner=$runner" >&2; exit 2 ;;
   esac
   prompt=${prompt//\{base\}/$BASE} && prompt=${prompt//\{head\}/$HEAD_REF}
-  cmd=${prompt%% *} && cmd=${cmd#/} && cmd=${cmd##*:}
+  cmd=$prefix && [[ $prompt == /* ]] && cmd=${prompt%% *} && cmd=${cmd#/} && cmd=${cmd##*:}
   for k in $(seq "${N:-1}"); do
     jobs+=("$prefix-r$k" "$prompt" "$lenses" "$model" "$effort"
            "reviewer=$cmd model=$model effort=$effort${shown:+ shown=$shown}" "$runner")
