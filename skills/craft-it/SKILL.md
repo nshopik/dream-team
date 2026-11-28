@@ -399,10 +399,9 @@ Link the issue so it auto-closes (`Closes #<n>`). Write the description per `sco
 
 ## 7. Watch the MR/PR
 
-Once the MR/PR is open, start a Bash `run_in_background` poll that exits on a final state,
-`merged` or `closed`, or when the pipeline for the MR/PR head finishes — never on "not open":
-GitLab reports a transient `locked` while it merges. Poll every 30s through the host's tooling
-skill, e.g.:
+Once the MR/PR is open, start a poll that exits on a final state, `merged` or `closed`, or when
+the pipeline for the MR/PR head finishes — never on "not open": GitLab reports a transient
+`locked` while it merges. Poll every 30s through the host's tooling skill, e.g.:
 
 ```sh
 h=$(git rev-parse HEAD)
@@ -419,8 +418,14 @@ echo "$s $p"
   --json status,conclusion`: finished once it lists runs and all are `completed`, failed when one
   concludes `failure`.
 
-Give the report (below) without waiting for the poll, and leave the poll out of it. When it
-exits:
+- Give the report (below) before the poll exits, and leave the poll out of it.
+- Keep watching until `merged` or `closed`, and run the cleanup below without another user
+  message.
+- The host resumes the session when a background call exits (Claude Code: Bash
+  `run_in_background`) → run the poll that way and end the turn after the report.
+- No such background call → run the poll in the foreground after the report, in the same turn.
+
+When it exits:
 
 - **Pipeline passed** → restart the poll on `merged` or `closed` only.
 - **Pipeline failed** → read the failing job's log with the `ci-logs` skill if present, else the

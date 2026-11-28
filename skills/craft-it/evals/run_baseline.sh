@@ -57,10 +57,12 @@ what = ('the hand-back comment you post on the issue' if kind == 'comment'
 ask = f"""Output only {what}
 under the skill's "Report back" section — no preamble, no code fence."""
 if kind == 'steps':
-    ask = """Output only the actions you take from here until the MR/PR opens, in order, one line
+    until = e.get('until', 'the MR/PR opens')
+    verbs = ', POLL (a step-7 poll), CLEANUP (step 7\'s cleanup)' if 'until' in e else ''
+    ask = f"""Output only the actions you take from here until {until}, in order, one line
 each, starting with its verb: ASK (an AskUserQuestion dialog: its questions and options), REPORT
 (a prose message to the user), DISPATCH (an agent: its task), COMMIT, GATE (a gateCommands run),
-COMMENT (an issue comment: its text), FILE (a new issue), FOLD, PUSH, OPEN (the MR/PR). End the
+COMMENT (an issue comment: its text), FILE (a new issue), FOLD, PUSH, OPEN (the MR/PR){verbs}. End the
 list at the first action that waits on the user. No preamble, no code fence."""
 print(f"""Use the dream-team:craft-it skill. You are its orchestrator on issue #{e['issue']}
 of github.com/acme/flowlog, "{e['title']}", labels {', '.join(e['labels'])}.
