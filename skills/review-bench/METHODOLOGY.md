@@ -97,11 +97,11 @@ quality = 100 × Σ_i w_i·c_i / Σ_i w_i        per run, c_i in {1, 0.5, 0}
 
 Run `python3 score.py <ledger.json> <marks.txt>`; it prints a ledger summary line (version,
 findings, weight, criticals), then one row per prefix, named by its reviewer and model: tier,
-reviewer (the prompt's first word without a leading `/` and plugin prefix, such as
-`qa-review`), model (`shown=`, else `model=` without a leading `claude-`, then `-<effort>`,
-from the prefix's first run's `stats.txt`), runs, mean quality, sd, mean criticals, mean
-rejected claims, mean $/run. Rows that would show the same reviewer and model show their prefix
-as the reviewer.
+reviewer (a slash-command prompt's first word without the `/` and plugin prefix, such as
+`qa-review`, else the line's prefix), model (`shown=`, else `model=` without a leading
+`claude-`, then `-<effort>`, from the prefix's first run's `stats.txt`), runs, mean quality, sd,
+mean criticals, mean rejected claims, mean $/run. Rows that would show the same reviewer and
+model show their prefix as the reviewer.
 
 ## Clean-PR case
 

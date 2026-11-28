@@ -155,7 +155,7 @@ assert sys.argv[1:] == ["-a", "never", "exec", "--json", "--sandbox", "read-only
                        "--model", "gpt-6.2-sol", "-c", 'model_reasoning_effort="high"', "-"]
 name = Path.cwd().name
 prompt = sys.stdin.read().strip()
-assert prompt == ("/plain-review main..feat" if name == "plain-sol-r1" else "/qa-review main..feat")
+assert prompt == ("The diff to review is main..feat" if name == "plain-sol-r1" else "/qa-review main..feat")
 assert Path("a.go").read_text() == "package a\n"
 thread = f"codex-{name}"
 print(json.dumps({"type": "thread.started", "thread_id": thread}))
@@ -188,7 +188,7 @@ codex.chmod(0o755)
 with (TMP / "reviewers.txt").open("a") as reviewers:
     reviewers.write("qa-sol:lenses runner=codex model=gpt-6.2-sol effort=high /qa-review {base}..{head}\n")
     reviewers.write("fresh-claude model=claude-opus-5 /fresh-review {base}\n")
-    reviewers.write("plain-sol runner=codex model=gpt-6.2-sol effort=high /plain-review {base}..{head}\n")
+    reviewers.write("plain-sol runner=codex model=gpt-6.2-sol effort=high The diff to review is {base}..{head}\n")
     reviewers.write("failed-sol:lenses runner=codex model=gpt-6.2-sol effort=high /qa-review {base}..{head}\n")
 command = ["bash", HERE / "run.sh", REPO, "main", "feat", TMP / "reviewers.txt", OUT]
 codex_env = {**env, "CODEX_HOME": str(TMP / "codex"), "N": "1"}
@@ -202,6 +202,7 @@ assert "cost=? report=7 lenses=1" in (run / "stats.txt").read_text()
 log = [json.loads(line) for line in (TMP / "log").read_text().splitlines()]
 assert any("/fresh-review main" in entry.get("argv", []) for entry in log)
 assert (OUT / "plain-sol-r1/marks.txt").read_text().startswith("plain-sol-r1 C1\n")
+assert (OUT / "plain-sol-r1/stats.txt").read_text().startswith("reviewer=plain-sol model=")
 assert (OUT / "failed-sol-r1/marks.txt").read_text() == "failed-sol-r1\n"
 assert all("The run is failed-sol-r1:" not in entry.get("prompt", "") for entry in log)
 print("PASS mixed runner defaults, raw lens grading, plain Codex grading and early exits")

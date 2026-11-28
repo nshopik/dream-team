@@ -41,6 +41,7 @@ All notable changes to this plugin are documented in this file. The format is ba
 
 - `scope-issue` reads its glossary rules before it writes an issue, and a reply that proposes a new term holds only the question until the user's OK.
 - `scope-issue` loads `brainstorm` with the Skill tool before it asks about an undecided design choice or a done-when check that is not observable.
+- The `review-bench` score table names a reviewer whose prompt is not a slash command by its `reviewers.txt` prefix instead of the prompt's first word.
 
 ## [26.11.2] - 2026-11-17
 
